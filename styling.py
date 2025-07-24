@@ -48,3 +48,25 @@ def apply_custom_css():
                 padding: 1rem;
                 margin: 0.5rem 0;
             }}
+            .form-section-title {{
+                font-size: 1.1rem !important;
+            }}
+            .stButton > button,
+            .stNumberInput input,
+            .stSelectbox div {{
+                width: 100% !important;
+            }}
+            .main-title {{
+                font-size: 1.8rem;
+                padding: 0.5rem;
+            }}
+            .block-container {{
+                padding: 1rem 0.5rem !important;
+            }}
+            .logo-container img {{
+                max-width: 150px !important;
+                height: auto !important;
+            }}
+        }}
+    </style>
+    """, unsafe_allow_html=True)
