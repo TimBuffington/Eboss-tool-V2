@@ -6,7 +6,7 @@ def apply_custom_css():
     st.markdown(f"""
     <style>
         .stApp {{
-            background-image: url("app://./AdobeStock_209254754.jpeg");
+            background-image: url("https://github.com/TimBuffington/Eboss-tool-V2/blob/main/AdobeStock_209254754.jpeg");
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
