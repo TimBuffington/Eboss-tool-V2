@@ -2,9 +2,6 @@ import streamlit as st
 import requests
 from datetime import date
 
-# ──────────────────────────────
-# 🎨 Custom Styling
-# ──────────────────────────────
 def apply_custom_css():
     st.markdown(f"""
     <style>
@@ -15,38 +12,115 @@ def apply_custom_css():
             background-repeat: no-repeat;
             background-attachment: fixed;
         }}
+
         .form-container {{
-            background: rgba(0,0,0,0.75);
+            background-color: #636569;
+            border: 2px solid #81BD47;
             padding: 1.5rem;
-            border-radius: 12px;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-        }}
-        .form-section-title {{
-            font-size: 1.4rem;
-            font-weight: bold;
-            color: #81BD47;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
-        }}
-        h1, h2, h3 {{
-            text-align: center;
+            border-radius: 18px;
             color: white;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
         }}
-        .info-box {{
-            background-color: #81BD47;
-            padding: 1rem;
-            margin: 1rem 0;
-            border-radius: 8px;
-            color: #fff;
+
+        .form-section-title, h1, h2, h3 {{
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+            text-align: center;
+        }}
+
+        input, select, textarea {{
+            background-color: #636569 !important;
+            border: 2px solid #81BD47 !important;
+            color: white !important;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }}
+
+        input:hover, select:hover, textarea:hover,
+        input:focus, select:focus, textarea:focus {{
+            border-color: #A9E37A !important;
+            box-shadow: 0 0 8px #A9E37A;
+        }}
+
+        .stSelectbox > div > div, .stTextInput > div > div {{
+            background-color: #636569 !important;
+            border: 2px solid #81BD47 !important;
+            color: white !important;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }}
+
+        .stSelectbox > div > div:hover,
+        .stTextInput > div > div:hover {{
+            border-color: #A9E37A !important;
+            box-shadow: 0 0 8px #A9E37A;
+        }}
+
+        .stButton > button {{
+            background-color: #81BD47 !important;
+            color: white !important;
+            font-weight: bold;
+            border-radius: 10px;
+            border: none;
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+            padding: 0.5rem 1.2rem;
+            transition: all 0.2s ease-in-out;
+        }}
+
+        .stButton > button:hover {{
+            background-color: #A9E37A !important;
+            transform: scale(1.03);
+            box-shadow: 0 0 12px rgba(129, 189, 71, 0.6);
+        }}
+
+        .stRadio > div {{
+            background-color: #636569;
+            border: 2px solid #81BD47;
+            border-radius: 10px;
+            padding: 0.5rem;
+            transition: all 0.2s ease-in-out;
+        }}
+
+        .stRadio > div:hover {{
+            border-color: #A9E37A;
+            box-shadow: 0 0 6px #A9E37A;
+        }}
+
+        .stRadio > div > label {{
+            color: white !important;
             font-weight: bold;
         }}
-        .warning-box {{
-            background-color: #FF6B6B;
+
+        .metric-box {{
+            background-color: #636569;
+            border: 2px solid #81BD47;
             padding: 1rem;
-            margin: 1rem 0;
-            border-radius: 8px;
-            color: #fff;
+            color: white;
+            border-radius: 12px;
+            text-align: center;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+            margin-bottom: 1rem;
+        }}
+
+        .footer {{
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 1rem 0;
+            text-align: center;
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+        }}
+
+        .footer a {{
+            color: #81BD47;
+            text-decoration: none;
             font-weight: bold;
         }}
     </style>
