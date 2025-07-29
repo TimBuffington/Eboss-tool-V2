@@ -1,6 +1,10 @@
 import streamlit as st
+import requests
+from datetime import date
 
-# 1. Styling
+# ──────────────────────────────
+# 🎨 Custom Styling
+# ──────────────────────────────
 def apply_custom_css():
     st.markdown(f"""
     <style>
@@ -13,46 +17,45 @@ def apply_custom_css():
         }}
         .form-container {{
             background: rgba(0,0,0,0.75);
-            padding: 1rem;
+            padding: 1.5rem;
             border-radius: 12px;
-            margin-bottom: 1rem;
-            color: #fff;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
         }}
         .form-section-title {{
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             font-weight: bold;
             color: #81BD47;
-            margin-bottom: 1rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+        }}
+        h1, h2, h3 {{
+            text-align: center;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }}
         .info-box {{
             background-color: #81BD47;
-            padding: 0.8rem;
+            padding: 1rem;
             margin: 1rem 0;
             border-radius: 8px;
             color: #fff;
+            font-weight: bold;
         }}
         .warning-box {{
             background-color: #FF6B6B;
-            padding: 0.8rem;
+            padding: 1rem;
             margin: 1rem 0;
             border-radius: 8px;
             color: #fff;
-        }}
-        table {{
-            width: 100%;
-            border-collapse: collapse;
-        }}
-        th, td {{
-            padding: 0.5rem;
-            border-bottom: 1px solid #444;
-        }}
-        th {{
-            color: #81BD47;
+            font-weight: bold;
         }}
     </style>
     """, unsafe_allow_html=True)
 
-# 2. EBOSS Reference Data
+
+# ──────────────────────────────
+# 📊 EBOSS® Reference Data
+# ──────────────────────────────
 EBOSS_KVA = {
     "EB25 kVA": 25,
     "EB70 kVA": 45,
@@ -65,119 +68,509 @@ STANDARD_GENERATORS = {
     "45 kVA / 36 kW": 2.7,
     "65 kVA / 52 kW": 3.5,
     "125 kVA / 100 kW": 6.5,
-    "220 kVA / 176 kW": 12.5
+    "220 kVA / 176 kW": 12.5,
+    "400 kVA / 320 kW": 22.0
 }
 
-# 3. Render cost table
-def render_cost_comparison(eboss_model, eboss_gen_size, std_gen_label, fuel_price, delivery_fee, pm_interval, pm_cost, eboss_monthly, std_monthly, eboss_runtime, std_runtime, eboss_gph, std_gph):
-    eboss_gal = eboss_gph * eboss_runtime
-    std_gal = std_gph * std_runtime
-    eboss_fuel_cost = eboss_gal * fuel_price
-    std_fuel_cost = std_gal * fuel_price
-    eboss_pms = eboss_runtime / pm_interval if pm_interval else 0
-    std_pms = std_runtime / pm_interval if pm_interval else 0
-    eboss_pm_total = eboss_pms * pm_cost
-    std_pm_total = std_pms * pm_cost
-    eboss_co2 = eboss_gal * 22.4
-    std_co2 = std_gal * 22.4
-    eboss_total = eboss_monthly + eboss_fuel_cost + delivery_fee + eboss_pm_total
-    std_total = std_monthly + std_fuel_cost + delivery_fee + std_pm_total
-    diff = std_total - eboss_total
+# ──────────────────────────────
+# 🧠 Session State Setup
+# ──────────────────────────────
+if "section" not in st.session_state:
+    st.session_state.section = "main"
+if "cost_inputs" not in st.session_state:
+    st.session_state.cost_inputs = {}
 
-    rows = [
-        ("Generator Size", eboss_gen_size, std_gen_label, ""),
-        ("Rental Cost ($)", eboss_monthly, std_monthly, std_monthly - eboss_monthly),
-        ("Fuel Used (gal)", eboss_gal, std_gal, std_gal - eboss_gal),
-        ("Fuel Cost ($)", eboss_fuel_cost, std_fuel_cost, std_fuel_cost - eboss_fuel_cost),
-        ("PM Services", eboss_pms, std_pms, std_pms - eboss_pms),
-        ("PM Cost ($)", eboss_pm_total, std_pm_total, std_pm_total - eboss_pm_total),
-        ("CO₂ Emissions (lbs)", eboss_co2, std_co2, std_co2 - eboss_co2),
-        ("Delivery Fee ($)", delivery_fee, delivery_fee, 0),
-        ("Total Monthly Cost ($)", eboss_total, std_total, diff)
-    ]
+# ──────────────────────────────
+# 🔢 Core Formulas
+# ──────────────────────────────
+def calculate_charge_rate(model, gen_type, kva=None):
+    if gen_type == "Full Hybrid":
+        gen_kva = EBOSS_KVA.get(model, 0)
+        return round(gen_kva * 0.8 * 0.98, 2)
+    elif gen_type == "Power Module" and kva:
+        try:
+            gen_kva = float(kva.replace("kVA", ""))
+            return round(gen_kva * 0.8 * 0.90 * 0.98, 2)
+        except:
+            return 0.0
+    return 0.0
 
+
+def interpolate_gph(kva, load_pct):
+    kva_map = {
+        25: [0.67, 0.94, 1.26, 1.62],
+        45: [1.04, 1.60, 2.20, 2.03],
+        65: [2.9, 3.8, 4.8, 5.6],
+        125: [5.0, 7.1, 9.1, 10.8],
+        220: [8.8, 12.5, 16.6, 20.2],
+        400: [14.9, 21.3, 28.6, 35.4]
+    }
+    breakpoints = [0.25, 0.5, 0.75, 1.0]
+    values = kva_map.get(kva, kva_map[25])
+    load_pct = max(0.25, min(load_pct, 1.0))
+
+    for i in range(len(breakpoints) - 1):
+        if breakpoints[i] <= load_pct <= breakpoints[i + 1]:
+            x1, x2 = breakpoints[i], breakpoints[i + 1]
+            y1, y2 = values[i], values[i + 1]
+            return round(y1 + (load_pct - x1) * (y2 - y1) / (x2 - x1), 3)
+    return values[0]
+
+
+def calculate_runtime_specs(model, gen_type, cont_kw, kva):
+    gen_kva = EBOSS_KVA.get(model, 0) if gen_type == "Full Hybrid" else float(kva.replace("kVA", ""))
+
+    gen_kw = gen_kva * 0.8
+    charge_kw = calculate_charge_rate(model, gen_type, kva)
+    battery_kwh = {
+        "EB25 kVA": 15,
+        "EB70 kVA": 25,
+        "EB125 kVA": 50,
+        "EB220 kVA": 75,
+        "EB400 kVA": 125
+    }.get(model, 20)
+
+    battery_life = battery_kwh / cont_kw if cont_kw else 0
+    charge_time = battery_kwh / charge_kw if charge_kw else 0
+    cycles_per_day = 24 / (battery_life + charge_time) if battery_life + charge_time > 0 else 0
+    total_runtime = charge_time * cycles_per_day
+    engine_pct = charge_kw / gen_kw if gen_kw else 0
+    fuel_gph = interpolate_gph(int(gen_kva), engine_pct)
+
+    return {
+        "battery_kwh": battery_kwh,
+        "battery_life": battery_life,
+        "charge_time": charge_time,
+        "runtime": total_runtime,
+        "engine_pct": engine_pct,
+        "fuel_gph": fuel_gph
+    }
+
+# ─────────────────────────────────────────────
+# 🌐 GOOGLE FORM SUBMISSION HANDLERS
+# ─────────────────────────────────────────────
+
+def submit_demo_request(data):
+    form_url = "https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/formResponse"
+    payload = {
+        "entry.2005620554": data["first_name"],
+        "entry.1649749912": data["last_name"],
+        "entry.1045781291": data["company"],
+        "entry.1065046570": data["title"],
+        "entry.1166974658": data["phone"],
+        "entry.839337160":  data["street"],
+        "entry.1773238634": data["city"],
+        "entry.2022339835": data["state"],
+        "entry.1175639336": data["zip"],
+        "entry.1615234896": data["email"]
+    }
+    return requests.post(form_url, data=payload).status_code
+
+def submit_training_request(data):
+    form_url = "https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/formResponse"
+    payload = {
+        "entry.2005620554": data["first_name"],
+        "entry.1045781291": data["last_name"],
+        "entry.1065046570": data["company"],
+        "entry.1166974658": data["title"],
+        "entry.839337160":  data["phone"],
+        "entry.1502461614": data["street"],
+        "entry.768723598":  data["city"],
+        "entry.1667781744": data["state"],
+        "entry.1777674235": data["zip"],
+        "entry.1301603693": data["email"],
+        "entry.779708650":  data["model"],
+        "entry.1497878538": data["train_type"],
+        "entry.257659210":  data["onsite"],
+        "entry.263815072":  data["train_date"],
+        "entry.298451692":  data["attendees"],
+        "entry.235434965":  data["tv"]
+    }
+    return requests.post(form_url, data=payload).status_code
+
+# ──────────────────────────────
+# 📝 Contact Form Logic
+# ──────────────────────────────
+def render_contact_form(form_type="demo"):
     st.markdown('<div class="form-container">', unsafe_allow_html=True)
-    st.markdown(f"<h3 class='form-section-title'>📊 Monthly Cost Comparison</h3>", unsafe_allow_html=True)
-    st.markdown(f"""
-    <table>
-        <thead>
-            <tr>
-                <th>Metric</th>
-                <th>EBOSS® Model<br>{eboss_model}</th>
-                <th>Standard Generator<br>{std_gen_label}</th>
-                <th>Difference</th>
-            </tr>
-        </thead>
-        <tbody>
-    """, unsafe_allow_html=True)
+    st.markdown(f'<h3 class="form-section-title">📝 Request { "a Demo" if form_type == "demo" else "On‑Site Training" }</h3>', unsafe_allow_html=True)
 
-    for label, e_val, s_val, d_val in rows:
-        def fmt(x): return f"{x:,.2f}" if isinstance(x, (int, float)) else x
-        st.markdown(f"""
-            <tr>
-                <td>{label}</td>
-                <td>{fmt(e_val)}</td>
-                <td>{fmt(s_val)}</td>
-                <td><strong>{fmt(d_val)}</strong></td>
-            </tr>
-        """, unsafe_allow_html=True)
-    st.markdown("</tbody></table></div>", unsafe_allow_html=True)
+    with st.form(f"{form_type}_form"):
+        st.text_input("First Name", key="first_name")
+        st.text_input("Last Name", key="last_name")
+        st.text_input("Company", key="company")
+        st.text_input("Title", key="title")
+        st.text_input("Phone Number", key="phone")
+        st.text_input("Street Address", key="street")
+        st.text_input("City", key="city")
+        st.text_input("State", key="state")
+        st.text_input("Zip Code", key="zip")
+        st.text_input("Email Address", key="email")
 
-# 🏁 Start App
-apply_custom_css()
-st.markdown("<h1 style='text-align:center;'>EBOSS® Model Selection Tool</h1>", unsafe_allow_html=True)
+        if form_type == "training":
+            st.selectbox("EBOSS® Model for Training", ["EB25 kVA", "EB70 kVA", "EB125 kVA", "EB220 kVA", "EB400 kVA"], key="model")
+            st.radio("Training Type", ["Sales", "Technical"], horizontal=True, key="train_type")
+            st.radio("Is an EBOSS® unit already onsite?", ["Yes", "No"], horizontal=True, key="onsite")
+            st.date_input("Preferred Training Date", key="train_date")
+            st.number_input("Number of Attendees", min_value=1, step=1, key="attendees")
+            tv = st.checkbox("A TV is available to present training materials")
+        else:
+            tv = None
 
-# Step 1: EBOSS config
-st.markdown('<div class="form-container">', unsafe_allow_html=True)
-st.markdown('<h3 class="form-section-title">⚙️ System Configuration</h3>', unsafe_allow_html=True)
-model = st.selectbox("EBOSS® Model", list(EBOSS_KVA.keys()))
-gen_type = st.selectbox("EBOSS® Type", ["Full Hybrid", "Power Module"])
-cont_kw = st.number_input("Continuous Load (kW)", min_value=0.0, max_value=500.0, step=1.0)
-peak_kw = st.number_input("Peak Load (kW)", min_value=0.0, max_value=500.0, step=1.0)
-st.markdown('</div>', unsafe_allow_html=True)
+        submitted = st.form_submit_button("📨 Submit Request")
 
-# Validate
-if cont_kw > peak_kw > 0:
-    st.markdown("<div class='warning-box'>⚠️ Continuous load cannot exceed peak load.</div>", unsafe_allow_html=True)
+    if submitted:
+        if form_type == "demo":
+            user_data = {k: st.session_state[k] for k in ["first_name", "last_name", "company", "title", "phone", "street", "city", "state", "zip", "email"]}
+            status = submit_demo_request(user_data)
+        else:
+            user_data = {k: st.session_state[k] for k in ["first_name", "last_name", "company", "title", "phone", "street", "city", "state", "zip", "email", "model", "train_type", "onsite", "train_date", "attendees"]}
+            user_data["train_date"] = str(user_data["train_date"])
+            user_data["tv"] = "TV available" if tv else "TV not available"
+            status = submit_training_request(user_data)
 
-# Step 2: Trigger cost analysis input
-if st.button("📊 Run Cost Analysis"):
-    st.session_state["show_cost"] = True
+        if status == 200:
+            st.success("✅ Your request was successfully submitted.")
+        else:
+            st.error("❌ Submission failed. Please try again.")
 
-# Step 3: Cost Input Section
-if st.session_state.get("show_cost", False):
-    st.markdown('<div class="form-container">', unsafe_allow_html=True)
-    st.markdown('<h3 class="form-section-title">💰 Cost Inputs</h3>', unsafe_allow_html=True)
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("🔁 Continue with Tool"):
+                st.session_state.landing_shown = False
+                st.session_state.show_contact_form = False
+                st.rerun()
+        with col2:
+            if st.button("🌐 Visit ANA Website"):
+                st.markdown("""<script>window.open("https://anacorp.com", "_blank");</script>""", unsafe_allow_html=True)
 
-    fuel_price = st.number_input("Fuel Price ($/gal)", 0.0, 100.0, 3.50, 0.01)
-    delivery_fee = st.number_input("Delivery Fee ($)", 0.0, 500.0, 75.0, 1.0)
-    pm_interval = st.number_input("PM Interval (hours)", 10.0, 1000.0, 500.0, 10.0)
-    pm_cost = st.number_input("Cost per PM ($)", 0.0, 5000.0, 150.0, 10.0)
-    eboss_monthly = st.number_input("EBOSS® Monthly Rental ($)", 0.0, 100000.0, 3800.0, 50.0)
-    std_monthly = st.number_input("Standard Gen Monthly Rental ($)", 0.0, 100000.0, 3500.0, 50.0)
-    std_gen = st.selectbox("Standard Generator Size", list(STANDARD_GENERATORS.keys()))
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # Step 4: Run comparison
-    if st.button("✅ Compare"):
-        # Runtime & GPH assumptions
-        eboss_runtime = 300  # hours per month (estimate)
-        std_runtime = 720    # 24/7 gen
-        eboss_gph = 1.6      # assumed interpolated
+# ──────────────────────────────
+# 🏠 Landing Page Logic
+# ──────────────────────────────
+if "landing_shown" not in st.session_state:
+    st.session_state.landing_shown = True
+if "show_contact_form" not in st.session_state:
+    st.session_state.show_contact_form = False
+if "form_type" not in st.session_state:
+    st.session_state.form_type = None
+
+if st.session_state.landing_shown:
+    apply_custom_css()
+    st.image("https://anacorp.com/wp-content/uploads/2023/10/ANA-ENERGY-LOGO-PADDED.png", width=250)
+    st.markdown("<h1>EBOSS® Hybrid Energy System Specs and Comparison Tool</h1>", unsafe_allow_html=True)
+
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("📋 Request a Demo"):
+            st.session_state.form_type = "demo"
+            st.session_state.show_contact_form = True
+            st.session_state.landing_shown = False
+            st.rerun()
+    with col2:
+        if st.button("📋 Request On-Site Training"):
+            st.session_state.form_type = "training"
+            st.session_state.show_contact_form = True
+            st.session_state.landing_shown = False
+            st.rerun()
+
+    col3, col4 = st.columns(2)
+    with col3:
+        if st.button("🎥 Learn How EBOSS® Works"):
+            st.markdown("""<script>window.open("https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc", "_blank");</script>""", unsafe_allow_html=True)
+    with col4:
+        if st.button("🚀 Launch EBOSS® Tool"):
+            st.session_state.landing_shown = False
+            st.session_state.show_contact_form = False
+            st.session_state.form_type = None
+            st.rerun()
+
+    st.stop()
+
+if st.session_state.show_contact_form:
+    render_contact_form(form_type=st.session_state.form_type)
+
+# ──────────────────────────────
+# 🚀 Main UI
+# ──────────────────────────────
+apply_custom_css()
+
+st.markdown("<h1>EBOSS® Model Selection Tool</h1>", unsafe_allow_html=True)
+
+with st.container():
+    col1, col2 = st.columns([1, 1])
+
+    # Left Column — System Configuration
+    with col1:
+        st.markdown('<div class="form-container">', unsafe_allow_html=True)
+        st.markdown('<h3 class="form-section-title">⚙️ System Configuration</h3>', unsafe_allow_html=True)
+
+        model = st.selectbox("EBOSS® Model", list(EBOSS_KVA.keys()))
+        gen_type = st.selectbox("EBOSS® Type", ["Full Hybrid", "Power Module"])
+
+        if gen_type == "Power Module":
+            kva_option = st.selectbox("Generator Size", ["25kVA", "45kVA", "65kVA", "125kVA", "220kVA", "400kVA"])
+        else:
+            kva_option = None
+
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # Right Column — Load Requirements
+    with col2:
+        st.markdown('<div class="form-container">', unsafe_allow_html=True)
+        st.markdown('<h3 class="form-section-title">⚡ Load Requirements</h3>', unsafe_allow_html=True)
+
+        cont_kw = st.number_input("Continuous Load (kW)", 0.0, 500.0, step=1.0)
+        peak_kw = st.number_input("Max Peak Load (kW)", 0.0, 500.0, step=1.0)
+
+        st.markdown('</div>', unsafe_allow_html=True)
+
+# 🔘 Button Panel (NOW with Contact Us)
+btn1, btn2, btn3, btn4, btn5 = st.columns(5)
+
+with btn1:
+    if st.button("📋 View Specs"):
+        st.session_state.section = "specs"
+
+with btn2:
+    if st.button("⚡ Load-Based Specs"):
+        st.session_state.section = "load"
+
+with btn3:
+    if st.button("⚖️ Compare"):
+        st.session_state.section = "compare"
+
+with btn4:
+    if st.button("💰 Cost Analysis"):
+        st.session_state.section = "cost"
+
+with btn5:
+    if st.button("📞 Contact Us"):
+        st.markdown("""
+        <script>
+        window.open("https://anacorp.com/contact/", "_blank");
+        </script>
+        """, unsafe_allow_html=True)
+# ──────────────────────────────
+# 💰 Cost Analysis Modal + Table
+# ──────────────────────────────
+if st.session_state.section == "cost":
+    with st.container():
+        st.markdown('<div class="form-container">', unsafe_allow_html=True)
+        st.markdown('<h3 class="form-section-title">💰 Cost Inputs</h3>', unsafe_allow_html=True)
+
+        fuel_price = st.number_input("Fuel Price ($/gal)", 0.0, 100.0, 3.5, 0.01)
+        delivery_fee = st.number_input("Delivery Fee ($)", 0.0, 1000.0, 75.0, 1.0)
+        pm_interval = st.number_input("PM Interval (hrs)", 10.0, 1000.0, 500.0, 10.0)
+        pm_cost = st.number_input("Cost per PM ($)", 0.0, 5000.0, 150.0, 10.0)
+        eboss_rent = st.number_input("EBOSS® Monthly Rental ($)", 0.0, 100000.0, 3800.0, 50.0)
+        std_rent = st.number_input("Standard Generator Monthly Rental ($)", 0.0, 100000.0, 3500.0, 50.0)
+        std_gen = st.selectbox("Standard Generator Size", list(STANDARD_GENERATORS.keys()))
+
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    if st.button("✅ Run Cost Comparison"):
+        runtime = calculate_runtime_specs(model, gen_type, cont_kw, kva_option)
+        std_runtime = 720  # Full 24x30 month
         std_gph = STANDARD_GENERATORS[std_gen]
 
-        render_cost_comparison(
-            eboss_model=model,
-            eboss_generator_label=f"{EBOSS_KVA[model]} kVA / {int(EBOSS_KVA[model]*0.8)} kW",
-            standard_generator_label=std_gen,
-            fuel_price=fuel_price,
-            delivery_fee=delivery_fee,
-            pm_interval=pm_interval,
-            cost_per_pm=pm_cost,
-            eboss_monthly=eboss_monthly,
-            standard_monthly=std_monthly,
-            eboss_runtime_hours=eboss_runtime,
-            standard_runtime_hours=std_runtime,
-            eboss_fuel_gph=eboss_gph,
-            standard_fuel_gph=std_gph
-        )
+        from math import ceil
+        def fmt(x): return f"{x:,.2f}"
+
+        # Table logic
+        def render_cost_comparison_table():
+            e_fuel = runtime["fuel_gph"] * runtime["runtime"]
+            s_fuel = std_gph * std_runtime
+            e_cost = e_fuel * fuel_price
+            s_cost = s_fuel * fuel_price
+            e_pms = ceil(runtime["runtime"] / pm_interval)
+            s_pms = ceil(std_runtime / pm_interval)
+            e_pm_cost = e_pms * pm_cost
+            s_pm_cost = s_pms * pm_cost
+            e_co2 = e_fuel * 22.4
+            s_co2 = s_fuel * 22.4
+            e_total = eboss_rent + e_cost + delivery_fee + e_pm_cost
+            s_total = std_rent + s_cost + delivery_fee + s_pm_cost
+            diff = s_total - e_total
+
+            rows = [
+                ("Generator Size", f"{EBOSS_KVA[model]} kVA / {int(EBOSS_KVA[model]*0.8)} kW", std_gen, ""),
+                ("Rental Cost ($)", eboss_rent, std_rent, std_rent - eboss_rent),
+                ("Fuel Used (gal)", e_fuel, s_fuel, s_fuel - e_fuel),
+                ("Fuel Cost ($)", e_cost, s_cost, s_cost - e_cost),
+                ("PM Services", e_pms, s_pms, s_pms - e_pms),
+                ("PM Cost ($)", e_pm_cost, s_pm_cost, s_pm_cost - e_pm_cost),
+                ("CO₂ Emissions (lbs)", e_co2, s_co2, s_co2 - e_co2),
+                ("Delivery Fee ($)", delivery_fee, delivery_fee, 0),
+                ("**Total Cost ($)**", e_total, s_total, diff)
+            ]
+
+            st.markdown('<div class="form-container">', unsafe_allow_html=True)
+            st.markdown('<h3 class="form-section-title">📊 Monthly Cost Comparison</h3>', unsafe_allow_html=True)
+            st.markdown(f"""
+            <table style='width:100%; text-align:left; font-size:0.9rem;'>
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>EBOSS® Model<br>{model}</th>
+                        <th>Standard Generator<br>{std_gen}</th>
+                        <th>Difference</th>
+                    </tr>
+                </thead>
+                <tbody>
+            """, unsafe_allow_html=True)
+
+            for label, e_val, s_val, d_val in rows:
+                st.markdown(f"""
+                    <tr>
+                        <td>{label}</td>
+                        <td>{fmt(e_val) if isinstance(e_val, (int, float)) else e_val}</td>
+                        <td>{fmt(s_val) if isinstance(s_val, (int, float)) else s_val}</td>
+                        <td><strong>{fmt(d_val) if isinstance(d_val, (int, float)) else d_val}</strong></td>
+                    </tr>
+                """, unsafe_allow_html=True)
+
+            st.markdown("</tbody></table></div>", unsafe_allow_html=True)
+
+        render_cost_comparison_table()
+st.markdown(f"""
+    <style>
+    @media print {{
+        body * {{
+            visibility: hidden;
+        }}
+        .print-logo, .print-logo * {{
+            visibility: visible;
+        }}
+        .form-container, .form-container * {{
+            visibility: visible;
+        }}
+        .form-container {{
+            position: relative;
+            background: white !important;
+            color: black !important;
+            box-shadow: none !important;
+        }}
+        .form-container h3, th, td {{
+            color: black !important;
+            text-shadow: none !important;
+        }}
+    }}
+    </style>
+
+    <div class="print-logo" style="text-align:center; margin-top:2rem;">
+        <img src="https://anacorp.com/wp-content/uploads/2023/10/ANA-ENERGY-LOGO-PADDED.png" width="200"><br><br>
+        <div style="font-size:1.2rem; font-weight:bold;">
+            EBOSS® Hybrid Energy System vs Standard Diesel Generator Cost Comparison
+        </div>
+        <div style="font-size:0.9rem; margin-top:0.2rem;">{today}</div>
+    </div>
+
+    <div style='text-align:right; margin-top: 1rem;'>
+        <button onclick="window.print()" style="
+            background-color: #81BD47;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+            🖨️ Print Report
+        </button>
+    </div>
+""", unsafe_allow_html=True)
+# ──────────────────────────────
+# 📋 EBOSS® Technical Specs
+# ──────────────────────────────
+def render_specs(model):
+    specs_data = {
+        "EB25 kVA": {
+            "Battery Capacity": "15 kWh",
+            "Inverter": "Pure Sine Wave",
+            "Voltage Options": "120/240 (1Φ) • 208/480 (3Φ)",
+            "Weight": "8,200 lbs",
+            "Dimensions": '108" x 45" x 62"',
+            "Warranty": "2 Years"
+        },
+        "EB70 kVA": {
+            "Battery Capacity": "25 kWh",
+            "Inverter": "Pure Sine Wave",
+            "Voltage Options": "120/240 (1Φ) • 208/480 (3Φ)",
+            "Weight": "13,200 lbs",
+            "Dimensions": '108" x 60" x 62"',
+            "Warranty": "2 Years"
+        },
+        # Add more specs for other models as needed
+    }
+
+    data = specs_data.get(model)
+    if not data:
+        st.warning("Specs not available for this model.")
+        return
+
+    st.markdown('<div class="form-container">', unsafe_allow_html=True)
+    st.markdown('<h3 class="form-section-title">📋 Technical Specs</h3>', unsafe_allow_html=True)
+    for key, value in data.items():
+        st.markdown(f"**{key}:** {value}")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# ──────────────────────────────
+# ⚡ Load-Based Specs Output
+# ──────────────────────────────
+def render_load_specs(model, gen_type, cont_kw, kva_option):
+    specs = calculate_runtime_specs(model, gen_type, cont_kw, kva_option)
+    st.markdown('<div class="form-container">', unsafe_allow_html=True)
+    st.markdown('<h3 class="form-section-title">⚡ Load-Based Performance</h3>', unsafe_allow_html=True)
+
+    col1, col2 = st.columns(2)
+    col1.metric("Battery Capacity", f"{specs['battery_kwh']} kWh")
+    col1.metric("Battery Longevity", f"{specs['battery_life']:.2f} hrs")
+    col1.metric("Charge Time", f"{specs['charge_time']:.2f} hrs")
+
+    col2.metric("Charges/Day", f"{24 / (specs['battery_life'] + specs['charge_time']):.2f}")
+    col2.metric("Runtime/Day", f"{specs['runtime']:.2f} hrs")
+    col2.metric("Fuel Consumption", f"{specs['fuel_gph']:.2f} GPH")
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# Show selected section
+if st.session_state.section == "specs":
+    render_specs(model)
+
+elif st.session_state.section == "load":
+    render_load_specs(model, gen_type, cont_kw, kva_option)
+
+# ──────────────────────────────
+# 🔗 Branded Footer (Sticky)
+# ──────────────────────────────
+st.markdown("""
+<style>
+.footer {
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    padding: 1rem 0;
+    text-align: center;
+    font-size: 0.9rem;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    margin-top: 3rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+}
+.footer a {
+    color: #81BD47;
+    text-decoration: none;
+    font-weight: bold;
+}
+</style>
+
+<div class="footer">
+    ANA EBOSS® Spec and Comparison Tool &nbsp; | &nbsp;
+    <a href="https://anacorp.com/hybrid-energy-systems/" target="_blank">
+        anacorp.com/hybrid-energy-systems
+    </a>
+</div>
+""", unsafe_allow_html=True)
