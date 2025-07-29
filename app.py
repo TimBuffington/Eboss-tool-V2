@@ -531,8 +531,10 @@ st.markdown(f"""
             text-shadow: none !important;
         }}
     }}
-    </style>
+ from datetime import date
+today = date.today().strftime("%B %d, %Y")
 
+st.markdown(f"""
     <div class="print-logo" style="text-align:center; margin-top:2rem;">
         <img src="https://anacorp.com/wp-content/uploads/2023/10/ANA-ENERGY-LOGO-PADDED.png" width="200"><br><br>
         <div style="font-size:1.2rem; font-weight:bold;">
@@ -540,6 +542,8 @@ st.markdown(f"""
         </div>
         <div style="font-size:0.9rem; margin-top:0.2rem;">{today}</div>
     </div>
+""", unsafe_allow_html=True)
+
 
     <div style='text-align:right; margin-top: 1rem;'>
         <button onclick="window.print()" style="
