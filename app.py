@@ -547,7 +547,7 @@ st.markdown(f"""
     </div>
 
     <div style='text-align:right; margin-top: 1rem;'>
-        <button onclick="window.print()" style="
+        <button onclick="window.print()" style=
             background-color: #81BD47;
             color: white;
             padding: 0.6rem 1.2rem;
