@@ -531,23 +531,39 @@ st.markdown(f"""
             text-shadow: none !important;
         }}
     }}
-def apply_custom_css():
-    st.markdown("""
-    <style>
-      /* ---- START OF YOUR CSS ---- */
-      .form-container {
-          background-color: #636569;
-          border: 2px solid #81BD47;
-          padding: 1.5rem;
-          border-radius: 18px;
-          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-      }
-      /* other rules… */
-      /* ---- END OF YOUR CSS ---- */
     </style>
-    """, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
+from datetime import date
+today = date.today().strftime("%B %d, %Y")
 
+html = f'''
+<div class="print-logo" style="text-align:center; margin-top:2rem;">
+  <img src="https://anacorp.com/wp-content/uploads/2023/10/ANA-ENERGY-LOGO-PADDED.png"
+       width="200"><br><br>
+  <div style="font-size:1.2rem; font-weight:bold;">
+    EBOSS&reg; Hybrid Energy System vs Standard Diesel Generator Cost Comparison
+  </div>
+  <div style="font-size:0.9rem; margin-top:0.2rem;">{today}</div>
+</div>
+
+<div style="text-align:right; margin-top:1rem;">
+  <button onclick="window.print()" style="
+    background-color:#81BD47;
+    color:white;
+    padding:0.6rem 1.2rem;
+    font-size:1rem;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    box-shadow:2px 2px 4px rgba(0,0,0,0.3);
+  ">
+    🖨️ Print Report
+  </button>
+</div>
+'''
+
+st.markdown(html, unsafe_allow_html=True)
 
 # ──────────────────────────────
 # 📋 EBOSS&reg;Technical Specs
