@@ -349,10 +349,30 @@ if st.session_state.landing_shown:
             st.session_state.landing_shown = False
             st.rerun()
 
-    col3, col4 = st.columns(2)
-    with col3:
-        if st.button("🎥 Learn How EBOSS&reg;Works"):
-            st.markdown("""<script>window.open("https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc", "_blank");</script>""", unsafe_allow_html=True)
+   col3, col4 = st.columns(2)
+
+with col3:
+    st.markdown(
+        """
+        <a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank">
+            <button style="
+                width: 100%; 
+                padding: 0.5rem; 
+                background-color: #81BD47; 
+                color: white; 
+                border-radius: 10px; 
+                border: none; 
+                font-size: 1.1rem;
+                font-weight: bold;
+                cursor: pointer;
+                box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+            ">
+                🎥 Learn How EBOSS&reg; Works
+            </button>
+        </a>
+        """, unsafe_allow_html=True
+    )
+
     with col4:
         if st.button("🚀 Launch EBOSS&reg;Tool"):
             st.session_state.landing_shown = False
