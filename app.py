@@ -532,19 +532,21 @@ st.markdown(f"""
         }}
     }}
 def apply_custom_css():
-    css = """
+    st.markdown("""
     <style>
-    .form-container {
-        background-color: #636569;
-        border: 2px solid #81BD47;
-        padding: 1rem 0;
-        border-radius: 18px;
-        /* etc… */
-    }
-    /* your other rules */
+      /* ---- START OF YOUR CSS ---- */
+      .form-container {
+          background-color: #636569;
+          border: 2px solid #81BD47;
+          padding: 1.5rem;
+          border-radius: 18px;
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+      }
+      /* other rules… */
+      /* ---- END OF YOUR CSS ---- */
     </style>
-    """
-    st.markdown(css, unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
+
 
 
 # ──────────────────────────────
