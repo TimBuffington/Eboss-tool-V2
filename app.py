@@ -1,18 +1,24 @@
 import streamlit as st
+
+st.set_page_config(
+    page_title="EBOSS® Tool",
+    page_icon="assets/logo.png",  # ← your local logo
+    layout="wide",
+)
+
 import requests
 from datetime import date
 
-def apply_custom_css():
-    st.markdown(f"""
+st.markdown(
+    """
     <style>
-        .stApp {{
-            background-image: url("https://github.com/TimBuffington/Eboss-tool-V2/blob/main/AdobeStock_209254754.jpeg");
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-        }}
-
+      .stApp {
+        background-image: url("assets/bg.png");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+      }
         .form-container {{
             background-color: #636569;
             border: 2px solid #81BD47;
