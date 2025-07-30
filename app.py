@@ -537,6 +537,9 @@ today = date.today().strftime("%B %d, %Y")
 from datetime import date
 today = date.today().strftime("%B %d, %Y")
 
+from datetime import date
+today = date.today().strftime("%B %d, %Y")
+
 st.markdown(f"""
     <div class="print-logo" style="text-align:center; margin-top:2rem;">
         <img src="https://anacorp.com/wp-content/uploads/2023/10/ANA-ENERGY-LOGO-PADDED.png" width="200"><br><br>
@@ -547,7 +550,7 @@ st.markdown(f"""
     </div>
 
     <div style='text-align:right; margin-top: 1rem;'>
-        <button onclick="window.print()" style=
+        <button onclick="window.print()" style="
             background-color: #81BD47;
             color: white;
             padding: 0.6rem 1.2rem;
@@ -560,6 +563,7 @@ st.markdown(f"""
         </button>
     </div>
 """, unsafe_allow_html=True)
+
 
 # ──────────────────────────────
 # 📋 EBOSS&reg;Technical Specs
