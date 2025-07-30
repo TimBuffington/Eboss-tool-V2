@@ -5,6 +5,96 @@ st.set_page_config(
     page_icon="assets/logo.png",  # ← your local logo
     layout="wide",
 )
+# ──────────────────────────────────────────────────────────────────────────────
+# File: Eboss-tool-V2/app.py
+# ──────────────────────────────────────────────────────────────────────────────
+
+import streamlit as st
+import pandas as pd
+from datetime import datetime
+
+# ── 1) Define your custom CSS for background ─────────────────────────────────
+def apply_custom_css():
+    st.markdown(
+        """
+        <style>
+          .stApp {
+            background-image: url("assets/bg.png");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+          }
+          /* …any other global CSS… */
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+# ── 2) Define your cost comparison block ──────────────────────────────────────
+def cost_comparison_block():
+    st.markdown("## 💰 Cost Comparison")
+    # …your inputs, calculations, metrics, chart… 
+    # (Use the function you already have here)
+
+# ── 3) Page setup ─────────────────────────────────────────────────────────────
+st.set_page_config(
+    page_title="EBOSS® Tool",
+    page_icon="assets/logo.png",
+    layout="wide",
+)
+apply_custom_css()    # ← apply your background right after config
+
+# ── 4) Print-only CSS ─────────────────────────────────────────────────────────
+st.markdown(
+    """
+    <style>
+    @media print {
+      /* hide everything by default */
+      body * { display: none !important; }
+      /* only show these two containers */
+      .print-logo, .print-section { display: block !important; }
+      /* hide the print button */
+      .print-button { display: none !important; }
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+# ── 5) Print button (visible on screen) ───────────────────────────────────────
+st.markdown(
+    """
+    <div style="text-align:center; margin:2rem 0;">
+      <button
+        class="print-button"
+        onclick="window.print()"
+        style="padding:0.5rem 1rem; font-size:1rem; cursor:pointer;"
+      >🖨️ Print Friendly View</button>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+# ── 6) Print header (logo + timestamp; hidden on screen) ─────────────────────
+today = datetime.today().strftime("%B %d, %Y")
+st.markdown(
+    f"""
+    <div class="print-logo" style="text-align:center; margin-top:2rem; display:none;">
+      <img src="assets/logo.png" width="200" /><br>
+      <div style="font-size:0.9rem; margin-top:0.5rem;">{today}</div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+# ── 7) Print section wrapper + cost block ────────────────────────────────────
+st.markdown('<div class="print-section" style="display:none;">', unsafe_allow_html=True)
+cost_comparison_block()
+st.markdown('</div>', unsafe_allow_html=True)
+
+# ── 8) (Optional) any other footer elements ───────────────────────────────────
+# st.markdown("…your footer…")
 
 import requests
 from datetime import date
