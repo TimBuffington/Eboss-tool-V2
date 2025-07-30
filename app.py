@@ -334,8 +334,8 @@ if st.session_state.landing_shown:
     apply_custom_css()
     st.image("https://anacorp.com/wp-content/uploads/2023/10/ANA-ENERGY-LOGO-PADDED.png", width=250)
     st.markdown("<h1>EBOSS&reg;Hybrid Energy System Specs and Comparison Tool</h1>", unsafe_allow_html=True)
-
-    col1, col2 = st.columns(2)
+    
+        col1, col2 = st.columns(2)
     with col1:
         if st.button("📋 Request a Demo"):
             st.session_state.form_type = "demo"
@@ -349,9 +349,9 @@ if st.session_state.landing_shown:
             st.session_state.landing_shown = False
             st.rerun()
 
-   col3, col4 = st.columns(2)
+        col3, col4 = st.columns(2)
 
-with col3:
+    with col3:
     st.markdown(
         """
         <a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank">
