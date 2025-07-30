@@ -1,114 +1,18 @@
 import streamlit as st
+import requests
+from datetime import date
 
-st.set_page_config(
-    page_title="EBOSS® Tool",
-    page_icon="assets/logo.png",  # ← your local logo
-    layout="wide",
-)
-# ──────────────────────────────────────────────────────────────────────────────
-# File: Eboss-tool-V2/app.py
-# ──────────────────────────────────────────────────────────────────────────────
-
-import streamlit as st
-import pandas as pd
-from datetime import datetime
-
-# ── 1) Define your custom CSS for background ─────────────────────────────────
 def apply_custom_css():
-    st.markdown(
-        """
-        <style>
-          .stApp {
-            background-image: url("assets/bg.png");
+    st.markdown(f"""
+    <style>
+        .stApp {{
+              page_icon="assets/logo.png”, 
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
             background-attachment: fixed;
-          }
-          /* …any other global CSS… */
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
+        }}
 
-# ── 2) Define your cost comparison block ──────────────────────────────────────
-def cost_comparison_block():
-    st.markdown("## 💰 Cost Comparison")
-    # …your inputs, calculations, metrics, chart… 
-    # (Use the function you already have here)
-
-# ── 3) Page setup ─────────────────────────────────────────────────────────────
-st.set_page_config(
-    page_title="EBOSS® Tool",
-    page_icon="assets/logo.png",
-    layout="wide",
-)
-apply_custom_css()    # ← apply your background right after config
-
-# ── 4) Print-only CSS ─────────────────────────────────────────────────────────
-st.markdown(
-    """
-    <style>
-    @media print {
-      /* hide everything by default */
-      body * { display: none !important; }
-      /* only show these two containers */
-      .print-logo, .print-section { display: block !important; }
-      /* hide the print button */
-      .print-button { display: none !important; }
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
-
-# ── 5) Print button (visible on screen) ───────────────────────────────────────
-st.markdown(
-    """
-    <div style="text-align:center; margin:2rem 0;">
-      <button
-        class="print-button"
-        onclick="window.print()"
-        style="padding:0.5rem 1rem; font-size:1rem; cursor:pointer;"
-      >🖨️ Print Friendly View</button>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
-
-# ── 6) Print header (logo + timestamp; hidden on screen) ─────────────────────
-today = datetime.today().strftime("%B %d, %Y")
-st.markdown(
-    f"""
-    <div class="print-logo" style="text-align:center; margin-top:2rem; display:none;">
-      <img src="assets/logo.png" width="200" /><br>
-      <div style="font-size:0.9rem; margin-top:0.5rem;">{today}</div>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
-
-# ── 7) Print section wrapper + cost block ────────────────────────────────────
-st.markdown('<div class="print-section" style="display:none;">', unsafe_allow_html=True)
-cost_comparison_block()
-st.markdown('</div>', unsafe_allow_html=True)
-
-# ── 8) (Optional) any other footer elements ───────────────────────────────────
-# st.markdown("…your footer…")
-
-import requests
-from datetime import date
-
-st.markdown(
-    """
-    <style>
-      .stApp {
-        background-image: url("assets/bg.png");
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-      }
         .form-container {{
             background-color: #636569;
             border: 2px solid #81BD47;
@@ -222,63 +126,7 @@ st.markdown(
     </style>
     """, unsafe_allow_html=True)
 
-import streamlit as st
-from datetime import datetime
 
-# ── 0) Call your existing setup first ────────────────────────────────────────
-st.set_page_config(page_title="EBOSS® Tool", page_icon="assets/logo.png", layout="wide")
-apply_custom_css()    # your background CSS
-# … other setup …
-
-# ── 1) Print-only CSS ───────────────────────────────────────────────────────
-st.markdown(
-    """
-    <style>
-    @media print {
-      /* hide everything by default */
-      body * { display: none !important; }
-      /* show only these two containers */
-      .print-logo, .print-section { display: block !important; }
-      /* hide the print button itself */
-      .print-button { display: none !important; }
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
-
-# ── 2) Print button ──────────────────────────────────────────────────────────
-st.markdown(
-    """
-    <div style="text-align:center; margin:2rem 0;">
-      <button 
-        class="print-button" 
-        onclick="window.print()" 
-        style="padding:0.5rem 1rem; font-size:1rem; cursor:pointer;"
-      >
-        🖨️ Print Friendly View
-      </button>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
-
-# ── 3) Logo + timestamp (print header) ──────────────────────────────────────
-today = datetime.today().strftime("%B %d, %Y")
-st.markdown(
-    f"""
-    <div class="print-logo" style="text-align:center; margin-top:2rem;">
-      <img src="assets/logo.png" width="200" /><br>
-      <div style="font-size:0.9rem; margin-top:0.5rem;">{today}</div>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
-
-# ── 4) Cost comparison wrapped for print ────────────────────────────────────
-st.markdown('<div class="print-section">', unsafe_allow_html=True)
-cost_comparison_block()   # your function from before
-st.markdown('</div>', unsafe_allow_html=True)
 # ──────────────────────────────
 # 📊 EBOSS&reg;Reference Data
 # ──────────────────────────────
@@ -581,77 +429,143 @@ with btn5:
 # ──────────────────────────────
 # 💰 Cost Analysis Modal + Table
 # ──────────────────────────────
-import streamlit as st
-import pandas as pd
-from datetime import datetime
+if st.session_state.section == "cost":
+    with st.container():
+        st.markdown('<div class="form-container">', unsafe_allow_html=True)
+        st.markdown('<h3 class="form-section-title">💰 Cost Inputs</h3>', unsafe_allow_html=True)
 
-def cost_comparison_block():
-    """
-    Renders an interactive cost comparison between:
-      • Standard Diesel Generator
-      • EBOSS® Hybrid Energy System
-    """
-    st.markdown("## 💰 Cost Comparison")
+        fuel_price = st.number_input("Fuel Price ($/gal)", 0.0, 100.0, 3.5, 0.01)
+        delivery_fee = st.number_input("Delivery Fee ($)", 0.0, 1000.0, 75.0, 1.0)
+        pm_interval = st.number_input("PM Interval (hrs)", 10.0, 1000.0, 500.0, 10.0)
+        pm_cost = st.number_input("Cost per PM ($)", 0.0, 5000.0, 150.0, 10.0)
+        eboss_rent = st.number_input("EBOSS&reg;Monthly Rental ($)", 0.0, 100000.0, 3800.0, 50.0)
+        std_rent = st.number_input("Standard Generator Monthly Rental ($)", 0.0, 100000.0, 3500.0, 50.0)
+        std_gen = st.selectbox("Standard Generator Size", list(STANDARD_GENERATORS.keys()))
 
-    # ── 1) User inputs ──────────────────────────────────────────────────────────
-    st.markdown("### Input Parameters")
-    d_col, h_col = st.columns(2)
-    with d_col:
-        diesel_price         = st.number_input("Diesel Price ($/L)",              value=1.20,   step=0.05, format="%.2f")
-        diesel_consumption   = st.number_input("Consumption (L/hour)",            value=2.5,    step=0.1,  format="%.1f")
-        runtime_hours_per_day= st.number_input("Runtime (hours/day)",             value=24,     step=1)
-    with h_col:
-        hybrid_capital_cost  = st.number_input("Hybrid System Capital Cost ($)",  value=50_000, step=500)
-        hybrid_om_cost       = st.number_input("Hybrid O&M Cost ($/year)",        value=1_000,  step=100)
-        project_lifetime_yr  = st.number_input("Project Lifetime (years)",        value=10,     step=1)
+        st.markdown('</div>', unsafe_allow_html=True)
 
-    # ── 2) Calculations ─────────────────────────────────────────────────────────
-    # Diesel system
-    diesel_daily_cost      = diesel_price * diesel_consumption * runtime_hours_per_day
-    diesel_annual_cost     = diesel_daily_cost * 365
-    diesel_lifetime_cost   = diesel_annual_cost * project_lifetime_yr
+    if st.button("✅ Run Cost Comparison"):
+        runtime = calculate_runtime_specs(model, gen_type, cont_kw, kva_option)
+        std_runtime = 720  # Full 24x30 month
+        std_gph = STANDARD_GENERATORS[std_gen]
 
-    # Hybrid system
-    hybrid_annual_cost     = hybrid_om_cost
-    hybrid_lifetime_cost   = hybrid_capital_cost + hybrid_annual_cost * project_lifetime_yr
+        from math import ceil
+        def fmt(x): return f"{x:,.2f}"
 
-    # Difference
-    savings                = diesel_lifetime_cost - hybrid_lifetime_cost
+        # Table logic
+        def render_cost_comparison_table():
+            e_fuel = runtime["fuel_gph"] * runtime["runtime"]
+            s_fuel = std_gph * std_runtime
+            e_cost = e_fuel * fuel_price
+            s_cost = s_fuel * fuel_price
+            e_pms = ceil(runtime["runtime"] / pm_interval)
+            s_pms = ceil(std_runtime / pm_interval)
+            e_pm_cost = e_pms * pm_cost
+            s_pm_cost = s_pms * pm_cost
+            e_co2 = e_fuel * 22.4
+            s_co2 = s_fuel * 22.4
+            e_total = eboss_rent + e_cost + delivery_fee + e_pm_cost
+            s_total = std_rent + s_cost + delivery_fee + s_pm_cost
+            diff = s_total - e_total
 
-    # ── 3) Display results ──────────────────────────────────────────────────────
-    st.markdown("### Results")
-    r_col, s_col = st.columns(2)
-    r_col.metric(
-        label="Diesel Generator\nTotal Cost",
-        value=f"${diesel_lifetime_cost:,.0f}",
-        delta=f"${diesel_annual_cost:,.0f}/yr"
-    )
-    s_col.metric(
-        label="EBOSS Hybrid\nTotal Cost",
-        value=f"${hybrid_lifetime_cost:,.0f}",
-        delta=f"${hybrid_annual_cost:,.0f}/yr"
-    )
+            rows = [
+                ("Generator Size", f"{EBOSS_KVA[model]} kVA / {int(EBOSS_KVA[model]*0.8)} kW", std_gen, ""),
+                ("Rental Cost ($)", eboss_rent, std_rent, std_rent - eboss_rent),
+                ("Fuel Used (gal)", e_fuel, s_fuel, s_fuel - e_fuel),
+                ("Fuel Cost ($)", e_cost, s_cost, s_cost - e_cost),
+                ("PM Services", e_pms, s_pms, s_pms - e_pms),
+                ("PM Cost ($)", e_pm_cost, s_pm_cost, s_pm_cost - e_pm_cost),
+                ("CO₂ Emissions (lbs)", e_co2, s_co2, s_co2 - e_co2),
+                ("Delivery Fee ($)", delivery_fee, delivery_fee, 0),
+                ("**Total Cost ($)**", e_total, s_total, diff)
+            ]
 
-    # Show net savings or extra cost
-    if savings >= 0:
-        st.success(f"✅ Hybrid system **saves** ${savings:,.0f} over {project_lifetime_yr} years")
-    else:
-        st.error  (f"❌ Hybrid system **costs** ${-savings:,.0f} more over {project_lifetime_yr} years")
+            st.markdown('<div class="form-container">', unsafe_allow_html=True)
+            st.markdown('<h3 class="form-section-title">📊 Monthly Cost Comparison</h3>', unsafe_allow_html=True)
+            st.markdown(f"""
+            <table style='width:100%; text-align:left; font-size:0.9rem;'>
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>EBOSS&reg;Model<br>{model}</th>
+                        <th>Standard Generator<br>{std_gen}</th>
+                        <th>Difference</th>
+                    </tr>
+                </thead>
+                <tbody>
+            """, unsafe_allow_html=True)
 
-    # ── 4) Bar chart for visual comparison ──────────────────────────────────────
-    df = pd.DataFrame({
-        "System": ["Diesel Generator", "EBOSS Hybrid"],
-        "Total Cost ($)": [diesel_lifetime_cost, hybrid_lifetime_cost]
-    }).set_index("System")
-    
-    st.bar_chart(df)
+            for label, e_val, s_val, d_val in rows:
+                st.markdown(f"""
+                    <tr>
+                        <td>{label}</td>
+                        <td>{fmt(e_val) if isinstance(e_val, (int, float)) else e_val}</td>
+                        <td>{fmt(s_val) if isinstance(s_val, (int, float)) else s_val}</td>
+                        <td><strong>{fmt(d_val) if isinstance(d_val, (int, float)) else d_val}</strong></td>
+                    </tr>
+                """, unsafe_allow_html=True)
 
-    # ── 5) Timestamp ───────────────────────────────────────────────────────────
-    today = datetime.today().strftime("%B %d, %Y")
-    st.markdown(f"*As of {today}*")
+            st.markdown("</tbody></table></div>", unsafe_allow_html=True)
 
-# ── Call it somewhere after your header/CSS setup ─────────────────────────────
-cost_comparison_block()# ──────────────────────────────
+        render_cost_comparison_table()
+st.markdown(f"""
+    <style>
+    @media print {{
+        body * {{
+            visibility: hidden;
+        }}
+        .print-logo, .print-logo * {{
+            visibility: visible;
+        }}
+        .form-container, .form-container * {{
+            visibility: visible;
+        }}
+        .form-container {{
+            position: relative;
+            background: white !important;
+            color: black !important;
+            box-shadow: none !important;
+        }}
+        .form-container h3, th, td {{
+            color: black !important;
+            text-shadow: none !important;
+        }}
+    }}
+    </style>
+""", unsafe_allow_html=True)
+
+from datetime import date
+today = date.today().strftime("%B %d, %Y")
+
+html = f'''
+<div class="print-logo" style="text-align:center; margin-top:2rem;">
+       page_icon="assets/logo.png”, 
+       width="200"><br><br>
+  <div style="font-size:1.2rem; font-weight:bold;">
+    EBOSS&reg; Hybrid Energy System vs Standard Diesel Generator Cost Comparison
+  </div>
+  <div style="font-size:0.9rem; margin-top:0.2rem;">{today}</div>
+</div>
+
+<div style="text-align:right; margin-top:1rem;">
+  <button onclick="window.print()" style="
+    background-color:#81BD47;
+    color:white;
+    padding:0.6rem 1.2rem;
+    font-size:1rem;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    box-shadow:2px 2px 4px rgba(0,0,0,0.3);
+  ">
+    🖨️ Print Report
+  </button>
+</div>
+'''
+
+st.markdown(html, unsafe_allow_html=True)
+
+# ──────────────────────────────
 # 📋 EBOSS&reg;Technical Specs
 # ──────────────────────────────
 def render_specs(model):
