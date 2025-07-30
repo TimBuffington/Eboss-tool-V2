@@ -128,7 +128,7 @@ def apply_custom_css():
 
 
 # ──────────────────────────────
-# 📊 EBOSS® Reference Data
+# 📊 EBOSS&reg;Reference Data
 # ──────────────────────────────
 EBOSS_KVA = {
     "EB25 kVA": 25,
@@ -282,9 +282,9 @@ def render_contact_form(form_type="demo"):
         st.text_input("Email Address", key="email")
 
         if form_type == "training":
-            st.selectbox("EBOSS® Model for Training", ["EB25 kVA", "EB70 kVA", "EB125 kVA", "EB220 kVA", "EB400 kVA"], key="model")
+            st.selectbox("EBOSS&reg;Model for Training", ["EB25 kVA", "EB70 kVA", "EB125 kVA", "EB220 kVA", "EB400 kVA"], key="model")
             st.radio("Training Type", ["Sales", "Technical"], horizontal=True, key="train_type")
-            st.radio("Is an EBOSS® unit already onsite?", ["Yes", "No"], horizontal=True, key="onsite")
+            st.radio("Is an EBOSS&reg;unit already onsite?", ["Yes", "No"], horizontal=True, key="onsite")
             st.date_input("Preferred Training Date", key="train_date")
             st.number_input("Number of Attendees", min_value=1, step=1, key="attendees")
             tv = st.checkbox("A TV is available to present training materials")
@@ -333,7 +333,7 @@ if "form_type" not in st.session_state:
 if st.session_state.landing_shown:
     apply_custom_css()
     st.image("https://anacorp.com/wp-content/uploads/2023/10/ANA-ENERGY-LOGO-PADDED.png", width=250)
-    st.markdown("<h1>EBOSS® Hybrid Energy System Specs and Comparison Tool</h1>", unsafe_allow_html=True)
+    st.markdown("<h1>EBOSS&reg;Hybrid Energy System Specs and Comparison Tool</h1>", unsafe_allow_html=True)
 
     col1, col2 = st.columns(2)
     with col1:
@@ -351,10 +351,10 @@ if st.session_state.landing_shown:
 
     col3, col4 = st.columns(2)
     with col3:
-        if st.button("🎥 Learn How EBOSS® Works"):
+        if st.button("🎥 Learn How EBOSS&reg;Works"):
             st.markdown("""<script>window.open("https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc", "_blank");</script>""", unsafe_allow_html=True)
     with col4:
-        if st.button("🚀 Launch EBOSS® Tool"):
+        if st.button("🚀 Launch EBOSS&reg;Tool"):
             st.session_state.landing_shown = False
             st.session_state.show_contact_form = False
             st.session_state.form_type = None
@@ -370,7 +370,7 @@ if st.session_state.show_contact_form:
 # ──────────────────────────────
 apply_custom_css()
 
-st.markdown("<h1>EBOSS® Model Selection Tool</h1>", unsafe_allow_html=True)
+st.markdown("<h1>EBOSS&reg;Model Selection Tool</h1>", unsafe_allow_html=True)
 
 with st.container():
     col1, col2 = st.columns([1, 1])
@@ -380,8 +380,8 @@ with st.container():
         st.markdown('<div class="form-container">', unsafe_allow_html=True)
         st.markdown('<h3 class="form-section-title">⚙️ System Configuration</h3>', unsafe_allow_html=True)
 
-        model = st.selectbox("EBOSS® Model", list(EBOSS_KVA.keys()))
-        gen_type = st.selectbox("EBOSS® Type", ["Full Hybrid", "Power Module"])
+        model = st.selectbox("EBOSS&reg;Model", list(EBOSS_KVA.keys()))
+        gen_type = st.selectbox("EBOSS&reg;Type", ["Full Hybrid", "Power Module"])
 
         if gen_type == "Power Module":
             kva_option = st.selectbox("Generator Size", ["25kVA", "45kVA", "65kVA", "125kVA", "220kVA", "400kVA"])
@@ -438,7 +438,7 @@ if st.session_state.section == "cost":
         delivery_fee = st.number_input("Delivery Fee ($)", 0.0, 1000.0, 75.0, 1.0)
         pm_interval = st.number_input("PM Interval (hrs)", 10.0, 1000.0, 500.0, 10.0)
         pm_cost = st.number_input("Cost per PM ($)", 0.0, 5000.0, 150.0, 10.0)
-        eboss_rent = st.number_input("EBOSS® Monthly Rental ($)", 0.0, 100000.0, 3800.0, 50.0)
+        eboss_rent = st.number_input("EBOSS&reg;Monthly Rental ($)", 0.0, 100000.0, 3800.0, 50.0)
         std_rent = st.number_input("Standard Generator Monthly Rental ($)", 0.0, 100000.0, 3500.0, 50.0)
         std_gen = st.selectbox("Standard Generator Size", list(STANDARD_GENERATORS.keys()))
 
@@ -487,7 +487,7 @@ if st.session_state.section == "cost":
                 <thead>
                     <tr>
                         <th>Metric</th>
-                        <th>EBOSS® Model<br>{model}</th>
+                        <th>EBOSS&reg;Model<br>{model}</th>
                         <th>Standard Generator<br>{std_gen}</th>
                         <th>Difference</th>
                     </tr>
@@ -538,7 +538,7 @@ st.markdown(f"""
     <div class="print-logo" style="text-align:center; margin-top:2rem;">
         <img src="https://anacorp.com/wp-content/uploads/2023/10/ANA-ENERGY-LOGO-PADDED.png" width="200"><br><br>
         <div style="font-size:1.2rem; font-weight:bold;">
-            EBOSS® Hybrid Energy System vs Standard Diesel Generator Cost Comparison
+            EBOSS&reg;Hybrid Energy System vs Standard Diesel Generator Cost Comparison
         </div>
         <div style="font-size:0.9rem; margin-top:0.2rem;">{today}</div>
     </div>
@@ -560,7 +560,7 @@ st.markdown(f"""
     </div>
 """, unsafe_allow_html=True)
 # ──────────────────────────────
-# 📋 EBOSS® Technical Specs
+# 📋 EBOSS&reg;Technical Specs
 # ──────────────────────────────
 def render_specs(model):
     specs_data = {
@@ -646,7 +646,7 @@ st.markdown("""
 </style>
 
 <div class="footer">
-    ANA EBOSS® Spec and Comparison Tool &nbsp; | &nbsp;
+    ANA EBOSS&reg;Spec and Comparison Tool &nbsp; | &nbsp;
     <a href="https://anacorp.com/hybrid-energy-systems/" target="_blank">
         anacorp.com/hybrid-energy-systems
     </a>
