@@ -334,14 +334,16 @@ if st.session_state.landing_shown:
     apply_custom_css()
     st.image("https://anacorp.com/wp-content/uploads/2023/10/ANA-ENERGY-LOGO-PADDED.png", width=250)
     st.markdown("<h1>EBOSS&reg;Hybrid Energy System Specs and Comparison Tool</h1>", unsafe_allow_html=True)
-    
-        col1, col2 = st.columns(2)
+
+    col1, col2 = st.columns(2)
+
     with col1:
         if st.button("📋 Request a Demo"):
             st.session_state.form_type = "demo"
             st.session_state.show_contact_form = True
             st.session_state.landing_shown = False
             st.rerun()
+
     with col2:
         if st.button("📋 Request On-Site Training"):
             st.session_state.form_type = "training"
@@ -349,42 +351,39 @@ if st.session_state.landing_shown:
             st.session_state.landing_shown = False
             st.rerun()
 
-        col3, col4 = st.columns(2)
+    col3, col4 = st.columns(2)
 
-   col3, col4 = st.columns(2)
-
-with col3:
-    st.markdown(
-        """
-        <a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank">
-            <button style="
-                width: 100%; 
-                padding: 0.5rem; 
-                background-color: #81BD47; 
-                color: white; 
-                border-radius: 10px; 
-                border: none; 
-                font-size: 1.1rem;
-                font-weight: bold;
-                cursor: pointer;
-                box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
-            ">
-                🎥 Learn How EBOSS&reg; Works
-            </button>
-        </a>
-        """, unsafe_allow_html=True
-    )
-
-    )
+    with col3:
+        st.markdown(
+            """
+            <a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank">
+                <button style="
+                    width: 100%; 
+                    padding: 0.5rem; 
+                    background-color: #81BD47; 
+                    color: white; 
+                    border-radius: 10px; 
+                    border: none; 
+                    font-size: 1.1rem;
+                    font-weight: bold;
+                    cursor: pointer;
+                    box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+                ">
+                    🎥 Learn How EBOSS&reg; Works
+                </button>
+            </a>
+            """, unsafe_allow_html=True
+        )
 
     with col4:
-        if st.button("🚀 Launch EBOSS&reg;Tool"):
+        if st.button("🚀 Launch EBOSS® Tool"):
             st.session_state.landing_shown = False
             st.session_state.show_contact_form = False
             st.session_state.form_type = None
             st.rerun()
 
     st.stop()
+
 
 if st.session_state.show_contact_form:
     render_contact_form(form_type=st.session_state.form_type)
