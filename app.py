@@ -534,6 +534,9 @@ st.markdown(f"""
 from datetime import date
 today = date.today().strftime("%B %d, %Y")
 
+from datetime import date
+today = date.today().strftime("%B %d, %Y")
+
 st.markdown(f"""
     <div class="print-logo" style="text-align:center; margin-top:2rem;">
         <img src="https://anacorp.com/wp-content/uploads/2023/10/ANA-ENERGY-LOGO-PADDED.png" width="200"><br><br>
