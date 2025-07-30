@@ -126,6 +126,44 @@ def apply_custom_css():
     </style>
     """, unsafe_allow_html=True)
 
+st.markdown("""
+<style>
+.eboss-btn {
+    width: 100%;
+    min-width: 170px;
+    max-width: 300px;
+    margin: 0.35rem auto;
+    padding: 0.75rem 0.5rem;
+    background: #232325; /* Charcoal */
+    color: #fff;
+    border-radius: 12px;
+    border: none;
+    font-size: 1.15rem;
+    font-weight: bold;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.35), 0 0 0px 0 #81BD47;
+    text-shadow: 1.5px 1.5px 6px #000, 0 2px 10px #81BD4744;
+    transition: box-shadow 0.25s, background 0.18s, transform 0.15s;
+    cursor: pointer;
+    display: block;
+}
+
+.eboss-btn:hover, .eboss-btn:focus {
+    box-shadow: 0 0 18px 4px #81BD47, 0 4px 18px rgba(0,0,0,0.50);
+    background: #2e2e32;
+    transform: scale(1.03);
+    outline: none;
+}
+
+@media (max-width: 600px) {
+    .eboss-btn {
+        min-width: 120px;
+        font-size: 1rem;
+        padding: 0.6rem 0.2rem;
+    }
+}
+</style>
+""", unsafe_allow_html=True)
+
 
 # ──────────────────────────────
 # 📊 EBOSS&reg;Reference Data
