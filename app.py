@@ -351,7 +351,9 @@ if st.session_state.landing_shown:
 
         col3, col4 = st.columns(2)
 
-    with col3:
+   col3, col4 = st.columns(2)
+
+with col3:
     st.markdown(
         """
         <a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank">
@@ -371,6 +373,8 @@ if st.session_state.landing_shown:
             </button>
         </a>
         """, unsafe_allow_html=True
+    )
+
     )
 
     with col4:
