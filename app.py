@@ -333,14 +333,16 @@ with col1:
         st.session_state.landing_shown = False
         st.experimental_rerun()
 
-col1, col2 = st.columns(2, gap="large")
-with col1:
-    if st.button("📋 Request a Demo", key="demo_btn"):
-        st.session_state.selected_form = "demo"
-        st.session_state.landing_shown = False
-        st.experimental_rerun()
-    if st.button("📋 Request On-Site Training", key="training_btn"):
-        st.session_state.selected_form = "training"
+with col2:
+    st.markdown("""
+        <a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank" style="text-decoration:none;">
+            <button class="eboss-hero-btn" type="button">
+                🎥 Learn How EBOSS&reg; Works
+            </button>
+        </a>
+    """, unsafe_allow_html=True)
+    if st.button("🚀 Launch EBOSS® Tool", key="tool_btn"):
+        st.session_state.selected_form = "tool"
         st.session_state.landing_shown = False
         st.experimental_rerun()
         
