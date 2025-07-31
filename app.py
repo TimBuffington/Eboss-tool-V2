@@ -322,12 +322,14 @@ if st.session_state.landing_shown:
     # Info/launch row: Learn and Launch
     col3, col4 = st.columns(2)
     with col3:
-        st.markdown(
-            """
-            <a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank">
-                <button class="eboss-btn" type="button" style="margin-top: 0.35rem; width: 100%;">🎥 Learn How EBOSS&reg; Works</button>
-            </a>
-            """, unsafe_allow_html=True
+       st.markdown("""
+<a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank" style="text-decoration:none;">
+    <button class="eboss-btn" type="button" style="margin-top: 0.35rem; width: 100%;">
+        🎥 Learn How EBOSS&reg; Works
+    </button>
+</a>
+""", unsafe_allow_html=True)
+
         )
     with col4:
         if st.button("🚀 Launch EBOSS® Tool", key="btn_launch"):
