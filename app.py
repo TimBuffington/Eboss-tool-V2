@@ -322,7 +322,7 @@ if "selected_form" not in st.session_state:
 if st.session_state.landing_shown:
        st.markdown('<h1 class="form-section-title">EBOSS&reg; Hybrid Energy System<br>Specs and Comparison Tool</h1>', unsafe_allow_html=True)
 
-   col1, col2 = st.columns(2, gap="large")
+col1, col2 = st.columns(2, gap="large")
 with col1:
     if st.button("📋 Request a Demo", key="demo_btn"):
         st.session_state.selected_form = "demo"
@@ -333,7 +333,7 @@ with col1:
         st.session_state.landing_shown = False
         st.experimental_rerun()
 
-   col1, col2 = st.columns(2, gap="large")
+col1, col2 = st.columns(2, gap="large")
 with col1:
     if st.button("📋 Request a Demo", key="demo_btn"):
         st.session_state.selected_form = "demo"
