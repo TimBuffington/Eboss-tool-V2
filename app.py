@@ -320,42 +320,30 @@ if "selected_form" not in st.session_state:
     st.session_state.selected_form = None
 
 if st.session_state.landing_shown:
-    st.markdown(
-        '<div class="logo-header"><img src="https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png" alt="Company Logo"></div>',
-        unsafe_allow_html=True
-    )
-    st.markdown('<h1 class="form-section-title">EBOSS&reg; Hybrid Energy System<br>Specs and Comparison Tool</h1>', unsafe_allow_html=True)
+       st.markdown('<h1 class="form-section-title">EBOSS&reg; Hybrid Energy System<br>Specs and Comparison Tool</h1>', unsafe_allow_html=True)
 
-    # Center the 4 buttons, stack on mobile
-    btn_col1, btn_col2 = st.columns(2, gap="large")
-    with btn_col1:
-        st.markdown("""
-            <button class="eboss-hero-btn" onclick="window.location.hash='req-demo'">📋 Request a Demo</button>
-        """, unsafe_allow_html=True)
-        st.markdown("""
-            <button class="eboss-hero-btn" onclick="window.location.hash='req-training'">📋 Request On-Site Training</button>
-        """, unsafe_allow_html=True)
-    with btn_col2:
-        st.markdown("""
-            <a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank" style="text-decoration:none;">
-                <button class="eboss-hero-btn" type="button">
-                    🎥 Learn How EBOSS&reg; Works
-                </button>
-            </a>
-        """, unsafe_allow_html=True)
-        st.markdown("""
-            <button class="eboss-hero-btn" onclick="window.location.hash='launch-tool'">🚀 Launch EBOSS® Tool</button>
-        """, unsafe_allow_html=True)
+  col1, col2 = st.columns(2, gap="large")
+with col1:
+    if st.button("📋 Request a Demo", key="demo_btn"):
+        st.session_state.selected_form = "demo"
+        st.session_state.landing_shown = False
+        st.experimental_rerun()
+    if st.button("📋 Request On-Site Training", key="training_btn"):
+        st.session_state.selected_form = "training"
+        st.session_state.landing_shown = False
+        st.experimental_rerun()
 
-    # Use Streamlit to detect which button (by hash)
-    import streamlit.components.v1 as components
-    hash_check = """
-        <script>
-        window.addEventListener('hashchange', function() {
-            window.parent.postMessage({func: 'setHash', hash: window.location.hash}, '*');
-        });
-        </script>
-    """
+  col1, col2 = st.columns(2, gap="large")
+with col1:
+    if st.button("📋 Request a Demo", key="demo_btn"):
+        st.session_state.selected_form = "demo"
+        st.session_state.landing_shown = False
+        st.experimental_rerun()
+    if st.button("📋 Request On-Site Training", key="training_btn"):
+        st.session_state.selected_form = "training"
+        st.session_state.landing_shown = False
+        st.experimental_rerun()
+        
     st.markdown(hash_check, unsafe_allow_html=True)
     hash_val = st.experimental_get_query_params().get('hash', [''])[0]
     if hash_val == "#req-demo":
