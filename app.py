@@ -114,11 +114,11 @@ def landing_page():
         if st.button("📋 Request a Demo", key="btn_demo"):
             st.session_state.selected_form = "demo"
             st.session_state.landing_shown = False
-            st.experimental_rerun()
+            st.rerun()
         if st.button("📋 Request On-Site Training", key="btn_training"):
             st.session_state.selected_form = "training"
             st.session_state.landing_shown = False
-            st.experimental_rerun()
+            st.rerun()
     with col2:
         st.markdown("""
         <a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank" style="text-decoration:none;">
@@ -130,7 +130,7 @@ def landing_page():
         if st.button("🚀 Launch EBOSS® Tool", key="btn_launch"):
             st.session_state.selected_form = "tool"
             st.session_state.landing_shown = False
-            st.experimental_rerun()
+            st.rerun()
 
 # ---- DEMO FORM ----
 def render_demo_form():
@@ -144,13 +144,13 @@ def render_demo_form():
                 st.session_state.selected_form = None
                 st.session_state.landing_shown = True
                 st.session_state.demo_success = False
-                st.experimental_rerun()
+                st.rerun()
         with col2:
             if st.button("🚀 Open EBOSS Spec Tool", key="demo_tool"):
                 st.session_state.selected_form = "tool"
                 st.session_state.landing_shown = False
                 st.session_state.demo_success = False
-                st.experimental_rerun()
+                st.rerun()
         st.stop()
 
     st.markdown('<div class="form-container">', unsafe_allow_html=True)
@@ -171,12 +171,12 @@ def render_demo_form():
     with submit:
         if st.button("📨 Submit Request", key="demo_submit"):
             st.session_state.demo_success = True
-            st.experimental_rerun()
+            st.rerun()
     with cancel:
         if st.button("Cancel", key="demo_cancel"):
             st.session_state.selected_form = None
             st.session_state.landing_shown = True
-            st.experimental_rerun()
+            st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ---- TRAINING FORM ----
@@ -191,13 +191,13 @@ def render_training_form():
                 st.session_state.selected_form = None
                 st.session_state.landing_shown = True
                 st.session_state.training_success = False
-                st.experimental_rerun()
+                st.rerun()
         with col2:
             if st.button("🚀 Open EBOSS Spec Tool", key="training_tool"):
                 st.session_state.selected_form = "tool"
                 st.session_state.landing_shown = False
                 st.session_state.training_success = False
-                st.experimental_rerun()
+                st.rerun()
         st.stop()
 
     st.markdown('<div class="form-container">', unsafe_allow_html=True)
@@ -224,12 +224,12 @@ def render_training_form():
     with submit:
         if st.button("📨 Submit Training Request", key="train_submit"):
             st.session_state.training_success = True
-            st.experimental_rerun()
+            st.rerun()
     with cancel:
         if st.button("Cancel", key="train_cancel"):
             st.session_state.selected_form = None
             st.session_state.landing_shown = True
-            st.experimental_rerun()
+            st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ---- HOME PAGE / MAIN TOOL ----
