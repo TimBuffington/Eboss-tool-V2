@@ -585,7 +585,7 @@ def render_cost_analysis_page():
 from datetime import date
 today = date.today().strftime("%B %d, %Y")
 
-# Print CSS (your code)
+# Print CSS for print-friendly view
 st.markdown("""
 <style>
 @media print {
@@ -612,8 +612,8 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Print logo/title block
-print_header = f'''
+# Logo and title for print and on-screen
+st.markdown(f'''
 <div class="print-logo" style="text-align:center; margin-top:2rem;">
   <img src="https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png" width="240"><br><br>
   <div style="font-size:1.3rem; font-weight:bold;">
@@ -621,16 +621,40 @@ print_header = f'''
   </div>
   <div style="font-size:0.9rem; margin-top:0.2rem;">{today}</div>
 </div>
-'''
+''', unsafe_allow_html=True)
 
-st.markdown(print_header, unsafe_allow_html=True)
-
-# Print button, styled to match your app
+# Print button styled like the rest of your app
 st.markdown("""
 <button class="eboss-hero-btn" onclick="window.print()" style="margin: 0 auto; display: block;">
     🖨️ Print Cost Analysis
 </button>
 """, unsafe_allow_html=True)
+
+
+if st.session_state.landing_shown:
+    landing_page()
+    st.stop()
+elif st.session_state.selected_form == "demo":
+    render_demo_form()
+    st.stop()
+elif st.session_state.selected_form == "training":
+    render_training_form()
+    st.stop()
+elif st.session_state.section == "tech_specs":
+    render_tech_specs_page()
+    st.stop()
+elif st.session_state.section == "load_specs":
+    render_load_specs_page()
+    st.stop()
+elif st.session_state.section == "compare":
+    render_compare_page()
+    st.stop()
+elif st.session_state.section == "cost":
+    render_cost_analysis_page()
+    st.stop()
+elif st.session_state.selected_form == "tool":
+    render_home()
+    st.stop()
 
 
 # ──────────────────────────────
