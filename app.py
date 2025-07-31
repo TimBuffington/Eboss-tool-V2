@@ -284,7 +284,7 @@ if "form_type" not in st.session_state:
     st.session_state.form_type = None
 
 if st.session_state.landing_shown:
-    apply_custom_css()
+   
     st.image("https://anacorp.com/wp-content/uploads/2023/10/ANA-ENERGY-LOGO-PADDED.png", width=250)
     st.markdown("<h1>EBOSS&reg;Hybrid Energy System Specs and Comparison Tool</h1>", unsafe_allow_html=True)
 
