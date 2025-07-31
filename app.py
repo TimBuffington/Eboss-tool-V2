@@ -252,8 +252,6 @@ elif st.session_state.selected_form == "training":
 elif st.session_state.selected_form == "tool":
     render_home()
     st.stop()
---- The rest of your Streamlit app code follows here...
-
 # ──────────────────────────────
 # 📊 EBOSS&reg;Reference Data
 # ──────────────────────────────
