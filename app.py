@@ -289,79 +289,56 @@ def render_contact_form(form_type="demo"):
 
     st.markdown('</div>', unsafe_allow_html=True)
 
-# ---- Landing Page Block ----
+#=======LANDING PAGE BLOCK============#
 
-if "landing_shown" not in st.session_state:
-    st.session_state.landing_shown = True
-if "show_contact_form" not in st.session_state:
-    st.session_state.show_contact_form = False
-if "form_type" not in st.session_state:
-    st.session_state.form_type = None
+# 1. The responsive logo header (only this line, placed ONCE!)
+st.markdown(
+    '<div class="logo-header"><img src="https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png" alt="Company Logo"></div>',
+    unsafe_allow_html=True
+)
 
-if st.session_state.landing_shown:
-    # Responsive logo and section title
-    st.markdown('<div class="logo-header"><img src="assets/logo.png" alt="Company Logo"></div>', unsafe_allow_html=True)
-    st.markdown('<div class="form-container">', unsafe_allow_html=True)
-    st.markdown('<h1 class="form-section-title">EBOSS&reg; Hybrid Energy System<br>Specs and Comparison Tool</h1>', unsafe_allow_html=True)
+# 2. The main headline in a styled container
+st.markdown('<div class="form-container">', unsafe_allow_html=True)
+st.markdown('<h1 class="form-section-title">EBOSS&reg; Hybrid Energy System<br>Specs and Comparison Tool</h1>', unsafe_allow_html=True)
 
-    # Main action buttons in first row
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("📋 Request a Demo", key="btn_demo"):
-            st.session_state.form_type = "demo"
-            st.session_state.show_contact_form = True
-            st.session_state.landing_shown = False
-            st.rerun()
-    with col2:
-        if st.button("📋 Request On-Site Training", key="btn_train"):
-            st.session_state.form_type = "training"
-            st.session_state.show_contact_form = True
-            st.session_state.landing_shown = False
-            st.rerun()
+# 3. First row: Streamlit buttons
+col1, col2 = st.columns(2)
+with col1:
+    if st.button("📋 Request a Demo", key="btn_demo"):
+        st.session_state.form_type = "demo"
+        st.session_state.show_contact_form = True
+        st.session_state.landing_shown = False
+        st.rerun()
+with col2:
+    if st.button("📋 Request On-Site Training", key="btn_train"):
+        st.session_state.form_type = "training"
+        st.session_state.show_contact_form = True
+        st.session_state.landing_shown = False
+        st.rerun()
 
-    # Info/launch row: Learn and Launch
-    col3, col4 = st.columns(2)
-    with col3:
-     st.markdown("""
-<a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank" style="text-decoration:none;">
-    <button type="button"
-        style="
-            margin-top: 0.35rem; width: 100%;
-            background: #232325 !important; /* Charcoal */
-            color: #fff !important;
-            border-radius: 14px !important;
-            border: none !important;
-            font-size: 1.17rem !important;
-            font-weight: bold !important;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.38), 0 0 0px 0 #81BD47;
-            text-shadow: 1.5px 1.5px 6px #000, 0 2px 10px #81BD4744;
-            cursor: pointer;
-            display: block;
-            padding: 0.9rem 0.5rem;
-            transition: box-shadow 0.25s, background 0.18s, transform 0.15s;
-        "
-        onmouseover="this.style.boxShadow='0 0 22px 4px #81BD47, 0 6px 24px rgba(0,0,0,0.52)';this.style.background='#313134';this.style.transform='scale(1.025)'"
-        onmouseout="this.style.boxShadow='0 6px 18px rgba(0,0,0,0.38), 0 0 0px 0 #81BD47';this.style.background='#232325';this.style.transform='scale(1.0)'"
-    >
-        🎥 Learn How EBOSS&reg; Works
-    </button>
-</a>
-""", unsafe_allow_html=True)
+# 4. Second row: HTML and Streamlit button
+col3, col4 = st.columns(2)
+with col3:
+    st.markdown("""
+    <a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank" style="text-decoration:none;">
+        <button class="eboss-btn" type="button" style="width: 100%;">
+            🎥 Learn How EBOSS&reg; Works
+        </button>
+    </a>
+    """, unsafe_allow_html=True)
+with col4:
+    if st.button("🚀 Launch EBOSS® Tool", key="btn_launch"):
+        st.session_state.landing_shown = False
+        st.session_state.show_contact_form = False
+        st.session_state.form_type = None
+        st.rerun()
 
-                  
-    with col4:
-        if st.button("🚀 Launch EBOSS® Tool", key="btn_launch"):
-            st.session_state.landing_shown = False
-            st.session_state.show_contact_form = False
-            st.session_state.form_type = None
-            st.rerun()
+st.markdown("</div>", unsafe_allow_html=True)
 
-    st.markdown("</div>", unsafe_allow_html=True)
-    st.stop()
-
-# If user is on contact form, render it
-if st.session_state.show_contact_form:
+# (Optional) Show contact form if requested
+if st.session_state.get("show_contact_form", False):
     render_contact_form(form_type=st.session_state.form_type)
+
 
 
 # ──────────────────────────────
