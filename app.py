@@ -103,8 +103,6 @@ a, a:visited, a:active {
 st.markdown("""
 <style>
 /* ...other CSS... */
-
-/* Force only selectbox "selected value" (not label) to black */
 .stSelectbox div[role="combobox"], 
 .stSelectbox div[role="combobox"] span {
     color: #111 !important;
@@ -112,10 +110,6 @@ st.markdown("""
     font-weight: bold !important;
     text-shadow: none !important;
 }
-/* ...rest of your CSS... */
-</style>
-""", unsafe_allow_html=True)
-
 </style>
 """, unsafe_allow_html=True)
 
