@@ -240,7 +240,11 @@ def render_home():
     st.write("Welcome to the EBOSS Spec Tool Home Page!")
   
 
-# ---- NAVIGATION ----
+if "landing_shown" not in st.session_state:
+    st.session_state.landing_shown = True
+if "selected_form" not in st.session_state:
+    st.session_state.selected_form = None
+
 if st.session_state.landing_shown:
     landing_page()
     st.stop()
@@ -253,6 +257,7 @@ elif st.session_state.selected_form == "training":
 elif st.session_state.selected_form == "tool":
     render_home()
     st.stop()
+
 # ──────────────────────────────
 # 📊 EBOSS&reg;Reference Data
 # ──────────────────────────────
