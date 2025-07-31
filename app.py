@@ -235,23 +235,7 @@ def render_training_form():
 
 # ---- HOME PAGE / MAIN TOOL ----
 
-if "landing_shown" not in st.session_state:
-    st.session_state.landing_shown = True
-if "selected_form" not in st.session_state:
-    st.session_state.selected_form = None
 
-if st.session_state.landing_shown:
-    landing_page()
-    st.stop()
-elif st.session_state.selected_form == "demo":
-    render_demo_form()
-    st.stop()
-elif st.session_state.selected_form == "training":
-    render_training_form()
-    st.stop()
-elif st.session_state.selected_form == "tool":
-    render_home()
-    st.stop()
 
 # ──────────────────────────────
 # 📊 EBOSS&reg;Reference Data
@@ -600,6 +584,24 @@ if st.session_state.section == "specs":
 
 elif st.session_state.section == "load":
     render_load_specs(model, gen_type, cont_kw, kva_option)
+
+if "landing_shown" not in st.session_state:
+    st.session_state.landing_shown = True
+if "selected_form" not in st.session_state:
+    st.session_state.selected_form = None
+
+if st.session_state.landing_shown:
+    landing_page()
+    st.stop()
+elif st.session_state.selected_form == "demo":
+    render_demo_form()
+    st.stop()
+elif st.session_state.selected_form == "training":
+    render_training_form()
+    st.stop()
+elif st.session_state.selected_form == "tool":
+    render_home()
+    st.stop()
 
 # ──────────────────────────────
 # 🔗 Branded Footer (Sticky)
