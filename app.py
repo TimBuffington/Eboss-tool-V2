@@ -329,7 +329,7 @@ if st.session_state.landing_shown:
     </button>
 </a>
 """, unsafe_allow_html=True)
-                  )
+                  
     with col4:
         if st.button("🚀 Launch EBOSS® Tool", key="btn_launch"):
             st.session_state.landing_shown = False
