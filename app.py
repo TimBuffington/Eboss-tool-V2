@@ -273,9 +273,8 @@ def render_contact_form(form_type="demo"):
 
     st.markdown('</div>', unsafe_allow_html=True)
 
-# ──────────────────────────────
-# 🏠 Landing Page Logic
-# ──────────────────────────────
+# ---- Landing Page Block ----
+
 if "landing_shown" not in st.session_state:
     st.session_state.landing_shown = True
 if "show_contact_form" not in st.session_state:
@@ -284,62 +283,50 @@ if "form_type" not in st.session_state:
     st.session_state.form_type = None
 
 if st.session_state.landing_shown:
-   
-    st.image("https://anacorp.com/wp-content/uploads/2023/10/ANA-ENERGY-LOGO-PADDED.png", width=250)
-    st.markdown("<h1>EBOSS&reg;Hybrid Energy System Specs and Comparison Tool</h1>", unsafe_allow_html=True)
+    # Responsive logo and section title
+    st.markdown('<div class="logo-header"><img src="assets/logo.png" alt="Company Logo"></div>', unsafe_allow_html=True)
+    st.markdown('<div class="form-container">', unsafe_allow_html=True)
+    st.markdown('<h1 class="form-section-title">EBOSS&reg; Hybrid Energy System<br>Specs and Comparison Tool</h1>', unsafe_allow_html=True)
 
+    # Main action buttons in first row
     col1, col2 = st.columns(2)
-
     with col1:
-        if st.button("📋 Request a Demo"):
+        if st.button("📋 Request a Demo", key="btn_demo"):
             st.session_state.form_type = "demo"
             st.session_state.show_contact_form = True
             st.session_state.landing_shown = False
             st.rerun()
-
     with col2:
-        if st.button("📋 Request On-Site Training"):
+        if st.button("📋 Request On-Site Training", key="btn_train"):
             st.session_state.form_type = "training"
             st.session_state.show_contact_form = True
             st.session_state.landing_shown = False
             st.rerun()
 
+    # Info/launch row: Learn and Launch
     col3, col4 = st.columns(2)
-
     with col3:
         st.markdown(
             """
             <a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank">
-                <button style="
-                    width: 100%; 
-                    padding: 0.5rem; 
-                    background-color: #81BD47; 
-                    color: white; 
-                    border-radius: 10px; 
-                    border: none; 
-                    font-size: 1.1rem;
-                    font-weight: bold;
-                    cursor: pointer;
-                    box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
-                ">
-                    🎥 Learn How EBOSS&reg; Works
-                </button>
+                <button class="eboss-btn" type="button" style="margin-top: 0.35rem; width: 100%;">🎥 Learn How EBOSS&reg; Works</button>
             </a>
             """, unsafe_allow_html=True
         )
-
     with col4:
-        if st.button("🚀 Launch EBOSS® Tool"):
+        if st.button("🚀 Launch EBOSS® Tool", key="btn_launch"):
             st.session_state.landing_shown = False
             st.session_state.show_contact_form = False
             st.session_state.form_type = None
             st.rerun()
 
+    st.markdown("</div>", unsafe_allow_html=True)
     st.stop()
 
-
+# If user is on contact form, render it
 if st.session_state.show_contact_form:
     render_contact_form(form_type=st.session_state.form_type)
+
 
 # ──────────────────────────────
 # 🚀 Main UI
