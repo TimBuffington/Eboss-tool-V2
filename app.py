@@ -1,6 +1,15 @@
 import streamlit as st
 import requests
 from datetime import date
+st.markdown("""
+<style>
+.stApp {
+    background: url("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/bg.png") no-repeat center center fixed !important;
+    background-size: cover !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
 st.markdown(
     '<div class="logo-header"><img src="https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png" alt="Company Logo"></div>',
     unsafe_allow_html=True
