@@ -71,7 +71,7 @@ st.markdown("""
 }
 input, select, textarea, .stSelectbox > div > div, .stTextInput > div > div {
     background-color: #e0e0e0 !important;
-    border: 2px solid #232325 !important;
+    border: .5px solid #232325 !important;
     color: #111 !important;        /* Black text */
     font-weight: bold !important;
     font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif !important;
