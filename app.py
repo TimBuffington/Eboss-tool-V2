@@ -102,7 +102,6 @@ a, a:visited, a:active {
 
 st.markdown("""
 <style>
-/* ...other CSS... */
 .stSelectbox div[role="combobox"], 
 .stSelectbox div[role="combobox"] span {
     color: #111 !important;
@@ -176,13 +175,14 @@ def landing_page():
             st.session_state.landing_shown = False
             st.rerun()
     with col2:
-        st.markdown("""
+    st.markdown("""
         <a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank" style="text-decoration:none;">
             <button class="eboss-hero-btn" type="button">
                 🎥 Learn How EBOSS&reg; Works
             </button>
         </a>
-        """, unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
+
         if st.button("🚀 Launch EBOSS® Tool", key="btn_launch"):
             st.session_state.selected_form = "tool"
             st.session_state.landing_shown = False
