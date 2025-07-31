@@ -385,113 +385,6 @@ def render_home():
             </script>
             """, unsafe_allow_html=True)
 
-# ──────────────────────────────
-# 💰 Cost Analysis Modal + Table
-# ──────────────────────────────
-if st.session_state.section == "cost":
-    with st.container():
-        st.markdown('<div class="form-container">', unsafe_allow_html=True)
-        st.markdown('<h3 class="form-section-title">💰 Cost Inputs</h3>', unsafe_allow_html=True)
-
-        fuel_price = st.number_input("Fuel Price ($/gal)", 0.0, 100.0, 3.5, 0.01)
-        delivery_fee = st.number_input("Delivery Fee ($)", 0.0, 1000.0, 75.0, 1.0)
-        pm_interval = st.number_input("PM Interval (hrs)", 10.0, 1000.0, 500.0, 10.0)
-        pm_cost = st.number_input("Cost per PM ($)", 0.0, 5000.0, 150.0, 10.0)
-        eboss_rent = st.number_input("EBOSS&reg;Monthly Rental ($)", 0.0, 100000.0, 3800.0, 50.0)
-        std_rent = st.number_input("Standard Generator Monthly Rental ($)", 0.0, 100000.0, 3500.0, 50.0)
-        std_gen = st.selectbox("Standard Generator Size", list(STANDARD_GENERATORS.keys()))
-
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    if st.button("✅ Run Cost Comparison"):
-        runtime = calculate_runtime_specs(model, gen_type, cont_kw, kva_option)
-        std_runtime = 720  # Full 24x30 month
-        std_gph = STANDARD_GENERATORS[std_gen]
-
-        from math import ceil
-        def fmt(x): return f"{x:,.2f}"
-
-        # Table logic
-        def render_cost_comparison_table():
-            e_fuel = runtime["fuel_gph"] * runtime["runtime"]
-            s_fuel = std_gph * std_runtime
-            e_cost = e_fuel * fuel_price
-            s_cost = s_fuel * fuel_price
-            e_pms = ceil(runtime["runtime"] / pm_interval)
-            s_pms = ceil(std_runtime / pm_interval)
-            e_pm_cost = e_pms * pm_cost
-            s_pm_cost = s_pms * pm_cost
-            e_co2 = e_fuel * 22.4
-            s_co2 = s_fuel * 22.4
-            e_total = eboss_rent + e_cost + delivery_fee + e_pm_cost
-            s_total = std_rent + s_cost + delivery_fee + s_pm_cost
-            diff = s_total - e_total
-
-            rows = [
-                ("Generator Size", f"{EBOSS_KVA[model]} kVA / {int(EBOSS_KVA[model]*0.8)} kW", std_gen, ""),
-                ("Rental Cost ($)", eboss_rent, std_rent, std_rent - eboss_rent),
-                ("Fuel Used (gal)", e_fuel, s_fuel, s_fuel - e_fuel),
-                ("Fuel Cost ($)", e_cost, s_cost, s_cost - e_cost),
-                ("PM Services", e_pms, s_pms, s_pms - e_pms),
-                ("PM Cost ($)", e_pm_cost, s_pm_cost, s_pm_cost - e_pm_cost),
-                ("CO₂ Emissions (lbs)", e_co2, s_co2, s_co2 - e_co2),
-                ("Delivery Fee ($)", delivery_fee, delivery_fee, 0),
-                ("**Total Cost ($)**", e_total, s_total, diff)
-            ]
-
-            st.markdown('<div class="form-container">', unsafe_allow_html=True)
-            st.markdown('<h3 class="form-section-title">📊 Monthly Cost Comparison</h3>', unsafe_allow_html=True)
-            st.markdown(f"""
-            <table style='width:100%; text-align:left; font-size:0.9rem;'>
-                <thead>
-                    <tr>
-                        <th>Metric</th>
-                        <th>EBOSS&reg;Model<br>{model}</th>
-                        <th>Standard Generator<br>{std_gen}</th>
-                        <th>Difference</th>
-                    </tr>
-                </thead>
-                <tbody>
-            """, unsafe_allow_html=True)
-
-            for label, e_val, s_val, d_val in rows:
-                st.markdown(f"""
-                    <tr>
-                        <td>{label}</td>
-                        <td>{fmt(e_val) if isinstance(e_val, (int, float)) else e_val}</td>
-                        <td>{fmt(s_val) if isinstance(s_val, (int, float)) else s_val}</td>
-                        <td><strong>{fmt(d_val) if isinstance(d_val, (int, float)) else d_val}</strong></td>
-                    </tr>
-                """, unsafe_allow_html=True)
-
-            st.markdown("</tbody></table></div>", unsafe_allow_html=True)
-
-        render_cost_comparison_table()
-st.markdown(f"""
-    <style>
-    @media print {{
-        body * {{
-            visibility: hidden;
-        }}
-        .print-logo, .print-logo * {{
-            visibility: visible;
-        }}
-        .form-container, .form-container * {{
-            visibility: visible;
-        }}
-        .form-container {{
-            position: relative;
-            background: white !important;
-            color: black !important;
-            box-shadow: none !important;
-        }}
-        .form-container h3, th, td {{
-            color: black !important;
-            text-shadow: none !important;
-        }}
-    }}
-    </style>
-""", unsafe_allow_html=True)
 
 from datetime import date
 today = date.today().strftime("%B %d, %Y")
@@ -602,6 +495,113 @@ elif st.session_state.selected_form == "training":
 elif st.session_state.selected_form == "tool":
     render_home()
     st.stop()
+# ──────────────────────────────
+# 💰 Cost Analysis Modal + Table
+# ──────────────────────────────
+if st.session_state.section == "cost":
+   with st.container():
+        st.markdown('<div class="form-container">', unsafe_allow_html=True)
+        st.markdown('<h3 class="form-section-title">💰 Cost Inputs</h3>', unsafe_allow_html=True)
+
+        fuel_price = st.number_input("Fuel Price ($/gal)", 0.0, 100.0, 3.5, 0.01)
+        delivery_fee = st.number_input("Delivery Fee ($)", 0.0, 1000.0, 75.0, 1.0)
+        pm_interval = st.number_input("PM Interval (hrs)", 10.0, 1000.0, 500.0, 10.0)
+        pm_cost = st.number_input("Cost per PM ($)", 0.0, 5000.0, 150.0, 10.0)
+        eboss_rent = st.number_input("EBOSS&reg;Monthly Rental ($)", 0.0, 100000.0, 3800.0, 50.0)
+        std_rent = st.number_input("Standard Generator Monthly Rental ($)", 0.0, 100000.0, 3500.0, 50.0)
+        std_gen = st.selectbox("Standard Generator Size", list(STANDARD_GENERATORS.keys()))
+
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    if st.button("✅ Run Cost Comparison"):
+        runtime = calculate_runtime_specs(model, gen_type, cont_kw, kva_option)
+        std_runtime = 720  # Full 24x30 month
+        std_gph = STANDARD_GENERATORS[std_gen]
+
+        from math import ceil
+        def fmt(x): return f"{x:,.2f}"
+
+        # Table logic
+        def render_cost_comparison_table():
+            e_fuel = runtime["fuel_gph"] * runtime["runtime"]
+            s_fuel = std_gph * std_runtime
+            e_cost = e_fuel * fuel_price
+            s_cost = s_fuel * fuel_price
+            e_pms = ceil(runtime["runtime"] / pm_interval)
+            s_pms = ceil(std_runtime / pm_interval)
+            e_pm_cost = e_pms * pm_cost
+            s_pm_cost = s_pms * pm_cost
+            e_co2 = e_fuel * 22.4
+            s_co2 = s_fuel * 22.4
+            e_total = eboss_rent + e_cost + delivery_fee + e_pm_cost
+            s_total = std_rent + s_cost + delivery_fee + s_pm_cost
+            diff = s_total - e_total
+
+            rows = [
+                ("Generator Size", f"{EBOSS_KVA[model]} kVA / {int(EBOSS_KVA[model]*0.8)} kW", std_gen, ""),
+                ("Rental Cost ($)", eboss_rent, std_rent, std_rent - eboss_rent),
+                ("Fuel Used (gal)", e_fuel, s_fuel, s_fuel - e_fuel),
+                ("Fuel Cost ($)", e_cost, s_cost, s_cost - e_cost),
+                ("PM Services", e_pms, s_pms, s_pms - e_pms),
+                ("PM Cost ($)", e_pm_cost, s_pm_cost, s_pm_cost - e_pm_cost),
+                ("CO₂ Emissions (lbs)", e_co2, s_co2, s_co2 - e_co2),
+                ("Delivery Fee ($)", delivery_fee, delivery_fee, 0),
+                ("**Total Cost ($)**", e_total, s_total, diff)
+            ]
+
+            st.markdown('<div class="form-container">', unsafe_allow_html=True)
+            st.markdown('<h3 class="form-section-title">📊 Monthly Cost Comparison</h3>', unsafe_allow_html=True)
+            st.markdown(f"""
+            <table style='width:100%; text-align:left; font-size:0.9rem;'>
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>EBOSS&reg;Model<br>{model}</th>
+                        <th>Standard Generator<br>{std_gen}</th>
+                        <th>Difference</th>
+                    </tr>
+                </thead>
+                <tbody>
+            """, unsafe_allow_html=True)
+
+            for label, e_val, s_val, d_val in rows:
+                st.markdown(f"""
+                    <tr>
+                        <td>{label}</td>
+                        <td>{fmt(e_val) if isinstance(e_val, (int, float)) else e_val}</td>
+                        <td>{fmt(s_val) if isinstance(s_val, (int, float)) else s_val}</td>
+                        <td><strong>{fmt(d_val) if isinstance(d_val, (int, float)) else d_val}</strong></td>
+                    </tr>
+                """, unsafe_allow_html=True)
+
+            st.markdown("</tbody></table></div>", unsafe_allow_html=True)
+
+        render_cost_comparison_table()
+st.markdown(f"""
+    <style>
+    @media print {{
+        body * {{
+            visibility: hidden;
+        }}
+        .print-logo, .print-logo * {{
+            visibility: visible;
+        }}
+        .form-container, .form-container * {{
+            visibility: visible;
+        }}
+        .form-container {{
+            position: relative;
+            background: white !important;
+            color: black !important;
+            box-shadow: none !important;
+        }}
+        .form-container h3, th, td {{
+            color: black !important;
+            text-shadow: none !important;
+        }}
+    }}
+    </style>
+""", unsafe_allow_html=True)
 
 # ──────────────────────────────
 # 🔗 Branded Footer (Sticky)
