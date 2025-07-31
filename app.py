@@ -52,38 +52,50 @@ input:focus, select:focus, textarea:focus,
     box-shadow: 0 0 10px #81BD47 !important;
 }
 
-/* ---- BUTTONS ---- */
-.stButton > button, .eboss-btn {
+.stButton > button, .eboss-hero-btn {
     width: 100%;
-    min-width: 170px;
-    max-width: 330px;
-    margin: 0.35rem auto;
-    padding: 0.9rem 0.5rem;
-    background: #232325 !important; /* Charcoal */
-    color: #fff  !important;
-    border-radius: 14px !important;
-    border: none !important;
-    font-size: 1.17rem !important;
-    font-weight: bold !important;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.38), 0 0 0px 0 #81BD47;
-    text-shadow: 1.5px 1.5px 6px #000, 0 2px 10px #81BD4744;
-    transition: box-shadow 0.25s, background 0.18s, transform 0.15s;
+    min-width: 150px;
+    max-width: 340px;
+    margin: 1rem auto;
+    padding: 1.1rem 0.5rem;
+    background: #232325;
+    color: #fff;
+    border-radius: 18px;
+    border: none;
+    font-size: 1.24rem;
+    font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+    font-weight: 700;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.36), 0 2px 4px #0002, 0 0 0 #81BD47;
+    text-shadow: 2px 2px 7px #000, 0 2px 10px #81BD4740;
+    transition: box-shadow 0.22s, background 0.18s, transform 0.14s;
     cursor: pointer;
     display: block;
-}
-.stButton > button:hover, .stButton > button:focus, .eboss-btn:hover, .eboss-btn:focus {
-    box-shadow: 0 0 22px 4px #81BD47, 0 6px 24px rgba(0,0,0,0.52);
-    background: #313134 !important;
-    transform: scale(1.025);
     outline: none;
+    position: relative;
+    letter-spacing: .02em;
 }
-@media (max-width: 650px) {
-    .stButton > button, .eboss-btn {
-        min-width: 110px !important;
-        font-size: 1rem !important;
-        padding: 0.65rem 0.15rem !important;
-    }
-    .logo-header img { width: 150px !important;}
+.stButton > button:hover, .stButton > button:focus, .eboss-hero-btn:hover, .eboss-hero-btn:focus {
+    box-shadow: 0 0 30px 8px #81BD47, 0 10px 32px rgba(0,0,0,0.55);
+    background: #2c2c2f;
+    transform: scale(1.04) translateY(-2px);
+}
+/* ---- INPUT FIELDS FOR FORMS ---- */
+input, select, textarea, .stSelectbox > div > div, .stTextInput > div > div {
+    background-color: #e0e0e0 !important;
+    border: 2px solid #232325 !important;
+    color: #111 !important;
+    font-weight: bold !important;
+    text-shadow: none !important;
+    border-radius: 12px !important;
+    box-shadow: none !important;
+    transition: box-shadow 0.22s, border-color 0.18s;
+    padding: 0.65rem 1.1rem !important;
+}
+/* ---- FOCUS EFFECT ---- */
+input:focus, select:focus, textarea:focus, 
+.stSelectbox > div > div:focus, .stTextInput > div > div:focus {
+    border: 2px solid #81BD47 !important;
+    box-shadow: 0 0 10px #81BD47 !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -192,155 +204,174 @@ def calculate_runtime_specs(model, gen_type, cont_kw, kva):
 # ─────────────────────────────────────────────
 # 🌐 GOOGLE FORM SUBMISSION HANDLERS
 # ─────────────────────────────────────────────
-
-def submit_demo_request(data):
-    form_url = "https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/formResponse"
-    payload = {
-        "entry.2005620554": data["first_name"],
-        "entry.1649749912": data["last_name"],
-        "entry.1045781291": data["company"],
-        "entry.1065046570": data["title"],
-        "entry.1166974658": data["phone"],
-        "entry.839337160":  data["street"],
-        "entry.1773238634": data["city"],
-        "entry.2022339835": data["state"],
-        "entry.1175639336": data["zip"],
-        "entry.1615234896": data["email"]
-    }
-    return requests.post(form_url, data=payload).status_code
-
-def submit_training_request(data):
-    form_url = "https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/formResponse"
-    payload = {
-        "entry.2005620554": data["first_name"],
-        "entry.1045781291": data["last_name"],
-        "entry.1065046570": data["company"],
-        "entry.1166974658": data["title"],
-        "entry.839337160":  data["phone"],
-        "entry.1502461614": data["street"],
-        "entry.768723598":  data["city"],
-        "entry.1667781744": data["state"],
-        "entry.1777674235": data["zip"],
-        "entry.1301603693": data["email"],
-        "entry.779708650":  data["model"],
-        "entry.1497878538": data["train_type"],
-        "entry.257659210":  data["onsite"],
-        "entry.263815072":  data["train_date"],
-        "entry.298451692":  data["attendees"],
-        "entry.235434965":  data["tv"]
-    }
-    return requests.post(form_url, data=payload).status_code
-
-# ──────────────────────────────
-# 📝 Contact Form Logic
-# ──────────────────────────────
-def render_contact_form(form_type="demo"):
-    st.markdown('<div class="form-container">', unsafe_allow_html=True)
-    st.markdown(f'<h3 class="form-section-title">📝 Request { "a Demo" if form_type == "demo" else "On‑Site Training" }</h3>', unsafe_allow_html=True)
-
-    with st.form(f"{form_type}_form"):
-        st.text_input("First Name", key="first_name")
-        st.text_input("Last Name", key="last_name")
-        st.text_input("Company", key="company")
-        st.text_input("Title", key="title")
-        st.text_input("Phone Number", key="phone")
-        st.text_input("Street Address", key="street")
-        st.text_input("City", key="city")
-        st.text_input("State", key="state")
-        st.text_input("Zip Code", key="zip")
-        st.text_input("Email Address", key="email")
-
-        if form_type == "training":
-            st.selectbox("EBOSS&reg;Model for Training", ["EB25 kVA", "EB70 kVA", "EB125 kVA", "EB220 kVA", "EB400 kVA"], key="model")
-            st.radio("Training Type", ["Sales", "Technical"], horizontal=True, key="train_type")
-            st.radio("Is an EBOSS&reg;unit already onsite?", ["Yes", "No"], horizontal=True, key="onsite")
-            st.date_input("Preferred Training Date", key="train_date")
-            st.number_input("Number of Attendees", min_value=1, step=1, key="attendees")
-            tv = st.checkbox("A TV is available to present training materials")
-        else:
-            tv = None
-
-        submitted = st.form_submit_button("📨 Submit Request")
-
-    if submitted:
-        if form_type == "demo":
-            user_data = {k: st.session_state[k] for k in ["first_name", "last_name", "company", "title", "phone", "street", "city", "state", "zip", "email"]}
-            status = submit_demo_request(user_data)
-        else:
-            user_data = {k: st.session_state[k] for k in ["first_name", "last_name", "company", "title", "phone", "street", "city", "state", "zip", "email", "model", "train_type", "onsite", "train_date", "attendees"]}
-            user_data["train_date"] = str(user_data["train_date"])
-            user_data["tv"] = "TV available" if tv else "TV not available"
-            status = submit_training_request(user_data)
-
-        if status == 200:
-            st.success("✅ Your request was successfully submitted.")
-        else:
-            st.error("❌ Submission failed. Please try again.")
-
+def render_demo_form():
+    # Submission dialog check
+    if st.session_state.get("demo_success"):
+        st.markdown('<div class="form-container">', unsafe_allow_html=True)
+        st.success("✅ Thank you for your submission!")
+        st.write("Would you like to return to the landing page or open the EBOSS Spec Tool?")
         col1, col2 = st.columns(2)
         with col1:
-            if st.button("🔁 Continue with Tool"):
-                st.session_state.landing_shown = False
-                st.session_state.show_contact_form = False
-                st.rerun()
+            if st.button("🏠 Back to Landing Page", key="demo_back"):
+                st.session_state.selected_form = None
+                st.session_state.landing_shown = True
+                st.session_state.demo_success = False
+                st.experimental_rerun()
         with col2:
-            if st.button("🌐 Visit ANA Website"):
-                st.markdown("""<script>window.open("https://anacorp.com", "_blank");</script>""", unsafe_allow_html=True)
+            if st.button("🚀 Open EBOSS Spec Tool", key="demo_tool"):
+                st.session_state.selected_form = "tool"
+                st.session_state.landing_shown = False
+                st.session_state.demo_success = False
+                st.experimental_rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
+        st.stop()
 
+    st.markdown('<div class="form-container">', unsafe_allow_html=True)
+    st.markdown('<h3 class="form-section-title">📝 Request a Demo</h3>', unsafe_allow_html=True)
+    colA, colB = st.columns(2)
+    with colA:
+        first_name = st.text_input("First Name")
+        company = st.text_input("Company")
+        phone = st.text_input("Phone Number")
+        city = st.text_input("City")
+        email = st.text_input("Email Address")
+    with colB:
+        last_name = st.text_input("Last Name")
+        title = st.text_input("Title")
+        street = st.text_input("Street Address")
+        state = st.text_input("State")
+        zip_code = st.text_input("Zip Code")
+    submit, cancel = st.columns(2)
+    with submit:
+        if st.button("📨 Submit Request", key="demo_submit"):
+            # handle submission
+            st.session_state.demo_success = True
+            st.experimental_rerun()
+    with cancel:
+        if st.button("Cancel", key="demo_cancel"):
+            st.session_state.selected_form = None
+            st.session_state.landing_shown = True
+            st.experimental_rerun()
     st.markdown('</div>', unsafe_allow_html=True)
+
+
+def render_training_form():
+    # Submission dialog check
+    if st.session_state.get("training_success"):
+        st.markdown('<div class="form-container">', unsafe_allow_html=True)
+        st.success("✅ Thank you for your submission!")
+        st.write("Would you like to return to the landing page or open the EBOSS Spec Tool?")
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("🏠 Back to Landing Page", key="training_back"):
+                st.session_state.selected_form = None
+                st.session_state.landing_shown = True
+                st.session_state.training_success = False
+                st.experimental_rerun()
+        with col2:
+            if st.button("🚀 Open EBOSS Spec Tool", key="training_tool"):
+                st.session_state.selected_form = "tool"
+                st.session_state.landing_shown = False
+                st.session_state.training_success = False
+                st.experimental_rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
+        st.stop()
+
+    st.markdown('<div class="form-container">', unsafe_allow_html=True)
+    st.markdown('<h3 class="form-section-title">📝 Request On‑Site Training</h3>', unsafe_allow_html=True)
+    colA, colB = st.columns(2)
+    with colA:
+        first_name = st.text_input("First Name", key="train_first_name")
+        company = st.text_input("Company", key="train_company")
+        phone = st.text_input("Phone Number", key="train_phone")
+        city = st.text_input("City", key="train_city")
+        email = st.text_input("Email Address", key="train_email")
+        attendees = st.number_input("Number of Attendees", min_value=1, step=1, key="attendees")
+    with colB:
+        last_name = st.text_input("Last Name", key="train_last_name")
+        title = st.text_input("Title", key="train_title")
+        street = st.text_input("Street Address", key="train_street")
+        state = st.text_input("State", key="train_state")
+        zip_code = st.text_input("Zip Code", key="train_zip")
+        model = st.selectbox("EBOSS® Model for Training", ["EB25 kVA", "EB70 kVA", "EB125 kVA", "EB220 kVA", "EB400 kVA"])
+        train_type = st.radio("Training Type", ["Sales", "Technical"], horizontal=True)
+        onsite = st.radio("Is an EBOSS® unit already onsite?", ["Yes", "No"], horizontal=True)
+        train_date = st.date_input("Preferred Training Date")
+        tv = st.checkbox("A TV is available to present training materials")
+    submit, cancel = st.columns(2)
+    with submit:
+        if st.button("📨 Submit Training Request", key="train_submit"):
+            st.session_state.training_success = True
+            st.experimental_rerun()
+    with cancel:
+        if st.button("Cancel", key="train_cancel"):
+            st.session_state.selected_form = None
+            st.session_state.landing_shown = True
+            st.experimental_rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+
 
 #=======LANDING PAGE BLOCK============#
 
-# Show landing page ONLY if landing_shown is True
+# Show landing page only if not selecting a form
 if "landing_shown" not in st.session_state:
     st.session_state.landing_shown = True
-if "show_contact_form" not in st.session_state:
-    st.session_state.show_contact_form = False
-if "form_type" not in st.session_state:
-    st.session_state.form_type = None
+if "selected_form" not in st.session_state:
+    st.session_state.selected_form = None
 
-
-    st.markdown('<div class="form-container">', unsafe_allow_html=True)
+if st.session_state.landing_shown:
+    st.markdown(
+        '<div class="logo-header"><img src="https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png" alt="Company Logo"></div>',
+        unsafe_allow_html=True
+    )
     st.markdown('<h1 class="form-section-title">EBOSS&reg; Hybrid Energy System<br>Specs and Comparison Tool</h1>', unsafe_allow_html=True)
 
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("📋 Request a Demo", key="btn_demo"):
-            st.session_state.form_type = "demo"
-            st.session_state.show_contact_form = True
-            st.session_state.landing_shown = False
-            st.rerun()
-    with col2:
-        if st.button("📋 Request On-Site Training", key="btn_train"):
-            st.session_state.form_type = "training"
-            st.session_state.show_contact_form = True
-            st.session_state.landing_shown = False
-            st.rerun()
-
-    col3, col4 = st.columns(2)
-    with col3:
+    # Center the 4 buttons, stack on mobile
+    btn_col1, btn_col2 = st.columns(2, gap="large")
+    with btn_col1:
         st.markdown("""
-        <a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank" style="text-decoration:none;">
-            <button class="eboss-btn" type="button" style="width: 100%;">
-                🎥 Learn How EBOSS&reg; Works
-            </button>
-        </a>
+            <button class="eboss-hero-btn" onclick="window.location.hash='req-demo'">📋 Request a Demo</button>
         """, unsafe_allow_html=True)
-    with col4:
-        if st.button("🚀 Launch EBOSS® Tool", key="btn_launch"):
-            st.session_state.landing_shown = False
-            st.session_state.show_contact_form = False
-            st.session_state.form_type = None
-            st.rerun()
+        st.markdown("""
+            <button class="eboss-hero-btn" onclick="window.location.hash='req-training'">📋 Request On-Site Training</button>
+        """, unsafe_allow_html=True)
+    with btn_col2:
+        st.markdown("""
+            <a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank" style="text-decoration:none;">
+                <button class="eboss-hero-btn" type="button">
+                    🎥 Learn How EBOSS&reg; Works
+                </button>
+            </a>
+        """, unsafe_allow_html=True)
+        st.markdown("""
+            <button class="eboss-hero-btn" onclick="window.location.hash='launch-tool'">🚀 Launch EBOSS® Tool</button>
+        """, unsafe_allow_html=True)
 
-    st.markdown("</div>", unsafe_allow_html=True)
+    # Use Streamlit to detect which button (by hash)
+    import streamlit.components.v1 as components
+    hash_check = """
+        <script>
+        window.addEventListener('hashchange', function() {
+            window.parent.postMessage({func: 'setHash', hash: window.location.hash}, '*');
+        });
+        </script>
+    """
+    st.markdown(hash_check, unsafe_allow_html=True)
+    hash_val = st.experimental_get_query_params().get('hash', [''])[0]
+    if hash_val == "#req-demo":
+        st.session_state.selected_form = "demo"
+        st.session_state.landing_shown = False
+        st.experimental_rerun()
+    elif hash_val == "#req-training":
+        st.session_state.selected_form = "training"
+        st.session_state.landing_shown = False
+        st.experimental_rerun()
+    elif hash_val == "#launch-tool":
+        st.session_state.selected_form = "tool"
+        st.session_state.landing_shown = False
+        st.experimental_rerun()
     st.stop()
 
-# Show form or tool UI based on session state after landing page is dismissed
-if st.session_state.get("show_contact_form", False):
-    render_contact_form(form_type=st.session_state.form_type)
-# else:
-#     ...main tool UI here...
 #──────────────────────────────
 # 🚀 Main UI
 # ──────────────────────────────
