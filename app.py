@@ -499,7 +499,7 @@ elif st.session_state.selected_form == "tool":
 # 💰 Cost Analysis Modal + Table
 # ──────────────────────────────
 if st.session_state.section == "cost":
-   with st.container():
+    with st.container():
         st.markdown('<div class="form-container">', unsafe_allow_html=True)
         st.markdown('<h3 class="form-section-title">💰 Cost Inputs</h3>', unsafe_allow_html=True)
 
@@ -513,13 +513,15 @@ if st.session_state.section == "cost":
 
         st.markdown('</div>', unsafe_allow_html=True)
 
- if st.button("✅ Run Cost Comparison"):
-        runtime = calculate_runtime_specs(model, gen_type, cont_kw, kva_option)
-        std_runtime = 720  # Full 24x30 month
-        std_gph = STANDARD_GENERATORS[std_gen]
+        if st.button("✅ Run Cost Comparison"):
+            runtime = calculate_runtime_specs(model, gen_type, cont_kw, kva_option)
+            std_runtime = 720  # Full 24x30 month
+            std_gph = STANDARD_GENERATORS[std_gen]
 
-        from math import ceil
-        def fmt(x): return f"{x:,.2f}"
+            from math import ceil
+            def fmt(x): return f"{x:,.2f}"
+            # ...rest of your cost comparison code...
+
 
         # Table logic
         def render_cost_comparison_table():
