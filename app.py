@@ -377,7 +377,7 @@ if st.session_state.show_contact_form:
 # ──────────────────────────────
 # 🚀 Main UI
 # ──────────────────────────────
-apply_custom_css()
+
 
 st.markdown("<h1>EBOSS&reg;Model Selection Tool</h1>", unsafe_allow_html=True)
 
