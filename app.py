@@ -44,6 +44,10 @@ input:focus, select:focus, textarea:focus,
     border: 2px solid #81BD47 !important;
     box-shadow: 0 0 10px #81BD47, inset 2px 4px 12px #b5b5b5, inset -2px -4px 10px #23232577;
 }
+.stApp {
+    background: url("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/bg.png") no-repeat center center fixed !important;
+    background-size: cover !important;
+}
 
 /* ---- BUTTONS ---- */
 .stButton > button, .eboss-btn {
@@ -78,17 +82,6 @@ input:focus, select:focus, textarea:focus,
     }
     .logo-header img { width: 160px !important;}
 }
-
-st.markdown("""
-<style>
-.stApp {
-    background: url("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/bg.png") no-repeat center center fixed !important;
-    background-size: cover !important;
-}
-/* ...the rest of your CSS styles... */
-</style>
-""", unsafe_allow_html=True)
-
 </style>
 """, unsafe_allow_html=True)
 
