@@ -291,57 +291,61 @@ def render_contact_form(form_type="demo"):
 
 #=======LANDING PAGE BLOCK============#
 
-# 1. The responsive logo header (only this line, placed ONCE!)
-st.markdown(
-    '<div class="logo-header"><img src="https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png" alt="Company Logo"></div>',
-    unsafe_allow_html=True
-)
+# Show landing page ONLY if landing_shown is True
+if "landing_shown" not in st.session_state:
+    st.session_state.landing_shown = True
+if "show_contact_form" not in st.session_state:
+    st.session_state.show_contact_form = False
+if "form_type" not in st.session_state:
+    st.session_state.form_type = None
 
-# 2. The main headline in a styled container
-st.markdown('<div class="form-container">', unsafe_allow_html=True)
-st.markdown('<h1 class="form-section-title">EBOSS&reg; Hybrid Energy System<br>Specs and Comparison Tool</h1>', unsafe_allow_html=True)
+if st.session_state.landing_shown:
+    st.markdown(
+        '<div class="logo-header"><img src="https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png" alt="Company Logo"></div>',
+        unsafe_allow_html=True
+    )
+    st.markdown('<div class="form-container">', unsafe_allow_html=True)
+    st.markdown('<h1 class="form-section-title">EBOSS&reg; Hybrid Energy System<br>Specs and Comparison Tool</h1>', unsafe_allow_html=True)
 
-# 3. First row: Streamlit buttons
-col1, col2 = st.columns(2)
-with col1:
-    if st.button("📋 Request a Demo", key="btn_demo"):
-        st.session_state.form_type = "demo"
-        st.session_state.show_contact_form = True
-        st.session_state.landing_shown = False
-        st.rerun()
-with col2:
-    if st.button("📋 Request On-Site Training", key="btn_train"):
-        st.session_state.form_type = "training"
-        st.session_state.show_contact_form = True
-        st.session_state.landing_shown = False
-        st.rerun()
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("📋 Request a Demo", key="btn_demo"):
+            st.session_state.form_type = "demo"
+            st.session_state.show_contact_form = True
+            st.session_state.landing_shown = False
+            st.rerun()
+    with col2:
+        if st.button("📋 Request On-Site Training", key="btn_train"):
+            st.session_state.form_type = "training"
+            st.session_state.show_contact_form = True
+            st.session_state.landing_shown = False
+            st.rerun()
 
-# 4. Second row: HTML and Streamlit button
-col3, col4 = st.columns(2)
-with col3:
-    st.markdown("""
-    <a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank" style="text-decoration:none;">
-        <button class="eboss-btn" type="button" style="width: 100%;">
-            🎥 Learn How EBOSS&reg; Works
-        </button>
-    </a>
-    """, unsafe_allow_html=True)
-with col4:
-    if st.button("🚀 Launch EBOSS® Tool", key="btn_launch"):
-        st.session_state.landing_shown = False
-        st.session_state.show_contact_form = False
-        st.session_state.form_type = None
-        st.rerun()
+    col3, col4 = st.columns(2)
+    with col3:
+        st.markdown("""
+        <a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank" style="text-decoration:none;">
+            <button class="eboss-btn" type="button" style="width: 100%;">
+                🎥 Learn How EBOSS&reg; Works
+            </button>
+        </a>
+        """, unsafe_allow_html=True)
+    with col4:
+        if st.button("🚀 Launch EBOSS® Tool", key="btn_launch"):
+            st.session_state.landing_shown = False
+            st.session_state.show_contact_form = False
+            st.session_state.form_type = None
+            st.rerun()
 
-st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+    st.stop()
 
-# (Optional) Show contact form if requested
+# Show form or tool UI based on session state after landing page is dismissed
 if st.session_state.get("show_contact_form", False):
     render_contact_form(form_type=st.session_state.form_type)
-
-
-
-# ──────────────────────────────
+# else:
+#     ...main tool UI here...
+#──────────────────────────────
 # 🚀 Main UI
 # ──────────────────────────────
 
