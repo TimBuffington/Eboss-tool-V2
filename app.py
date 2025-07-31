@@ -78,7 +78,7 @@ input, select, textarea, .stSelectbox > div > div, .stTextInput > div > div {
     text-shadow: none !important;  /* No text shadow */
     border-radius: 12px !important;
     box-shadow: none !important;   /* No sunken/3D effect */
-    transition: box-shadow 0.22s, border-color 0.18s;
+   81BD47
     padding: 0.65rem 1.1rem !important;
 }
 input:focus, select:focus, textarea:focus, 
@@ -86,7 +86,7 @@ input:focus, select:focus, textarea:focus,
     border: 2px solid #81BD47 !important;
      box-shadow: none !important;
 }
-}
+
 a, a:visited, a:active {
     text-decoration: none !important;
     color: inherit !important;
