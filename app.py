@@ -343,62 +343,65 @@ def calculate_runtime_specs(model, gen_type, cont_kw, kva):
 # 🚀 Main UI
 # ──────────────────────────────
 
-st.markdown("<h1>EBOSS&reg;Model Selection Tool</h1>", unsafe_allow_html=True)
+def render_home():
+    # Show logo and main tool header
+    show_logo_and_title("EBOSS® Model Selection Tool")
 
-with st.container():
-    col1, col2 = st.columns([1, 1])
+    with st.container():
+        col1, col2 = st.columns([1, 1])
 
-    # Left Column — System Configuration
-    with col1:
-        st.markdown('<div class="form-container">', unsafe_allow_html=True)
-        st.markdown('<h3 class="form-section-title">⚙️ System Configuration</h3>', unsafe_allow_html=True)
+        # Left Column — System Configuration
+        with col1:
+            st.markdown('<div class="form-container">', unsafe_allow_html=True)
+            st.markdown('<h3 class="form-section-title">⚙️ System Configuration</h3>', unsafe_allow_html=True)
 
-        model = st.selectbox("EBOSS&reg;Model", list(EBOSS_KVA.keys()))
-        gen_type = st.selectbox("EBOSS&reg;Type", ["Full Hybrid", "Power Module"])
+            model = st.selectbox("EBOSS® Model", list(EBOSS_KVA.keys()))
+            gen_type = st.selectbox("EBOSS® Type", ["Full Hybrid", "Power Module"])
 
-        if gen_type == "Power Module":
-            kva_option = st.selectbox("Generator Size", ["25kVA", "45kVA", "65kVA", "125kVA", "220kVA", "400kVA"])
-        else:
-            kva_option = None
+            if gen_type == "Power Module":
+                kva_option = st.selectbox("Generator Size", ["25kVA", "45kVA", "65kVA", "125kVA", "220kVA", "400kVA"])
+            else:
+                kva_option = None
 
-        st.markdown('</div>', unsafe_allow_html=True)
+            st.markdown('</div>', unsafe_allow_html=True)
 
-    # Right Column — Load Requirements
-    with col2:
-        st.markdown('<div class="form-container">', unsafe_allow_html=True)
-        st.markdown('<h3 class="form-section-title">⚡ Load Requirements</h3>', unsafe_allow_html=True)
+        # Right Column — Load Requirements
+        with col2:
+            st.markdown('<div class="form-container">', unsafe_allow_html=True)
+            st.markdown('<h3 class="form-section-title">⚡ Load Requirements</h3>', unsafe_allow_html=True)
 
-        cont_kw = st.number_input("Continuous Load (kW)", 0.0, 500.0, step=1.0)
-        peak_kw = st.number_input("Max Peak Load (kW)", 0.0, 500.0, step=1.0)
+            cont_kw = st.number_input("Continuous Load (kW)", 0.0, 500.0, step=1.0)
+            peak_kw = st.number_input("Max Peak Load (kW)", 0.0, 500.0, step=1.0)
 
-        st.markdown('</div>', unsafe_allow_html=True)
+            st.markdown('</div>', unsafe_allow_html=True)
 
-# 🔘 Button Panel (NOW with Contact Us)
-btn1, btn2, btn3, btn4, btn5 = st.columns(5)
+    # 🔘 Button Panel (NOW with Contact Us)
+    btn1, btn2, btn3, btn4, btn5 = st.columns(5)
 
-with btn1:
-    if st.button("📋 View Specs"):
-        st.session_state.section = "specs"
+    with btn1:
+        if st.button("📋 View Specs"):
+            st.session_state.section = "specs"
 
-with btn2:
-    if st.button("⚡ Load-Based Specs"):
-        st.session_state.section = "load"
+    with btn2:
+        if st.button("⚡ Load-Based Specs"):
+            st.session_state.section = "load"
 
-with btn3:
-    if st.button("⚖️ Compare"):
-        st.session_state.section = "compare"
+    with btn3:
+        if st.button("⚖️ Compare"):
+            st.session_state.section = "compare"
 
-with btn4:
-    if st.button("💰 Cost Analysis"):
-        st.session_state.section = "cost"
+    with btn4:
+        if st.button("💰 Cost Analysis"):
+            st.session_state.section = "cost"
 
-with btn5:
-    if st.button("📞 Contact Us"):
-        st.markdown("""
-        <script>
-        window.open("https://anacorp.com/contact/", "_blank");
-        </script>
-        """, unsafe_allow_html=True)
+    with btn5:
+        if st.button("📞 Contact Us"):
+            st.markdown("""
+            <script>
+            window.open("https://anacorp.com/contact/", "_blank");
+            </script>
+            """, unsafe_allow_html=True)
+
 # ──────────────────────────────
 # 💰 Cost Analysis Modal + Table
 # ──────────────────────────────
