@@ -84,7 +84,7 @@ input, select, textarea, .stSelectbox > div > div, .stTextInput > div > div {
 input:focus, select:focus, textarea:focus, 
 .stSelectbox > div > div:focus, .stTextInput > div > div:focus {
     border: 2px solid #81BD47 !important;
-    box-shadow: 0 0 10px #81BD47 !important;
+     box-shadow: none !important;
 }
 }
 a, a:visited, a:active {
