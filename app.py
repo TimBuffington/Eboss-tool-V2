@@ -175,27 +175,50 @@ def render_home():
     top_navbar()
     with st.container():
         col1, col2 = st.columns([1, 1])
+
         with col1:
             st.markdown('<div class="form-container">', unsafe_allow_html=True)
-            st.markdown('<h3 class="form-section-title">⚙️ System Configuration</h3>', unsafe_allow_html=True)
-            model = st.selectbox("EBOSS® Model", ["EB25 kVA", "EB70 kVA", "EB125 kVA", "EB220 kVA", "EB400 kVA"])
-            gen_type = st.selectbox("EBOSS® Type", ["Full Hybrid", "Power Module"])
+            st.markdown('<h3 class="form-section-title">EBOSS® Type / Model</h3>', unsafe_allow_html=True)
+            model = st.selectbox("Model", ["EB25 kVA", "EB70 kVA", "EB125 kVA", "EB220 kVA", "EB400 kVA"])
+            gen_type = st.selectbox("Type", ["Full Hybrid", "Power Module"])
             kva_option = st.selectbox("Generator Size", ["25kVA", "45kVA", "65kVA", "125kVA", "220kVA", "400kVA"]) if gen_type == "Power Module" else None
             st.markdown('</div>', unsafe_allow_html=True)
+
         with col2:
             st.markdown('<div class="form-container">', unsafe_allow_html=True)
-            st.markdown('<h3 class="form-section-title">⚡ Load Requirements</h3>', unsafe_allow_html=True)
-            cont_kw = st.number_input("Continuous Load (kW)", 0.0, 500.0, step=1.0)
-            peak_kw = st.number_input("Max Peak Load (kW)", 0.0, 500.0, step=1.0)
+            st.markdown('<h3 class="form-section-title">Load Parameters</h3>', unsafe_allow_html=True)
+            cont_load = st.number_input("Continuous Load", 0, 500, step=1, format="%d")
+            peak_load = st.number_input("Max Peak Load", 0, 500, step=1, format="%d")
+            # New dropdowns below Max Peak Load
+            load_units = st.selectbox("Units", ["kW", "Amps"])
+            voltage = st.selectbox("Voltage", ["480V", "240V", "208V"])
             st.markdown('</div>', unsafe_allow_html=True)
-        # Store inputs for use on other pages
+
+        # Convert input as needed
+        pf = 0.8  # power factor (typical)
+        v_val = int(voltage.replace("V", ""))
+
+        # Calculate continuous and peak load in kW at 480V if needed
+        if load_units == "Amps":
+            cont_kw = (cont_load * (3 ** 0.5) * v_val * pf) / 1000
+            peak_kw = (peak_load * (3 ** 0.5) * v_val * pf) / 1000
+        else:
+            cont_kw = cont_load
+            peak_kw = peak_load
+
+        # Always store as kW for the rest of the app (assume 480V calculations)
         st.session_state.user_inputs = {
             "model": model,
             "gen_type": gen_type,
             "kva_option": kva_option,
             "cont_kw": cont_kw,
             "peak_kw": peak_kw,
+            "raw_cont_load": cont_load,
+            "raw_peak_load": peak_load,
+            "load_units": load_units,
+            "voltage": voltage,
         }
+
 
 # Reference data & calculation functions (unchanged)
 EBOSS_KVA = {
