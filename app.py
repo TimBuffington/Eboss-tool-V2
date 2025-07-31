@@ -100,7 +100,6 @@ if "landing_shown" not in st.session_state:
 if "selected_form" not in st.session_state:
     st.session_state.selected_form = None
 
-# ---- LOGO + HEADER FUNCTION ----
 def show_logo_and_title(title):
     st.markdown(
         '<div class="logo-header"><img src="https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png" alt="Company Logo"></div>',
@@ -108,7 +107,6 @@ def show_logo_and_title(title):
     )
     st.markdown(f'<h1 class="form-section-title">{title}</h1>', unsafe_allow_html=True)
 
-# ---- LANDING PAGE ----
 def landing_page():
     show_logo_and_title("EBOSS® Hybrid Energy System<br>Specs and Comparison Tool")
     col1, col2 = st.columns(2, gap="large")
@@ -133,6 +131,7 @@ def landing_page():
             st.session_state.selected_form = "tool"
             st.session_state.landing_shown = False
             st.rerun()
+
 
 # ---- DEMO FORM ----
 def render_demo_form():
