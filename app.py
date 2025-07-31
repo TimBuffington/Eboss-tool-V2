@@ -36,20 +36,20 @@ st.markdown("""
 
 /* ---- INPUTS, DROPDOWNS ---- */
 input, select, textarea, .stSelectbox > div > div, .stTextInput > div > div {
-    background-color: #e0e0e0 !important;  /* Concrete gray */
-    border: 1px solid #232325 !important;
-    color: #111  !important;
+    background-color: #e0e0e0 !important;
+    border: 2px solid #232325 !important;
+    color: #111 !important;    /* BLACK font */
     font-weight: bold !important;
-    text-shadow: 1px 1px 2px #111;
+    text-shadow: none !important;
     border-radius: 12px !important;
-    box-shadow: inset 2px 4px 12px #b5b5b5, inset -2px -4px 10px #23232577;
+    box-shadow: none !important;   /* <--- No sunken effect */
     transition: box-shadow 0.22s, border-color 0.18s;
     padding: 0.6rem 1.2rem !important;
 }
 input:focus, select:focus, textarea:focus, 
 .stSelectbox > div > div:focus, .stTextInput > div > div:focus {
     border: 2px solid #81BD47 !important;
-    box-shadow: 0 0 10px #81BD47, inset 2px 4px 12px #b5b5b5, inset -2px -4px 10px #23232577;
+    box-shadow: 0 0 10px #81BD47 !important;
 }
 
 /* ---- BUTTONS ---- */
