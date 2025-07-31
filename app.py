@@ -234,11 +234,6 @@ def render_training_form():
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ---- HOME PAGE / MAIN TOOL ----
-def render_home():
-    show_logo_and_title("EBOSS® Model Selection Tool")
-    st.markdown("<!-- Your tool's content goes here -->")
-    st.write("Welcome to the EBOSS Spec Tool Home Page!")
-  
 
 if "landing_shown" not in st.session_state:
     st.session_state.landing_shown = True
@@ -349,7 +344,7 @@ def calculate_runtime_specs(model, gen_type, cont_kw, kva):
 
 def render_home():
     # Show logo and main tool header
-    show_logo_and_title("EBOSS® Model Selection Tool")
+    show_logo_and_title("EBOSS® Size & Spec Tool")
 
     with st.container():
         col1, col2 = st.columns([1, 1])
