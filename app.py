@@ -2,130 +2,144 @@ import streamlit as st
 import requests
 from datetime import date
 
-def apply_custom_css():
-    st.markdown(f"""
-    <style>
-        .stApp {{
-            background-image: url("https://github.com/TimBuffington/Eboss-tool-V2/blob/main/AdobeStock_209254754.jpeg");
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-        }}
+# ---- Place this at the top of your main app file ----
 
-        .form-container {{
-            background-color: #636569;
-            border: 2px solid #81BD47;
-            padding: 1.5rem;
-            border-radius: 18px;
-            color: white;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-        }}
+st.markdown("""
+<style>
+/* ---- APP BACKGROUND ---- */
+.stApp {
+    background: url("assets/bg.png") no-repeat center center fixed !important;
+    background-size: cover !important;
+}
 
-        .form-section-title, h1, h2, h3 {{
-            font-size: 1.6rem;
-            font-weight: bold;
-            color: white;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
-            text-align: center;
-        }}
+/* ---- LOGO, RESPONSIVE ---- */
+.logo-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1.2rem;
+    width: 100%;
+}
+.logo-header img {
+    width: 240px;
+    max-width: 70vw;
+    height: auto;
+    filter: drop-shadow(0 2px 16px rgba(0,0,0,0.28));
+    margin-top: 1.0rem;
+    border-radius: 0.4rem;
+}
+@media (max-width: 600px) {
+    .logo-header img {
+        width: 150px !important;
+        max-width: 90vw !important;
+        margin-top: 0.4rem;
+    }
+}
 
-        input, select, textarea {{
-            background-color: #636569 !important;
-            border: 2px solid #81BD47 !important;
-            color: white !important;
-            font-weight: bold;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
-            border-radius: 10px;
-            transition: all 0.3s ease;
-        }}
+/* ---- FORM CONTAINER ---- */
+.form-container {
+    background-color: #232325e9; /* semi-transparent charcoal */
+    border: 2px solid #81BD47;
+    padding: 1.5rem;
+    border-radius: 18px;
+    color: white;
+    max-width: 600px;
+    margin: 1.5rem auto 1.5rem auto;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+@media (max-width: 700px) {
+    .form-container {
+        padding: 1.1rem;
+        max-width: 98vw;
+        margin: 0.7rem auto;
+    }
+}
 
-        input:hover, select:hover, textarea:hover,
-        input:focus, select:focus, textarea:focus {{
-            border-color: #A9E37A !important;
-            box-shadow: 0 0 8px #A9E37A;
-        }}
+/* ---- SECTION TITLES ---- */
+.form-section-title, h1, h2, h3 {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: white;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+    text-align: center;
+}
 
-        .stSelectbox > div > div, .stTextInput > div > div {{
-            background-color: #636569 !important;
-            border: 2px solid #81BD47 !important;
-            color: white !important;
-            font-weight: bold;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
-            border-radius: 10px;
-            transition: all 0.3s ease;
-        }}
+/* ---- INPUTS, DROPDOWNS ---- */
+input, select, textarea, .stSelectbox > div > div, .stTextInput > div > div {
+    background-color: #e0e0e0 !important;  /* Concrete gray */
+    border: 2px solid #232325 !important;
+    color: #fff !important;
+    font-weight: bold !important;
+    text-shadow: 1px 1px 2px #111;
+    border-radius: 12px !important;
+    box-shadow: inset 2px 4px 12px #b5b5b5, inset -2px -4px 10px #23232577;
+    transition: box-shadow 0.22s, border-color 0.18s;
+    padding: 0.6rem 1.2rem !important;
+}
+input:focus, select:focus, textarea:focus, 
+.stSelectbox > div > div:focus, .stTextInput > div > div:focus {
+    border: 2px solid #81BD47 !important;
+    box-shadow: 0 0 10px #81BD47, inset 2px 4px 12px #b5b5b5, inset -2px -4px 10px #23232577;
+}
 
-        .stSelectbox > div > div:hover,
-        .stTextInput > div > div:hover {{
-            border-color: #A9E37A !important;
-            box-shadow: 0 0 8px #A9E37A;
-        }}
+/* ---- BUTTONS ---- */
+.stButton > button, .eboss-btn {
+    width: 100%;
+    min-width: 170px;
+    max-width: 330px;
+    margin: 0.35rem auto;
+    padding: 0.9rem 0.5rem;
+    background: #232325 !important; /* Charcoal */
+    color: #fff !important;
+    border-radius: 14px !important;
+    border: none !important;
+    font-size: 1.17rem !important;
+    font-weight: bold !important;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.38), 0 0 0px 0 #81BD47;
+    text-shadow: 1.5px 1.5px 6px #000, 0 2px 10px #81BD4744;
+    transition: box-shadow 0.25s, background 0.18s, transform 0.15s;
+    cursor: pointer;
+    display: block;
+}
+.stButton > button:hover, .stButton > button:focus, .eboss-btn:hover, .eboss-btn:focus {
+    box-shadow: 0 0 22px 4px #81BD47, 0 6px 24px rgba(0,0,0,0.52);
+    background: #313134 !important;
+    transform: scale(1.025);
+    outline: none;
+}
+@media (max-width: 650px) {
+    .stButton > button, .eboss-btn {
+        min-width: 110px !important;
+        font-size: 1rem !important;
+        padding: 0.65rem 0.15rem !important;
+    }
+    .logo-header img { width: 150px !important;}
+}
 
-        .stButton > button {{
-            background-color: #81BD47 !important;
-            color: white !important;
-            font-weight: bold;
-            border-radius: 10px;
-            border: none;
-            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
-            padding: 0.5rem 1.2rem;
-            transition: all 0.2s ease-in-out;
-        }}
+/* ---- FOOTER (OPTIONAL) ---- */
+.footer {
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    padding: 1rem 0;
+    text-align: center;
+    font-size: 0.9rem;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    margin-top: 3rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+}
+.footer a {
+    color: #81BD47;
+    text-decoration: none;
+    font-weight: bold;
+}
+</style>
+""", unsafe_allow_html=True)
 
-        .stButton > button:hover {{
-            background-color: #A9E37A !important;
-            transform: scale(1.03);
-            box-shadow: 0 0 12px rgba(129, 189, 71, 0.6);
-        }}
-
-        .stRadio > div {{
-            background-color: #636569;
-            border: 2px solid #81BD47;
-            border-radius: 10px;
-            padding: 0.5rem;
-            transition: all 0.2s ease-in-out;
-        }}
-
-        .stRadio > div:hover {{
-            border-color: #A9E37A;
-            box-shadow: 0 0 6px #A9E37A;
-        }}
-
-        .stRadio > div > label {{
-            color: white !important;
-            font-weight: bold;
-        }}
-
-        .metric-box {{
-            background-color: #636569;
-            border: 2px solid #81BD47;
-            padding: 1rem;
-            color: white;
-            border-radius: 12px;
-            text-align: center;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
-            margin-bottom: 1rem;
-        }}
-
-        .footer {{
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 1rem 0;
-            text-align: center;
-            font-size: 0.9rem;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
-        }}
-
-        .footer a {{
-            color: #81BD47;
-            text-decoration: none;
-            font-weight: bold;
-        }}
-    </style>
-    """, unsafe_allow_html=True)
-
+# ---- Responsive Logo at Top (call once at app start) ----
+st.markdown('<div class="logo-header"><img src="assets/logo.png" alt="Company Logo"></div>', unsafe_allow_html=True)
 
 # ──────────────────────────────
 # 📊 EBOSS&reg;Reference Data
