@@ -19,7 +19,7 @@ st.markdown("""
     width: 100%;
 }
 .logo-header img {
-    width: 240px;
+    width: 600px;
     max-width: 90vw;
     height: auto;
     filter: drop-shadow(0 2px 16px rgba(0,0,0,0.28));
