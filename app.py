@@ -37,8 +37,8 @@ st.markdown("""
 /* ---- INPUTS, DROPDOWNS ---- */
 input, select, textarea, .stSelectbox > div > div, .stTextInput > div > div {
     background-color: #e0e0e0 !important;  /* Concrete gray */
-    border: 2px solid #232325 !important;
-    color: #fff !important;
+    border: 1px solid #232325 !important;
+    color: #111  !important;
     font-weight: bold !important;
     text-shadow: 1px 1px 2px #111;
     border-radius: 12px !important;
@@ -60,7 +60,7 @@ input:focus, select:focus, textarea:focus,
     margin: 0.35rem auto;
     padding: 0.9rem 0.5rem;
     background: #232325 !important; /* Charcoal */
-    color: #fff !important;
+    color: #fff  !important;
     border-radius: 14px !important;
     border: none !important;
     font-size: 1.17rem !important;
@@ -322,13 +322,32 @@ if st.session_state.landing_shown:
     # Info/launch row: Learn and Launch
     col3, col4 = st.columns(2)
     with col3:
-       st.markdown("""
+     st.markdown("""
 <a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank" style="text-decoration:none;">
-    <button class="eboss-btn" type="button" style="margin-top: 0.35rem; width: 100%;">
+    <button type="button"
+        style="
+            margin-top: 0.35rem; width: 100%;
+            background: #232325 !important; /* Charcoal */
+            color: #fff !important;
+            border-radius: 14px !important;
+            border: none !important;
+            font-size: 1.17rem !important;
+            font-weight: bold !important;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.38), 0 0 0px 0 #81BD47;
+            text-shadow: 1.5px 1.5px 6px #000, 0 2px 10px #81BD4744;
+            cursor: pointer;
+            display: block;
+            padding: 0.9rem 0.5rem;
+            transition: box-shadow 0.25s, background 0.18s, transform 0.15s;
+        "
+        onmouseover="this.style.boxShadow='0 0 22px 4px #81BD47, 0 6px 24px rgba(0,0,0,0.52)';this.style.background='#313134';this.style.transform='scale(1.025)'"
+        onmouseout="this.style.boxShadow='0 6px 18px rgba(0,0,0,0.38), 0 0 0px 0 #81BD47';this.style.background='#232325';this.style.transform='scale(1.0)'"
+    >
         🎥 Learn How EBOSS&reg; Works
     </button>
 </a>
 """, unsafe_allow_html=True)
+
                   
     with col4:
         if st.button("🚀 Launch EBOSS® Tool", key="btn_launch"):
