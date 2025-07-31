@@ -1,32 +1,22 @@
 import streamlit as st
 import requests
 from datetime import date
+
+# ----- ONE CLEAN CSS BLOCK -----
 st.markdown("""
 <style>
+/* ---- APP BACKGROUND ---- */
 .stApp {
     background: url("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/bg.png") no-repeat center center fixed !important;
     background-size: cover !important;
 }
-</style>
-""", unsafe_allow_html=True)
-
-st.markdown(
-    '<div class="logo-header"><img src="https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png" alt="Company Logo"></div>',
-    unsafe_allow_html=True
-)
-
-st.markdown("""
-<style>
-/* ---- APP BACKGROUND + LOGO ---- */
-.stApp {
-    background: url("https://github.com/TimBuffington/Eboss-tool-V2/blob/main/assets/bg.png") no-repeat center center fixed !important;
-    background-size: cover !important;
-}
+/* ---- LOGO, RESPONSIVE ---- */
 .logo-header {
     display: flex;
     justify-content: center;
     align-items: center;
     margin-bottom: 1.2rem;
+    width: 100%;
 }
 .logo-header img {
     width: 240px;
@@ -34,6 +24,14 @@ st.markdown("""
     height: auto;
     filter: drop-shadow(0 2px 16px rgba(0,0,0,0.28));
     margin-top: 1.0rem;
+    border-radius: 0.4rem;
+}
+@media (max-width: 600px) {
+    .logo-header img {
+        width: 150px !important;
+        max-width: 90vw !important;
+        margin-top: 0.4rem;
+    }
 }
 
 /* ---- INPUTS, DROPDOWNS ---- */
@@ -53,9 +51,6 @@ input:focus, select:focus, textarea:focus,
     border: 2px solid #81BD47 !important;
     box-shadow: 0 0 10px #81BD47, inset 2px 4px 12px #b5b5b5, inset -2px -4px 10px #23232577;
 }
-
-
-
 
 /* ---- BUTTONS ---- */
 .stButton > button, .eboss-btn {
@@ -88,13 +83,18 @@ input:focus, select:focus, textarea:focus,
         font-size: 1rem !important;
         padding: 0.65rem 0.15rem !important;
     }
-    .logo-header img { width: 160px !important;}
+    .logo-header img { width: 150px !important;}
 }
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="logo-header"><img src="logo.png" alt="Company Logo"></div>', unsafe_allow_html=True)
+# ----- LOGO HEADER (ONCE, after CSS) -----
+st.markdown(
+    '<div class="logo-header"><img src="https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png" alt="Company Logo"></div>',
+    unsafe_allow_html=True
+)
 
+# ---- The rest of your Streamlit app code follows here...
 
 # ──────────────────────────────
 # 📊 EBOSS&reg;Reference Data
