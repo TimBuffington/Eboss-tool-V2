@@ -10,7 +10,7 @@ st.markdown("""
 <style>
 /* ---- APP BACKGROUND + LOGO ---- */
 .stApp {
-    background: url("https://github.com/TimBuffington/Eboss-tool-V2/blob/main/assets/AdobeStock_209254754.jpeg") no-repeat center center fixed !important;
+    background: url("https://github.com/TimBuffington/Eboss-tool-V2/blob/main/assets/bg.png") no-repeat center center fixed !important;
     background-size: cover !important;
 }
 .logo-header {
