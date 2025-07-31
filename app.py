@@ -299,11 +299,7 @@ if "show_contact_form" not in st.session_state:
 if "form_type" not in st.session_state:
     st.session_state.form_type = None
 
-if st.session_state.landing_shown:
-    st.markdown(
-        '<div class="logo-header"><img src="https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png" alt="Company Logo"></div>',
-        unsafe_allow_html=True
-    )
+
     st.markdown('<div class="form-container">', unsafe_allow_html=True)
     st.markdown('<h1 class="form-section-title">EBOSS&reg; Hybrid Energy System<br>Specs and Comparison Tool</h1>', unsafe_allow_html=True)
 
