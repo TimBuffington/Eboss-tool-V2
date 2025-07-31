@@ -513,7 +513,7 @@ if st.session_state.section == "cost":
 
         st.markdown('</div>', unsafe_allow_html=True)
 
-    if st.button("✅ Run Cost Comparison"):
+     if st.button("✅ Run Cost Comparison"):
         runtime = calculate_runtime_specs(model, gen_type, cont_kw, kva_option)
         std_runtime = 720  # Full 24x30 month
         std_gph = STANDARD_GENERATORS[std_gen]
