@@ -421,12 +421,6 @@ def render_calculate_buttons():
 
 
 #==============================================================================================================================
-def render_home():
-    show_logo_and_title("EBOSS® Size & Spec Tool")
-    top_navbar()
-    render_user_input_form()
-#=================================================================================================
-def interpolate_gph(kva, load_pct):
     kva_map = {
         25: [0.67, 0.94, 1.26, 1.62],
         45: [1.04, 1.60, 2.20, 2.03],
@@ -947,7 +941,8 @@ elif st.session_state.section == "cost":
     render_cost_analysis_page()
     st.stop()
 elif st.session_state.selected_form == "tool":
-    render_home()
+    top_navbar()
+    render_user_input_form()
     st.stop()
 elif st.session_state.section == "parallel_calc":
     render_parallel_calculator_page()
