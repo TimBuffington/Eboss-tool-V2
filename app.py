@@ -259,10 +259,6 @@ def render_training_form():
    
 def render_user_input_form():
     show_logo_and_title("Tech Specs")
-    model = st.session_state.get("model_select", "")
-    if not model:
-        st.warning("Please select an EBOSS model.")
-        return
     col1, col2, col3 = st.columns([1, 1, 1])
 
     with col1:
