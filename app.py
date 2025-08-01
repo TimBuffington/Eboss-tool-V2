@@ -665,6 +665,15 @@ def render_tech_specs_page():
     </div>
     """, unsafe_allow_html=True)
 
+    for section, items in specs.items():
+    st.markdown(f"""
+    <div style="background-color:#232325; color:white; font-weight:bold;
+                padding:0.7rem 1rem; border-radius:8px; font-size:1rem;
+                margin:2rem 0 1rem 0; text-transform:uppercase;">
+        {section}
+    </div>
+    """, unsafe_allow_html=True)
+
     for i in range(0, len(items), 2):
         col1, col2 = st.columns(2)
 
