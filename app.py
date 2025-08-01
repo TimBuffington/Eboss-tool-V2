@@ -155,38 +155,10 @@ st.markdown("""
     background: #2c2c2f !important;
     transform: scale(1.04) translateY(-2px);
 }
-.stButton > button, .eboss-hero-btn {
-    width: 100%;
-    min-width: 150px;
-    max-width: 340px;
-    margin: 1rem auto;
-    padding: 1.1rem 0.5rem;
-    background: #232325 !important;
-    color: #fff !important;
-    border-radius: 18px !important;
-    border: none !important;
-    font-size: 1.24rem !important;
-    font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif !important;
-    font-weight: 700 !important;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.36), 0 2px 4px #0002, 0 0 0 #81BD47;
-    text-shadow: 2px 2px 7px #000, 0 2px 10px #81BD4740;
-    transition: box-shadow 0.22s, background 0.18s, transform 0.14s;
-    cursor: pointer;
-    display: block;
-    outline: none;
-    letter-spacing: .02em;
-}
-.stButton > button:hover, .stButton > button:focus, .eboss-hero-btn:hover, .eboss-hero-btn:focus {
-    box-shadow: 0 0 30px 8px #81BD47, 0 10px 32px rgba(0,0,0,0.55);
-    background: #2c2c2f !important;
-    transform: scale(1.04) translateY(-2px);
-}
-
-
 </style>
 """, unsafe_allow_html=True)
 
-# ---- SESSION STATE INITIALIZATION ----
+# =========================================================================================================
 if "landing_shown" not in st.session_state:
     st.session_state.landing_shown = True
 if "selected_form" not in st.session_state:
@@ -204,7 +176,7 @@ def show_logo_and_title(title):
     )
     st.markdown(f'<h1 class="form-section-title">{title}</h1>', unsafe_allow_html=True)
 
-# ---- TOP NAVIGATION BAR ----
+#=====================================================================================================
 def top_navbar():
     btn1, btn2, btn3, btn4, btn5 = st.columns(5)
     with btn1:
@@ -232,10 +204,7 @@ def top_navbar():
             st.session_state.section = "parallel_calc"
             st.session_state.landing_shown = False
             st.rerun()
-
-
-
-# ---- LANDING PAGE ----
+# ===============================================================================================
 def landing_page():
     show_logo_and_title("EBOSS&reg Hybrid Energy System<br>Specs and Comparison Tool")
     col1, col2 = st.columns(2, gap="large")
@@ -274,8 +243,10 @@ def render_training_form():
     show_logo_and_title("📝 Request On‑Site Training")
     top_navbar()
     # ...your form code remains unchanged...
-
+#=============================================================================================================================
 def render_user_input_form():
+    render_calculate_buttons()
+
     st.markdown("## System Configuration")
 
     col1, col2, col3 = st.columns([1, 1, 1])
@@ -321,7 +292,7 @@ def render_user_input_form():
     else:
         cont_kw = cont_load
         peak_kw = peak_load
-
+#========================================================================================================
 def display_load_threshold_check(user_inputs):
     # Reference data
     EBOSS_KVA = {
@@ -385,7 +356,7 @@ def display_load_threshold_check(user_inputs):
         st.success(f"✅ Load is optimal for fuel efficiency (≤ {efficiency_target:.1f} kW).")
 
     st.markdown('</div>', unsafe_allow_html=True)
-
+#============================================================================================================================
 def render_calculate_buttons():
     # Horizontal Rule for visual break
     st.markdown("""
@@ -438,7 +409,7 @@ def render_calculate_buttons():
             st.rerun()
 
 
-# ---- HOME PAGE / MAIN TOOL ----
+#==============================================================================================================================
 def render_home():
     show_logo_and_title("EBOSS&reg Size & Spec Tool")
     top_navbar()
@@ -525,19 +496,7 @@ STANDARD_GENERATORS = {
     "220 kVA / 176 kW": 12.5,
     "400 kVA / 320 kW": 22.0
 }
-
-def calculate_charge_rate(model, gen_type, kva=None):
-    if gen_type == "Full Hybrid":
-        gen_kva = EBOSS_KVA.get(model, 0)
-        return round(gen_kva * 0.8 * 0.98, 2)
-    elif gen_type == "Power Module" and kva:
-        try:
-            gen_kva = float(kva.replace("kVA", ""))
-            return round(gen_kva * 0.8 * 0.90 * 0.98, 2)
-        except:
-            return 0.0
-    return 0.0
-
+#=================================================================================================
 def interpolate_gph(kva, load_pct):
     kva_map = {
         25: [0.67, 0.94, 1.26, 1.62],
@@ -556,7 +515,7 @@ def interpolate_gph(kva, load_pct):
             y1, y2 = values[i], values[i + 1]
             return round(y1 + (load_pct - x1) * (y2 - y1) / (x2 - x1), 3)
     return values[0]
-
+#=======================================================================================================
 def calculate_runtime_specs(model, gen_type, cont_kw, kva):
     gen_kva = EBOSS_KVA.get(model, 0) if gen_type == "Full Hybrid" else float(kva.replace("kVA", ""))
     gen_kw = gen_kva * 0.8
