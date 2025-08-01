@@ -956,9 +956,8 @@ elif st.session_state.selected_form == "tool":
 elif st.session_state.section == "parallel_calc":
     render_parallel_calculator_page()
     st.stop()
-
-
 # ---- FOOTER ----
+
 st.markdown("""
 <style>
 .footer {
