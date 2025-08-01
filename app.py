@@ -207,7 +207,7 @@ def show_logo_and_title(title):
 def top_navbar():
     btn1, btn2, btn3, btn4, btn5 = st.columns(5)
 
-    with btn1:
+with btn1:
     if st.button("🧑‍🔧 Tech Specs", key="nav_tech_specs"):
         st.session_state.selected_form = "tool"
         st.session_state.section = "tech_specs"
