@@ -43,8 +43,27 @@ def apply_custom_css():
     .stSelectbox div[role="combobox"]:hover {
         border-color: #666 !important;
     }
-    </style>
-    """, unsafe_allow_html=True)
+    st.markdown("""
+<style>
+.form-container {
+    min-height: 320px;
+    background-color: #d8d8d8 !important;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid #bbb;
+}
+
+.form-section-title {
+    min-height: 2.5rem;
+    font-weight: bold;
+    font-size: 1.25rem;
+    color: #111;
+    margin-bottom: 1rem;
+    font-family: 'Segoe UI', sans-serif;
+}
+</style>
+""", unsafe_allow_html=True)
 
 # ---- CSS for ALL PAGES ----
 st.markdown("""
@@ -137,6 +156,8 @@ st.markdown("""
     background: #2c2c2f !important;
     transform: scale(1.04) translateY(-2px);
 }
+
+
 </style>
 """, unsafe_allow_html=True)
 
