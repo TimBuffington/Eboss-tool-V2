@@ -16,6 +16,7 @@ st.markdown("""
 a, a:visited, a:active {
     text-decoration: none !important;
     color: inherit !important;
+}
 input, select, textarea, .stSelectbox > div > div, .stTextInput > div > div {
     background-color: #e0e0e0 !important;
     border: .5px solid #232325 !important;
