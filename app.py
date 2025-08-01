@@ -180,15 +180,12 @@ def show_logo_and_title(title):
 def top_navbar():
     btn1, btn2, btn3, btn4, btn5 = st.columns(5)
 
-    # ✅ Live debug view
-    st.markdown(f"🛠️ model_select = `{st.session_state.get('model_select')}`")
-
-    def model_selected():
+    def is_model_selected():
         return st.session_state.get("model_select") not in [None, ""]
 
     with btn1:
         if st.button("🧑‍🔧 Tech Specs", key="nav_tech_specs"):
-            if model_selected():
+            if is_model_selected():
                 st.session_state.section = "tech_specs"
                 st.session_state.run_tech_specs = True
                 st.session_state.nav_error = None
@@ -199,7 +196,7 @@ def top_navbar():
 
     with btn2:
         if st.button("⚡ Load Specs", key="nav_load_specs"):
-            if model_selected():
+            if is_model_selected():
                 st.session_state.section = "load_specs"
                 st.session_state.run_load_calc = True
                 st.session_state.nav_error = None
@@ -210,7 +207,7 @@ def top_navbar():
 
     with btn3:
         if st.button("⚖️ Compare", key="nav_compare"):
-            if model_selected():
+            if is_model_selected():
                 st.session_state.section = "compare"
                 st.session_state.run_compare = True
                 st.session_state.nav_error = None
@@ -221,7 +218,7 @@ def top_navbar():
 
     with btn4:
         if st.button("💰 Cost Analysis", key="nav_cost"):
-            if model_selected():
+            if is_model_selected():
                 st.session_state.section = "cost"
                 st.session_state.run_cost_calc = True
                 st.session_state.nav_error = None
@@ -232,7 +229,7 @@ def top_navbar():
 
     with btn5:
         if st.button("🧮 Parallel Calculator", key="nav_parallel_calc"):
-            if model_selected():
+            if is_model_selected():
                 st.session_state.section = "parallel_calc"
                 st.session_state.run_parallel_calc = True
                 st.session_state.nav_error = None
@@ -241,7 +238,7 @@ def top_navbar():
             else:
                 st.session_state.nav_error = "parallel"
 
-    # 🔔 Error popup (outside column blocks)
+    # Error popup (outside column blocks)
     nav_error = st.session_state.get("nav_error")
     if nav_error:
         st.error("❌ Please select an EBOSS model before continuing.")
