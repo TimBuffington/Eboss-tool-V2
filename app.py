@@ -94,30 +94,28 @@ st.markdown("""
 }
 st.markdown("""
 <style>
-/* Style for input boxes */
 input, select, textarea,
 .stTextInput > div > div,
 .stNumberInput > div > input {
-    background-color: #e0e0e0 !important;
-    color: #111 !important;
+    background-color:e0e0e0 !important;
+    color:111 !important;
     font-weight: bold !important;
     font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif !important;
     border-radius: 12px !important;
-    border: 1px solid #232325 !important;
+    border: 1px solid 232325 !important;
 }
 
-/* Explicitly style dropdown display text */
-.stSelectbox div[role="combobox"] *,
+.stSelectbox div[role="combobox"] ,
 .stSelectbox div[role="combobox"],
 .stSelectbox div[data-baseweb="select"] input,
 .stSelectbox div[data-baseweb="select"] div[role="combobox"],
 .stSelectbox div[data-baseweb="select"] span,
 .stSelectbox div[role="combobox"] input,
 .stSelectbox div[role="combobox"] > div {
-    color: #111 !important;  /* 👈 Match text to dark readable font */
-    background: #e0e0e0 !important;
+    color:111 !important;  
+    background:e0e0e0 !important;
     font-weight: bold !important;
-    -webkit-text-fill-color: #111 !important;
+    -webkit-text-fill-color:111 !important;
 }
 </style>
 """, unsafe_allow_html=True)
