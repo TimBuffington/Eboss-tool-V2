@@ -297,7 +297,7 @@ def render_home():
         # 🟦 Column 1: EBOSS Configuration
         with col1:
             st.markdown('<div class="form-container">', unsafe_allow_html=True)
-            st.markdown('<h3 class="form-section-title">EBOSS® Configuration</h3>', unsafe_allow_html=True)
+            st.markdown('<h3 class="form-section-title">EBOSS®</h3>', unsafe_allow_html=True)
 
             model = st.selectbox("Model", ["EB25 kVA", "EB70 kVA", "EB125 kVA", "EB220 kVA", "EB400 kVA"], key="model_select")
             gen_type = st.selectbox("Type", ["Full Hybrid", "Power Module"], key="gen_type_select")
@@ -312,7 +312,7 @@ def render_home():
         # 🟩 Column 2: Load Parameters
         with col2:
             st.markdown('<div class="form-container">', unsafe_allow_html=True)
-            st.markdown('<h3 class="form-section-title">Load Requirements</h3>', unsafe_allow_html=True)
+            st.markdown('<h3 class="form-section-title">Load</h3>', unsafe_allow_html=True)
 
             cont_load = st.number_input("Continuous Load", 0, 500, step=1, format="%d", key="cont_input")
             peak_load = st.number_input("Max Peak Load", 0, 500, step=1, format="%d", key="peak_input")
@@ -322,7 +322,7 @@ def render_home():
         # 🟨 Column 3: Power Settings
         with col3:
             st.markdown('<div class="form-container">', unsafe_allow_html=True)
-            st.markdown('<h3 class="form-section-title">Power Settings</h3>', unsafe_allow_html=True)
+            st.markdown('<h3 class="form-section-title">Units</h3>', unsafe_allow_html=True)
 
             load_units = st.selectbox("Units", ["kW", "Amps"], key="unit_select")
             voltage = st.selectbox("Voltage", ["480V", "240V", "208V"], key="voltage_select")
