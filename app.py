@@ -288,11 +288,7 @@ def render_training_form():
     top_navbar()
     # ...your form code remains unchanged...
 #=============================================================================================================================
-def render_home():
-    show_logo_and_title("EBOSS® Size & Spec Tool")
-    render_user_input_form()
-    top_navbar()
-    
+   
 def render_user_input_form():
     col1, col2, col3 = st.columns([1, 1, 1])
 
@@ -456,7 +452,10 @@ def render_calculate_buttons():
 
 
 #==============================================================================================================================
-
+def render_home():
+    show_logo_and_title("EBOSS® Size & Spec Tool")
+    top_navbar()
+    render_user_input_form()
 #=================================================================================================
 def interpolate_gph(kva, load_pct):
     kva_map = {
