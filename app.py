@@ -105,13 +105,6 @@ a, a:visited, a:active {
     font-weight: bold !important;
     text-shadow: none !important;
 }
-.stSelectbox div[role="combobox"], 
-.stSelectbox div[role="combobox"] span {
-    color: #111 !important;
-    background: #e0e0e0 !important;
-    font-weight: bold !important;
-    text-shadow: none !important;
-}
 </style>
 """, unsafe_allow_html=True)
 
