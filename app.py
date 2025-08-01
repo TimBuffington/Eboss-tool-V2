@@ -657,40 +657,41 @@ def render_tech_specs_page():
         return
 
     for section, items in specs.items():
-        st.markdown(f"""
-        <div style="background-color:#232325; color:white; font-weight:bold;
-                    padding:0.7rem 1rem; border-radius:8px; font-size:1rem;
-                    margin:2rem 0 1rem 0; text-transform:uppercase;">
-            {section}
-        </div>
-        """, unsafe_allow_html=True)
+    st.markdown(f"""
+    <div style="background-color:#232325; color:white; font-weight:bold;
+                padding:0.7rem 1rem; border-radius:8px; font-size:1rem;
+                margin:2rem 0 1rem 0; text-transform:uppercase;">
+        {section}
+    </div>
+    """, unsafe_allow_html=True)
 
-        for i in range(0, len(items), 2):
-            col1, col2 = st.columns(2)
+    for i in range(0, len(items), 2):
+        col1, col2 = st.columns(2)
 
-            with col1:
-                if i < len(items):
-                    label, value = items[i]
-                    st.markdown(f"""
-                    <div style="background:#f5f5f5; border-radius:10px; padding:1rem;
-                                margin-bottom:1.2rem; box-shadow:0 1px 4px rgba(0,0,0,0.08);
-                                border:1px solid #ddd;">
-                        <div style="font-weight:bold; font-size:0.95rem; margin-bottom:0.3rem;">{label}</div>
-                        <div style="font-size:0.95rem;">{value}</div>
-                    </div>
-                    """, unsafe_allow_html=True)
+        with col1:
+            if i < len(items):
+                label, value = items[i]
+                st.markdown(f"""
+                <div style="background:#2b2b2b; border-radius:10px; padding:1rem;
+                            margin-bottom:1.2rem; box-shadow:0 1px 6px rgba(0,0,0,0.15);
+                            border:1px solid #444; color:white;">
+                    <div style="font-weight:bold; font-size:0.95rem; margin-bottom:0.3rem;">{label}</div>
+                    <div style="font-size:0.95rem;">{value}</div>
+                </div>
+                """, unsafe_allow_html=True)
 
-            with col2:
-                if i + 1 < len(items):
-                    label, value = items[i + 1]
-                    st.markdown(f"""
-                    <div style="background:#f5f5f5; border-radius:10px; padding:1rem;
-                                margin-bottom:1.2rem; box-shadow:0 1px 4px rgba(0,0,0,0.08);
-                                border:1px solid #ddd;">
-                        <div style="font-weight:bold; font-size:0.95rem; margin-bottom:0.3rem;">{label}</div>
-                        <div style="font-size:0.95rem;">{value}</div>
-                    </div>
-                    """, unsafe_allow_html=True)
+        with col2:
+            if i + 1 < len(items):
+                label, value = items[i + 1]
+                st.markdown(f"""
+                <div style="background:#2b2b2b; border-radius:10px; padding:1rem;
+                            margin-bottom:1.2rem; box-shadow:0 1px 6px rgba(0,0,0,0.15);
+                            border:1px solid #444; color:white;">
+                    <div style="font-weight:bold; font-size:0.95rem; margin-bottom:0.3rem;">{label}</div>
+                    <div style="font-size:0.95rem;">{value}</div>
+                </div>
+                """, unsafe_allow_html=True)
+
 
 
 
