@@ -9,16 +9,7 @@ st.markdown("""
     background-size: cover !important;
 }
 
-.form-section-title, h1 {
-    font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
-    font-size: 2.2rem;
-    font-weight: 800;
-    color: #fff;
-    text-shadow: 2px 2px 10px #232325bb, 0 1px 2px #232325cc;
-    text-align: center;
-    margin-bottom: 1.6rem;
-    letter-spacing: .04em;
-}
+
 .stButton > button, .eboss-hero-btn {
     width: 100%;
     min-width: 150px;
