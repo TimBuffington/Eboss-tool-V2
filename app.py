@@ -12,18 +12,7 @@ st.markdown("""
 
 
 
-input:focus, select:focus, textarea:focus, 
-.stSelectbox > div > div:focus, .stTextInput > div > div:focus {
-    background-color: #e0e0e0 !important
-    border: 2px solid #81BD47 !important;
-    color: #111  !important;
-    font-weight: bold !important;
-    font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif !important;
-    text-shadow: none !important;
-    border-radius: 12px !important;
-    box-shadow: none !important;
-    padding: 0.65rem 1.1rem !important;
-}
+
 a, a:visited, a:active {
     text-decoration: none !important;
     color: inherit !important;
