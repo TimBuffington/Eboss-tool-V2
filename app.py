@@ -259,7 +259,6 @@ def render_training_form():
    
 def render_user_input_form():
     show_logo_and_title("Tech Specs")
-    top_navbar()
     model = st.session_state.get("model_select", "")
     if not model:
         st.warning("Please select an EBOSS model.")
