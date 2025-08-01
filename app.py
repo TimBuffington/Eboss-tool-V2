@@ -326,7 +326,122 @@ Eboss_Charge_Rates = {
     400: {"full_hybrid": 172, "power_module": 158, "max": 220}
 }
 
+def render_user_input_form():
+    st.markdown("## System Configuration")
 
+    col1, col2, col3 = st.columns([1, 1, 1])
+
+    with col1:
+        st.markdown('<div class="form-container">', unsafe_allow_html=True)
+        st.markdown('<h3 class="form-section-title">EBOSS® Config</h3>', unsafe_allow_html=True)
+
+        model = st.selectbox("Model", ["EB25 kVA", "EB70 kVA", "EB125 kVA", "EB220 kVA", "EB400 kVA"], key="model_select")
+        gen_type = st.selectbox("Type", ["Full Hybrid", "Power Module"], key="gen_type_select")
+        kva_option = st.selectbox("Generator Size", ["25kVA", "45kVA", "65kVA", "125kVA", "220kVA", "400kVA"], key="kva_select") if gen_type == "Power Module" else None
+
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    with col2:
+        st.markdown('<div class="form-container">', unsafe_allow_html=True)
+        st.markdown('<h3 class="form-section-title">Load</h3>', unsafe_allow_html=True)
+
+        cont_load = st.number_input("Continuous Load", 0, 500, step=1, format="%d", key="cont_input")
+        peak_load = st.number_input("Max Peak Load", 0, 500, step=1, format="%d", key="peak_input")
+
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    with col3:
+        st.markdown('<div class="form-container">', unsafe_allow_html=True)
+        st.markdown('<h3 class="form-section-title">Power Settings</h3>', unsafe_allow_html=True)
+
+        load_units = st.selectbox("Units", ["kW", "Amps"], key="unit_select")
+        voltage = st.selectbox("Voltage", ["480V", "240V", "208V"], key="voltage_select")
+
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # Store values
+    pf = 0.8
+    v_val = int(voltage.replace("V", ""))
+
+    if load_units == "Amps":
+        cont_kw = (cont_load * (3 ** 0.5) * v_val * pf) / 1000
+        peak_kw = (peak_load * (3 ** 0.5) * v_val * pf) / 1000
+        if v_val != 480:
+            cont_kw = (cont_load * (3 ** 0.5) * 480 * pf) / 1000
+            peak_kw = (peak_load * (3 ** 0.5) * 480 * pf) / 1000
+    else:
+        cont_kw = cont_load
+        peak_kw = peak_load
+
+ # Lookups
+EBOSS_BATTERY_KWH = {
+    "EB25 kVA": 15,
+    "EB70 kVA": 25,
+    "EB125 kVA": 50,
+    "EB220 kVA": 75,
+    "EB400 kVA": 125
+}
+
+model = st.session_state.user_inputs["model"]
+gen_type = st.session_state.user_inputs["gen_type"]
+cont_kw = st.session_state.user_inputs["cont_kw"]
+pm_kva = EBOSS_KVA[model]
+battery_kwh = EBOSS_BATTERY_KWH[model]
+
+# Get charge rate by EBOSS size and type
+charge_rate = Eboss_Charge_Rates[pm_kva]["power_module" if gen_type == "Power Module" else "full_hybrid"]
+max_safe_limit = charge_rate * 0.9
+efficiency_target = battery_kwh * (2 / 3)
+
+# Display status
+st.markdown("### 🔒 Load Threshold Check")
+
+if cont_kw > charge_rate:
+    st.error(f"❌ Load ({cont_kw:.1f} kW) exceeds the max charge rate of {charge_rate:.1f} kW for {model}.")
+elif cont_kw > max_safe_limit:
+    st.warning(f"⚠️ Load is above 90% of the EBOSS charge rate ({charge_rate:.1f} kW).")
+elif cont_kw > efficiency_target:
+    st.info(f"ℹ️ Load is within safe range but above the fuel-efficiency threshold (~{efficiency_target:.1f} kW).")
+else:
+    st.success(f"✅ Load is optimal for fuel efficiency (≤ {efficiency_target:.1f} kW).")
+
+colA, _, colB = st.columns([1, 0.1, 1])
+
+with colA:
+    if st.button("🧮 Calculate", key="btn_calculate"):
+        active_page = st.session_state.get("section")
+        if active_page == "load_specs":
+            st.session_state.run_load_calc = True
+        elif active_page == "cost":
+            st.session_state.run_cost_calc = True
+        elif active_page == "parallel_calc":
+            st.session_state.run_parallel_calc = True
+        elif active_page == "tech_specs":
+            st.session_state.run_tech_specs = True
+        elif active_page == "compare":
+            st.session_state.run_compare = True
+        st.session_state.calculation_done = True
+
+with colB:
+    if st.button("♻️ Clear", key="btn_clear"):
+        st.session_state.user_inputs = {
+            "model": "EB25 kVA",
+            "gen_type": "Full Hybrid",
+            "kva_option": None,
+            "cont_kw": 0,
+            "peak_kw": 0,
+            "raw_cont_load": 0,
+            "raw_peak_load": 0,
+            "load_units": "kW",
+            "voltage": "480V"
+        }
+        st.session_state.calculation_done = False
+        st.session_state.run_cost_calc = False
+        st.session_state.run_load_calc = False
+        st.session_state.run_parallel_calc = False
+        st.session_state.run_tech_specs = False
+        st.session_state.run_compare = False
+        st.rerun()
 
 # ---- HOME PAGE / MAIN TOOL ----
 def render_home():
