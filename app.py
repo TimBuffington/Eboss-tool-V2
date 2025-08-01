@@ -207,17 +207,17 @@ def show_logo_and_title(title):
 def top_navbar():
     btn1, btn2, btn3, btn4, btn5 = st.columns(5)
 
-with btn1:
-    if st.button("🧑‍🔧 Tech Specs", key="nav_tech_specs"):
-        st.session_state.selected_form = "tool"
-        st.session_state.section = "tech_specs"
-        st.session_state.run_tech_specs = True
-        st.session_state.landing_shown = False
-        st.rerun()
-
+    with btn1:
+        if st.button("🧑‍🔧 Tech Specs", key="nav_tech_specs"):
+            st.session_state.selected_form = "tool"
+            st.session_state.section = "tech_specs"
+            st.session_state.run_tech_specs = True
+            st.session_state.landing_shown = False
+            st.rerun()
 
     with btn2:
         if st.button("⚡ Load Specs", key="nav_load_specs"):
+            st.session_state.selected_form = "tool"
             st.session_state.section = "load_specs"
             st.session_state.run_load_calc = True
             st.session_state.landing_shown = False
@@ -225,6 +225,7 @@ with btn1:
 
     with btn3:
         if st.button("⚖️ Compare", key="nav_compare"):
+            st.session_state.selected_form = "tool"
             st.session_state.section = "compare"
             st.session_state.run_compare = True
             st.session_state.landing_shown = False
@@ -232,6 +233,7 @@ with btn1:
 
     with btn4:
         if st.button("💰 Cost Analysis", key="nav_cost"):
+            st.session_state.selected_form = "tool"
             st.session_state.section = "cost"
             st.session_state.run_cost_calc = True
             st.session_state.landing_shown = False
@@ -239,6 +241,7 @@ with btn1:
 
     with btn5:
         if st.button("🧮 Parallel Calculator", key="nav_parallel_calc"):
+            st.session_state.selected_form = "tool"
             st.session_state.section = "parallel_calc"
             st.session_state.run_parallel_calc = True
             st.session_state.landing_shown = False
