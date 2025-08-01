@@ -105,6 +105,18 @@ a, a:visited, a:active {
     font-weight: bold !important;
     text-shadow: none !important;
 }
+.stSelectbox div[data-baseweb="select"] input,
+.stSelectbox div[data-baseweb="select"] div[role="combobox"],
+.stSelectbox div[data-baseweb="select"] span,
+.stSelectbox div[role="combobox"] input,
+.stSelectbox div[role="combobox"] > div {
+    color: #111 !important;
+    background: #e0e0e0 !important;
+    font-weight: bold !important;
+    text-shadow: none !important;
+    caret-color: #111 !important;
+    -webkit-text-fill-color: #111 !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
