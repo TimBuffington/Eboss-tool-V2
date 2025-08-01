@@ -3,29 +3,35 @@ from datetime import date
 import pandas as pd
 
 @st.cache_data
-def load_spec_table():
-    url = "https://github.com/TimBuffington/Eboss-tool-V2/blob/main/assets/stats.xlsx"
-    df = pd.read_excel(url)
-    model_spec_table = {}
+def load_transposed_spec_table():
+    import pandas as pd
 
-    for model in df["Model"].unique():
-        model_df = df[df["Model"] == model]
-        blocks = []
-        current_block = {"header": "", "rows": []}
+    # ✅ Raw Excel URL from your GitHub repo
+    url = "https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/EBStats.xlsx"
+    df = pd.read_excel(url, header=None)
 
-        for _, row in model_df.iterrows():
-            if pd.isna(row["Spec Value"]):
-                if current_block["rows"]:
-                    blocks.append(current_block)
-                    current_block = {"header": "", "rows": []}
-                current_block["header"] = row["Spec Name"]
-            else:
-                current_block["rows"].append((row["Spec Name"], row["Spec Value"]))
-        if current_block["rows"]:
-            blocks.append(current_block)
-        model_spec_table[model] = blocks
+    # ✅ First row = model names, first column = spec labels
+    models = df.iloc[0, 1:].tolist()
+    labels = df.iloc[:, 0].tolist()
 
-    return model_spec_table
+    # ✅ Create empty list per model
+    model_spec_data = {model: [] for model in models}
+    current_header = None
+
+    # ✅ Start reading rows from row 2 onward (skip model header + blank line)
+    for i, label in enumerate(labels[2:], start=2):
+        if pd.isna(df.iloc[i, 1]):
+            # This is a section title row
+            current_header = df.iloc[i, 0]
+        else:
+            for col_index, model in enumerate(models, start=1):
+                model_spec_data[model].append({
+                    "section": current_header,
+                    "label": df.iloc[i, 0],
+                    "value": df.iloc[i, col_index]
+                })
+
+    return model_spec_data
 
 
 def apply_custom_css():
