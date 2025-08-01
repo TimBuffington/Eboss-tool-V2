@@ -8,6 +8,28 @@ st.markdown("""
     background: url("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/bg.png") no-repeat center center fixed !important;
     background-size: cover !important;
 }
+input, select, textarea, .stSelectbox > div > div, .stTextInput > div > div {
+    background-color: #e0e0e0 !important;
+    border: .5px solid #232325 !important;
+    color: #111 !important;
+    font-weight: bold !important;
+    font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif !important;
+    text-shadow: none !important;
+    border-radius: 12px !important;
+    box-shadow: none !important;
+    padding: 0.65rem 1.1rem !important;
+}
+input:focus, select:focus, textarea:focus, 
+.stSelectbox > div > div:focus, .stTextInput > div > div:focus {
+    border: 2px solid #81BD47 !important;
+    color: #111 !important;
+    font-weight: bold !important;
+    font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif !important;
+    text-shadow: none !important;
+    border-radius: 12px !important;
+    box-shadow: none !important;
+    padding: 0.65rem 1.1rem !important;
+}
 .logo-header {
     display: flex;
     justify-content: center;
