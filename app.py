@@ -8,28 +8,7 @@ st.markdown("""
     background: url("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/bg.png") no-repeat center center fixed !important;
     background-size: cover !important;
 }
-.logo-header {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 1.2rem;
-    width: 100%;
-}
-.logo-header img {
-    width: 600px;
-    max-width: 90vw;
-    height: auto;
-    filter: drop-shadow(0 2px 16px rgba(0,0,0,0.28));
-    margin-top: 1.0rem;
-    border-radius: 0.4rem;
-}
-@media (max-width: 600px) {
-    .logo-header img {
-        width: 150px !important;
-        max-width: 90vw !important;
-        margin-top: 0.4rem;
-    }
-}
+
 .form-section-title, h1 {
     font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
     font-size: 2.2rem;
