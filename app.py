@@ -302,7 +302,7 @@ def render_user_input_form():
     else:
         cont_kw = cont_load
         peak_kw = peak_load
-        render_calculate_buttons()
+       
 #========================================================================================================
 def display_load_threshold_check(user_inputs):
     # Reference data
@@ -476,15 +476,6 @@ def render_tech_specs_page():
     show_logo_and_title("Tech Specs")
     top_navbar()
 
-    if not st.session_state.get("run_tech_specs"):
-        st.warning("Please fill out the form and click 'Calculate' before viewing Tech Specs.")
-        return
-
-    model = st.session_state.user_inputs.get("model", "")
-    if not model:
-        st.warning("No model selected.")
-        return
-
     # Convert user-facing model to spreadsheet label
     model_map = {
         "EB25 kVA": "EBOSS 25 kVA",
@@ -523,11 +514,6 @@ def render_load_specs_page():
     show_logo_and_title("Load Specs")
     render_user_input_form()
     top_navbar()
-
-    model = st.session_state.get("model_select", "")
-    if not model:
-        st.warning("Please select an EBOSS model.")
-        return
     inputs = st.session_state.user_inputs
 
     model = inputs.get("model")
@@ -580,7 +566,6 @@ def render_load_specs_page():
 
 def render_compare_page():
     show_logo_and_title("Comparison")
-    show_logo_and_title("Tech Specs")
     render_user_input_form()
     top_navbar()
 
