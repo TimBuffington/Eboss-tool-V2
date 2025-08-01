@@ -163,7 +163,7 @@ def top_navbar():
 
 # ---- LANDING PAGE ----
 def landing_page():
-    show_logo_and_title("EBOSS® Hybrid Energy System<br>Specs and Comparison Tool")
+    show_logo_and_title("EBOSS&reg Hybrid Energy System<br>Specs and Comparison Tool")
     col1, col2 = st.columns(2, gap="large")
     with col1:
         if st.button("📋 Request a Demo", key="btn_demo"):
@@ -183,7 +183,7 @@ def landing_page():
         </a>
     """, unsafe_allow_html=True)
 
-        if st.button("🚀 Launch EBOSS® Tool", key="btn_launch"):
+        if st.button("🚀 Launch EBOSS&reg Tool", key="btn_launch"):
             st.session_state.selected_form = "tool"
             st.session_state.landing_shown = False
             st.rerun()
@@ -212,14 +212,14 @@ Eboss_Charge_Rates = {
 
 # ---- HOME PAGE / MAIN TOOL ----
 def render_home():
-    show_logo_and_title("EBOSS® Size & Spec Tool")
+    show_logo_and_title("EBOSS&reg Size & Spec Tool")
     top_navbar()
     with st.container():
         col1, col2 = st.columns([1, 1])
 
         with col1:
             st.markdown('<div class="form-container">', unsafe_allow_html=True)
-            st.markdown('<h3 class="form-section-title">EBOSS® Type / Model</h3>', unsafe_allow_html=True)
+            st.markdown('<h3 class="form-section-title">EBOSS&reg Type / Model</h3>', unsafe_allow_html=True)
             model = st.selectbox("Model", ["EB25 kVA", "EB70 kVA", "EB125 kVA", "EB220 kVA", "EB400 kVA"])
             gen_type = st.selectbox("Type", ["Full Hybrid", "Power Module"])
             kva_option = st.selectbox("Generator Size", ["25kVA", "45kVA", "65kVA", "125kVA", "220kVA", "400kVA"]) if gen_type == "Power Module" else None
@@ -472,7 +472,7 @@ def render_cost_analysis_page():
         delivery_fee = st.number_input("Delivery Fee ($)", 0.0, 1000.0, 75.0, 1.0)
         pm_interval = st.number_input("PM Interval (hrs)", 10.0, 1000.0, 500.0, 10.0)
         pm_cost = st.number_input("Cost per PM ($)", 0.0, 5000.0, 150.0, 10.0)
-        eboss_rent = st.number_input("EBOSS® Monthly Rental ($)", 0.0, 100000.0, 3800.0, 50.0)
+        eboss_rent = st.number_input("EBOSS&reg Monthly Rental ($)", 0.0, 100000.0, 3800.0, 50.0)
         std_rent = st.number_input("Standard Generator Monthly Rental ($)", 0.0, 100000.0, 3500.0, 50.0)
         std_gen = st.selectbox("Standard Generator Size", list(STANDARD_GENERATORS.keys()))
         st.markdown('</div>', unsafe_allow_html=True)
@@ -514,7 +514,7 @@ def render_cost_analysis_page():
                     <thead>
                         <tr>
                             <th>Metric</th>
-                            <th>EBOSS® Model<br>{model}</th>
+                            <th>EBOSS&reg Model<br>{model}</th>
                             <th>Standard Generator<br>{std_gen}</th>
                             <th>Difference</th>
                         </tr>
@@ -732,7 +732,7 @@ def render_parallel_calculator_page():
             <div class="print-logo" style="text-align:center; margin-top:2rem;">
               <img src="https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png" width="240"><br><br>
               <div style="font-size:1.3rem; font-weight:bold;">
-                EBOSS® Parallel Sizing and Generator Comparison Report
+                EBOSS&reg Parallel Sizing and Generator Comparison Report
               </div>
               <div style="font-size:0.9rem; margin-top:0.2rem;">{today}</div>
               <div style="font-size:0.95rem; margin-top:0.8rem;">
