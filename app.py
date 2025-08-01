@@ -67,9 +67,9 @@ st.markdown("""
     transform: scale(1.04) translateY(-2px);
 }
 input, select, textarea, .stSelectbox > div > div, .stTextInput > div > div {
-    background-color: #111 !important;
+    background-color: #e0e0e0 !important;
     border: .5px solid #232325 !important;
-    color: #e0e0e0  !important;
+    color: #111  !important;
     font-weight: bold !important;
     font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif !important;
     text-shadow: none !important;
@@ -79,9 +79,9 @@ input, select, textarea, .stSelectbox > div > div, .stTextInput > div > div {
 }
 input:focus, select:focus, textarea:focus, 
 .stSelectbox > div > div:focus, .stTextInput > div > div:focus {
-    background-color: #111 !important
+    background-color: #e0e0e0 !important
     border: 2px solid #81BD47 !important;
-    color: #e0e0e0  !important;
+    color: #111  !important;
     font-weight: bold !important;
     font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif !important;
     text-shadow: none !important;
