@@ -497,7 +497,35 @@ def render_tech_specs_page():
     show_logo_and_title("Tech Specs")
     top_navbar()
 
-    # Map display name to Excel model name
+    import pandas as pd
+
+    @st.cache_data
+    def load_spec_table():
+        url = "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/data/EBoss%20Stats%20final.xlsx"
+        df = pd.read_excel(url)
+        model_spec_table = {}
+
+        for model in df["Model"].unique():
+            model_df = df[df["Model"] == model]
+            blocks = []
+            current_block = {"header": "", "rows": []}
+
+            for _, row in model_df.iterrows():
+                if pd.isna(row["Spec Value"]):
+                    if current_block["rows"]:
+                        blocks.append(current_block)
+                        current_block = {"header": "", "rows": []}
+                    current_block["header"] = row["Spec Name"]
+                else:
+                    current_block["rows"].append((row["Spec Name"], row["Spec Value"]))
+            if current_block["rows"]:
+                blocks.append(current_block)
+            model_spec_table[model] = blocks
+
+        return model_spec_table
+
+    complete_model_spec_data = load_spec_table()
+
     model_map = {
         "EB25 kVA": "EBOSS 25 kVA",
         "EB70 kVA": "EBOSS 70 kVA",
@@ -505,7 +533,7 @@ def render_tech_specs_page():
         "EB220 kVA": "EBOSS 220 kVA",
         "EB400 kVA": "EBOSS 400 kVA"
     }
-    
+
     model = st.session_state.get("model_select", "EB25 kVA")
     excel_model = model_map.get(model)
     spec_blocks = complete_model_spec_data.get(excel_model, [])
@@ -515,7 +543,6 @@ def render_tech_specs_page():
         return
 
     for block in spec_blocks:
-        # Section Header
         st.markdown(f"""
         <div style="
             background-color:#232325; 
@@ -532,7 +559,6 @@ def render_tech_specs_page():
         </div>
         """, unsafe_allow_html=True)
 
-        # Display rows as cards in 2-column layout
         rows = block['rows']
         for i in range(0, len(rows), 2):
             col1, col2 = st.columns(2)
@@ -570,6 +596,7 @@ def render_tech_specs_page():
                         <div style="font-size:0.95rem;">{value}</div>
                     </div>
                     """, unsafe_allow_html=True)
+
 
 # ---- LOAD SPECS PAGE ----
 def render_load_specs_page():
