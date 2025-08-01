@@ -289,7 +289,7 @@ def render_user_input_form():
     else:
         cont_kw = cont_load
         peak_kw = peak_load
-         render_calculate_buttons()
+        render_calculate_buttons()
 #========================================================================================================
 def display_load_threshold_check(user_inputs):
     # Reference data
