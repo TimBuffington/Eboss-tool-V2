@@ -654,40 +654,54 @@ def render_tech_specs_page():
         return
 
     for section, items in specs.items():
-        st.markdown(f"""
-        <div style="background-color:#232325; color:white; font-weight:bold;
-                    padding:0.7rem 1rem; border-radius:8px; font-size:1rem;
-                    margin:2rem 0 1rem 0; text-transform:uppercase;">
-            {section}
-        </div>
-        """, unsafe_allow_html=True)
+    st.markdown(f"""
+    <div style="background-color:#636569; color:#fff; font-weight:700;
+                padding:0.85rem 1.2rem; border-radius:10px;
+                font-size:1.2rem; margin:2rem 0 1rem 0;
+                text-transform:uppercase; letter-spacing:0.04em;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.4);">
+        {section}
+    </div>
+    """, unsafe_allow_html=True)
 
-        for i in range(0, len(items), 2):
-            col1, col2 = st.columns(2)
+    for i in range(0, len(items), 2):
+        col1, col2 = st.columns(2)
 
-            with col1:
-                if i < len(items):
-                    label, value = items[i]
+        for idx, col in enumerate([col1, col2]):
+            if i + idx < len(items):
+                label, value = items[i + idx]
+                with col:
                     st.markdown(f"""
-                    <div style="background:#2b2b2b; border-radius:10px; padding:1rem;
-                                margin-bottom:1.2rem; box-shadow:0 1px 6px rgba(0,0,0,0.15);
-                                border:1px solid #444; color:white;">
-                        <div style="font-weight:bold; font-size:0.95rem; margin-bottom:0.3rem;">{label}</div>
-                        <div style="font-size:0.95rem;">{value}</div>
+                    <div style="
+                        background: linear-gradient(145deg, #000000, #1b1b1b);
+                        border-radius: 16px;
+                        padding: 1.4rem 1.8rem;
+                        margin-bottom: 1.5rem;
+                        border: 1px solid #939598;
+                        color: #FFFFFF;
+                        box-shadow: 0 8px 20px rgba(0,0,0,0.65),
+                                    inset 0 1px 2px rgba(255,255,255,0.05);
+                        transition: transform 0.2s ease-in-out;
+                    ">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="
+                                font-size: 1.05rem;
+                                font-weight: 600;
+                                color: #81BD47;
+                                text-shadow: 0 1px 1px rgba(0,0,0,0.6);">
+                                {label}
+                            </div>
+                            <div style="
+                                font-size: 1.2rem;
+                                font-weight: 700;
+                                color: #FFFFFF;
+                                text-shadow: 0 2px 4px rgba(0,0,0,0.4);">
+                                {value}
+                            </div>
+                        </div>
                     </div>
                     """, unsafe_allow_html=True)
 
-            with col2:
-                if i + 1 < len(items):
-                    label, value = items[i + 1]
-                    st.markdown(f"""
-                    <div style="background:#2b2b2b; border-radius:10px; padding:1rem;
-                                margin-bottom:1.2rem; box-shadow:0 1px 6px rgba(0,0,0,0.15);
-                                border:1px solid #444; color:white;">
-                        <div style="font-weight:bold; font-size:0.95rem; margin-bottom:0.3rem;">{label}</div>
-                        <div style="font-size:0.95rem;">{value}</div>
-                    </div>
-                    """, unsafe_allow_html=True)
 
 
 # ---- LOAD SPECS PAGE ----
