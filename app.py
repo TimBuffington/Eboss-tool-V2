@@ -245,10 +245,7 @@ def render_training_form():
     # ...your form code remains unchanged...
 #=============================================================================================================================
 def render_user_input_form():
-    render_calculate_buttons()
-
     st.markdown("## System Configuration")
-
     col1, col2, col3 = st.columns([1, 1, 1])
 
     with col1:
@@ -292,6 +289,7 @@ def render_user_input_form():
     else:
         cont_kw = cont_load
         peak_kw = peak_load
+         render_calculate_buttons()
 #========================================================================================================
 def display_load_threshold_check(user_inputs):
     # Reference data
