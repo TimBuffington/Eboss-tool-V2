@@ -96,7 +96,7 @@ st.markdown("""
 input, select, textarea,
 .stTextInput > div > div,
 .stNumberInput > div > input {
-    background-color:e0e0e0 !important;
+    background-color:#d8d8d8 !important;
     color:111 !important;
     font-weight: bold !important;
     font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif !important;
