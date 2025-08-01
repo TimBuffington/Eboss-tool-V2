@@ -217,45 +217,79 @@ def render_home():
     with st.container():
         col1, col2 = st.columns([1, 1])
 
+        # ---- LEFT COLUMN: System Configuration ----
         with col1:
             st.markdown('<div class="form-container">', unsafe_allow_html=True)
             st.markdown('<h3 class="form-section-title">EBOSS&reg Type / Model</h3>', unsafe_allow_html=True)
-            model = st.selectbox("Model", ["EB25 kVA", "EB70 kVA", "EB125 kVA", "EB220 kVA", "EB400 kVA"])
-            gen_type = st.selectbox("Type", ["Full Hybrid", "Power Module"])
-            kva_option = st.selectbox("Generator Size", ["25kVA", "45kVA", "65kVA", "125kVA", "220kVA", "400kVA"]) if gen_type == "Power Module" else None
+
+            # MODEL SELECT
+            model_options = ["EB25 kVA", "EB70 kVA", "EB125 kVA", "EB220 kVA", "EB400 kVA"]
+            default_model = st.session_state.get("model", model_options[0])
+            model = st.selectbox("Model", model_options,
+                                 index=model_options.index(default_model),
+                                 key="model_select")
+
+            # GEN TYPE SELECT
+            gen_type_options = ["Full Hybrid", "Power Module"]
+            default_gen_type = st.session_state.get("gen_type", gen_type_options[0])
+            gen_type = st.selectbox("Type", gen_type_options,
+                                    index=gen_type_options.index(default_gen_type),
+                                    key="gen_type_select")
+
+            # GENERATOR SIZE (conditional)
+            gen_sizes = ["25kVA", "45kVA", "65kVA", "125kVA", "220kVA", "400kVA"]
+            if gen_type == "Power Module":
+                default_kva = st.session_state.get("kva_option", gen_sizes[0])
+                kva_option = st.selectbox("Generator Size", gen_sizes,
+                                          index=gen_sizes.index(default_kva),
+                                          key="kva_select")
+            else:
+                kva_option = None
             st.markdown('</div>', unsafe_allow_html=True)
 
+        # ---- RIGHT COLUMN: Load Parameters ----
         with col2:
             st.markdown('<div class="form-container">', unsafe_allow_html=True)
             st.markdown('<h3 class="form-section-title">Load Parameters</h3>', unsafe_allow_html=True)
-            # Clean number inputs (integers, black font)
-            cont_load = st.number_input("Continuous Load", 0, 500, step=1, format="%d")
-            peak_load = st.number_input("Max Peak Load", 0, 500, step=1, format="%d")
-            load_units = st.selectbox("Units", ["kW", "Amps"])
-            voltage = st.selectbox("Voltage", ["480V", "240V", "208V"])
+
+            # CONTINUOUS LOAD
+            cont_load = st.number_input("Continuous Load", 0, 500,
+                                        value=st.session_state.get("raw_cont_load", 0),
+                                        step=1, format="%d", key="cont_input")
+
+            # PEAK LOAD
+            peak_load = st.number_input("Max Peak Load", 0, 500,
+                                        value=st.session_state.get("raw_peak_load", 0),
+                                        step=1, format="%d", key="peak_input")
+
+            # UNITS
+            unit_options = ["kW", "Amps"]
+            load_units = st.selectbox("Units", unit_options,
+                                      index=unit_options.index(st.session_state.get("load_units", "kW")),
+                                      key="units_select")
+
+            # VOLTAGE
+            voltages = ["480V", "240V", "208V"]
+            voltage = st.selectbox("Voltage", voltages,
+                                   index=voltages.index(st.session_state.get("voltage", "480V")),
+                                   key="voltage_select")
             st.markdown('</div>', unsafe_allow_html=True)
 
-        pf = 0.8  # Power factor, adjust as needed
+        # ---- Calculations ----
+        pf = 0.8
         v_val = int(voltage.replace("V", ""))
 
-        # Convert to kW at 480V for all downstream logic
         if load_units == "Amps":
             cont_kw = (cont_load * (3 ** 0.5) * v_val * pf) / 1000
             peak_kw = (peak_load * (3 ** 0.5) * v_val * pf) / 1000
+            if v_val != 480:
+                cont_kw = (cont_load * (3 ** 0.5) * 480 * pf) / 1000
+                peak_kw = (peak_load * (3 ** 0.5) * 480 * pf) / 1000
         else:
             cont_kw = cont_load
             peak_kw = peak_load
 
-        # Always convert to equivalent 480V kW for sizing
-        # (If you want to always convert to 480V, adjust v_val to 480 here)
-        if load_units == "Amps" and v_val != 480:
-            # Convert amps at v_val to kW, then scale that kW to what it would be at 480V
-            kw_480 = (cont_load * (3 ** 0.5) * 480 * pf) / 1000
-            cont_kw = kw_480
-            kw_480_peak = (peak_load * (3 ** 0.5) * 480 * pf) / 1000
-            peak_kw = kw_480_peak
-
-        # Store all inputs for use on all pages
+        # ---- Store All Values in Session ----
         st.session_state.user_inputs = {
             "model": model,
             "gen_type": gen_type,
@@ -267,32 +301,14 @@ def render_home():
             "load_units": load_units,
             "voltage": voltage,
         }
+        st.session_state.model = model
+        st.session_state.gen_type = gen_type
+        st.session_state.kva_option = kva_option
+        st.session_state.raw_cont_load = cont_load
+        st.session_state.raw_peak_load = peak_load
+        st.session_state.load_units = load_units
+        st.session_state.voltage = voltage
 
-        # Charge rate checks for Power Module
-        if gen_type == "Power Module" and kva_option:
-            gen_kva = int(kva_option.replace("kVA", ""))
-            pm_kva = EBOSS_KVA[model]
-            gen_max_kw = gen_kva * 0.8
-            pm_charge_rate = Eboss_Charge_Rates[pm_kva]["power_module"]
-
-            if gen_max_kw < pm_charge_rate:
-                st.warning(
-                    f"The selected generator ({gen_kva} kVA / {gen_max_kw:.1f} kW) is undersized for the selected Power Module's charge rate ({pm_charge_rate} kW)."
-                )
-                if st.button("Lower Power Module charge rate to fit generator"):
-                    adjusted_charge_rate = gen_max_kw * 0.95
-                    st.session_state.user_inputs["pm_charge_rate"] = adjusted_charge_rate
-                    st.success(
-                        f"Charge rate set to 95% of generator max output: {adjusted_charge_rate:.1f} kW"
-                    )
-                else:
-                    st.info("Please select a larger generator or lower the charge rate.")
-            else:
-                st.session_state.user_inputs["pm_charge_rate"] = pm_charge_rate
-        elif gen_type == "Power Module":
-            pm_kva = EBOSS_KVA[model]
-            pm_charge_rate = Eboss_Charge_Rates[pm_kva]["power_module"]
-            st.session_state.user_inputs["pm_charge_rate"] = pm_charge_rate
 
 
 
