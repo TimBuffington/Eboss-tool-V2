@@ -958,7 +958,7 @@ elif st.session_state.section == "parallel_calc":
     st.stop()
 # ---- FOOTER ----
 
-st.markdown("""
+st.markdown(r"""
 <style>
 .footer {
     position: relative;
