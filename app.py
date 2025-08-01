@@ -10,32 +10,7 @@ st.markdown("""
 }
 
 
-.stButton > button, .eboss-hero-btn {
-    width: 100%;
-    min-width: 150px;
-    max-width: 340px;
-    margin: 1rem auto;
-    padding: 1.1rem 0.5rem;
-    background: #232325 !important;
-    color: #fff !important;
-    border-radius: 18px !important;
-    border: none !important;
-    font-size: 1.24rem !important;
-    font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif !important;
-    font-weight: 700 !important;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.36), 0 2px 4px #0002, 0 0 0 #81BD47;
-    text-shadow: 2px 2px 7px #000, 0 2px 10px #81BD4740;
-    transition: box-shadow 0.22s, background 0.18s, transform 0.14s;
-    cursor: pointer;
-    display: block;
-    outline: none;
-    letter-spacing: .02em;
-}
-.stButton > button:hover, .stButton > button:focus, .eboss-hero-btn:hover, .eboss-hero-btn:focus {
-    box-shadow: 0 0 30px 8px #81BD47, 0 10px 32px rgba(0,0,0,0.55);
-    background: #2c2c2f !important;
-    transform: scale(1.04) translateY(-2px);
-}
+
 input, select, textarea, .stSelectbox > div > div, .stTextInput > div > div {
     background-color: #e0e0e0 !important;
     border: .5px solid #232325 !important;
