@@ -4,7 +4,7 @@ import pandas as pd
 
 @st.cache_data
 def load_spec_table():
-    url = "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/data/EBoss%20Stats%20final.xlsx"
+    url = "https://github.com/TimBuffington/Eboss-tool-V2/blob/main/assets/stats.xlsx"
     df = pd.read_excel(url)
     model_spec_table = {}
 
