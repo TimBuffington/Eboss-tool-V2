@@ -237,6 +237,7 @@ def top_navbar():
                 st.rerun()
             else:
                 st.session_state.nav_error = "parallel"
+st.markdown(f"🛠️ model_select = `{st.session_state.get('model_select')}`")
 
     # 🔔 Error popup (dismissible)
     nav_error = st.session_state.get("nav_error")
