@@ -208,11 +208,13 @@ def top_navbar():
     btn1, btn2, btn3, btn4, btn5 = st.columns(5)
 
     with btn1:
-        if st.button("🧑‍🔧 Tech Specs", key="nav_tech_specs"):
-            st.session_state.section = "tech_specs"
-            st.session_state.run_tech_specs = True
-            st.session_state.landing_shown = False
-            st.rerun()
+    if st.button("🧑‍🔧 Tech Specs", key="nav_tech_specs"):
+        st.session_state.selected_form = "tool"
+        st.session_state.section = "tech_specs"
+        st.session_state.run_tech_specs = True
+        st.session_state.landing_shown = False
+        st.rerun()
+
 
     with btn2:
         if st.button("⚡ Load Specs", key="nav_load_specs"):
@@ -550,7 +552,25 @@ def render_tech_specs_page():
                 if i < len(rows):
                     label, value = rows[i]
                     st.markdown(f"""
-                    <div style="b
+                    <div style="background:#f5f5f5; border-radius:10px; padding:1rem;
+                                margin-bottom:1.2rem; box-shadow:0 1px 4px rgba(0,0,0,0.08);
+                                border:1px solid #ddd;">
+                        <div style="font-weight:bold; font-size:0.95rem; margin-bottom:0.3rem;">{label}</div>
+                        <div style="font-size:0.95rem;">{value}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+            with col2:
+                if i + 1 < len(rows):
+                    label, value = rows[i + 1]
+                    st.markdown(f"""
+                    <div style="background:#f5f5f5; border-radius:10px; padding:1rem;
+                                margin-bottom:1.2rem; box-shadow:0 1px 4px rgba(0,0,0,0.08);
+                                border:1px solid #ddd;">
+                        <div style="font-weight:bold; font-size:0.95rem; margin-bottom:0.3rem;">{label}</div>
+                        <div style="font-size:0.95rem;">{value}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+
 
 
 # ---- LOAD SPECS PAGE ----
