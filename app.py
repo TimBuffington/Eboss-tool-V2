@@ -40,6 +40,46 @@ def apply_custom_css():
     /* ===============================
        EBOSS® Form Styling: Concrete Theme – Enhanced + Aligned
        =============================== */
+/* Global font scale */
+html, body, .stApp {
+    font-size: 1.3rem !important;
+    font-family: 'Segoe UI', sans-serif !important;
+    line-height: 1.6;
+    color: #fff;
+}
+
+/* Inputs & Buttons */
+input, select, textarea,
+.stTextInput > div > div,
+.stNumberInput > div > input,
+.stSelectbox div[role="combobox"],
+.stSelectbox div[role="combobox"] input {
+    font-size: 1.3rem !important;
+}
+
+.stButton > button {
+    font-size: 1.3rem !important;
+}
+
+/* Section Headers */
+.form-section-title,
+div[role="heading"] h1,
+h2, h3 {
+    font-size: 1.6rem !important;
+    font-weight: 700 !important;
+    color: #81BD47 !important;
+    margin-top: 2rem !important;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+}
+
+/* Page Title */
+h1 {
+    font-size: 2.2rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.03em;
+    color: #ffffff !important;
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.6);
+}
 
     /* Main form containers */
     .form-container {
