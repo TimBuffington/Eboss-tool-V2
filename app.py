@@ -374,6 +374,7 @@ def render_user_input_form():
         peak_kw = peak_load
 
 def display_load_threshold_check(user_inputs):
+    # Reference data
     EBOSS_KVA = {
         "EB25 kVA": 25,
         "EB70 kVA": 45,
@@ -401,69 +402,40 @@ def display_load_threshold_check(user_inputs):
     pm_kva = EBOSS_KVA[model]
     battery_kwh = EBOSS_BATTERY_KWH[model]
 
-    # Get correct charge rate
-    charge_rate = Eboss_Charge_Rates[pm_kva]["power_module" if gen_type == "Power Module" else "full_hybrid"]
-    max_safe_limit = charge_rate * 0.9
-    efficiency_target = battery_kwh * (2 / 3)
+    try:
+        charge_rate = Eboss_Charge_Rates[pm_kva]["power_module" if gen_type == "Power Module" else "full_hybrid"]
+        max_safe_limit = charge_rate * 0.9
+        efficiency_target = battery_kwh * (2 / 3)
+    except Exception as e:
+        st.error("⚠️ Could not determine charge rate or battery specs for this model.")
+        return
 
-    # Display result
+    st.markdown('<div class="form-container">', unsafe_allow_html=True)
     st.markdown("### 🔒 Load Threshold Check")
+
     if cont_kw > charge_rate:
         st.error(f"❌ Load ({cont_kw:.1f} kW) exceeds the max charge rate of {charge_rate:.1f} kW for {model}.")
+
+        # 🔍 Find recommended model
+        recommended = None
+        for name, kva in EBOSS_KVA.items():
+            new_rate = Eboss_Charge_Rates[kva]["power_module" if gen_type == "Power Module" else "full_hybrid"]
+            if cont_kw <= new_rate * 0.9:
+                recommended = name
+                break
+
+        if recommended:
+            st.warning(f"💡 Recommended EBOSS size: **{recommended}** for your current load.")
+        else:
+            st.error("❌ No EBOSS size can handle this load. Consider splitting into multiple units.")
     elif cont_kw > max_safe_limit:
         st.warning(f"⚠️ Load is above 90% of the EBOSS charge rate ({charge_rate:.1f} kW).")
     elif cont_kw > efficiency_target:
         st.info(f"ℹ️ Load is within safe range but above the fuel-efficiency threshold (~{efficiency_target:.1f} kW).")
     else:
         st.success(f"✅ Load is optimal for fuel efficiency (≤ {efficiency_target:.1f} kW).")
-## 🔒 Load Threshold Check")
 
-if cont_kw > charge_rate:
-    st.error(f"❌ Load ({cont_kw:.1f} kW) exceeds the max charge rate of {charge_rate:.1f} kW for {model}.")
-elif cont_kw > max_safe_limit:
-    st.warning(f"⚠️ Load is above 90% of the EBOSS charge rate ({charge_rate:.1f} kW).")
-elif cont_kw > efficiency_target:
-    st.info(f"ℹ️ Load is within safe range but above the fuel-efficiency threshold (~{efficiency_target:.1f} kW).")
-else:
-    st.success(f"✅ Load is optimal for fuel efficiency (≤ {efficiency_target:.1f} kW).")
-
-colA, _, colB = st.columns([1, 0.1, 1])
-
-with colA:
-    if st.button("🧮 Calculate", key="btn_calculate"):
-        active_page = st.session_state.get("section")
-        if active_page == "load_specs":
-            st.session_state.run_load_calc = True
-        elif active_page == "cost":
-            st.session_state.run_cost_calc = True
-        elif active_page == "parallel_calc":
-            st.session_state.run_parallel_calc = True
-        elif active_page == "tech_specs":
-            st.session_state.run_tech_specs = True
-        elif active_page == "compare":
-            st.session_state.run_compare = True
-        st.session_state.calculation_done = True
-
-with colB:
-    if st.button("♻️ Clear", key="btn_clear"):
-        st.session_state.user_inputs = {
-            "model": "EB25 kVA",
-            "gen_type": "Full Hybrid",
-            "kva_option": None,
-            "cont_kw": 0,
-            "peak_kw": 0,
-            "raw_cont_load": 0,
-            "raw_peak_load": 0,
-            "load_units": "kW",
-            "voltage": "480V"
-        }
-        st.session_state.calculation_done = False
-        st.session_state.run_cost_calc = False
-        st.session_state.run_load_calc = False
-        st.session_state.run_parallel_calc = False
-        st.session_state.run_tech_specs = False
-        st.session_state.run_compare = False
-        st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # ---- HOME PAGE / MAIN TOOL ----
 def render_home():
