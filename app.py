@@ -796,6 +796,9 @@ st.markdown("""
     border-top: 1px solid rgba(255,255,255,0.1);
     text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
 }
+</style>
+""", unsafe_allow_html=True)
+
 .footer a {
     color: #81BD47;
     text-decoration: none;
