@@ -5,46 +5,70 @@ def apply_custom_css():
     st.markdown("""
     <style>
     /* ===============================
-       EBOSS® Form Styling: Concrete Theme
+       EBOSS® Form Styling: Concrete Theme – Enhanced
        =============================== */
 
-    /* Text input, number input, and textarea */
+    /* Overall input section container */
+    .form-container {
+        background-color: #e2e2e2 !important;     /* Lighter concrete */
+        border-radius: 14px !important;
+        padding: 1.2rem !important;
+        border: 1px solid #ccc !important;
+        min-height: 340px !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;  /* Soft depth */
+        transition: all 0.2s ease-in-out;
+    }
+
+    .form-container:hover {
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18) !important;  /* Hover lift */
+    }
+
+    /* Section titles */
+    .form-section-title {
+        font-weight: 700;
+        font-size: 1.3rem;
+        font-family: 'Segoe UI', sans-serif;
+        color: #111111;
+        min-height: 2.5rem;
+        margin-bottom: 1rem;
+        text-shadow: 0 1px 1px rgba(0,0,0,0.04);
+    }
+
+    /* Inputs and selectboxes */
     input, select, textarea,
     .stTextInput > div > div,
-    .stNumberInput > div > input {
-        background-color: #d8d8d8 !important;  /* Light concrete */
-        color: #111111 !important;             /* Black font */
+    .stNumberInput > div > input,
+    .stSelectbox div[role="combobox"],
+    .stSelectbox div[role="combobox"] input {
+        background-color: #ffffff !important;
+        color: #111111 !important;
         font-weight: bold !important;
         font-family: 'Segoe UI', sans-serif !important;
         border-radius: 8px !important;
         padding: 0.6rem 1rem !important;
-        border: 1px solid #999 !important;
-        box-shadow: none !important;
+        border: 1px solid #bbb !important;
+        box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+        transition: border 0.2s, box-shadow 0.2s;
     }
 
-    /* Dropdown display area */
-    .stSelectbox div[role="combobox"],
-    .stSelectbox div[role="combobox"] input {
-        background-color: #d8d8d8 !important;
-        color: #111111 !important;
-        font-weight: bold !important;
-        border-radius: 8px !important;
-        padding: 0.6rem 1rem !important;
-        border: 1px solid #999 !important;
+    /* On hover or focus */
+    input:focus, select:focus, textarea:focus,
+    .stTextInput > div > div:focus-within,
+    .stNumberInput > div > input:focus,
+    .stSelectbox div[role="combobox"]:hover {
+        border-color: #81BD47 !important;
+        box-shadow: 0 0 0 2px rgba(129, 189, 71, 0.25);
     }
 
-    /* Dropdown value text */
-    .stSelectbox div[role="combobox"] * {
+    /* Fix for dropdown text color */
+    .stSelectbox div[role="combobox"] *,
+    .stSelectbox div[role="combobox"] {
         -webkit-text-fill-color: #111111 !important;
         color: #111111 !important;
     }
+    </style>
+    """, unsafe_allow_html=True)
 
-    /* Hover border effect for dropdown */
-    .stSelectbox div[role="combobox"]:hover {
-        border-color: #666 !important;
-    }
-</style>
-""", unsafe_allow_html=True)
 
 # ---- CSS for ALL PAGES ----
 st.markdown("""
