@@ -172,13 +172,14 @@ def landing_page():
             st.session_state.landing_shown = False
             st.rerun()
     with col2:
-    st.markdown("""
-        <a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank" style="text-decoration:none;">
-            <button class="eboss-hero-btn" type="button">
-                 Learn How EBOSS&reg; Works
-            </button>
-        </a>
-    """, unsafe_allow_html=True)
+        st.markdown("""
+            <a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank" style="text-decoration:none;">
+                <button class="eboss-hero-btn" type="button">
+                    Learn How EBOSS&reg; Works
+                </button>
+            </a>
+        """, unsafe_allow_html=True)
+
 
         if st.button("🚀 Launch EBOSS&reg Tool", key="btn_launch"):
             st.session_state.selected_form = "tool"
