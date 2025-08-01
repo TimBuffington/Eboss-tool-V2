@@ -240,7 +240,7 @@ def top_navbar():
 st.markdown(f"🛠️ model_select = `{st.session_state.get('model_select')}`")
 
     # 🔔 Error popup (dismissible)
-    nav_error = st.session_state.get("nav_error")
+        nav_error = st.session_state.get("nav_error")
         if nav_error:
         st.error("❌ Please select an EBOSS model before continuing.")
         if st.button("✅ OK", key="dismiss_nav_error"):
