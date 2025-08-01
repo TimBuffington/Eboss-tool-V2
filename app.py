@@ -34,49 +34,6 @@ def apply_custom_css():
         text-shadow: 0 1px 1px rgba(0,0,0,0.04);
     }
 
-
-col_left, col_mid, col_right = st.columns([1, 1, 1])
-
-with col_left:
-   if st.button("🧮 Calculate", key="btn_calculate"):
-    active_page = st.session_state.get("section")
-
-    if active_page == "load_specs":
-        st.session_state.run_load_calc = True
-    elif active_page == "cost":
-        st.session_state.run_cost_calc = True
-    elif active_page == "parallel_calc":
-        st.session_state.run_parallel_calc = True
-    elif active_page == "tech_specs":
-        st.session_state.run_tech_specs = True
-    elif active_page == "compare":
-        st.session_state.run_compare = True
-
-    st.session_state.calculation_done = True
-
-
-with col_right:
-    if st.button("♻️ Clear", key="btn_clear"):
-        # Reset only user_inputs section
-        st.session_state.user_inputs = {
-            "model": "EB25 kVA",
-            "gen_type": "Full Hybrid",
-            "kva_option": None,
-            "cont_kw": 0,
-            "peak_kw": 0,
-            "raw_cont_load": 0,
-            "raw_peak_load": 0,
-            "load_units": "kW",
-            "voltage": "480V"
-        }
-        # Optional: reset calculation flags
-        st.session_state.calculation_done = False
-        st.session_state.run_cost_calc = False
-        st.session_state.run_load_calc = False
-        st.session_state.run_parallel_calc = False
-        st.rerun()
-
-
     /* Labels (including selectbox and number input) */
     label, .form-section-title {
         display: block !important;
@@ -318,14 +275,6 @@ def render_training_form():
     top_navbar()
     # ...your form code remains unchanged...
 
-Eboss_Charge_Rates = {
-    25: {"full_hybrid": 19.5, "power_module": 18, "max": 20},
-    70: {"full_hybrid": 35, "power_module": 32.5, "max": 45},
-    125: {"full_hybrid": 50, "power_module": 46.5, "max": 65},
-    220: {"full_hybrid": 98, "power_module": 90, "max": 125},
-    400: {"full_hybrid": 172, "power_module": 158, "max": 220}
-}
-
 def render_user_input_form():
     st.markdown("## System Configuration")
 
@@ -436,6 +385,58 @@ def display_load_threshold_check(user_inputs):
         st.success(f"✅ Load is optimal for fuel efficiency (≤ {efficiency_target:.1f} kW).")
 
     st.markdown('</div>', unsafe_allow_html=True)
+
+def render_calculate_buttons():
+    # Horizontal Rule for visual break
+    st.markdown("""
+    <hr style='
+        border: none;
+        border-top: 4px solid #999999;
+        margin: 2.5rem 0 2rem 0;
+        width: 100%;
+    '>
+    """, unsafe_allow_html=True)
+
+    colA, _, colB = st.columns([1, 0.1, 1])
+
+    with colA:
+        if st.button("🧮 Calculate", key="btn_calculate"):
+            active_page = st.session_state.get("section")
+
+            if active_page == "load_specs":
+                st.session_state.run_load_calc = True
+            elif active_page == "cost":
+                st.session_state.run_cost_calc = True
+            elif active_page == "parallel_calc":
+                st.session_state.run_parallel_calc = True
+            elif active_page == "tech_specs":
+                st.session_state.run_tech_specs = True
+            elif active_page == "compare":
+                st.session_state.run_compare = True
+
+            st.session_state.calculation_done = True
+
+    with colB:
+        if st.button("♻️ Clear", key="btn_clear"):
+            st.session_state.user_inputs = {
+                "model": "EB25 kVA",
+                "gen_type": "Full Hybrid",
+                "kva_option": None,
+                "cont_kw": 0,
+                "peak_kw": 0,
+                "raw_cont_load": 0,
+                "raw_peak_load": 0,
+                "load_units": "kW",
+                "voltage": "480V"
+            }
+            # Clear all calculation flags
+            for key in [
+                "run_cost_calc", "run_load_calc", "run_parallel_calc",
+                "run_tech_specs", "run_compare", "calculation_done"
+            ]:
+                st.session_state[key] = False
+            st.rerun()
+
 
 # ---- HOME PAGE / MAIN TOOL ----
 def render_home():
