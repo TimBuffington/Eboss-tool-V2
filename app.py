@@ -373,28 +373,50 @@ def render_user_input_form():
         cont_kw = cont_load
         peak_kw = peak_load
 
- # Lookups
-EBOSS_BATTERY_KWH = {
-    "EB25 kVA": 15,
-    "EB70 kVA": 25,
-    "EB125 kVA": 50,
-    "EB220 kVA": 75,
-    "EB400 kVA": 125
-}
+def display_load_threshold_check(user_inputs):
+    EBOSS_KVA = {
+        "EB25 kVA": 25,
+        "EB70 kVA": 45,
+        "EB125 kVA": 65,
+        "EB220 kVA": 125,
+        "EB400 kVA": 220
+    }
 
-model = st.session_state.user_inputs["model"]
-gen_type = st.session_state.user_inputs["gen_type"]
-cont_kw = st.session_state.user_inputs["cont_kw"]
-pm_kva = EBOSS_KVA[model]
-battery_kwh = EBOSS_BATTERY_KWH[model]
+    EBOSS_BATTERY_KWH = {
+        "EB25 kVA": 15,
+        "EB70 kVA": 25,
+        "EB125 kVA": 50,
+        "EB220 kVA": 75,
+        "EB400 kVA": 125
+    }
 
-# Get charge rate by EBOSS size and type
-charge_rate = Eboss_Charge_Rates[pm_kva]["power_module" if gen_type == "Power Module" else "full_hybrid"]
-max_safe_limit = charge_rate * 0.9
-efficiency_target = battery_kwh * (2 / 3)
+    model = user_inputs.get("model")
+    gen_type = user_inputs.get("gen_type")
+    cont_kw = user_inputs.get("cont_kw")
 
-# Display status
-st.markdown("### 🔒 Load Threshold Check")
+    if not model or model not in EBOSS_KVA or model not in EBOSS_BATTERY_KWH:
+        st.warning("⚠️ Invalid model selected or missing data.")
+        return
+
+    pm_kva = EBOSS_KVA[model]
+    battery_kwh = EBOSS_BATTERY_KWH[model]
+
+    # Get correct charge rate
+    charge_rate = Eboss_Charge_Rates[pm_kva]["power_module" if gen_type == "Power Module" else "full_hybrid"]
+    max_safe_limit = charge_rate * 0.9
+    efficiency_target = battery_kwh * (2 / 3)
+
+    # Display result
+    st.markdown("### 🔒 Load Threshold Check")
+    if cont_kw > charge_rate:
+        st.error(f"❌ Load ({cont_kw:.1f} kW) exceeds the max charge rate of {charge_rate:.1f} kW for {model}.")
+    elif cont_kw > max_safe_limit:
+        st.warning(f"⚠️ Load is above 90% of the EBOSS charge rate ({charge_rate:.1f} kW).")
+    elif cont_kw > efficiency_target:
+        st.info(f"ℹ️ Load is within safe range but above the fuel-efficiency threshold (~{efficiency_target:.1f} kW).")
+    else:
+        st.success(f"✅ Load is optimal for fuel efficiency (≤ {efficiency_target:.1f} kW).")
+## 🔒 Load Threshold Check")
 
 if cont_kw > charge_rate:
     st.error(f"❌ Load ({cont_kw:.1f} kW) exceeds the max charge rate of {charge_rate:.1f} kW for {model}.")
