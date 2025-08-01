@@ -476,7 +476,7 @@ def render_tech_specs_page():
     show_logo_and_title("Tech Specs")
     top_navbar()
 
-    # Convert user-facing model to spreadsheet label
+    # Map display name to Excel model name
     model_map = {
         "EB25 kVA": "EBOSS 25 kVA",
         "EB70 kVA": "EBOSS 70 kVA",
@@ -484,30 +484,71 @@ def render_tech_specs_page():
         "EB220 kVA": "EBOSS 220 kVA",
         "EB400 kVA": "EBOSS 400 kVA"
     }
+    
+    model = st.session_state.get("model_select", "EB25 kVA")
     excel_model = model_map.get(model)
-    spec_data = complete_model_spec_data.get(excel_model, {})
+    spec_blocks = complete_model_spec_data.get(excel_model, [])
 
-    # Container start
-    st.markdown('<div class="form-container">', unsafe_allow_html=True)
-    st.markdown(f'<h3 class="form-section-title">📋 Technical Specs – {model}</h3>', unsafe_allow_html=True)
+    if not spec_blocks:
+        st.warning(f"No data found for model: {excel_model}")
+        return
 
-    # Column headers
-    col1, col2 = st.columns([1, 1])
-    with col1:
-        st.markdown("### 🟦 Stats")
-    with col2:
-        st.markdown(f"### 🟩 {model}")
+    for block in spec_blocks:
+        # Section Header
+        st.markdown(f"""
+        <div style="
+            background-color:#232325; 
+            color:white; 
+            font-weight:bold; 
+            padding:0.7rem 1rem; 
+            border-radius:8px; 
+            font-size:1rem;
+            margin:2rem 0 1rem 0;
+            text-transform:uppercase;
+            letter-spacing:0.02em;
+        ">
+            {block['header']}
+        </div>
+        """, unsafe_allow_html=True)
 
-    # Data rows
-    for label, value in spec_data.items():
-        col1, col2 = st.columns([1, 1])
-        with col1:
-            st.markdown(f"**{label}**")
-        with col2:
-            st.markdown(f"{value if pd.notna(value) else 'TBD'}")
+        # Display rows as cards in 2-column layout
+        rows = block['rows']
+        for i in range(0, len(rows), 2):
+            col1, col2 = st.columns(2)
 
-    st.markdown('</div>', unsafe_allow_html=True)
-    st.session_state.run_tech_specs = False   
+            with col1:
+                if i < len(rows):
+                    label, value = rows[i]
+                    st.markdown(f"""
+                    <div style="
+                        background-color:#f5f5f5;
+                        border-radius:10px;
+                        padding:1rem;
+                        margin-bottom:1.2rem;
+                        box-shadow:0 1px 4px rgba(0,0,0,0.08);
+                        border:1px solid #ddd;
+                    ">
+                        <div style="font-weight:bold; font-size:0.95rem; margin-bottom:0.3rem;">{label}</div>
+                        <div style="font-size:0.95rem;">{value}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+            with col2:
+                if i + 1 < len(rows):
+                    label, value = rows[i + 1]
+                    st.markdown(f"""
+                    <div style="
+                        background-color:#f5f5f5;
+                        border-radius:10px;
+                        padding:1rem;
+                        margin-bottom:1.2rem;
+                        box-shadow:0 1px 4px rgba(0,0,0,0.08);
+                        border:1px solid #ddd;
+                    ">
+                        <div style="font-weight:bold; font-size:0.95rem; margin-bottom:0.3rem;">{label}</div>
+                        <div style="font-size:0.95rem;">{value}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
 
 # ---- LOAD SPECS PAGE ----
 def render_load_specs_page():
