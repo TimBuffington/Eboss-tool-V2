@@ -653,7 +653,7 @@ def render_tech_specs_page():
         st.warning(f"No data available for {model}")
         return
 
- for section, items in specs.items():
+    for section, items in specs.items():
     st.markdown(f"""
     <div style="background-color:#636569; color:#fff; font-weight:700;
                 padding:0.85rem 1.2rem; border-radius:10px;
