@@ -31,7 +31,7 @@ a, a:visited, a:active {
     background: #e0e0e0 !important;
     font-weight: bold !important;
     text-shadow: none !important;
-    caret-color: none;
+    caret-color: 111;
     -webkit-text-fill-color: #111 !important;
 }
 
