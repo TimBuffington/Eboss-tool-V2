@@ -4,7 +4,7 @@ import pandas as pd
 
 @st.cache_data
 def load_spec_table():
-    df = pd.read_excel("EBoss Stats final.xlsx")
+    df = pd.read_excel("/mnt/data/EBoss Stats final.xlsx")
     model_spec_table = {}
 
     for model in df["Model"].unique():
