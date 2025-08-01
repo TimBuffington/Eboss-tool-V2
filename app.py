@@ -292,7 +292,7 @@ def render_user_input_form():
         st.markdown('<div class="form-container">', unsafe_allow_html=True)
         st.markdown('<h3 class="form-section-title">EBOSS®</h3>', unsafe_allow_html=True)
 
-        model = st.selectbox("Model", ["EB25 kVA", "EB70 kVA", "EB125 kVA", "EB220 kVA", "EB400 kVA"], key="model_select")
+        model = st.selectbox("Model", ["EBOSS 25 kVA", "EBOSS 70 kVA", "EBOSS125 kVA", "EBOSS 220 kVA", "EBOSS 400 kVA"], key="model_select")
         gen_type = st.selectbox("Type", ["Full Hybrid", "Power Module"], key="gen_type_select")
         kva_option = st.selectbox("Generator Size", ["25kVA", "45kVA", "65kVA", "125kVA", "220kVA", "400kVA"], key="kva_select") if gen_type == "Power Module" else None
 
@@ -498,104 +498,59 @@ def render_tech_specs_page():
     top_navbar()
 
     import pandas as pd
+    from collections import defaultdict
 
     @st.cache_data
-    def load_spec_table():
+    def load_transposed_spec_table():
         url = "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/data/EBoss%20Stats%20final.xlsx"
-        df = pd.read_excel(url)
-        model_spec_table = {}
+        df = pd.read_excel(url, header=None)
 
-        for model in df["Model"].unique():
-            model_df = df[df["Model"] == model]
-            blocks = []
-            current_block = {"header": "", "rows": []}
+        models = df.iloc[0, 1:].tolist()
+        labels = df.iloc[:, 0].tolist()
 
-            for _, row in model_df.iterrows():
-                if pd.isna(row["Spec Value"]):
-                    if current_block["rows"]:
-                        blocks.append(current_block)
-                        current_block = {"header": "", "rows": []}
-                    current_block["header"] = row["Spec Name"]
-                else:
-                    current_block["rows"].append((row["Spec Name"], row["Spec Value"]))
-            if current_block["rows"]:
-                blocks.append(current_block)
-            model_spec_table[model] = blocks
+        model_spec_data = {model: [] for model in models}
+        current_header = None
 
-        return model_spec_table
+        for i, label in enumerate(labels[2:], start=2):
+            if pd.isna(df.iloc[i, 1]):
+                current_header = df.iloc[i, 0]
+            else:
+                for col_index, model in enumerate(models, start=1):
+                    model_spec_data[model].append({
+                        "section": current_header,
+                        "label": df.iloc[i, 0],
+                        "value": df.iloc[i, col_index]
+                    })
+        return model_spec_data
 
-    complete_model_spec_data = load_spec_table()
+    complete_model_spec_data = load_transposed_spec_table()
+    selected_model = st.session_state.get("model_select", "EBOSS 25 kVA")
+    model_data = complete_model_spec_data.get(selected_model, [])
 
-    model_map = {
-        "EB25 kVA": "EBOSS 25 kVA",
-        "EB70 kVA": "EBOSS 70 kVA",
-        "EB125 kVA": "EBOSS 125 kVA",
-        "EB220 kVA": "EBOSS 220 kVA",
-        "EB400 kVA": "EBOSS 400 kVA"
-    }
-
-    model = st.session_state.get("model_select", "EB25 kVA")
-    excel_model = model_map.get(model)
-    spec_blocks = complete_model_spec_data.get(excel_model, [])
-
-    if not spec_blocks:
-        st.warning(f"No data found for model: {excel_model}")
+    if not model_data:
+        st.warning(f"No data found for model: {selected_model}")
         return
 
-    for block in spec_blocks:
+    grouped = defaultdict(list)
+    for row in model_data:
+        grouped[row["section"]].append((row["label"], row["value"]))
+
+    for section, rows in grouped.items():
         st.markdown(f"""
-        <div style="
-            background-color:#232325; 
-            color:white; 
-            font-weight:bold; 
-            padding:0.7rem 1rem; 
-            border-radius:8px; 
-            font-size:1rem;
-            margin:2rem 0 1rem 0;
-            text-transform:uppercase;
-            letter-spacing:0.02em;
-        ">
-            {block['header']}
+        <div style="background-color:#232325; color:white; font-weight:bold;
+                    padding:0.7rem 1rem; border-radius:8px; font-size:1rem;
+                    margin:2rem 0 1rem 0; text-transform:uppercase;">
+            {section}
         </div>
         """, unsafe_allow_html=True)
 
-        rows = block['rows']
         for i in range(0, len(rows), 2):
             col1, col2 = st.columns(2)
-
             with col1:
                 if i < len(rows):
                     label, value = rows[i]
                     st.markdown(f"""
-                    <div style="
-                        background-color:#f5f5f5;
-                        border-radius:10px;
-                        padding:1rem;
-                        margin-bottom:1.2rem;
-                        box-shadow:0 1px 4px rgba(0,0,0,0.08);
-                        border:1px solid #ddd;
-                    ">
-                        <div style="font-weight:bold; font-size:0.95rem; margin-bottom:0.3rem;">{label}</div>
-                        <div style="font-size:0.95rem;">{value}</div>
-                    </div>
-                    """, unsafe_allow_html=True)
-
-            with col2:
-                if i + 1 < len(rows):
-                    label, value = rows[i + 1]
-                    st.markdown(f"""
-                    <div style="
-                        background-color:#f5f5f5;
-                        border-radius:10px;
-                        padding:1rem;
-                        margin-bottom:1.2rem;
-                        box-shadow:0 1px 4px rgba(0,0,0,0.08);
-                        border:1px solid #ddd;
-                    ">
-                        <div style="font-weight:bold; font-size:0.95rem; margin-bottom:0.3rem;">{label}</div>
-                        <div style="font-size:0.95rem;">{value}</div>
-                    </div>
-                    """, unsafe_allow_html=True)
+                    <div style="b
 
 
 # ---- LOAD SPECS PAGE ----
