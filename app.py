@@ -5,22 +5,22 @@ def apply_custom_css():
     st.markdown("""
     <style>
     /* ===============================
-       EBOSS® Form Styling: Concrete Theme – Enhanced
+       EBOSS® Form Styling: Concrete Theme – Enhanced + Aligned
        =============================== */
 
-    /* Overall input section container */
+    /* Main form containers */
     .form-container {
-        background-color: #e2e2e2 !important;     /* Lighter concrete */
+        background-color: #e2e2e2 !important;  /* Light concrete */
         border-radius: 14px !important;
         padding: 1.2rem !important;
         border: 1px solid #ccc !important;
-        min-height: 340px !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;  /* Soft depth */
+        min-height: 360px !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
         transition: all 0.2s ease-in-out;
     }
 
     .form-container:hover {
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18) !important;  /* Hover lift */
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18) !important;
     }
 
     /* Section titles */
@@ -30,11 +30,21 @@ def apply_custom_css():
         font-family: 'Segoe UI', sans-serif;
         color: #111111;
         min-height: 2.5rem;
-        margin-bottom: 1rem;
+        margin-bottom: 1.2rem;
         text-shadow: 0 1px 1px rgba(0,0,0,0.04);
     }
 
-    /* Inputs and selectboxes */
+    /* Labels (including selectbox and number input) */
+    label, .form-section-title {
+        display: block !important;
+        margin-bottom: 0.4rem !important;
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: #111;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    /* Form input fields */
     input, select, textarea,
     .stTextInput > div > div,
     .stNumberInput > div > input,
@@ -48,10 +58,13 @@ def apply_custom_css():
         padding: 0.6rem 1rem !important;
         border: 1px solid #bbb !important;
         box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+        margin-bottom: 1.2rem !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
         transition: border 0.2s, box-shadow 0.2s;
     }
 
-    /* On hover or focus */
+    /* Focus / hover effect */
     input:focus, select:focus, textarea:focus,
     .stTextInput > div > div:focus-within,
     .stNumberInput > div > input:focus,
@@ -60,7 +73,7 @@ def apply_custom_css():
         box-shadow: 0 0 0 2px rgba(129, 189, 71, 0.25);
     }
 
-    /* Fix for dropdown text color */
+    /* Dropdown value text color fix */
     .stSelectbox div[role="combobox"] *,
     .stSelectbox div[role="combobox"] {
         -webkit-text-fill-color: #111111 !important;
@@ -68,7 +81,6 @@ def apply_custom_css():
     }
     </style>
     """, unsafe_allow_html=True)
-
 
 # ---- CSS for ALL PAGES ----
 st.markdown("""
@@ -279,48 +291,45 @@ def render_home():
     top_navbar()
 
     with st.container():
-        col1, col2, col3 = st.columns([1, 1, 1])  # 3 equal columns
+        # Define clean 3-column layout
+        col1, col2, col3 = st.columns([1, 1, 1])
 
-        # 🟦 Column 1: System Configuration
+        # 🟦 Column 1: EBOSS Configuration
         with col1:
             st.markdown('<div class="form-container">', unsafe_allow_html=True)
-            st.markdown('<h3 class="form-section-title">EBOSS&reg</h3>', unsafe_allow_html=True)
+            st.markdown('<h3 class="form-section-title">EBOSS® Configuration</h3>', unsafe_allow_html=True)
 
-            model_options = ["EB25 kVA", "EB70 kVA", "EB125 kVA", "EB220 kVA", "EB400 kVA"]
-            model = st.selectbox("Model", model_options, key="model_select")
+            model = st.selectbox("Model", ["EB25 kVA", "EB70 kVA", "EB125 kVA", "EB220 kVA", "EB400 kVA"], key="model_select")
+            gen_type = st.selectbox("Type", ["Full Hybrid", "Power Module"], key="gen_type_select")
 
-            gen_type_options = ["Full Hybrid", "Power Module"]
-            gen_type = st.selectbox("Type", gen_type_options, key="gen_type_select")
-
-            gen_sizes = ["25kVA", "45kVA", "65kVA", "125kVA", "220kVA", "400kVA"]
-            kva_option = st.selectbox("Generator Size", gen_sizes, key="kva_select") if gen_type == "Power Module" else None
+            # Conditional dropdown for generator size
+            kva_option = None
+            if gen_type == "Power Module":
+                kva_option = st.selectbox("Generator Size", ["25kVA", "45kVA", "65kVA", "125kVA", "220kVA", "400kVA"], key="kva_select")
 
             st.markdown('</div>', unsafe_allow_html=True)
 
-        # 🟩 Column 2: Load Requirements
+        # 🟩 Column 2: Load Parameters
         with col2:
             st.markdown('<div class="form-container">', unsafe_allow_html=True)
-            st.markdown('<h3 class="form-section-title">Load Parameters</h3>', unsafe_allow_html=True)
+            st.markdown('<h3 class="form-section-title">Load Requirements</h3>', unsafe_allow_html=True)
 
             cont_load = st.number_input("Continuous Load", 0, 500, step=1, format="%d", key="cont_input")
             peak_load = st.number_input("Max Peak Load", 0, 500, step=1, format="%d", key="peak_input")
 
             st.markdown('</div>', unsafe_allow_html=True)
 
-        # 🟨 Column 3: Units & Voltage
+        # 🟨 Column 3: Power Settings
         with col3:
             st.markdown('<div class="form-container">', unsafe_allow_html=True)
-            st.markdown('<h3 class="form-section-title">MUnits</h3>', unsafe_allow_html=True)
+            st.markdown('<h3 class="form-section-title">Power Settings</h3>', unsafe_allow_html=True)
 
-            unit_options = ["kW", "Amps"]
-            load_units = st.selectbox("Units", unit_options, key="unit_select")
-
-            voltage_options = ["480V", "240V", "208V"]
-            voltage = st.selectbox("Voltage", voltage_options, key="voltage_select")
+            load_units = st.selectbox("Units", ["kW", "Amps"], key="unit_select")
+            voltage = st.selectbox("Voltage", ["480V", "240V", "208V"], key="voltage_select")
 
             st.markdown('</div>', unsafe_allow_html=True)
 
-        # ---- Calculation Logic ----
+        # ⚙️ Convert amps to kW if needed
         pf = 0.8
         v_val = int(voltage.replace("V", ""))
 
@@ -334,7 +343,7 @@ def render_home():
             cont_kw = cont_load
             peak_kw = peak_load
 
-        # ---- Store All Values in Session State ----
+        # 💾 Store values in session
         st.session_state.user_inputs = {
             "model": model,
             "gen_type": gen_type,
@@ -346,9 +355,6 @@ def render_home():
             "load_units": load_units,
             "voltage": voltage,
         }
-
-
-
 
 # Reference data & calculation functions (unchanged)
 EBOSS_KVA = {
