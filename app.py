@@ -92,8 +92,7 @@ st.markdown("""
     background: #2c2c2f !important;
     transform: scale(1.04) translateY(-2px);
 }
-st.markdown("""
-<style>
+
 input, select, textarea,
 .stTextInput > div > div,
 .stNumberInput > div > input {
@@ -119,37 +118,6 @@ input, select, textarea,
 }
 </style>
 """, unsafe_allow_html=True)
-
-
-.stSelectbox div[role="combobox"] *,
-.stSelectbox div[role="combobox"],
-.stSelectbox div[data-baseweb="select"] input,
-.stSelectbox div[data-baseweb="select"] div[role="combobox"],
-.stSelectbox div[data-baseweb="select"] span,
-.stSelectbox div[role="combobox"] input,
-.stSelectbox div[role="combobox"] > div {
-    color: #111 !important;  /* 👈 Match text to dark readable font */
-    background: #e0e0e0 !important;
-    font-weight: bold !important;
-    -webkit-text-fill-color: #111 !important;
-}
-</style>
-""", unsafe_allow_html=True)
-
-
-
-
-
-
-
-
-
-
-
-
-</style>
-""", unsafe_allow_html=True)
-
 # ---- SESSION STATE INITIALIZATION ----
 if "landing_shown" not in st.session_state:
     st.session_state.landing_shown = True
