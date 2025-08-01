@@ -179,12 +179,9 @@ def show_logo_and_title(title):
 #=====================================================================================================
 def top_navbar():
     btn1, btn2, btn3, btn4, btn5 = st.columns(5)
+
     def model_selected():
         return st.session_state.get("model_select") not in [None, ""]
-
-
-    def model_selected():
-        return inputs.get("model") not in [None, ""]
 
     with btn1:
         if st.button("🧑‍🔧 Tech Specs", key="nav_tech_specs"):
@@ -241,12 +238,13 @@ def top_navbar():
             else:
                 st.session_state.nav_error = "parallel"
 
-    # ✅ Error message (persistent but dismissible)
-    error_flag = st.session_state.get("nav_error")
-    if error_flag:
+    # 🔔 Error popup (dismissible)
+    nav_error = st.session_state.get("nav_error")
+    if nav_error:
         st.error("❌ Please select an EBOSS model before continuing.")
         if st.button("✅ OK", key="dismiss_nav_error"):
             st.session_state.nav_error = None
+
 
 # ===============================================================================================
 def landing_page():
