@@ -179,31 +179,73 @@ def show_logo_and_title(title):
 #=====================================================================================================
 def top_navbar():
     btn1, btn2, btn3, btn4, btn5 = st.columns(5)
+    inputs = st.session_state.get("user_inputs", {})
+
+    def model_selected():
+        return inputs.get("model") not in [None, ""]
+
     with btn1:
         if st.button("🧑‍🔧 Tech Specs", key="nav_tech_specs"):
-            st.session_state.section = "tech_specs"
-            st.session_state.landing_shown = False
-            st.rerun()
+            if model_selected():
+                st.session_state.section = "tech_specs"
+                st.session_state.run_tech_specs = True
+                st.session_state.nav_error = None
+                st.session_state.landing_shown = False
+                st.rerun()
+            else:
+                st.session_state.nav_error = "tech"
+
     with btn2:
         if st.button("⚡ Load Specs", key="nav_load_specs"):
-            st.session_state.section = "load_specs"
-            st.session_state.landing_shown = False
-            st.rerun()
+            if model_selected():
+                st.session_state.section = "load_specs"
+                st.session_state.run_load_calc = True
+                st.session_state.nav_error = None
+                st.session_state.landing_shown = False
+                st.rerun()
+            else:
+                st.session_state.nav_error = "load"
+
     with btn3:
         if st.button("⚖️ Compare", key="nav_compare"):
-            st.session_state.section = "compare"
-            st.session_state.landing_shown = False
-            st.rerun()
+            if model_selected():
+                st.session_state.section = "compare"
+                st.session_state.run_compare = True
+                st.session_state.nav_error = None
+                st.session_state.landing_shown = False
+                st.rerun()
+            else:
+                st.session_state.nav_error = "compare"
+
     with btn4:
         if st.button("💰 Cost Analysis", key="nav_cost"):
-            st.session_state.section = "cost"
-            st.session_state.landing_shown = False
-            st.rerun()
+            if model_selected():
+                st.session_state.section = "cost"
+                st.session_state.run_cost_calc = True
+                st.session_state.nav_error = None
+                st.session_state.landing_shown = False
+                st.rerun()
+            else:
+                st.session_state.nav_error = "cost"
+
     with btn5:
         if st.button("🧮 Parallel Calculator", key="nav_parallel_calc"):
-            st.session_state.section = "parallel_calc"
-            st.session_state.landing_shown = False
-            st.rerun()
+            if model_selected():
+                st.session_state.section = "parallel_calc"
+                st.session_state.run_parallel_calc = True
+                st.session_state.nav_error = None
+                st.session_state.landing_shown = False
+                st.rerun()
+            else:
+                st.session_state.nav_error = "parallel"
+
+    # ✅ Error message (persistent but dismissible)
+    error_flag = st.session_state.get("nav_error")
+    if error_flag:
+        st.error("❌ Please select an EBOSS model before continuing.")
+        if st.button("✅ OK", key="dismiss_nav_error"):
+            st.session_state.nav_error = None
+
 # ===============================================================================================
 def landing_page():
     show_logo_and_title("EBOSS&reg Hybrid Energy System<br>Specs and Comparison Tool")
