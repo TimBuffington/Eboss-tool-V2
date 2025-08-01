@@ -250,7 +250,7 @@ def render_home():
         # 🟦 Column 1: System Configuration
         with col1:
             st.markdown('<div class="form-container">', unsafe_allow_html=True)
-            st.markdown('<h3 class="form-section-title">EBOSS&reg Type / Model</h3>', unsafe_allow_html=True)
+            st.markdown('<h3 class="form-section-title">EBOSS&reg</h3>', unsafe_allow_html=True)
 
             model_options = ["EB25 kVA", "EB70 kVA", "EB125 kVA", "EB220 kVA", "EB400 kVA"]
             model = st.selectbox("Model", model_options, key="model_select")
@@ -276,7 +276,7 @@ def render_home():
         # 🟨 Column 3: Units & Voltage
         with col3:
             st.markdown('<div class="form-container">', unsafe_allow_html=True)
-            st.markdown('<h3 class="form-section-title">Power Settings</h3>', unsafe_allow_html=True)
+            st.markdown('<h3 class="form-section-title">MUnits</h3>', unsafe_allow_html=True)
 
             unit_options = ["kW", "Amps"]
             load_units = st.selectbox("Units", unit_options, key="unit_select")
