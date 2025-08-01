@@ -99,9 +99,6 @@ a, a:visited, a:active {
     font-weight: bold !important;
     text-shadow: none !important;
 }
-
-st.markdown("""
-<style>
 .stSelectbox div[role="combobox"], 
 .stSelectbox div[role="combobox"] span {
     color: #111 !important;
