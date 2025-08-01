@@ -742,7 +742,7 @@ def render_parallel_calculator_page():
             ''', unsafe_allow_html=True)
             st.markdown("""
             <button class="eboss-hero-btn" onclick="window.print()" style="margin: 0 auto; display: block;">
-                🖨️ Print Parallel Calculation
+                 Print Parallel Calculation
             </button>
             """, unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
