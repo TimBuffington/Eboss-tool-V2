@@ -92,19 +92,7 @@ a, a:visited, a:active {
     text-decoration: none !important;
     color: inherit !important;
 }
-/* Only change the input text (the selected value) to black in dropdown/selectbox */
-.stSelectbox div[role="combobox"] {
-    color: #111 !important;
-    background: #e0e0e0 !important;
-    font-weight: bold !important;
-    text-shadow: none !important;
-}
-.stSelectbox div[role="combobox"] span {
-    color: #111 !important;
-    background: #e0e0e0 !important;
-    font-weight: bold !important;
-    text-shadow: none !important;
-}
+.stSelectbox div[role="combobox"] *,
 .stSelectbox div[data-baseweb="select"] input,
 .stSelectbox div[data-baseweb="select"] div[role="combobox"],
 .stSelectbox div[data-baseweb="select"] span,
@@ -117,7 +105,6 @@ a, a:visited, a:active {
     caret-color: #111 !important;
     -webkit-text-fill-color: #111 !important;
 }
-
 </style>
 """, unsafe_allow_html=True)
 
