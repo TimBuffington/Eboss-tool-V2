@@ -1,6 +1,51 @@
 import streamlit as st
 from datetime import date
 
+def apply_custom_css():
+    st.markdown("""
+    <style>
+    /* ===============================
+       EBOSS® Form Styling: Concrete Theme
+       =============================== */
+
+    /* Text input, number input, and textarea */
+    input, select, textarea,
+    .stTextInput > div > div,
+    .stNumberInput > div > input {
+        background-color: #d8d8d8 !important;  /* Light concrete */
+        color: #111111 !important;             /* Black font */
+        font-weight: bold !important;
+        font-family: 'Segoe UI', sans-serif !important;
+        border-radius: 8px !important;
+        padding: 0.6rem 1rem !important;
+        border: 1px solid #999 !important;
+        box-shadow: none !important;
+    }
+
+    /* Dropdown display area */
+    .stSelectbox div[role="combobox"],
+    .stSelectbox div[role="combobox"] input {
+        background-color: #d8d8d8 !important;
+        color: #111111 !important;
+        font-weight: bold !important;
+        border-radius: 8px !important;
+        padding: 0.6rem 1rem !important;
+        border: 1px solid #999 !important;
+    }
+
+    /* Dropdown value text */
+    .stSelectbox div[role="combobox"] * {
+        -webkit-text-fill-color: #111111 !important;
+        color: #111111 !important;
+    }
+
+    /* Hover border effect for dropdown */
+    .stSelectbox div[role="combobox"]:hover {
+        border-color: #666 !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
 # ---- CSS for ALL PAGES ----
 st.markdown("""
 <style>
@@ -92,32 +137,9 @@ st.markdown("""
     background: #2c2c2f !important;
     transform: scale(1.04) translateY(-2px);
 }
-
-input, select, textarea,
-.stTextInput > div > div,
-.stNumberInput > div > input {
-    background-color:#d8d8d8 !important;
-    color:111 !important;
-    font-weight: bold !important;
-    font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif !important;
-    border-radius:12px !important;
-    border: 1px solid 232325 !important;
-}
-
-.stSelectbox div[role="combobox"] ,
-.stSelectbox div[role="combobox"],
-.stSelectbox div[data-baseweb="select"] input,
-.stSelectbox div[data-baseweb="select"] div[role="combobox"],
-.stSelectbox div[data-baseweb="select"] span,
-.stSelectbox div[role="combobox"] input,
-.stSelectbox div[role="combobox"] > div {
-    color:111 !important;  
-    background:e0e0e0 !important;
-    font-weight: bold !important;
-    -webkit-text-fill-color:111 !important;
-}
 </style>
 """, unsafe_allow_html=True)
+
 # ---- SESSION STATE INITIALIZATION ----
 if "landing_shown" not in st.session_state:
     st.session_state.landing_shown = True
