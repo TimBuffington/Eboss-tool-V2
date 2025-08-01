@@ -101,7 +101,7 @@ input, select, textarea,
     color:111 !important;
     font-weight: bold !important;
     font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif !important;
-    border-radius: 12px !important;
+    border-radius:12px !important;
     border: 1px solid 232325 !important;
 }
 
