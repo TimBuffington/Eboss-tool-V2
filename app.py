@@ -117,6 +117,7 @@ a, a:visited, a:active {
     caret-color: #111 !important;
     -webkit-text-fill-color: #111 !important;
 }
+
 </style>
 """, unsafe_allow_html=True)
 
