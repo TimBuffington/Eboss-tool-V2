@@ -508,45 +508,113 @@ def render_tech_specs_page():
     show_logo_and_title("Tech Specs")
     top_navbar()
 
-    import pandas as pd
-    from collections import defaultdict
+    model = st.session_state.get("model_select", "EBOSS 25 kVA")
 
-    @st.cache_data
-    def load_transposed_spec_table():
-        url = "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/data/EBoss%20Stats%20final.xlsx"
-        df = pd.read_excel(url, header=None)
+    # Full structured data (70, 125, 220, 400 included)
+    spec_data = {
+        "EBOSS 70 kVA": {
+            "Maximum Intermittent Power Output": [
+                ("Three‑phase", "70 kVA / 56 kW"),
+                ("Single‑phase", "47 kVA / 37 kW"),
+                ("Frequency", "60 Hz"),
+                ("Voltage (1Φ)", "120 / 240 V"),
+                ("Voltage (3Φ)", "120 / 208 / 277 / 480 V"),
+                ("Voltage Regulation", "Adjustable"),
+                ("Max Amp-load (120 V)", "20 A"),
+                ("Max Amp-load (240 V)", "50 A"),
+                ("Cam‑Loks", "208 V & 480 V")
+            ],
+            "Technology": [
+                ("Battery Capacity", "25 kWh LTO"),
+                ("Battery Life", "90K cycles @ 90% DOD (~20 yr @ 3 kW)")
+            ],
+            "Operating Temperatures": [
+                ("Cold‑start min", "14 °F"),
+                ("Running", "–22 °F to 130 °F"),
+                ("Arctic option", "–50 °F to 130 °F")
+            ],
+            "Weights & Dimensions": [
+                ("Skid Weight", "2,513 lbs"),
+                ("Total Weight (w/ fuel)", "5,988 lbs"),
+                ("Dimensions (skid)", "55″ × 44″ × 62″"),
+                ("Trailer + Gen dims", "167″ × 71″ × 76″")
+            ]
+        },
+        "EBOSS125 kVA": {
+            "Maximum Intermittent Power Output": [
+                ("Three‑phase", "125 kVA / 100 kW"),
+                ("Frequency", "60 Hz"),
+                ("Voltage", "208 V / 277 V / 480 V"),
+                ("Courtesy Outlets", "120 V"),
+                ("Voltage Regulation", "Adjustable"),
+                ("Amp-load 208V", "345 A"),
+                ("Amp-load 480V", "150 A")
+            ],
+            "Technology": [
+                ("Battery Capacity", "50 kWh LTO"),
+                ("Battery Life", "90K cycles @ 90% DOD (~20 yr)")
+            ],
+            "Operating Temperatures": [
+                ("Cold‑start min", "14 °F"),
+                ("Running", "–22 °F to 130 °F"),
+                ("Arctic option", "–50 °F to 130 °F")
+            ],
+            "Generator": [
+                ("Gen Model", "Airman SDG65"),
+                ("Single-phase Output", "2.4 kW × 2")
+            ]
+        },
+        "EBOSS 220 kVA": {
+            "Maximum Intermittent Power Output": [
+                ("Three‑phase", "220 kVA / 176 kW"),
+                ("Frequency", "60 Hz"),
+                ("Voltage", "208 V / 277 V / 480 V"),
+                ("Courtesy Outlets", "120 V"),
+                ("Voltage Regulation", "Adjustable"),
+                ("Amp-load 208V", "700 A"),
+                ("Amp-load 480V", "303 A")
+            ],
+            "Technology": [
+                ("Battery Capacity", "75 kWh LTO"),
+                ("Battery Life", "90K cycles @ 90% DOD (~20 yr)")
+            ],
+            "Operating Temperatures": [
+                ("Cold‑start min", "14 °F"),
+                ("Running", "–22 °F to 130 °F"),
+                ("Arctic option", "–50 °F to 130 °F")
+            ],
+            "Generator": [
+                ("Gen Model", "Airman SDG125"),
+                ("Single-phase Output", "2.4 kW × 2")
+            ]
+        },
+        "EBOSS 400 kVA": {
+            "Maximum Intermittent Power Output": [
+                ("Three‑phase", "400 kVA / 320 kW"),
+                ("Frequency", "60 Hz"),
+                ("Voltage", "480 V"),
+                ("Courtesy Outlets", "120 V"),
+                ("Voltage Regulation", "Adjustable"),
+                ("Amp-load 480V", "769 A")
+            ],
+            "Technology": [
+                ("Battery Capacity", "125 kWh LTO"),
+                ("Battery Life", "10,000 MWh total (~21 yr)")
+            ],
+            "Operating Temperatures": [
+                ("Cold‑start min", "14 °F"),
+                ("Running", "–22 °F to 130 °F"),
+                ("Arctic option", "–50 °F to 130 °F")
+            ]
+        }
+    }
 
-        models = df.iloc[0, 1:].tolist()
-        labels = df.iloc[:, 0].tolist()
-
-        model_spec_data = {model: [] for model in models}
-        current_header = None
-
-        for i, label in enumerate(labels[2:], start=2):
-            if pd.isna(df.iloc[i, 1]):
-                current_header = df.iloc[i, 0]
-            else:
-                for col_index, model in enumerate(models, start=1):
-                    model_spec_data[model].append({
-                        "section": current_header,
-                        "label": df.iloc[i, 0],
-                        "value": df.iloc[i, col_index]
-                    })
-        return model_spec_data
-
-    complete_model_spec_data = load_transposed_spec_table()
-    selected_model = st.session_state.get("model_select", "EBOSS 25 kVA")
-    model_data = complete_model_spec_data.get(selected_model, [])
-
-    if not model_data:
-        st.warning(f"No data found for model: {selected_model}")
+    specs = spec_data.get(model)
+    if not specs:
+        st.warning(f"No hardcoded data for model: {model}")
         return
 
-    grouped = defaultdict(list)
-    for row in model_data:
-        grouped[row["section"]].append((row["label"], row["value"]))
-
-    for section, rows in grouped.items():
+    for section, items in specs.items():
         st.markdown(f"""
         <div style="background-color:#232325; color:white; font-weight:bold;
                     padding:0.7rem 1rem; border-radius:8px; font-size:1rem;
@@ -555,11 +623,12 @@ def render_tech_specs_page():
         </div>
         """, unsafe_allow_html=True)
 
-        for i in range(0, len(rows), 2):
+        for i in range(0, len(items), 2):
             col1, col2 = st.columns(2)
+
             with col1:
-                if i < len(rows):
-                    label, value = rows[i]
+                if i < len(items):
+                    label, value = items[i]
                     st.markdown(f"""
                     <div style="background:#f5f5f5; border-radius:10px; padding:1rem;
                                 margin-bottom:1.2rem; box-shadow:0 1px 4px rgba(0,0,0,0.08);
@@ -568,9 +637,10 @@ def render_tech_specs_page():
                         <div style="font-size:0.95rem;">{value}</div>
                     </div>
                     """, unsafe_allow_html=True)
+
             with col2:
-                if i + 1 < len(rows):
-                    label, value = rows[i + 1]
+                if i + 1 < len(items):
+                    label, value = items[i + 1]
                     st.markdown(f"""
                     <div style="background:#f5f5f5; border-radius:10px; padding:1rem;
                                 margin-bottom:1.2rem; box-shadow:0 1px 4px rgba(0,0,0,0.08);
