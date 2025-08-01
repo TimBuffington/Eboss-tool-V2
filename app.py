@@ -243,10 +243,11 @@ Eboss_Charge_Rates = {
 def render_home():
     show_logo_and_title("EBOSS&reg Size & Spec Tool")
     top_navbar()
-    with st.container():
-        col1, col2 = st.columns([1, 1])
 
-        # ---- LEFT COLUMN: System Configuration ----
+    with st.container():
+        col1, col2, col3 = st.columns([1, 1, 1])  # 3 equal columns
+
+        # 🟦 Column 1: System Configuration
         with col1:
             st.markdown('<div class="form-container">', unsafe_allow_html=True)
             st.markdown('<h3 class="form-section-title">EBOSS&reg Type / Model</h3>', unsafe_allow_html=True)
@@ -262,13 +263,20 @@ def render_home():
 
             st.markdown('</div>', unsafe_allow_html=True)
 
-        # ---- RIGHT COLUMN: Load Parameters ----
+        # 🟩 Column 2: Load Requirements
         with col2:
             st.markdown('<div class="form-container">', unsafe_allow_html=True)
             st.markdown('<h3 class="form-section-title">Load Parameters</h3>', unsafe_allow_html=True)
 
             cont_load = st.number_input("Continuous Load", 0, 500, step=1, format="%d", key="cont_input")
             peak_load = st.number_input("Max Peak Load", 0, 500, step=1, format="%d", key="peak_input")
+
+            st.markdown('</div>', unsafe_allow_html=True)
+
+        # 🟨 Column 3: Units & Voltage
+        with col3:
+            st.markdown('<div class="form-container">', unsafe_allow_html=True)
+            st.markdown('<h3 class="form-section-title">Power Settings</h3>', unsafe_allow_html=True)
 
             unit_options = ["kW", "Amps"]
             load_units = st.selectbox("Units", unit_options, key="unit_select")
@@ -278,7 +286,7 @@ def render_home():
 
             st.markdown('</div>', unsafe_allow_html=True)
 
-        # ---- Calculations ----
+        # ---- Calculation Logic ----
         pf = 0.8
         v_val = int(voltage.replace("V", ""))
 
