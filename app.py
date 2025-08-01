@@ -178,7 +178,7 @@ def landing_page():
     st.markdown("""
         <a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank" style="text-decoration:none;">
             <button class="eboss-hero-btn" type="button">
-                🎥 Learn How EBOSS&reg; Works
+                 Learn How EBOSS&reg; Works
             </button>
         </a>
     """, unsafe_allow_html=True)
