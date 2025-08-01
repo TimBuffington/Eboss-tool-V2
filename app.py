@@ -180,7 +180,7 @@ def show_logo_and_title(title):
 def top_navbar():
     btn1, btn2, btn3, btn4, btn5 = st.columns(5)
     def model_selected():
-    return st.session_state.get("model_select") not in [None, ""]
+        return st.session_state.get("model_select") not in [None, ""]
 
 
     def model_selected():
