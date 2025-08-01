@@ -4,7 +4,8 @@ import pandas as pd
 
 @st.cache_data
 def load_spec_table():
-    df = pd.read_excel("/mnt/data/EBoss Stats final.xlsx")
+    url = "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/data/EBoss%20Stats%20final.xlsx"
+    df = pd.read_excel(url)
     model_spec_table = {}
 
     for model in df["Model"].unique():
@@ -26,7 +27,6 @@ def load_spec_table():
 
     return model_spec_table
 
-complete_model_spec_data = load_spec_table()
 
 def apply_custom_css():
     st.markdown("""
