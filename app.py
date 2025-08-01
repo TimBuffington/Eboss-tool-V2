@@ -180,6 +180,9 @@ def show_logo_and_title(title):
 def top_navbar():
     btn1, btn2, btn3, btn4, btn5 = st.columns(5)
 
+    # ✅ Live debug view
+    st.markdown(f"🛠️ model_select = `{st.session_state.get('model_select')}`")
+
     def model_selected():
         return st.session_state.get("model_select") not in [None, ""]
 
@@ -237,15 +240,13 @@ def top_navbar():
                 st.rerun()
             else:
                 st.session_state.nav_error = "parallel"
-st.markdown(f"🛠️ model_select = `{st.session_state.get('model_select')}`")
 
-    # 🔔 Error popup (dismissible)
-        nav_error = st.session_state.get("nav_error")
-        if nav_error:
+    # 🔔 Error popup (outside column blocks)
+    nav_error = st.session_state.get("nav_error")
+    if nav_error:
         st.error("❌ Please select an EBOSS model before continuing.")
         if st.button("✅ OK", key="dismiss_nav_error"):
             st.session_state.nav_error = None
-
 
 # ===============================================================================================
 def landing_page():
