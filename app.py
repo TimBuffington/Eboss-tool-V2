@@ -92,7 +92,9 @@ a, a:visited, a:active {
     text-decoration: none !important;
     color: inherit !important;
 }
+/* FINAL SELECTBOX FIX: Always make dropdown value black! */
 .stSelectbox div[role="combobox"] *,
+.stSelectbox div[role="combobox"],
 .stSelectbox div[data-baseweb="select"] input,
 .stSelectbox div[data-baseweb="select"] div[role="combobox"],
 .stSelectbox div[data-baseweb="select"] span,
@@ -105,6 +107,7 @@ a, a:visited, a:active {
     caret-color: #111 !important;
     -webkit-text-fill-color: #111 !important;
 }
+
 </style>
 """, unsafe_allow_html=True)
 
