@@ -28,7 +28,7 @@ st.markdown("""
         width: 150px !important;
         max-width: 90vw !important;
         margin-top: 0.4rem;
-    
+    }
 }
 .form-section-title, h1 {
     font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
