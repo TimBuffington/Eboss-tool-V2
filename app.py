@@ -13,10 +13,7 @@ st.markdown("""
 
 
 
-a, a:visited, a:active {
-    text-decoration: none !important;
-    color: inherit !important;
-}
+
 
 
 /* FINAL SELECTBOX FIX: Always make dropdown value black! */
