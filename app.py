@@ -107,6 +107,13 @@ a, a:visited, a:active {
     caret-color: #111 !important;
     -webkit-text-fill-color: #111 !important;
 }
+st.markdown("""
+<style>
+.stSelectbox div[role="combobox"] * {
+    color: red !important;
+}
+</style>
+""", unsafe_allow_html=True)
 
 </style>
 """, unsafe_allow_html=True)
