@@ -43,25 +43,6 @@ def apply_custom_css():
     .stSelectbox div[role="combobox"]:hover {
         border-color: #666 !important;
     }
-    st.markdown("""
-<style>
-.form-container {
-    min-height: 320px;
-    background-color: #d8d8d8 !important;
-    border-radius: 12px;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    border: 1px solid #bbb;
-}
-
-.form-section-title {
-    min-height: 2.5rem;
-    font-weight: bold;
-    font-size: 1.25rem;
-    color: #111;
-    margin-bottom: 1rem;
-    font-family: 'Segoe UI', sans-serif;
-}
 </style>
 """, unsafe_allow_html=True)
 
@@ -103,6 +84,14 @@ st.markdown("""
     text-align: center;
     margin-bottom: 1.6rem;
     letter-spacing: .04em;
+}
+.form-section-title {
+    min-height: 2.5rem;
+    font-weight: bold;
+    font-size: 1.25rem;
+    color: #111;
+    margin-bottom: 1rem;
+    font-family: 'Segoe UI', sans-serif;
 }
 .stButton > button, .eboss-hero-btn {
     width: 100%;
