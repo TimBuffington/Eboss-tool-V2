@@ -1,5 +1,32 @@
 import streamlit as st
 from datetime import date
+import pandas as pd
+
+@st.cache_data
+def load_spec_table():
+    df = pd.read_excel("EBoss Stats final.xlsx")
+    model_spec_table = {}
+
+    for model in df["Model"].unique():
+        model_df = df[df["Model"] == model]
+        blocks = []
+        current_block = {"header": "", "rows": []}
+
+        for _, row in model_df.iterrows():
+            if pd.isna(row["Spec Value"]):
+                if current_block["rows"]:
+                    blocks.append(current_block)
+                    current_block = {"header": "", "rows": []}
+                current_block["header"] = row["Spec Name"]
+            else:
+                current_block["rows"].append((row["Spec Name"], row["Spec Value"]))
+        if current_block["rows"]:
+            blocks.append(current_block)
+        model_spec_table[model] = blocks
+
+    return model_spec_table
+
+complete_model_spec_data = load_spec_table()
 
 def apply_custom_css():
     st.markdown("""
