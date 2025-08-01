@@ -656,7 +656,7 @@ def render_tech_specs_page():
         st.warning(f"No hardcoded data for model: {model}")
         return
 
-    for section, items in specs.items():
+for section, items in specs.items():
     st.markdown(f"""
     <div style="background-color:#232325; color:white; font-weight:bold;
                 padding:0.7rem 1rem; border-radius:8px; font-size:1rem;
@@ -664,7 +664,7 @@ def render_tech_specs_page():
         {section}
     </div>
     """, unsafe_allow_html=True)
-
+   
     for section, items in specs.items():
     st.markdown(f"""
     <div style="background-color:#232325; color:white; font-weight:bold;
