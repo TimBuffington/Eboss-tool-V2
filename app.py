@@ -409,91 +409,9 @@ def render_calculate_buttons():
 
 #==============================================================================================================================
 def render_home():
-    show_logo_and_title("EBOSS&reg Size & Spec Tool")
+    show_logo_and_title("EBOSS® Size & Spec Tool")
     top_navbar()
-
-    with st.container():
-        # Define clean 3-column layout
-        col1, col2, col3 = st.columns([1, 1, 1])
-
-        # 🟦 Column 1: EBOSS Configuration
-        with col1:
-            st.markdown('<div class="form-container">', unsafe_allow_html=True)
-            st.markdown('<h3 class="form-section-title">EBOSS®</h3>', unsafe_allow_html=True)
-
-            model = st.selectbox("Model", ["EB25 kVA", "EB70 kVA", "EB125 kVA", "EB220 kVA", "EB400 kVA"], key="model_select")
-            gen_type = st.selectbox("Type", ["Full Hybrid", "Power Module"], key="gen_type_select")
-
-            # Conditional dropdown for generator size
-            kva_option = None
-            if gen_type == "Power Module":
-                kva_option = st.selectbox("Generator Size", ["25kVA", "45kVA", "65kVA", "125kVA", "220kVA", "400kVA"], key="kva_select")
-
-            st.markdown('</div>', unsafe_allow_html=True)
-
-        # 🟩 Column 2: Load Parameters
-        with col2:
-            st.markdown('<div class="form-container">', unsafe_allow_html=True)
-            st.markdown('<h3 class="form-section-title">Load</h3>', unsafe_allow_html=True)
-
-            cont_load = st.number_input("Continuous Load", 0, 500, step=1, format="%d", key="cont_input")
-            peak_load = st.number_input("Max Peak Load", 0, 500, step=1, format="%d", key="peak_input")
-
-            st.markdown('</div>', unsafe_allow_html=True)
-
-        # 🟨 Column 3: Power Settings
-        with col3:
-            st.markdown('<div class="form-container">', unsafe_allow_html=True)
-            st.markdown('<h3 class="form-section-title">Units</h3>', unsafe_allow_html=True)
-
-            load_units = st.selectbox("Units", ["kW", "Amps"], key="unit_select")
-            voltage = st.selectbox("Voltage", ["480V", "240V", "208V"], key="voltage_select")
-
-            st.markdown('</div>', unsafe_allow_html=True)
-
-        # ⚙️ Convert amps to kW if needed
-        pf = 0.8
-        v_val = int(voltage.replace("V", ""))
-
-        if load_units == "Amps":
-            cont_kw = (cont_load * (3 ** 0.5) * v_val * pf) / 1000
-            peak_kw = (peak_load * (3 ** 0.5) * v_val * pf) / 1000
-            if v_val != 480:
-                cont_kw = (cont_load * (3 ** 0.5) * 480 * pf) / 1000
-                peak_kw = (peak_load * (3 ** 0.5) * 480 * pf) / 1000
-        else:
-            cont_kw = cont_load
-            peak_kw = peak_load
-
-        # 💾 Store values in session
-        st.session_state.user_inputs = {
-            "model": model,
-            "gen_type": gen_type,
-            "kva_option": kva_option,
-            "cont_kw": cont_kw,
-            "peak_kw": peak_kw,
-            "raw_cont_load": cont_load,
-            "raw_peak_load": peak_load,
-            "load_units": load_units,
-            "voltage": voltage,
-        }
-
-# Reference data & calculation functions (unchanged)
-EBOSS_KVA = {
-    "EB25 kVA": 25,
-    "EB70 kVA": 45,
-    "EB125 kVA": 65,
-    "EB220 kVA": 125,
-    "EB400 kVA": 220
-}
-STANDARD_GENERATORS = {
-    "25 kVA / 20 kW": 1.8,
-    "45 kVA / 36 kW": 2.7,
-    "65 kVA / 52 kW": 3.5,
-    "125 kVA / 100 kW": 6.5,
-    "220 kVA / 176 kW": 12.5,
-    "400 kVA / 320 kW": 22.0
-}
+    render_user_input_form()
 #=================================================================================================
 def interpolate_gph(kva, load_pct):
     kva_map = {
