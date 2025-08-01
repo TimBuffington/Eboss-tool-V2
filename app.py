@@ -222,29 +222,15 @@ def render_home():
             st.markdown('<div class="form-container">', unsafe_allow_html=True)
             st.markdown('<h3 class="form-section-title">EBOSS&reg Type / Model</h3>', unsafe_allow_html=True)
 
-            # MODEL SELECT
             model_options = ["EB25 kVA", "EB70 kVA", "EB125 kVA", "EB220 kVA", "EB400 kVA"]
-            default_model = st.session_state.get("model", model_options[0])
-            model = st.selectbox("Model", model_options,
-                                 index=model_options.index(default_model),
-                                 key="model_select")
+            model = st.selectbox("Model", model_options, key="model_select")
 
-            # GEN TYPE SELECT
             gen_type_options = ["Full Hybrid", "Power Module"]
-            default_gen_type = st.session_state.get("gen_type", gen_type_options[0])
-            gen_type = st.selectbox("Type", gen_type_options,
-                                    index=gen_type_options.index(default_gen_type),
-                                    key="gen_type_select")
+            gen_type = st.selectbox("Type", gen_type_options, key="gen_type_select")
 
-            # GENERATOR SIZE (conditional)
             gen_sizes = ["25kVA", "45kVA", "65kVA", "125kVA", "220kVA", "400kVA"]
-            if gen_type == "Power Module":
-                default_kva = st.session_state.get("kva_option", gen_sizes[0])
-                kva_option = st.selectbox("Generator Size", gen_sizes,
-                                          index=gen_sizes.index(default_kva),
-                                          key="kva_select")
-            else:
-                kva_option = None
+            kva_option = st.selectbox("Generator Size", gen_sizes, key="kva_select") if gen_type == "Power Module" else None
+
             st.markdown('</div>', unsafe_allow_html=True)
 
         # ---- RIGHT COLUMN: Load Parameters ----
@@ -252,27 +238,15 @@ def render_home():
             st.markdown('<div class="form-container">', unsafe_allow_html=True)
             st.markdown('<h3 class="form-section-title">Load Parameters</h3>', unsafe_allow_html=True)
 
-            # CONTINUOUS LOAD
-            cont_load = st.number_input("Continuous Load", 0, 500,
-                                        value=st.session_state.get("raw_cont_load", 0),
-                                        step=1, format="%d", key="cont_input")
+            cont_load = st.number_input("Continuous Load", 0, 500, step=1, format="%d", key="cont_input")
+            peak_load = st.number_input("Max Peak Load", 0, 500, step=1, format="%d", key="peak_input")
 
-            # PEAK LOAD
-            peak_load = st.number_input("Max Peak Load", 0, 500,
-                                        value=st.session_state.get("raw_peak_load", 0),
-                                        step=1, format="%d", key="peak_input")
-
-            # UNITS
             unit_options = ["kW", "Amps"]
-            load_units = st.selectbox("Units", unit_options,
-                                      index=unit_options.index(st.session_state.get("load_units", "kW")),
-                                      key="units_select")
+            load_units = st.selectbox("Units", unit_options, key="unit_select")
 
-            # VOLTAGE
-            voltages = ["480V", "240V", "208V"]
-            voltage = st.selectbox("Voltage", voltages,
-                                   index=voltages.index(st.session_state.get("voltage", "480V")),
-                                   key="voltage_select")
+            voltage_options = ["480V", "240V", "208V"]
+            voltage = st.selectbox("Voltage", voltage_options, key="voltage_select")
+
             st.markdown('</div>', unsafe_allow_html=True)
 
         # ---- Calculations ----
@@ -289,7 +263,7 @@ def render_home():
             cont_kw = cont_load
             peak_kw = peak_load
 
-        # ---- Store All Values in Session ----
+        # ---- Store All Values in Session State ----
         st.session_state.user_inputs = {
             "model": model,
             "gen_type": gen_type,
@@ -301,13 +275,6 @@ def render_home():
             "load_units": load_units,
             "voltage": voltage,
         }
-        st.session_state.model = model
-        st.session_state.gen_type = gen_type
-        st.session_state.kva_option = kva_option
-        st.session_state.raw_cont_load = cont_load
-        st.session_state.raw_peak_load = peak_load
-        st.session_state.load_units = load_units
-        st.session_state.voltage = voltage
 
 
 
