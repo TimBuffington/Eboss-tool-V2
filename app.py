@@ -510,50 +510,47 @@ def render_tech_specs_page():
 
     model = st.session_state.get("model_select", "EBOSS 25 kVA")
 
-    # Full structured data (70, 125, 220, 400 included)
     spec_data = {
         "EBOSS 25 kVA": {
-    "Maximum Intermittent Power Output": [
-        ("Three‑phase", "30 kVA / 24 kW"),
-        ("Single‑phase", "20 kVA / 16 kW"),
-        ("Frequency", "60 Hz"),
-        ("Voltage (1Φ)", "120 / 240 V"),
-        ("Voltage (3Φ)", "120 / 208 / 277 / 480 V"),
-        ("Voltage Regulation", "Adjustable"),
-        ("Amp-load 208V", "70 A / 13.5 kW"),
-        ("Amp-load 480V", "30 A / 19 kW"),
-        ("Motor Start (208V)", "104 A / 19.5 kW"),
-        ("Motor Start (480V)", "45 A / 29 kW")
-    ],
-    "Technology": [
-        ("Battery Chemistry", "Lithium Titanate Oxide (LTO)"),
-        ("Battery Capacity", "15 kWh"),
-        ("Battery Life", "90K cycles @ 90% DOD (~41 yr @ 3 kW)"),
-        ("Charge Time", "< 45 min"),
-        ("Inverter Output Max", "24 kW"),
-        ("Parallel Capability", "Available")
-    ],
-    "Operating Temperatures": [
-        ("Cold‑start min", "14 °F"),
-        ("Running", "–22 °F to 130 °F"),
-        ("Arctic option", "–50 °F to 130 °F")
-    ],
-    "Weights & Dimensions": [
-        ("Skid Size", "40″ × 48″ × 46″"),
-        ("Skid Weight", "2,120 lbs"),
-        ("Trailer Size", "160″ × 74″ × 75″"),
-        ("Total Weight", "5,100 lbs / 5,500 lbs"),
-        ("Fuel Tank", "51.5 gal")
-    ],
-    "Generator": [
-        ("Model", "Airman SDG25"),
-        ("Gen Charge Rate", "25 kVA / 20 kW"),
-        ("Three‑phase Output", "23 kVA / 19 kW"),
-        ("Single‑phase Output", "20 kVA / 16 kW")
-    ]
-},
-
-        
+            "Maximum Intermittent Power Output": [
+                ("Three‑phase", "30 kVA / 24 kW"),
+                ("Single‑phase", "20 kVA / 16 kW"),
+                ("Frequency", "60 Hz"),
+                ("Voltage (1Φ)", "120 / 240 V"),
+                ("Voltage (3Φ)", "120 / 208 / 277 / 480 V"),
+                ("Voltage Regulation", "Adjustable"),
+                ("Amp-load 208V", "70 A / 13.5 kW"),
+                ("Amp-load 480V", "30 A / 19 kW"),
+                ("Motor Start (208V)", "104 A / 19.5 kW"),
+                ("Motor Start (480V)", "45 A / 29 kW")
+            ],
+            "Technology": [
+                ("Battery Chemistry", "Lithium Titanate Oxide (LTO)"),
+                ("Battery Capacity", "15 kWh"),
+                ("Battery Life", "90K cycles @ 90% DOD (~41 yr @ 3 kW)"),
+                ("Charge Time", "< 45 min"),
+                ("Inverter Output Max", "24 kW"),
+                ("Parallel Capability", "Available")
+            ],
+            "Operating Temperatures": [
+                ("Cold‑start min", "14 °F"),
+                ("Running", "–22 °F to 130 °F"),
+                ("Arctic option", "–50 °F to 130 °F")
+            ],
+            "Weights & Dimensions": [
+                ("Skid Size", "40″ × 48″ × 46″"),
+                ("Skid Weight", "2,120 lbs"),
+                ("Trailer Size", "160″ × 74″ × 75″"),
+                ("Total Weight", "5,100 lbs / 5,500 lbs"),
+                ("Fuel Tank", "51.5 gal")
+            ],
+            "Generator": [
+                ("Model", "Airman SDG25"),
+                ("Gen Charge Rate", "25 kVA / 20 kW"),
+                ("Three‑phase Output", "23 kVA / 19 kW"),
+                ("Single‑phase Output", "20 kVA / 16 kW")
+            ]
+        },
         "EBOSS 70 kVA": {
             "Maximum Intermittent Power Output": [
                 ("Three‑phase", "70 kVA / 56 kW"),
@@ -653,55 +650,44 @@ def render_tech_specs_page():
 
     specs = spec_data.get(model)
     if not specs:
-        st.warning(f"No hardcoded data for model: {model}")
+        st.warning(f"No data available for {model}")
         return
 
-for section, items in specs.items():
-    st.markdown(f"""
-    <div style="background-color:#232325; color:white; font-weight:bold;
-                padding:0.7rem 1rem; border-radius:8px; font-size:1rem;
-                margin:2rem 0 1rem 0; text-transform:uppercase;">
-        {section}
-    </div>
-    """, unsafe_allow_html=True)
-   
     for section, items in specs.items():
-    st.markdown(f"""
-    <div style="background-color:#232325; color:white; font-weight:bold;
-                padding:0.7rem 1rem; border-radius:8px; font-size:1rem;
-                margin:2rem 0 1rem 0; text-transform:uppercase;">
-        {section}
-    </div>
-    """, unsafe_allow_html=True)
+        st.markdown(f"""
+        <div style="background-color:#232325; color:white; font-weight:bold;
+                    padding:0.7rem 1rem; border-radius:8px; font-size:1rem;
+                    margin:2rem 0 1rem 0; text-transform:uppercase;">
+            {section}
+        </div>
+        """, unsafe_allow_html=True)
 
-    for i in range(0, len(items), 2):
-        col1, col2 = st.columns(2)
+        for i in range(0, len(items), 2):
+            col1, col2 = st.columns(2)
 
-        with col1:
-            if i < len(items):
-                label, value = items[i]
-                st.markdown(f"""
-                <div style="background:#2b2b2b; border-radius:10px; padding:1rem;
-                            margin-bottom:1.2rem; box-shadow:0 1px 6px rgba(0,0,0,0.15);
-                            border:1px solid #444; color:white;">
-                    <div style="font-weight:bold; font-size:0.95rem; margin-bottom:0.3rem;">{label}</div>
-                    <div style="font-size:0.95rem;">{value}</div>
-                </div>
-                """, unsafe_allow_html=True)
+            with col1:
+                if i < len(items):
+                    label, value = items[i]
+                    st.markdown(f"""
+                    <div style="background:#2b2b2b; border-radius:10px; padding:1rem;
+                                margin-bottom:1.2rem; box-shadow:0 1px 6px rgba(0,0,0,0.15);
+                                border:1px solid #444; color:white;">
+                        <div style="font-weight:bold; font-size:0.95rem; margin-bottom:0.3rem;">{label}</div>
+                        <div style="font-size:0.95rem;">{value}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
 
-        with col2:
-            if i + 1 < len(items):
-                label, value = items[i + 1]
-                st.markdown(f"""
-                <div style="background:#2b2b2b; border-radius:10px; padding:1rem;
-                            margin-bottom:1.2rem; box-shadow:0 1px 6px rgba(0,0,0,0.15);
-                            border:1px solid #444; color:white;">
-                    <div style="font-weight:bold; font-size:0.95rem; margin-bottom:0.3rem;">{label}</div>
-                    <div style="font-size:0.95rem;">{value}</div>
-                </div>
-                """, unsafe_allow_html=True)
-
-
+            with col2:
+                if i + 1 < len(items):
+                    label, value = items[i + 1]
+                    st.markdown(f"""
+                    <div style="background:#2b2b2b; border-radius:10px; padding:1rem;
+                                margin-bottom:1.2rem; box-shadow:0 1px 6px rgba(0,0,0,0.15);
+                                border:1px solid #444; color:white;">
+                        <div style="font-weight:bold; font-size:0.95rem; margin-bottom:0.3rem;">{label}</div>
+                        <div style="font-size:0.95rem;">{value}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
 
 
 # ---- LOAD SPECS PAGE ----
