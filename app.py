@@ -109,12 +109,9 @@ a, a:visited, a:active {
 }
 st.markdown("""
 <style>
-.stSelectbox div[role="combobox"] * {
+.stSelectbox div[role="combobox"] 
     color: red !important;
 }
-</style>
-""", unsafe_allow_html=True)
-
 </style>
 """, unsafe_allow_html=True)
 
