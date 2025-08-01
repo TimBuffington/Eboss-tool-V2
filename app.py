@@ -180,70 +180,41 @@ def show_logo_and_title(title):
 def top_navbar():
     btn1, btn2, btn3, btn4, btn5 = st.columns(5)
 
-    def is_model_selected():
-        return st.session_state.get("model_select") not in [None, ""]
-
     with btn1:
         if st.button("🧑‍🔧 Tech Specs", key="nav_tech_specs"):
-            if is_model_selected():
-                st.session_state.section = "tech_specs"
-                st.session_state.run_tech_specs = True
-                st.session_state.nav_error = None
-                st.session_state.landing_shown = False
-                st.rerun()
-            else:
-                st.session_state.nav_error = "tech"
+            st.session_state.section = "tech_specs"
+            st.session_state.run_tech_specs = True
+            st.session_state.landing_shown = False
+            st.rerun()
 
     with btn2:
         if st.button("⚡ Load Specs", key="nav_load_specs"):
-            if is_model_selected():
-                st.session_state.section = "load_specs"
-                st.session_state.run_load_calc = True
-                st.session_state.nav_error = None
-                st.session_state.landing_shown = False
-                st.rerun()
-            else:
-                st.session_state.nav_error = "load"
+            st.session_state.section = "load_specs"
+            st.session_state.run_load_calc = True
+            st.session_state.landing_shown = False
+            st.rerun()
 
     with btn3:
         if st.button("⚖️ Compare", key="nav_compare"):
-            if is_model_selected():
-                st.session_state.section = "compare"
-                st.session_state.run_compare = True
-                st.session_state.nav_error = None
-                st.session_state.landing_shown = False
-                st.rerun()
-            else:
-                st.session_state.nav_error = "compare"
+            st.session_state.section = "compare"
+            st.session_state.run_compare = True
+            st.session_state.landing_shown = False
+            st.rerun()
 
     with btn4:
         if st.button("💰 Cost Analysis", key="nav_cost"):
-            if is_model_selected():
-                st.session_state.section = "cost"
-                st.session_state.run_cost_calc = True
-                st.session_state.nav_error = None
-                st.session_state.landing_shown = False
-                st.rerun()
-            else:
-                st.session_state.nav_error = "cost"
+            st.session_state.section = "cost"
+            st.session_state.run_cost_calc = True
+            st.session_state.landing_shown = False
+            st.rerun()
 
     with btn5:
         if st.button("🧮 Parallel Calculator", key="nav_parallel_calc"):
-            if is_model_selected():
-                st.session_state.section = "parallel_calc"
-                st.session_state.run_parallel_calc = True
-                st.session_state.nav_error = None
-                st.session_state.landing_shown = False
-                st.rerun()
-            else:
-                st.session_state.nav_error = "parallel"
+            st.session_state.section = "parallel_calc"
+            st.session_state.run_parallel_calc = True
+            st.session_state.landing_shown = False
+            st.rerun()
 
-    # Error popup (outside column blocks)
-    nav_error = st.session_state.get("nav_error")
-    if nav_error:
-        st.error("❌ Please select an EBOSS model before continuing.")
-        if st.button("✅ OK", key="dismiss_nav_error"):
-            st.session_state.nav_error = None
 
 # ===============================================================================================
 def landing_page():
@@ -287,6 +258,12 @@ def render_training_form():
 #=============================================================================================================================
    
 def render_user_input_form():
+    show_logo_and_title("Tech Specs")
+    top_navbar()
+    model = st.session_state.get("model_select", "")
+    if not model:
+        st.warning("Please select an EBOSS model.")
+        return
     col1, col2, col3 = st.columns([1, 1, 1])
 
     with col1:
@@ -549,7 +526,13 @@ def render_tech_specs_page():
 # ---- LOAD SPECS PAGE ----
 def render_load_specs_page():
     show_logo_and_title("Load Specs")
+    render_user_input_form()
     top_navbar()
+
+    model = st.session_state.get("model_select", "")
+    if not model:
+        st.warning("Please select an EBOSS model.")
+        return
     inputs = st.session_state.user_inputs
 
     model = inputs.get("model")
@@ -602,7 +585,16 @@ def render_load_specs_page():
 
 def render_compare_page():
     show_logo_and_title("Comparison")
+    show_logo_and_title("Tech Specs")
+    render_user_input_form()
     top_navbar()
+
+    # 4. Continue with the rest of the page
+    model = st.session_state.get("model_select", "")
+    if not model:
+        st.warning("Please select an EBOSS model.")
+        return
+    
 
     if not st.session_state.get("run_compare"):
         st.warning("Please fill out the form and click 'Calculate' before viewing comparison results.")
