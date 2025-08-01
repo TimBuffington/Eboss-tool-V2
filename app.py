@@ -34,6 +34,49 @@ def apply_custom_css():
         text-shadow: 0 1px 1px rgba(0,0,0,0.04);
     }
 
+
+col_left, col_mid, col_right = st.columns([1, 1, 1])
+
+with col_left:
+   if st.button("🧮 Calculate", key="btn_calculate"):
+    active_page = st.session_state.get("section")
+
+    if active_page == "load_specs":
+        st.session_state.run_load_calc = True
+    elif active_page == "cost":
+        st.session_state.run_cost_calc = True
+    elif active_page == "parallel_calc":
+        st.session_state.run_parallel_calc = True
+    elif active_page == "tech_specs":
+        st.session_state.run_tech_specs = True
+    elif active_page == "compare":
+        st.session_state.run_compare = True
+
+    st.session_state.calculation_done = True
+
+
+with col_right:
+    if st.button("♻️ Clear", key="btn_clear"):
+        # Reset only user_inputs section
+        st.session_state.user_inputs = {
+            "model": "EB25 kVA",
+            "gen_type": "Full Hybrid",
+            "kva_option": None,
+            "cont_kw": 0,
+            "peak_kw": 0,
+            "raw_cont_load": 0,
+            "raw_peak_load": 0,
+            "load_units": "kW",
+            "voltage": "480V"
+        }
+        # Optional: reset calculation flags
+        st.session_state.calculation_done = False
+        st.session_state.run_cost_calc = False
+        st.session_state.run_load_calc = False
+        st.session_state.run_parallel_calc = False
+        st.rerun()
+
+
     /* Labels (including selectbox and number input) */
     label, .form-section-title {
         display: block !important;
@@ -434,35 +477,48 @@ def calculate_runtime_specs(model, gen_type, cont_kw, kva):
 def render_tech_specs_page():
     show_logo_and_title("Tech Specs")
     top_navbar()
-    model = st.session_state.user_inputs.get("model", "")
-    specs_data = {
-        "EB25 kVA": {
-            "Battery Capacity": "15 kWh",
-            "Inverter": "Pure Sine Wave",
-            "Voltage Options": "120/240 (1Φ) • 208/480 (3Φ)",
-            "Weight": "8,200 lbs",
-            "Dimensions": '108" x 45" x 62"',
-            "Warranty": "2 Years"
-        },
-        "EB70 kVA": {
-            "Battery Capacity": "25 kWh",
-            "Inverter": "Pure Sine Wave",
-            "Voltage Options": "120/240 (1Φ) • 208/480 (3Φ)",
-            "Weight": "13,200 lbs",
-            "Dimensions": '108" x 60" x 62"',
-            "Warranty": "2 Years"
-        },
-        # Add more specs for other models as needed
-    }
-    data = specs_data.get(model)
-    if not data:
-        st.warning("Specs not available for this model.")
+
+    if not st.session_state.get("run_tech_specs"):
+        st.warning("Please fill out the form and click 'Calculate' before viewing Tech Specs.")
         return
+
+    model = st.session_state.user_inputs.get("model", "")
+    if not model:
+        st.warning("No model selected.")
+        return
+
+    # Convert user-facing model to spreadsheet label
+    model_map = {
+        "EB25 kVA": "EBOSS 25 kVA",
+        "EB70 kVA": "EBOSS 70 kVA",
+        "EB125 kVA": "EBOSS 125 kVA",
+        "EB220 kVA": "EBOSS 220 kVA",
+        "EB400 kVA": "EBOSS 400 kVA"
+    }
+    excel_model = model_map.get(model)
+    spec_data = complete_model_spec_data.get(excel_model, {})
+
+    # Container start
     st.markdown('<div class="form-container">', unsafe_allow_html=True)
-    st.markdown('<h3 class="form-section-title">📋 Technical Specs</h3>', unsafe_allow_html=True)
-    for key, value in data.items():
-        st.markdown(f"**{key}:** {value}")
+    st.markdown(f'<h3 class="form-section-title">📋 Technical Specs – {model}</h3>', unsafe_allow_html=True)
+
+    # Column headers
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        st.markdown("### 🟦 Stats")
+    with col2:
+        st.markdown(f"### 🟩 {model}")
+
+    # Data rows
+    for label, value in spec_data.items():
+        col1, col2 = st.columns([1, 1])
+        with col1:
+            st.markdown(f"**{label}**")
+        with col2:
+            st.markdown(f"{value if pd.notna(value) else 'TBD'}")
+
     st.markdown('</div>', unsafe_allow_html=True)
+    st.session_state.run_tech_specs = False   
 
 # ---- LOAD SPECS PAGE ----
 def render_load_specs_page():
@@ -515,6 +571,25 @@ def render_load_specs_page():
         st.session_state.user_inputs["charge_rate"] = charge_rate
 
     # ...rest of your load specs calculations/output here...
+
+#======================================================================================================
+
+def render_compare_page():
+    show_logo_and_title("Comparison")
+    top_navbar()
+
+    if not st.session_state.get("run_compare"):
+        st.warning("Please fill out the form and click 'Calculate' before viewing comparison results.")
+        return
+
+    # Placeholder for future comparison output
+    st.markdown('<div class="form-container">', unsafe_allow_html=True)
+    st.markdown('<h3 class="form-section-title">🔍 EBOSS® vs Standard Generator</h3>', unsafe_allow_html=True)
+    st.markdown("Comparison data will be displayed here.")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    # Optional: reset flag
+    st.session_state.run_compare = False
 
 # ---- COST ANALYSIS PAGE ----
 def render_cost_analysis_page():
