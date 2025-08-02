@@ -360,7 +360,7 @@ def landing_page():
         """, unsafe_allow_html=True)
 
 
-       if st.button("🚀 Launch EBOSS® Tool", key="btn_launch"):
+    if st.button("🚀 Launch EBOSS® Tool", key="btn_launch"):
         st.session_state.selected_form = "tool"
         st.session_state.section = "input"  # 👈 or "tech_specs" if you prefer
         st.session_state.landing_shown = False
