@@ -536,8 +536,10 @@ def render_user_input_form():
 
 
 def render_user_input_page():
-    show_logo_and_title("User Input")
+    apply_custom_css()  # ✅ ADD THIS
+    show_logo_and_title("Eboss & Load Data")
     render_user_input_form()
+    top_navbar()
    
 #========================================================================================================
 def display_load_threshold_check(user_inputs):
