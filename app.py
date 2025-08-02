@@ -1,18 +1,10 @@
 import streamlit as st
 from datetime import date
 import pandas as pd
-def render_card(label, value):
-    st.markdown(f'''
-    <div class="card">
-        <div class="card-label">{label}</div>
-        <div class="card-value">{value}</div>
-    </div>
-    ''', unsafe_allow_html=True)
-
 def apply_custom_css():
     st.markdown("""
     <style>
-    /* === GLOBAL === */
+    /* === GLOBAL STYLES === */
     html, body, .stApp {
         font-family: 'Segoe UI', sans-serif;
         font-size: 1.1rem;
@@ -24,120 +16,120 @@ def apply_custom_css():
         padding: 0;
     }
 
-/* === HEADINGS === */
-h1, .form-section-title {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 2.2rem;
-    font-weight: 800;
-    text-align: center;
-    color: #fff;
-    text-shadow: 2px 2px 10px rgba(0,0,0,0.6);
-    margin-bottom: 1.5rem;
-}
-
-/* === CARD BLOCK === */
-.card {
-    background: linear-gradient(145deg, #000, #1b1b1b);
-    border-radius: 16px;
-    padding: 1.4rem 1.8rem;
-    margin-bottom: 1.5rem;
-    border: 1px solid #939598;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.65),
-                inset 0 1px 2px rgba(255,255,255,0.05);
-    transition: transform 0.2s ease-in-out;
-    color: #fff;
-}
-
-.card-label {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #81BD47;
-    margin-bottom: 0.4rem;
-    text-shadow: 0 1px 1px rgba(0,0,0,0.6);
-}
-
-.card-value {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #fff;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.4);
-}
-
-/* === BUTTONS === */
-.stButton > button, .eboss-hero-btn {
-    width: 100%;
-    max-width: 340px;
-    margin: 1rem auto;
-    padding: 1.1rem 0.5rem;
-    background: #232325;
-    color: #fff;
-    border-radius: 18px;
-    font-size: 1.2rem;
-    font-weight: 700;
-    border: none;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.36);
-    transition: all 0.2s ease-in-out;
-}
-
-.stButton > button:hover {
-    background: #2c2c2f;
-    transform: scale(1.04) translateY(-2px);
-    box-shadow: 0 0 30px 8px #81BD47;
-}
-
-/* === FORM INPUTS === */
-input, select, textarea {
-    background-color: #fff;
-    color: #111;
-    font-weight: bold;
-    border-radius: 8px;
-    padding: 0.6rem 1rem;
-    border: 1px solid #bbb;
-    width: 100%;
-    box-sizing: border-box;
-    margin-bottom: 1rem;
-    transition: border 0.2s, box-shadow 0.2s;
-}
-
-input:focus, select:focus, textarea:focus {
-    border-color: #81BD47;
-    box-shadow: 0 0 0 2px rgba(129,189,71,0.25);
-}
-
-/* === LOGO === */
-.logo-header {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-
-.logo-header img {
-    width: 90%;
-    max-width: 360px;
-    height: auto;
-    filter: drop-shadow(0 2px 16px rgba(0,0,0,0.28));
-    border-radius: 0.4rem;
-}
-
-/* === MOBILE === */
-@media (max-width: 600px) {
-    .logo-header img {
-        width: 80% !important;
-    }
+    /* === HEADER & SECTION TITLES === */
     h1, .form-section-title {
-        font-size: 1.5rem;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2.2rem;
+        font-weight: 800;
+        text-align: center;
+        color: #fff;
+        text-shadow: 2px 2px 10px rgba(0,0,0,0.6);
+        margin-bottom: 1.5rem;
     }
-    .card-label {
-        font-size: 0.95rem;
-    }
-    .card-value {
-        font-size: 1.05rem;
-    }
-}
-</style>
-""", unsafe_allow_html=True)
 
+    /* === CARD === */
+    .card {
+        background: linear-gradient(145deg, #000, #1b1b1b);
+        border-radius: 16px;
+        padding: 1.4rem 1.8rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #939598;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.65),
+                    inset 0 1px 2px rgba(255,255,255,0.05);
+        transition: transform 0.2s ease-in-out;
+        color: #fff;
+    }
+
+    .card-label {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #81BD47;
+        margin-bottom: 0.4rem;
+        text-shadow: 0 1px 1px rgba(0,0,0,0.6);
+    }
+
+    .card-value {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #fff;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+    }
+
+    /* === BUTTONS === */
+    .stButton > button, .eboss-hero-btn {
+        width: 100%;
+        max-width: 340px;
+        margin: 1rem auto;
+        padding: 1.1rem 0.5rem;
+        background: #232325;
+        color: #fff;
+        border-radius: 18px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        border: none;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.36);
+        transition: all 0.2s ease-in-out;
+    }
+
+    .stButton > button:hover {
+        background: #2c2c2f;
+        transform: scale(1.04) translateY(-2px);
+        box-shadow: 0 0 30px 8px #81BD47;
+    }
+
+    /* === FORM INPUTS === */
+    input, select, textarea {
+        background-color: #fff;
+        color: #111;
+        font-weight: bold;
+        border-radius: 8px;
+        padding: 0.6rem 1rem;
+        border: 1px solid #bbb;
+        width: 100%;
+        box-sizing: border-box;
+        margin-bottom: 1rem;
+        transition: border 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+        border-color: #81BD47;
+        box-shadow: 0 0 0 2px rgba(129,189,71,0.25);
+    }
+
+    /* === LOGO === */
+    .logo-header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .logo-header img {
+        width: 90%;
+        max-width: 360px;
+        height: auto;
+        filter: drop-shadow(0 2px 16px rgba(0,0,0,0.28));
+        border-radius: 0.4rem;
+    }
+
+    /* === MOBILE STYLES === */
+    @media (max-width: 768px) {
+        .stColumn {
+            flex: 1 0 100% !important;
+            max-width: 100% !important;
+        }
+        h1, .form-section-title {
+            font-size: 1.6rem !important;
+        }
+        .card-label, .card-value {
+            font-size: 1rem !important;
+        }
+        .logo-header img {
+            width: 80% !important;
+        }
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
 # =========================================================================================================
 if "landing_shown" not in st.session_state:
@@ -338,7 +330,9 @@ def top_navbar():
 
 
 # ===============================================================================================
+
 def landing_page():
+    apply_custom_css()
     show_logo_and_title("EBOSS&reg Hybrid Energy System<br>Specs and Comparison Tool")
     col1, col2 = st.columns(2, gap="large")
     with col1:
