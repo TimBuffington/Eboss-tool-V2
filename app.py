@@ -521,7 +521,7 @@ def render_user_input_form():
 
     top_navbar()  # ✅ Nav buttons moved below input cards
 
-       def render_user_input_page():
+def render_user_input_page():
     show_logo_and_title("User Input")
     render_user_input_form()
     top_navbar()
