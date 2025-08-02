@@ -800,29 +800,90 @@ def render_load_specs_page():
 #======================================================================================================
 
 def render_compare_page():
-    show_logo_and_title("Comparison")
-    render_user_input_form()
+    show_logo_and_title("Compare EBOSS vs Standard Generator")
     top_navbar()
 
-    # 4. Continue with the rest of the page
-    model = st.session_state.get("model_select", "")
-    if not model:
-        st.warning("Please select an EBOSS model.")
-        return
-    
+    model = st.session_state.get("model_select", "EBOSS 70 kVA")
+    eboss_specs = spec_data.get(model, {})
+    std_specs = std_gen_data.get(model, {})
 
-    if not st.session_state.get("run_compare"):
-        st.warning("Please fill out the form and click 'Calculate' before viewing comparison results.")
+    if not eboss_specs or not std_specs:
+        st.warning(f"No comparison specs found for: {model}")
         return
 
-    # Placeholder for future comparison output
-    st.markdown('<div class="form-container">', unsafe_allow_html=True)
-    st.markdown('<h3 class="form-section-title">🔍 EBOSS® vs Standard Generator</h3>', unsafe_allow_html=True)
-    st.markdown("Comparison data will be displayed here.")
-    st.markdown('</div>', unsafe_allow_html=True)
+    for section, eboss_items in eboss_specs.items():
+        # SECTION HEADER
+        st.markdown(f"""
+        <div style="
+            background-color: #636569;
+            color: white;
+            font-weight: 700;
+            font-size: 1.4rem;
+            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            margin: 2rem 0 1rem 0;
+            text-align: center;
+            text-transform: uppercase;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);">
+            {section}
+        </div>
+        """, unsafe_allow_html=True)
 
-    # Optional: reset flag
-    st.session_state.run_compare = False
+        # iterate specs (match std spec by label)
+        for label, eboss_val in eboss_items:
+            std_list = dict(std_specs.get(section, []))
+            std_val = std_list.get(label, "–")
+
+            col1, col2, col3 = st.columns([1, 1, 1])
+
+            with col1:
+                st.markdown(f"""
+                <div style="
+                    background-color: #111;
+                    color: #81BD47;
+                    font-size: 1.15rem;
+                    font-weight: 600;
+                    padding: 1.1rem 1.5rem;
+                    border-radius: 12px;
+                    border: 1px solid #444;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+                    margin-bottom: 1rem;">
+                    {label}
+                </div>
+                """, unsafe_allow_html=True)
+
+            with col2:
+                st.markdown(f"""
+                <div style="
+                    background-color: #1c1c1c;
+                    color: #ffffff;
+                    font-size: 1.25rem;
+                    font-weight: 700;
+                    padding: 1.1rem 1.5rem;
+                    border-radius: 12px;
+                    border: 2px solid #81BD47;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+                    margin-bottom: 1rem;">
+                    {eboss_val}
+                </div>
+                """, unsafe_allow_html=True)
+
+            with col3:
+                st.markdown(f"""
+                <div style="
+                    background-color: #1c1c1c;
+                    color: #ffffff;
+                    font-size: 1.25rem;
+                    font-weight: 700;
+                    padding: 1.1rem 1.5rem;
+                    border-radius: 12px;
+                    border: 2px solid #939598;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+                    margin-bottom: 1rem;">
+                    {std_val}
+                </div>
+                """, unsafe_allow_html=True)
+
 
 # ---- COST ANALYSIS PAGE ----
 def render_cost_analysis_page():
