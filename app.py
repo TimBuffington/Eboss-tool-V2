@@ -2,234 +2,136 @@ import streamlit as st
 from datetime import date
 import pandas as pd
 
-@st.cache_data
-def load_transposed_spec_table():
-    import pandas as pd
-
-    # ✅ Raw Excel URL from your GitHub repo
-    url = "https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/EBStats.xlsx"
-    df = pd.read_excel(url, header=None)
-
-    # ✅ First row = model names, first column = spec labels
-    models = df.iloc[0, 1:].tolist()
-    labels = df.iloc[:, 0].tolist()
-
-    # ✅ Create empty list per model
-    model_spec_data = {model: [] for model in models}
-    current_header = None
-
-    # ✅ Start reading rows from row 2 onward (skip model header + blank line)
-    for i, label in enumerate(labels[2:], start=2):
-        if pd.isna(df.iloc[i, 1]):
-            # This is a section title row
-            current_header = df.iloc[i, 0]
-        else:
-            for col_index, model in enumerate(models, start=1):
-                model_spec_data[model].append({
-                    "section": current_header,
-                    "label": df.iloc[i, 0],
-                    "value": df.iloc[i, col_index]
-                })
-
-    return model_spec_data
-
 
 def apply_custom_css():
-    st.markdown("""
-    <style>
-    /* ===============================
-       EBOSS® Form Styling: Concrete Theme – Enhanced + Aligned
-       =============================== */
-/* Global font scale */
+st.markdown("""
+<style>
+/* === GLOBAL === */
 html, body, .stApp {
-    font-size: 1.3rem !important;
-    font-family: 'Segoe UI', sans-serif !important;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 1.1rem;
     line-height: 1.6;
+    background: url("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/bg.png") no-repeat center center fixed;
+    background-size: cover;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+}
+
+/* === HEADINGS === */
+h1, .form-section-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    text-align: center;
+    color: #fff;
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.6);
+    margin-bottom: 1.5rem;
+}
+
+/* === CARD BLOCK === */
+.card {
+    background: linear-gradient(145deg, #000, #1b1b1b);
+    border-radius: 16px;
+    padding: 1.4rem 1.8rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #939598;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.65),
+                inset 0 1px 2px rgba(255,255,255,0.05);
+    transition: transform 0.2s ease-in-out;
     color: #fff;
 }
 
-/* Inputs & Buttons */
-input, select, textarea,
-.stTextInput > div > div,
-.stNumberInput > div > input,
-.stSelectbox div[role="combobox"],
-.stSelectbox div[role="combobox"] input {
-    font-size: 1.3rem !important;
+.card-label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #81BD47;
+    margin-bottom: 0.4rem;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.6);
 }
 
-.stButton > button {
-    font-size: 1.3rem !important;
+.card-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.4);
 }
 
-/* Section Headers */
-.form-section-title,
-div[role="heading"] h1,
-h2, h3 {
-    font-size: 1.6rem !important;
-    font-weight: 700 !important;
-    color: #81BD47 !important;
-    margin-top: 2rem !important;
-    text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+/* === BUTTONS === */
+.stButton > button, .eboss-hero-btn {
+    width: 100%;
+    max-width: 340px;
+    margin: 1rem auto;
+    padding: 1.1rem 0.5rem;
+    background: #232325;
+    color: #fff;
+    border-radius: 18px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    border: none;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.36);
+    transition: all 0.2s ease-in-out;
 }
 
-/* Page Title */
-h1 {
-    font-size: 2.2rem !important;
-    font-weight: 800 !important;
-    letter-spacing: 0.03em;
-    color: #ffffff !important;
-    text-shadow: 2px 2px 10px rgba(0,0,0,0.6);
+.stButton > button:hover {
+    background: #2c2c2f;
+    transform: scale(1.04) translateY(-2px);
+    box-shadow: 0 0 30px 8px #81BD47;
 }
 
-    /* Main form containers */
-    .form-container {
-        background-color: #e2e2e2 !important;  /* Light concrete */
-        border-radius: 14px !important;
-        padding: 1.2rem !important;
-        border: 1px solid #ccc !important;
-        min-height: 360px !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
-        transition: all 0.2s ease-in-out;
-    }
-
-    .form-container:hover {
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18) !important;
-    }
-
-    /* Section titles */
-    .form-section-title {
-        font-weight: 700;
-        font-size: 1.3rem;
-        font-family: 'Segoe UI', sans-serif;
-        color: #111111;
-        min-height: 2.5rem;
-        margin-bottom: 1.2rem;
-        text-shadow: 0 1px 1px rgba(0,0,0,0.04);
-    }
-
-    /* Labels (including selectbox and number input) */
-    label, .form-section-title {
-        display: block !important;
-        margin-bottom: 0.4rem !important;
-        font-weight: 600;
-        font-size: 0.95rem;
-        color: #111;
-        font-family: 'Segoe UI', sans-serif;
-    }
-
-    /* Form input fields */
-    input, select, textarea,
-    .stTextInput > div > div,
-    .stNumberInput > div > input,
-    .stSelectbox div[role="combobox"],
-    .stSelectbox div[role="combobox"] input {
-        background-color: #ffffff !important;
-        color: #111111 !important;
-        font-weight: bold !important;
-        font-family: 'Segoe UI', sans-serif !important;
-        border-radius: 8px !important;
-        padding: 0.6rem 1rem !important;
-        border: 1px solid #bbb !important;
-        box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
-        margin-bottom: 1.2rem !important;
-        width: 100% !important;
-        box-sizing: border-box !important;
-        transition: border 0.2s, box-shadow 0.2s;
-    }
-
-    /* Focus / hover effect */
-    input:focus, select:focus, textarea:focus,
-    .stTextInput > div > div:focus-within,
-    .stNumberInput > div > input:focus,
-    .stSelectbox div[role="combobox"]:hover {
-        border-color: #81BD47 !important;
-        box-shadow: 0 0 0 2px rgba(129, 189, 71, 0.25);
-    }
-
-    /* Dropdown value text color fix */
-    .stSelectbox div[role="combobox"] *,
-    .stSelectbox div[role="combobox"] {
-        -webkit-text-fill-color: #111111 !important;
-        color: #111111 !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-# ---- CSS for ALL PAGES ----
-st.markdown("""
-<style>
-.stApp {
-    background: url("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/bg.png") no-repeat center center fixed !important;
-    background-size: cover !important;
+/* === FORM INPUTS === */
+input, select, textarea {
+    background-color: #fff;
+    color: #111;
+    font-weight: bold;
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    border: 1px solid #bbb;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 1rem;
+    transition: border 0.2s, box-shadow 0.2s;
 }
+
+input:focus, select:focus, textarea:focus {
+    border-color: #81BD47;
+    box-shadow: 0 0 0 2px rgba(129,189,71,0.25);
+}
+
+/* === LOGO === */
 .logo-header {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 1.2rem;
-    width: 100%;
+    margin-bottom: 1rem;
 }
+
 .logo-header img {
-    width: 600px;
-    max-width: 90vw;
+    width: 90%;
+    max-width: 360px;
     height: auto;
     filter: drop-shadow(0 2px 16px rgba(0,0,0,0.28));
-    margin-top: 1.0rem;
     border-radius: 0.4rem;
 }
+
+/* === MOBILE === */
 @media (max-width: 600px) {
     .logo-header img {
-        width: 150px !important;
-        max-width: 90vw !important;
-        margin-top: 0.4rem;
+        width: 80% !important;
     }
-}
-.form-section-title, h1 {
-    font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
-    font-size: 2.2rem;
-    font-weight: 800;
-    color: #fff;
-    text-shadow: 2px 2px 10px #232325bb, 0 1px 2px #232325cc;
-    text-align: center;
-    margin-bottom: 1.6rem;
-    letter-spacing: .04em;
-}
-.form-section-title {
-    min-height: 2.5rem;
-    font-weight: bold;
-    font-size: 1.25rem;
-    color: #111;
-    margin-bottom: 1rem;
-    font-family: 'Segoe UI', sans-serif;
-}
-.stButton > button, .eboss-hero-btn {
-    width: 100%;
-    min-width: 150px;
-    max-width: 340px;
-    margin: 1rem auto;
-    padding: 1.1rem 0.5rem;
-    background: #232325 !important;
-    color: #fff !important;
-    border-radius: 18px !important;
-    border: none !important;
-    font-size: 1.24rem !important;
-    font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif !important;
-    font-weight: 700 !important;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.36), 0 2px 4px #0002, 0 0 0 #81BD47;
-    text-shadow: 2px 2px 7px #000, 0 2px 10px #81BD4740;
-    transition: box-shadow 0.22s, background 0.18s, transform 0.14s;
-    cursor: pointer;
-    display: block;
-    outline: none;
-    letter-spacing: .02em;
-}
-.stButton > button:hover, .stButton > button:focus, .eboss-hero-btn:hover, .eboss-hero-btn:focus {
-    box-shadow: 0 0 30px 8px #81BD47, 0 10px 32px rgba(0,0,0,0.55);
-    background: #2c2c2f !important;
-    transform: scale(1.04) translateY(-2px);
+    h1, .form-section-title {
+        font-size: 1.5rem;
+    }
+    .card-label {
+        font-size: 0.95rem;
+    }
+    .card-value {
+        font-size: 1.05rem;
+    }
 }
 </style>
 """, unsafe_allow_html=True)
+
 
 # =========================================================================================================
 if "landing_shown" not in st.session_state:
