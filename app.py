@@ -800,19 +800,71 @@ def render_load_specs_page():
 #======================================================================================================
 
 def render_compare_page():
+    import re
+
+    def extract_number(s):
+        match = re.search(r"(\d+\.?\d*)", s)
+        return float(match.group(1)) if match else None
+
+    def extract_kva(model):
+        match = re.search(r"(\d+)", model)
+        return int(match.group(1)) if match else 0
+
     show_logo_and_title("Compare EBOSS vs Standard Generator")
     top_navbar()
 
-    model = st.session_state.get("model_select", "EBOSS 70 kVA")
+    model = st.session_state.get("model_select", "EBOSS 25 kVA")
     eboss_specs = spec_data.get(model, {})
     std_specs = std_gen_data.get(model, {})
 
-    if not eboss_specs or not std_specs:
-        st.warning(f"No comparison specs found for: {model}")
-        return
+    cont_kw = st.session_state.user_inputs.get("cont_kw", 10)
 
-    for section, eboss_items in eboss_specs.items():
-        # SECTION HEADER
+    kva = extract_kva(model)
+    charge_kw = Eboss_Charge_Rates[kva]["full_hybrid"]
+    gen_kw = kva * 0.8
+    battery_kwh = {
+        "EBOSS 25 kVA": 15,
+        "EBOSS 70 kVA": 25,
+        "EBOSS125 kVA": 50,
+        "EBOSS 220 kVA": 75,
+        "EBOSS 400 kVA": 125
+    }.get(model, 0)
+
+    # Runtime & fuel
+    battery_life = battery_kwh / cont_kw if cont_kw else 0
+    charge_time = battery_kwh / charge_kw if charge_kw else 0
+    cycles_per_day = 24 / (battery_life + charge_time) if (battery_life + charge_time) > 0 else 0
+    runtime_hrs = charge_time * cycles_per_day
+    eboss_gph = interpolate_gph(kva, charge_kw / gen_kw if gen_kw else 1)
+    std_gph = interpolate_gph(kva, 1.0)
+
+    eboss_gpd = round(eboss_gph * runtime_hrs, 2)
+    std_gpd = round(std_gph * 24, 2)
+    eboss_gpw = round(eboss_gpd * 7, 2)
+    std_gpw = round(std_gpd * 7, 2)
+    eboss_gpm = round(eboss_gpd * 30, 2)
+    std_gpm = round(std_gpd * 30, 2)
+
+    spec_layout = {
+        "Maximum Intermittent Load": [
+            "Three-phase", "Single-phase", "Frequency", "Simultaneous voltage", "Voltage regulation",
+            "Max. Intermittent 208v", "Max. Intermittent amp-load 480v",
+            "Motor start rating - 3 second 208v", "Motor start rating - 3 second 480v"
+        ],
+        "Maximum Continuous Load": [
+            "Generator Size", "Three-phase output", "Single-phase output", "Simultaneous voltage",
+            "Max. Continuous load @208v", "Max. Continuous load @480v"
+        ],
+        "Engine Specs": [
+            ("Runtime Hrs per Day", f"{round(runtime_hrs,1)}", "24"),
+            ("Battery Storage", f"{battery_kwh} kWH", "0 kWH"),
+            ("Gallons per Day", f"{eboss_gpd} gal", f"{std_gpd} gal"),
+            ("Gallons per Week", f"{eboss_gpw} gal", f"{std_gpw} gal"),
+            ("Gallons per Month", f"{eboss_gpm} gal", f"{std_gpm} gal")
+        ]
+    }
+
+    for section, rows in spec_layout.items():
         st.markdown(f"""
         <div style="
             background-color: #636569;
@@ -829,60 +881,62 @@ def render_compare_page():
         </div>
         """, unsafe_allow_html=True)
 
-        # iterate specs (match std spec by label)
-        for label, eboss_val in eboss_items:
-            std_list = dict(std_specs.get(section, []))
-            std_val = std_list.get(label, "–")
+        # Dynamic rows (from spec_data)
+        if isinstance(rows[0], str):
+            eboss_sec = dict(eboss_specs.get(section, []))
+            std_sec = dict(std_specs.get(section, []))
+            for label in rows:
+                eboss_val = eboss_sec.get(label, "–")
+                std_val = std_sec.get(label, "–")
 
-            col1, col2, col3 = st.columns([1, 1, 1])
+                col1, col2, col3 = st.columns([1, 1, 1])
+                with col1:
+                    st.markdown(f"""
+                    <div style="background-color:#111;color:#81BD47;font-size:1.1rem;font-weight:600;
+                    padding:1rem 1.5rem;border-radius:12px;border:1px solid #444;
+                    box-shadow:0 4px 10px rgba(0,0,0,0.5);margin-bottom:1rem;">
+                    {label}</div>
+                    """, unsafe_allow_html=True)
+                with col2:
+                    st.markdown(f"""
+                    <div style="background-color:#1c1c1c;color:#fff;font-size:1.2rem;font-weight:700;
+                    padding:1rem 1.5rem;border-radius:12px;border:2px solid #81BD47;
+                    box-shadow:0 4px 10px rgba(0,0,0,0.5);margin-bottom:1rem;">
+                    {eboss_val}</div>
+                    """, unsafe_allow_html=True)
+                with col3:
+                    st.markdown(f"""
+                    <div style="background-color:#1c1c1c;color:#fff;font-size:1.2rem;font-weight:700;
+                    padding:1rem 1.5rem;border-radius:12px;border:2px solid #939598;
+                    box-shadow:0 4px 10px rgba(0,0,0,0.5);margin-bottom:1rem;">
+                    {std_val}</div>
+                    """, unsafe_allow_html=True)
 
-            with col1:
-                st.markdown(f"""
-                <div style="
-                    background-color: #111;
-                    color: #81BD47;
-                    font-size: 1.15rem;
-                    font-weight: 600;
-                    padding: 1.1rem 1.5rem;
-                    border-radius: 12px;
-                    border: 1px solid #444;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-                    margin-bottom: 1rem;">
-                    {label}
-                </div>
-                """, unsafe_allow_html=True)
-
-            with col2:
-                st.markdown(f"""
-                <div style="
-                    background-color: #1c1c1c;
-                    color: #ffffff;
-                    font-size: 1.25rem;
-                    font-weight: 700;
-                    padding: 1.1rem 1.5rem;
-                    border-radius: 12px;
-                    border: 2px solid #81BD47;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-                    margin-bottom: 1rem;">
-                    {eboss_val}
-                </div>
-                """, unsafe_allow_html=True)
-
-            with col3:
-                st.markdown(f"""
-                <div style="
-                    background-color: #1c1c1c;
-                    color: #ffffff;
-                    font-size: 1.25rem;
-                    font-weight: 700;
-                    padding: 1.1rem 1.5rem;
-                    border-radius: 12px;
-                    border: 2px solid #939598;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-                    margin-bottom: 1rem;">
-                    {std_val}
-                </div>
-                """, unsafe_allow_html=True)
+        # Static engine rows
+        else:
+            for label, eboss_val, std_val in rows:
+                col1, col2, col3 = st.columns([1, 1, 1])
+                with col1:
+                    st.markdown(f"""
+                    <div style="background-color:#111;color:#81BD47;font-size:1.1rem;font-weight:600;
+                    padding:1rem 1.5rem;border-radius:12px;border:1px solid #444;
+                    box-shadow:0 4px 10px rgba(0,0,0,0.5);margin-bottom:1rem;">
+                    {label}</div>
+                    """, unsafe_allow_html=True)
+                with col2:
+                    st.markdown(f"""
+                    <div style="background-color:#1c1c1c;color:#fff;font-size:1.2rem;font-weight:700;
+                    padding:1rem 1.5rem;border-radius:12px;border:2px solid #81BD47;
+                    box-shadow:0 4px 10px rgba(0,0,0,0.5);margin-bottom:1rem;">
+                    {eboss_val}</div>
+                    """, unsafe_allow_html=True)
+                with col3:
+                    st.markdown(f"""
+                    <div style="background-color:#1c1c1c;color:#fff;font-size:1.2rem;font-weight:700;
+                    padding:1rem 1.5rem;border-radius:12px;border:2px solid #939598;
+                    box-shadow:0 4px 10px rgba(0,0,0,0.5);margin-bottom:1rem;">
+                    {std_val}</div>
+                    """, unsafe_allow_html=True)
 
 
 # ---- COST ANALYSIS PAGE ----
