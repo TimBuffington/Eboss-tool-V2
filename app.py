@@ -287,7 +287,14 @@ spec_data = {
 }
 
 def top_navbar():
-    btn1, btn2, btn3, btn4, btn5 = st.columns(5)
+    btn0, btn1, btn2, btn3, btn4, btn5 = st.columns(6)
+
+    with btn0:
+        if st.button("📥 User Input", key="nav_input"):
+            st.session_state.selected_form = "tool"
+            st.session_state.section = "input"
+            st.session_state.landing_shown = False
+            st.rerun()
 
     with btn1:
         if st.button("🧑‍🔧 Tech Specs", key="nav_tech_specs"):
@@ -514,7 +521,11 @@ def render_user_input_form():
 
     top_navbar()  # ✅ Nav buttons moved below input cards
 
-       
+       def render_user_input_page():
+    show_logo_and_title("User Input")
+    render_user_input_form()
+    top_navbar()
+
 #========================================================================================================
 def display_load_threshold_check(user_inputs):
     # Reference data
@@ -1200,9 +1211,10 @@ elif st.session_state.section == "compare":
 elif st.session_state.section == "cost":
     render_cost_analysis_page()
     st.stop()
-elif st.session_state.selected_form == "tool":
-    top_navbar()
-    render_user_input_form()
+elif st.session_state.section == "input":
+    render_user_input_page()
+    st.stop()
+
     st.stop()
 elif st.session_state.section == "parallel_calc":
     render_parallel_calculator_page()
