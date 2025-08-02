@@ -923,7 +923,133 @@ def render_load_specs_page():
             st.stop()
         st.session_state.user_inputs["charge_rate"] = charge_rate
 
-    # ...rest of your load specs calculations/output here...
+std_gen_data = {
+    "EBOSS 25 kVA": {
+        "Maximum Intermittent Load": [
+            ("Three-phase", "27.5 kva / 22 kw"),
+            ("Single-phase", "19.75 kva / 15.8 kw"),
+            ("Frequency", "60 Hz"),
+            ("Simultaneous voltage", "No"),
+            ("Voltage regulation", "Adjustable"),
+            ("Max. Intermittent 208v", "60 A / 17.29 kW"),
+            ("Max. Intermittent amp-load 480v", "30 A / 20 kW"),
+            ("Motor start rating - 3 second 208v", "60 A / 17.3 kW"),
+            ("Motor start rating - 3 second 480v", "30 A / 20 kW"),
+        ],
+        "Maximum Continuous Load": [
+            ("Generator Size", "25 kVA / 20 kW"),
+            ("Three-phase output", "25 kVA / 20 kW"),
+            ("Single-phase output", "16.4 kVA / 14.4 kW"),
+            ("Simultaneous voltage", "No"),
+            ("Max. Continuous load @208v", "60 A"),
+            ("Max. Continuous load @480v", "30 A"),
+        ],
+        "Engine Specs": [
+            ("Runtime Hrs per Day", "24"),
+            ("Battery Storage", "0 kWH")
+        ]
+    },
+    "EBOSS 70 kVA": {
+        "Maximum Intermittent Load": [
+            ("Three-phase", "77 kVA / 62 kW"),
+            ("Single-phase", "N/A / N/A"),
+            ("Frequency", "60 Hz"),
+            ("Simultaneous voltage", "No"),
+            ("Voltage regulation", "Adjustable"),
+            ("Max. Intermittent 208v", "168 A / 48 kW"),
+            ("Max. Intermittent amp-load 480v", "84 A / 56 kW"),
+            ("Motor start rating - 3 second 208v", "200 A / 57 kW"),
+            ("Motor start rating - 3 second 480v", "84 A / 56 kW"),
+        ],
+        "Maximum Continuous Load": [
+            ("Generator Size", "70 kVA / 56 kW"),
+            ("Three-phase output", "70 kVA / 56 kW"),
+            ("Single-phase output", "45.5 kVA / 40 kW"),
+            ("Simultaneous voltage", "No"),
+            ("Max. Continuous load @208v", "168 A"),
+            ("Max. Continuous load @480v", "84 A"),
+        ],
+        "Engine Specs": [
+            ("Runtime Hrs per Day", "24"),
+            ("Battery Storage", "0 kWH")
+        ]
+    },
+    "EBOSS125 kVA": {
+        "Maximum Intermittent Load": [
+            ("Three-phase", "137.5 kVA / 110 kW"),
+            ("Single-phase", "89.8 kVA / 79 kW"),
+            ("Frequency", "60 Hz"),
+            ("Simultaneous voltage", "No"),
+            ("Voltage regulation", "Adjustable"),
+            ("Max. Intermittent 208v", "300 A / 86 kW"),
+            ("Max. Intermittent amp-load 480v", "150 A / 100 kW"),
+            ("Motor start rating - 3 second 208v", "300 A / 86 kW"),
+            ("Motor start rating - 3 second 480v", "152 A / 101 kW"),
+        ],
+        "Maximum Continuous Load": [
+            ("Generator Size", "125 kVA / 100 kW"),
+            ("Three-phase output", "125 kVA / 100 kW"),
+            ("Single-phase output", "81.8 kVA / 72 kW"),
+            ("Simultaneous voltage", "No"),
+            ("Max. Continuous load @208v", "300 A"),
+            ("Max. Continuous load @480v", "150 A"),
+        ],
+        "Engine Specs": [
+            ("Runtime Hrs per Day", "24"),
+            ("Battery Storage", "0 kWH")
+        ]
+    },
+    "EBOSS 220 kVA": {
+        "Maximum Intermittent Load": [
+            ("Three-phase", "242 kVA / 194 kW"),
+            ("Single-phase", "N/A / N/A"),
+            ("Frequency", "60 Hz"),
+            ("Simultaneous voltage", "No"),
+            ("Voltage regulation", "Adjustable"),
+            ("Max. Intermittent 208v", "529 A / 152.5 kW"),
+            ("Max. Intermittent amp-load 480v", "264 A / 175.6 kW"),
+            ("Motor start rating - 3 second 208v", "600 A / 172.9 kW"),
+            ("Motor start rating - 3 second 480v", "256 A / 170.2 kW"),
+        ],
+        "Maximum Continuous Load": [
+            ("Generator Size", "220 kVA / 176 kW"),
+            ("Three-phase output", "210 kVA / 168 kW"),
+            ("Single-phase output", "244.4 A"),
+            ("Simultaneous voltage", "No"),
+            ("Max. Continuous load @208v", "529 A"),
+            ("Max. Continuous load @480v", "264 A"),
+        ],
+        "Engine Specs": [
+            ("Runtime Hrs per Day", "24"),
+            ("Battery Storage", "0 kWH")
+        ]
+    },
+    "EBOSS 400 kVA": {
+        "Maximum Intermittent Load": [
+            ("Three-phase", "420 kVA / 336 kW"),
+            ("Single-phase", "N/A"),
+            ("Frequency", "60 Hz"),
+            ("Simultaneous voltage", "No"),
+            ("Voltage regulation", "Adjustable"),
+            ("Max. Intermittent 208v", "769 A / 639 kW"),
+            ("Max. Intermittent amp-load 480v", "769 A / 639 kW"),
+            ("Motor start rating - 3 second 208v", "1776 A / 511 kW"),
+            ("Motor start rating - 3 second 480v", "769 A / 639 kW"),
+        ],
+        "Maximum Continuous Load": [
+            ("Generator Size", "220 kVA / 176 kW"),
+            ("Three-phase output", "210 kVA / 168 kW"),
+            ("Single-phase output", "481 A"),
+            ("Simultaneous voltage", "Yes 208v / 480v"),
+            ("Max. Continuous load @208v", "481 A"),
+            ("Max. Continuous load @480v", "—"),
+        ],
+        "Engine Specs": [
+            ("Runtime Hrs per Day", "24"),
+            ("Battery Storage", "0 kWH")
+        ]
+    }
+}
 
 #======================================================================================================
 
