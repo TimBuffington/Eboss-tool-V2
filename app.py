@@ -476,10 +476,10 @@ if st.session_state.show_contact_form:
 #=============================================================================================================================
    
 def render_user_input_form():
-    show_logo_and_title("Tech Specs")
-
     with st.container():
-        with st.columns(3)[0]:
+        col1, col2, col3 = st.columns(3)
+       
+        with col1:
             st.markdown('<div class="card">', unsafe_allow_html=True)
             st.markdown('<div class="card-label">EBOSS®</div>', unsafe_allow_html=True)
 
