@@ -1195,8 +1195,7 @@ elif st.session_state.section == "load_specs":
     render_load_specs_page()
     st.stop()
 elif st.session_state.section == "compare":
-    # render_compare_page()  # define as needed
-    st.write("Compare Page (to be implemented)")
+    render_compare_page()
     st.stop()
 elif st.session_state.section == "cost":
     render_cost_analysis_page()
