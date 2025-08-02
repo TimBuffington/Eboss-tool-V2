@@ -461,12 +461,12 @@ if st.session_state.landing_shown:
         if st.button("🎥 Learn How EBOSS® Works"):
             st.markdown("""<script>window.open("https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc", "_blank");</script>""", unsafe_allow_html=True)
     with col4:
-        if st.button("🚀 Launch EBOSS® Tool"):
+        if st.button("🚀 Launch EBOSS® Tool", key="btn_launch"):
+            st.session_state.selected_form = "tool"
+            st.session_state.section = "input"
             st.session_state.landing_shown = False
-            st.session_state.show_contact_form = False
-            st.session_state.form_type = None
             st.rerun()
-            
+     
     st.stop()
 
 
