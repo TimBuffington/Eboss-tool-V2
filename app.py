@@ -704,6 +704,14 @@ def calculate_runtime_specs(model, gen_type, cont_kw, kva):
     }
 
 # ---- TECH SPECS PAGE ----
+def render_card(label, value):
+    st.markdown(f'''
+        <div class="card">
+            <div class="card-label">{label}</div>
+            <div class="card-value">{value}</div>
+        </div>
+    ''', unsafe_allow_html=True)
+
 def render_tech_specs_page():
     show_logo_and_title("Tech Specs")
 
