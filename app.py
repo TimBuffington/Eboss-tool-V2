@@ -285,111 +285,6 @@ spec_data = {
         ]
     }
 }
-def submit_demo_request(data):
-    form_url = "https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/formResponse"
-    payload = {
-        "entry.2005620554": data["first_name"],
-        "entry.1649749912": data["last_name"],
-        "entry.1045781291": data["company"],
-        "entry.1065046570": data["title"],
-        "entry.1166974658": data["phone"],
-        "entry.839337160":  data["street"],
-        "entry.1773238634": data["city"],
-        "entry.2022339835": data["state"],
-        "entry.1175639336": data["zip"],
-        "entry.1615234896": data["email"]
-    }
-    return requests.post(form_url, data=payload).status_code
-
-def submit_training_request(data):
-    form_url = "https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/formResponse"
-    payload = {
-        "entry.2005620554": data["first_name"],
-        "entry.1045781291": data["last_name"],
-        "entry.1065046570": data["company"],
-        "entry.1166974658": data["title"],
-        "entry.839337160":  data["phone"],
-        "entry.1502461614": data["street"],
-        "entry.768723598":  data["city"],
-        "entry.1667781744": data["state"],
-        "entry.1777674235": data["zip"],
-        "entry.1301603693": data["email"],
-        "entry.779708650":  data["model"],
-        "entry.1497878538": data["train_type"],
-        "entry.257659210":  data["onsite"],
-        "entry.263815072":  data["train_date"],
-        "entry.298451692":  data["attendees"],
-        "entry.235434965":  data["tv"]
-    }
-    return requests.post(form_url, data=payload).status_code
-    # ===============================
-# 📝 Contact Form Renderer
-# ===============================
-import streamlit as st
-from datetime import date
-
-def render_contact_form(form_type="demo"):
-    st.markdown('<div class="form-container">', unsafe_allow_html=True)
-    st.markdown(f'<h3 class="form-section-title">📝 Request {"a Demo" if form_type == "demo" else "On‑Site Training"}</h3>', unsafe_allow_html=True)
-
-    with st.form(f"{form_type}_form"):
-        st.text_input("First Name", key="first_name")
-        st.text_input("Last Name", key="last_name")
-        st.text_input("Company", key="company")
-        st.text_input("Title", key="title")
-        st.text_input("Phone Number", key="phone")
-        st.text_input("Street Address", key="street")
-        st.text_input("City", key="city")
-        st.text_input("State", key="state")
-        st.text_input("Zip Code", key="zip")
-        st.text_input("Email Address", key="email")
-
-        if form_type == "training":
-            st.selectbox("EBOSS® Model for Training", ["EB25 kVA", "EB70 kVA", "EB125 kVA", "EB220 kVA", "EB400 kVA"], key="model")
-            st.radio("Training Type", ["Sales", "Technical"], horizontal=True, key="train_type")
-            st.radio("Is an EBOSS® unit already onsite?", ["Yes", "No"], horizontal=True, key="onsite")
-            st.date_input("Preferred Training Date", key="train_date")
-            st.number_input("Number of Attendees", min_value=1, step=1, key="attendees")
-            tv = st.checkbox("A TV is available to present training materials")
-        else:
-            tv = None
-
-        submitted = st.form_submit_button("📨 Submit Request")
-
-    if submitted:
-        if form_type == "demo":
-            user_data = {k: st.session_state[k] for k in [
-                "first_name", "last_name", "company", "title", "phone",
-                "street", "city", "state", "zip", "email"
-            ]}
-            status = submit_demo_request(user_data)
-        else:
-            user_data = {k: st.session_state[k] for k in [
-                "first_name", "last_name", "company", "title", "phone",
-                "street", "city", "state", "zip", "email",
-                "model", "train_type", "onsite", "train_date", "attendees"
-            ]}
-            user_data["train_date"] = str(user_data["train_date"])
-            user_data["tv"] = "TV available" if tv else "TV not available"
-            status = submit_training_request(user_data)
-
-        if status == 200:
-            st.success("✅ Your request was successfully submitted.")
-        else:
-            st.error("❌ Submission failed. Please try again.")
-
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button("🔁 Continue with Tool"):
-                st.session_state.landing_shown = False
-                st.session_state.show_contact_form = False
-                st.rerun()
-        with col2:
-            if st.button("🌐 Visit ANA Website"):
-                st.markdown("""<script>window.open("https://anacorp.com", "_blank");</script>""", unsafe_allow_html=True)
-
-    st.markdown('</div>', unsafe_allow_html=True)
-
 
 def top_navbar():
     btn1, btn2, btn3, btn4, btn5 = st.columns(5)
@@ -462,17 +357,6 @@ def landing_page():
             st.session_state.selected_form = "tool"
             st.session_state.landing_shown = False
             st.rerun()
-
-# ---- DEMO FORM ----
-
-
-import streamlit as st
-import requests
-from datetime import date
-
-# ─────────────────────────────────────────────
-# 🌐 GOOGLE FORM SUBMISSION HANDLERS
-# ─────────────────────────────────────────────
 
 
 
