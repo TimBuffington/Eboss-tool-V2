@@ -801,10 +801,12 @@ def render_load_specs_page():
 
 def render_compare_page():
     import re
+    global spec_data  # ✅ Must be directly inside the function, not after a block
 
     def extract_number(s):
         match = re.search(r"(\d+\.?\d*)", s)
         return float(match.group(1)) if match else None
+
 
     def extract_kva(model):
         match = re.search(r"(\d+)", model)
