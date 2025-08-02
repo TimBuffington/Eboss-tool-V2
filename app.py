@@ -471,52 +471,69 @@ if st.session_state.show_contact_form:
    
 def render_user_input_form():
     with st.container():
-        col1, col2, col3 = st.columns(3)
-       
+        col1, col2, col3 = st.columns([1, 1, 1], gap="large")
+
+        # ─────────── Column 1: EBOSS Info ───────────
         with col1:
             st.markdown('<div class="card">', unsafe_allow_html=True)
             st.markdown('<div class="card-label">EBOSS®</div>', unsafe_allow_html=True)
 
-            st.session_state.user_inputs["model"] = st.selectbox("Model", ["EBOSS 25 kVA", "EBOSS 70 kVA", "EBOSS125 kVA", "EBOSS 220 kVA", "EBOSS 400 kVA"], key="model_select")
-            st.session_state.user_inputs["gen_type"] = st.selectbox("Type", ["Full Hybrid", "Power Module"], key="gen_type_select")
+            st.session_state.user_inputs["model"] = st.selectbox("Model", [
+                "EBOSS 25 kVA", "EBOSS 70 kVA", "EBOSS125 kVA", "EBOSS 220 kVA", "EBOSS 400 kVA"
+            ], key="model_select")
+
+            st.session_state.user_inputs["gen_type"] = st.selectbox("Type", [
+                "Full Hybrid", "Power Module"
+            ], key="gen_type_select")
+
             if st.session_state.user_inputs["gen_type"] == "Power Module":
-                st.session_state.user_inputs["kva_option"] = st.selectbox("Generator Size", ["25kVA", "45kVA", "65kVA", "125kVA", "220kVA", "400kVA"], key="kva_select")
+                st.session_state.user_inputs["kva_option"] = st.selectbox("Generator Size", [
+                    "25kVA", "45kVA", "65kVA", "125kVA", "220kVA", "400kVA"
+                ], key="kva_select")
 
             st.markdown('</div>', unsafe_allow_html=True)
 
-        with st.columns(3)[1]:
+        # ─────────── Column 2: Load Values ───────────
+        with col2:
             st.markdown('<div class="card">', unsafe_allow_html=True)
             st.markdown('<div class="card-label">Load</div>', unsafe_allow_html=True)
 
-            st.session_state.user_inputs["raw_cont_load"] = st.number_input("Continuous Load", 0, 500, step=1, format="%d", key="cont_input")
-            st.session_state.user_inputs["raw_peak_load"] = st.number_input("Max Peak Load", 0, 500, step=1, format="%d", key="peak_input")
+            st.session_state.user_inputs["raw_cont_load"] = st.number_input(
+                "Continuous Load", 0, 500, step=1, format="%d", key="cont_input"
+            )
+            st.session_state.user_inputs["raw_peak_load"] = st.number_input(
+                "Max Peak Load", 0, 500, step=1, format="%d", key="peak_input"
+            )
 
             st.markdown('</div>', unsafe_allow_html=True)
 
-        with st.columns(3)[2]:
+        # ─────────── Column 3: Units ───────────
+        with col3:
             st.markdown('<div class="card">', unsafe_allow_html=True)
             st.markdown('<div class="card-label">Units</div>', unsafe_allow_html=True)
 
-            st.session_state.user_inputs["load_units"] = st.selectbox("Units", ["kW", "Amps"], key="unit_select")
-            st.session_state.user_inputs["voltage"] = st.selectbox("Voltage", ["480V", "240V", "208V"], key="voltage_select")
+            st.session_state.user_inputs["load_units"] = st.selectbox("Units", [
+                "kW", "Amps"
+            ], key="unit_select")
+            st.session_state.user_inputs["voltage"] = st.selectbox("Voltage", [
+                "480V", "240V", "208V"
+            ], key="voltage_select")
 
             st.markdown('</div>', unsafe_allow_html=True)
 
-    # ---- Kw conversion logic
+    # ─────────── kW Conversion Logic ───────────
     pf = 0.8
     v_val = int(st.session_state.user_inputs["voltage"].replace("V", ""))
     cont = st.session_state.user_inputs["raw_cont_load"]
     peak = st.session_state.user_inputs["raw_peak_load"]
 
     if st.session_state.user_inputs["load_units"] == "Amps":
-        # Normalize voltage for calcs
-        st.session_state.user_inputs["cont_kw"] = (cont * (3 ** 0.5) * 480 * pf) / 1000
-        st.session_state.user_inputs["peak_kw"] = (peak * (3 ** 0.5) * 480 * pf) / 1000
+        st.session_state.user_inputs["cont_kw"] = (cont * (3 ** 0.5) * v_val * pf) / 1000
+        st.session_state.user_inputs["peak_kw"] = (peak * (3 ** 0.5) * v_val * pf) / 1000
     else:
         st.session_state.user_inputs["cont_kw"] = cont
         st.session_state.user_inputs["peak_kw"] = peak
 
-    top_navbar()  # ✅ Nav buttons moved below input cards
 
 def render_user_input_page():
     show_logo_and_title("User Input")
