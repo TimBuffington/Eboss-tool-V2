@@ -285,6 +285,111 @@ spec_data = {
         ]
     }
 }
+def submit_demo_request(data):
+    form_url = "https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/formResponse"
+    payload = {
+        "entry.2005620554": data["first_name"],
+        "entry.1649749912": data["last_name"],
+        "entry.1045781291": data["company"],
+        "entry.1065046570": data["title"],
+        "entry.1166974658": data["phone"],
+        "entry.839337160":  data["street"],
+        "entry.1773238634": data["city"],
+        "entry.2022339835": data["state"],
+        "entry.1175639336": data["zip"],
+        "entry.1615234896": data["email"]
+    }
+    return requests.post(form_url, data=payload).status_code
+
+def submit_training_request(data):
+    form_url = "https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/formResponse"
+    payload = {
+        "entry.2005620554": data["first_name"],
+        "entry.1045781291": data["last_name"],
+        "entry.1065046570": data["company"],
+        "entry.1166974658": data["title"],
+        "entry.839337160":  data["phone"],
+        "entry.1502461614": data["street"],
+        "entry.768723598":  data["city"],
+        "entry.1667781744": data["state"],
+        "entry.1777674235": data["zip"],
+        "entry.1301603693": data["email"],
+        "entry.779708650":  data["model"],
+        "entry.1497878538": data["train_type"],
+        "entry.257659210":  data["onsite"],
+        "entry.263815072":  data["train_date"],
+        "entry.298451692":  data["attendees"],
+        "entry.235434965":  data["tv"]
+    }
+    return requests.post(form_url, data=payload).status_code
+    # ===============================
+# 📝 Contact Form Renderer
+# ===============================
+import streamlit as st
+from datetime import date
+
+def render_contact_form(form_type="demo"):
+    st.markdown('<div class="form-container">', unsafe_allow_html=True)
+    st.markdown(f'<h3 class="form-section-title">📝 Request {"a Demo" if form_type == "demo" else "On‑Site Training"}</h3>', unsafe_allow_html=True)
+
+    with st.form(f"{form_type}_form"):
+        st.text_input("First Name", key="first_name")
+        st.text_input("Last Name", key="last_name")
+        st.text_input("Company", key="company")
+        st.text_input("Title", key="title")
+        st.text_input("Phone Number", key="phone")
+        st.text_input("Street Address", key="street")
+        st.text_input("City", key="city")
+        st.text_input("State", key="state")
+        st.text_input("Zip Code", key="zip")
+        st.text_input("Email Address", key="email")
+
+        if form_type == "training":
+            st.selectbox("EBOSS® Model for Training", ["EB25 kVA", "EB70 kVA", "EB125 kVA", "EB220 kVA", "EB400 kVA"], key="model")
+            st.radio("Training Type", ["Sales", "Technical"], horizontal=True, key="train_type")
+            st.radio("Is an EBOSS® unit already onsite?", ["Yes", "No"], horizontal=True, key="onsite")
+            st.date_input("Preferred Training Date", key="train_date")
+            st.number_input("Number of Attendees", min_value=1, step=1, key="attendees")
+            tv = st.checkbox("A TV is available to present training materials")
+        else:
+            tv = None
+
+        submitted = st.form_submit_button("📨 Submit Request")
+
+    if submitted:
+        if form_type == "demo":
+            user_data = {k: st.session_state[k] for k in [
+                "first_name", "last_name", "company", "title", "phone",
+                "street", "city", "state", "zip", "email"
+            ]}
+            status = submit_demo_request(user_data)
+        else:
+            user_data = {k: st.session_state[k] for k in [
+                "first_name", "last_name", "company", "title", "phone",
+                "street", "city", "state", "zip", "email",
+                "model", "train_type", "onsite", "train_date", "attendees"
+            ]}
+            user_data["train_date"] = str(user_data["train_date"])
+            user_data["tv"] = "TV available" if tv else "TV not available"
+            status = submit_training_request(user_data)
+
+        if status == 200:
+            st.success("✅ Your request was successfully submitted.")
+        else:
+            st.error("❌ Submission failed. Please try again.")
+
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("🔁 Continue with Tool"):
+                st.session_state.landing_shown = False
+                st.session_state.show_contact_form = False
+                st.rerun()
+        with col2:
+            if st.button("🌐 Visit ANA Website"):
+                st.markdown("""<script>window.open("https://anacorp.com", "_blank");</script>""", unsafe_allow_html=True)
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
 
 def top_navbar():
     btn1, btn2, btn3, btn4, btn5 = st.columns(5)
@@ -359,44 +464,7 @@ def landing_page():
             st.rerun()
 
 # ---- DEMO FORM ----
-def submit_demo_request(data):
-    form_url = "https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/formResponse"
-    payload = {
-        "entry.2005620554": data["first_name"],
-        "entry.1649749912": data["last_name"],
-        "entry.1045781291": data["company"],
-        "entry.1065046570": data["title"],
-        "entry.1166974658": data["phone"],
-        "entry.839337160":  data["street"],
-        "entry.1773238634": data["city"],
-        "entry.2022339835": data["state"],
-        "entry.1175639336": data["zip"],
-        "entry.1615234896": data["email"]
-    }
-    return requests.post(form_url, data=payload).status_code
 
-# ---- TRAINING FORM ----
-def submit_training_request(data):
-    form_url = "https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/formResponse"
-    payload = {
-        "entry.2005620554": data["first_name"],
-        "entry.1045781291": data["last_name"],
-        "entry.1065046570": data["company"],
-        "entry.1166974658": data["title"],
-        "entry.839337160":  data["phone"],
-        "entry.1502461614": data["street"],
-        "entry.768723598":  data["city"],
-        "entry.1667781744": data["state"],
-        "entry.1777674235": data["zip"],
-        "entry.1301603693": data["email"],
-        "entry.779708650":  data["model"],
-        "entry.1497878538": data["train_type"],
-        "entry.257659210":  data["onsite"],
-        "entry.263815072":  data["train_date"],
-        "entry.298451692":  data["attendees"],
-        "entry.235434965":  data["tv"]
-    }
-    return requests.post(form_url, data=payload).status_code
 
 import streamlit as st
 import requests
@@ -406,43 +474,7 @@ from datetime import date
 # 🌐 GOOGLE FORM SUBMISSION HANDLERS
 # ─────────────────────────────────────────────
 
-def submit_demo_request(data):
-    form_url = "https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/formResponse"
-    payload = {
-        "entry.2005620554": data["first_name"],
-        "entry.1649749912": data["last_name"],
-        "entry.1045781291": data["company"],
-        "entry.1065046570": data["title"],
-        "entry.1166974658": data["phone"],
-        "entry.839337160":  data["street"],
-        "entry.1773238634": data["city"],
-        "entry.2022339835": data["state"],
-        "entry.1175639336": data["zip"],
-        "entry.1615234896": data["email"]
-    }
-    return requests.post(form_url, data=payload).status_code
 
-def submit_training_request(data):
-    form_url = "https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/formResponse"
-    payload = {
-        "entry.2005620554": data["first_name"],
-        "entry.1045781291": data["last_name"],
-        "entry.1065046570": data["company"],
-        "entry.1166974658": data["title"],
-        "entry.839337160":  data["phone"],
-        "entry.1502461614": data["street"],
-        "entry.768723598":  data["city"],
-        "entry.1667781744": data["state"],
-        "entry.1777674235": data["zip"],
-        "entry.1301603693": data["email"],
-        "entry.779708650":  data["model"],
-        "entry.1497878538": data["train_type"],
-        "entry.257659210":  data["onsite"],
-        "entry.263815072":  data["train_date"],
-        "entry.298451692":  data["attendees"],
-        "entry.235434965":  data["tv"]
-    }
-    return requests.post(form_url, data=payload).status_code
 
 # ──────────────────────────────
 # 📝 Contact Form Logic
@@ -796,64 +828,44 @@ def render_tech_specs_page():
 # ---- LOAD SPECS PAGE ----
 def render_load_specs_page():
     show_logo_and_title("Load Specs")
+
+    # 👉 Render form UI
     render_user_input_form()
 
+    # 👉 Validate inputs globally
+    enforce_session_validation()
     inputs = st.session_state.user_inputs
-    model = inputs.get("model")
-    gen_type = inputs.get("gen_type")
-    cont_kw = inputs.get("cont_kw")
-    peak_kw = inputs.get("peak_kw")
-
-    if not model or not cont_kw:
-        st.warning("⚠️ Please complete the input fields above.")
-        return
-
-    # Determine thresholds
-    EBOSS_KVA = {
-        "EBOSS 25 kVA": 25,
-        "EBOSS 70 kVA": 45,
-        "EBOSS125 kVA": 65,
-        "EBOSS 220 kVA": 125,
-        "EBOSS 400 kVA": 220
-    }
-    EBOSS_BATTERY_KWH = {
-        "EBOSS 25 kVA": 15,
-        "EBOSS 70 kVA": 25,
-        "EBOSS125 kVA": 50,
-        "EBOSS 220 kVA": 75,
-        "EBOSS 400 kVA": 125
-    }
-
-    kva = EBOSS_KVA.get(model)
-    battery_kwh = EBOSS_BATTERY_KWH.get(model)
-    charge_rate = Eboss_Charge_Rates[kva][
-        "power_module" if gen_type == "Power Module" else "full_hybrid"
-    ]
-    max_safe = charge_rate * 0.9
-    fuel_eff_threshold = battery_kwh * (2 / 3)
+    kva = EBOSS_KVA[inputs["model"]]
+    spec = Eboss_Specs[kva]
 
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.markdown("### 🔒 Load Threshold Check")
 
-    if cont_kw > charge_rate:
-        st.error(f"❌ Load ({cont_kw:.1f} kW) exceeds charge rate ({charge_rate:.1f} kW).")
-        for name, test_kva in EBOSS_KVA.items():
-            alt_rate = Eboss_Charge_Rates[test_kva][
-                "power_module" if gen_type == "Power Module" else "full_hybrid"
-            ]
-            if cont_kw <= alt_rate * 0.9:
-                render_card("Recommended Model", name)
-                break
-        else:
-            st.error("❌ No EBOSS size can support this load. Consider parallel units.")
-    elif cont_kw > max_safe:
-        st.warning(f"⚠️ Load is above 90% of the charge rate ({max_safe:.1f} kW).")
-    elif cont_kw > fuel_eff_threshold:
-        st.info(f"ℹ️ Load is within safe range but above fuel-efficiency threshold (~{fuel_eff_threshold:.1f} kW).")
+    charge_rate = inputs["charge_rate"]
+    battery_kwh = spec["battery_kwh"]
+    cont_kw = inputs["cont_kw"]
+    peak_kw = inputs["peak_kw"]
+    max_safe_limit = spec["max_charge"] * 0.9
+    efficiency_target = battery_kwh * (2 / 3)
+
+    # ⚙️ Threshold visual feedback
+    if cont_kw > spec["max_charge"]:
+        st.error(f"❌ Load ({cont_kw:.1f} kW) exceeds max charge rate ({spec['max_charge']} kW).")
+    elif cont_kw > max_safe_limit:
+        st.warning(f"⚠️ Load is above 90% of the charge rate ({max_safe_limit:.1f} kW).")
+    elif cont_kw > efficiency_target:
+        st.info(f"ℹ️ Load is within safe range but above the fuel-efficiency threshold (~{efficiency_target:.1f} kW).")
     else:
-        st.success(f"✅ Load is optimal for fuel efficiency (≤ {fuel_eff_threshold:.1f} kW).")
+        st.success(f"✅ Load is optimal for fuel efficiency (≤ {efficiency_target:.1f} kW).")
+
+    # 🔺 Peak load check
+    if peak_kw > spec["max_peak"]:
+        st.error(f"❌ Peak load ({peak_kw:.1f} kW) exceeds EBOSS peak limit ({spec['max_peak']} kW).")
 
     st.markdown('</div>', unsafe_allow_html=True)
+
+    top_navbar()
+
 
 def render_compare_page():
     import re
