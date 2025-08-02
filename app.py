@@ -10,19 +10,19 @@ def render_card(label, value):
     ''', unsafe_allow_html=True)
 
 def apply_custom_css():
-st.markdown("""
-<style>
-/* === GLOBAL === */
-html, body, .stApp {
-    font-family: 'Segoe UI', sans-serif;
-    font-size: 1.1rem;
-    line-height: 1.6;
-    background: url("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/bg.png") no-repeat center center fixed;
-    background-size: cover;
-    color: #fff;
-    margin: 0;
-    padding: 0;
-}
+    st.markdown("""
+    <style>
+    /* === GLOBAL === */
+    html, body, .stApp {
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        background: url("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/bg.png") no-repeat center center fixed;
+        background-size: cover;
+        color: #fff;
+        margin: 0;
+        padding: 0;
+    }
 
 /* === HEADINGS === */
 h1, .form-section-title {
