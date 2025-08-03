@@ -503,57 +503,60 @@ def validate_charge_rate(model, gen_type, entered_rate, gen_kw=None):
   
 def render_user_input_form():
     with st.container():
-        col1, col2, col3 = st.columns([1, 1, 1], gap="large")
+        cols = st.columns([1, 1, 1], gap="large")
 
-        # ─────────── Column 1: EBOSS Info ───────────
-        with col1:
+        # ──────── Column 1: EBOSS® ────────
+        with cols[0]:
             st.markdown('<div class="card">', unsafe_allow_html=True)
             st.markdown('<div class="card-label">EBOSS®</div>', unsafe_allow_html=True)
 
-            st.session_state.user_inputs["model"] = st.selectbox("Model", [
-                "EBOSS 25 kVA", "EBOSS 70 kVA", "EBOSS125 kVA", "EBOSS 220 kVA", "EBOSS 400 kVA"
-            ], key="model_select")
+            st.session_state.user_inputs["model"] = st.selectbox(
+                "Model", list(EBOSS_KVA.keys()), key="model_select"
+            )
 
-            st.session_state.user_inputs["gen_type"] = st.selectbox("Type", [
-                "Full Hybrid", "Power Module"
-            ], key="gen_type_select")
+            st.session_state.user_inputs["gen_type"] = st.selectbox(
+                "Type", ["Full Hybrid", "Power Module"], key="gen_type_select"
+            )
 
             if st.session_state.user_inputs["gen_type"] == "Power Module":
-                st.session_state.user_inputs["kva_option"] = st.selectbox("Generator Size", [
-                    "25kVA", "45kVA", "65kVA", "125kVA", "220kVA", "400kVA"
-                ], key="kva_select")
+                st.session_state.user_inputs["kva_option"] = st.selectbox(
+                    "Generator Size", ["25kVA", "45kVA", "65kVA", "125kVA", "220kVA", "400kVA"],
+                    key="kva_select"
+                )
 
             st.markdown('</div>', unsafe_allow_html=True)
 
-        # ─────────── Column 2: Load Values ───────────
-        with col2:
+        # ──────── Column 2: Load ────────
+        with cols[1]:
             st.markdown('<div class="card">', unsafe_allow_html=True)
             st.markdown('<div class="card-label">Load</div>', unsafe_allow_html=True)
 
             st.session_state.user_inputs["raw_cont_load"] = st.number_input(
                 "Continuous Load", 0, 500, step=1, format="%d", key="cont_input"
             )
+
             st.session_state.user_inputs["raw_peak_load"] = st.number_input(
                 "Max Peak Load", 0, 500, step=1, format="%d", key="peak_input"
             )
 
             st.markdown('</div>', unsafe_allow_html=True)
 
-        # ─────────── Column 3: Units ───────────
-        with col3:
+        # ──────── Column 3: Units ────────
+        with cols[2]:
             st.markdown('<div class="card">', unsafe_allow_html=True)
             st.markdown('<div class="card-label">Units</div>', unsafe_allow_html=True)
 
-            st.session_state.user_inputs["load_units"] = st.selectbox("Units", [
-                "kW", "Amps"
-            ], key="unit_select")
-            st.session_state.user_inputs["voltage"] = st.selectbox("Voltage", [
-                "480V", "240V", "208V"
-            ], key="voltage_select")
+            st.session_state.user_inputs["load_units"] = st.selectbox(
+                "Units", ["kW", "Amps"], key="unit_select"
+            )
+
+            st.session_state.user_inputs["voltage"] = st.selectbox(
+                "Voltage", ["480V", "240V", "208V"], key="voltage_select"
+            )
 
             st.markdown('</div>', unsafe_allow_html=True)
 
-    # ─────────── kW Conversion Logic ───────────
+    # ──────── kW Conversion Logic ────────
     pf = 0.8
     v_val = int(st.session_state.user_inputs["voltage"].replace("V", ""))
     cont = st.session_state.user_inputs["raw_cont_load"]
@@ -565,6 +568,7 @@ def render_user_input_form():
     else:
         st.session_state.user_inputs["cont_kw"] = cont
         st.session_state.user_inputs["peak_kw"] = peak
+
 
 
 
@@ -743,8 +747,8 @@ def calculate_runtime_specs(model, gen_type, cont_kw, kva):
 def render_user_input_page():
     apply_custom_css()  # ✅ ADD THIS
     show_logo_and_title("Eboss & Load Data")
-    render_user_input_form()
     top_navbar()
+    render_user_input_form()
     
 def render_tech_specs_page():
     show_logo_and_title("Tech Specs")
