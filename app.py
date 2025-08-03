@@ -329,13 +329,13 @@ def landing_page():
                 </button>
             </a>
         """, unsafe_allow_html=True)
-
+        
         if st.button("🚀 Launch EBOSS®Tool"):
-    st.session_state.landing_shown = False
-    st.session_state.show_contact_form = False
-    st.session_state.form_type = None
-    st.session_state.show_user_input = True  # 🔥 trigger modal
-    st.rerun()
+            st.session_state.landing_shown = False
+            st.session_state.show_contact_form = False
+            st.session_state.form_type = None
+            st.session_state.show_user_input = True
+            st.rerun()
 
 
 
