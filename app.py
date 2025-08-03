@@ -347,7 +347,7 @@ def landing_page():
             st.rerun()
             with col2:
                 st.markdown("""
-                <a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank" style="text-decoration:none;">
+                <a href="https://www.youtube.com/watch?v=0Om2qO-zZfM&list=PLT1sg9qKNOz-Oad0aB5L4D4EXvLiQo2gz&index=2" target="_blank" style="text-decoration:none;">
                 <button style="
                 background-color: transparent;
                 color: #81BD47;
