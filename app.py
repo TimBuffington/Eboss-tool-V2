@@ -279,6 +279,13 @@ spec_data = {
         ]
     }
 }
+EBOSS_KVA = {
+    "EBOSS 25 kVA": 25,
+    "EBOSS 70 kVA": 70,
+    "EBOSS 125 kVA": 125,
+    "EBOSS 220 kVA": 220,
+    "EBOSS 400 kVA": 400
+}
 
 def top_navbar():
     btn0, btn1, btn2, btn3, btn4, btn5 = st.columns(6)
