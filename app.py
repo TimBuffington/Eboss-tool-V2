@@ -35,6 +35,30 @@ def apply_custom_css():
     border-color: #A9E37A !important;
     box-shadow: 0 0 8px #A9E37A;
 }
+#=================================================> User input pop up
+.modal-container {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.modal-content {
+    background-color: #1a1a1a;
+    border: 2px solid #81BD47;
+    border-radius: 15px;
+    padding: 2rem;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 0 15px #81BD47;
+}
+
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -235,6 +259,10 @@ EBOSS_KVA = {
     "EBOSS 220 kVA": 220,
     "EBOSS 400 kVA": 400
 }
+model = st.session_state.user_inputs["model"]
+gen_type = st.session_state.user_inputs["gen_type"]
+kva = st.session_state.user_inputs["kva_option"]
+
 
 def top_navbar():
         st.markdown("""
@@ -302,12 +330,13 @@ def landing_page():
             </a>
         """, unsafe_allow_html=True)
 
+        if st.button("🚀 Launch EBOSS®Tool"):
+    st.session_state.landing_shown = False
+    st.session_state.show_contact_form = False
+    st.session_state.form_type = None
+    st.session_state.show_user_input = True  # 🔥 trigger modal
+    st.rerun()
 
-        if st.button("🚀 Launch EBOSS® Tool", key="btn_launch"):
-            st.session_state.selected_form = "tool"
-            st.session_state.section = "input"  # 👈 or "tech_specs" if you prefer
-            st.session_state.landing_shown = False
-            st.rerun()
 
 
 
@@ -447,7 +476,44 @@ def validate_charge_rate(model, gen_type, entered_rate, gen_kw=None):
             messages.append(f"⚠️ Generator output ({gen_kw} kW) exceeds max charge rate {max_rate} kW. May reduce fuel efficiency.")
 
     return is_valid, messages
-  
+
+def render_user_input_modal():
+    if "show_user_input" not in st.session_state:
+        st.session_state.show_user_input = True
+
+    if st.session_state.show_user_input:
+        st.markdown('<div class="modal-container"><div class="modal-content">', unsafe_allow_html=True)
+        st.markdown('<h3 style="color:#81BD47; text-align:center;">⚙️ EBOSS® System Configuration</h3>', unsafe_allow_html=True)
+
+        st.session_state.user_inputs = {}
+
+        st.session_state.user_inputs["model"] = st.selectbox(
+            "EBOSS® Model", list(EBOSS_KVA.keys()), key="model_select"
+        )
+
+        st.session_state.user_inputs["gen_type"] = st.selectbox(
+            "EBOSS® Type", ["Full Hybrid", "Power Module"], key="gen_type_select"
+        )
+
+        if st.session_state.user_inputs["gen_type"] == "Power Module":
+            st.session_state.user_inputs["kva_option"] = st.selectbox(
+                "Generator Size", ["25kVA", "45kVA", "65kVA", "125kVA", "220kVA", "400kVA"], key="kva_select"
+            )
+        else:
+            st.session_state.user_inputs["kva_option"] = None
+
+        st.session_state.user_inputs["cont_kw"] = st.number_input("Continuous Load (kW)", 0.0, 500.0, step=1.0)
+        st.session_state.user_inputs["peak_kw"] = st.number_input("Max Peak Load (kW)", 0.0, 500.0, step=1.0)
+
+        # "Go" button closes modal
+        if st.button("🚀 Go", key="go_button"):
+            st.session_state.show_user_input = False
+            st.session_state.user_inputs["submitted"] = True
+            st.rerun()
+
+        st.markdown('</div></div>', unsafe_allow_html=True)
+
+
 def render_user_input_form():
     with st.container():
         cols = st.columns([1, 1, 1], gap="large")
