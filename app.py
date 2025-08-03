@@ -3,12 +3,23 @@ from datetime import date
 import pandas as pd
 from itertools import combinations_with_replacement
 
-background: url("https://your-background-image.png") no-repeat center center fixed;
-background-size: cover;
-
 def apply_custom_css():
     st.markdown("""
-    <style>
+        <style>
+        .stApp {
+            background: url("https://raw.githubusercontent.com/anacorp/Eboss-tool-V2/main/assets/bg.png") no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+        }
+
+        /* Optional: Adjust for readability */
+        .block-container {
+            background-color: rgba(0, 0, 0, 0.65);
+            padding: 2rem;
+            border-radius: 10px;
+        }
+  
+
     /* Global input styling */
     .stSelectbox > div > div,
     .stTextInput > div > div,
