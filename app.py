@@ -256,7 +256,7 @@ EBOSS_KVA = {
 def landing_page():
     apply_custom_css()
 
-    # Init session state
+    # Init state
     for key, val in {
         "landing_shown": True,
         "show_contact_form": False,
@@ -271,96 +271,77 @@ def landing_page():
     if st.session_state.landing_shown:
         show_logo_and_title("EBOSS® Size Specs & Comparison Tool")
 
-        # Inject CSS
+        # ✅ Styling block
         st.markdown("""
         <style>
-        .landing-container {
+        .landing-wrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding-top: 2rem;
+            padding: 2rem 1rem;
         }
-        .landing-grid {
+        .button-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
             width: 100%;
             max-width: 600px;
         }
-        .landing-button > button {
-            width: 100%;
+        .stButton>button {
             height: 60px;
-            font-size: 1.1rem;
+            width: 100%;
+            font-size: 1.05rem;
             font-weight: bold;
             color: #81BD47 !important;
             background-color: #1a1a1a !important;
             border: 2px solid #81BD47 !important;
             border-radius: 10px;
-            box-shadow: none;
-            transition: box-shadow 0.3s ease;
+            transition: box-shadow 0.2s ease-in-out;
         }
-        .landing-button > button:hover {
+        .stButton>button:hover {
             box-shadow: 0 0 12px #81BD47;
         }
         </style>
         """, unsafe_allow_html=True)
 
-        # Layout the buttons
-        st.markdown('<div class="landing-container">', unsafe_allow_html=True)
-        st.markdown('<div class="landing-grid">', unsafe_allow_html=True)
+        # ✅ Centered and aligned button layout
+        st.markdown('<div class="landing-wrapper"><div class="button-grid">', unsafe_allow_html=True)
 
-        with st.container():
-            with st.columns([1])[0]:
-                with st.container():
-                    with st.container():
-                        with st.container():
-                            with st.container():
-                                with st.container():
-                                    with st.container():
-                                        with st.container():
-                                            with st.container():
-                                                if st.button("Request a Demo", key="btn_demo"):
-                                                    st.session_state.form_type = "demo"
-                                                    st.session_state.show_contact_form = True
-                                                    st.session_state.landing_shown = False
-                                                    st.rerun()
-                                                st.markdown('<div class="landing-button"></div>', unsafe_allow_html=True)
+        if st.button("📋 Request a Demo", key="btn_demo"):
+            st.session_state.form_type = "demo"
+            st.session_state.show_contact_form = True
+            st.session_state.landing_shown = False
+            st.rerun()
 
-        with st.container():
-            if st.button("Request On-Site Training", key="btn_training"):
-                st.session_state.form_type = "training"
-                st.session_state.show_contact_form = True
-                st.session_state.landing_shown = False
-                st.rerun()
-            st.markdown('<div class="landing-button"></div>', unsafe_allow_html=True)
+        if st.button("📋 Request On-Site Training", key="btn_training"):
+            st.session_state.form_type = "training"
+            st.session_state.show_contact_form = True
+            st.session_state.landing_shown = False
+            st.rerun()
 
-        with st.container():
-            if st.button("Learn How EBOSS® Works", key="btn_learn"):
-                st.markdown("""
-                    <script>
-                        window.open("https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc", "_blank");
-                    </script>
-                """, unsafe_allow_html=True)
-            st.markdown('<div class="landing-button"></div>', unsafe_allow_html=True)
+        if st.button("🎥 Learn How EBOSS® Works", key="btn_learn"):
+            st.markdown("""
+            <script>
+                window.open("https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc", "_blank");
+            </script>
+            """, unsafe_allow_html=True)
 
-        with st.container():
-            if st.button("Launch EBOSS® Tool", key="btn_launch"):
-                st.session_state.selected_form = "tool"
-                st.session_state.section = "input"
-                st.session_state.landing_shown = False
-                st.session_state.show_contact_form = False
-                st.session_state.form_type = None
-                st.rerun()
-            st.markdown('<div class="landing-button"></div>', unsafe_allow_html=True)
+        if st.button("🚀 Launch EBOSS® Tool", key="btn_launch"):
+            st.session_state.selected_form = "tool"
+            st.session_state.section = "input"
+            st.session_state.landing_shown = False
+            st.session_state.show_contact_form = False
+            st.session_state.form_type = None
+            st.rerun()
 
-        st.markdown('</div>', unsafe_allow_html=True)  # Close grid
-        st.markdown('</div>', unsafe_allow_html=True)  # Close container
+        st.markdown('</div></div>', unsafe_allow_html=True)  # Close layout
 
         st.stop()
 
     if st.session_state.show_contact_form:
         render_contact_form(form_type=st.session_state.form_type)
+
 
 
 def enforce_session_validation():
