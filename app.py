@@ -26,18 +26,7 @@ def apply_custom_css():
 
 
 
-}
-[data-baseweb="menu"] {
-    background-color: #000000 !important;
-    color: #81BD47 !important;
-    border: 1px solid #D3D3D3 !important;
-    border-radius: 6px !important;
-}
-[data-baseweb="menu"] li:hover {
-    background-color: #81BD47 !important;
-    color: #000000 !important;
-    font-weight: bold !important;
-}
+
 .stNumberInput input {
     background-color: #000000 !important;
     color: #81BD47 !important;
