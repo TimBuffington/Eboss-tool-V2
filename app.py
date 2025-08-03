@@ -64,14 +64,6 @@ def apply_custom_css():
 
 apply_custom_css()
 # =========================================================================================================
-if "landing_shown" not in st.session_state:
-    st.session_state.landing_shown = True
-if "selected_form" not in st.session_state:
-    st.session_state.selected_form = None
-if "section" not in st.session_state:
-    st.session_state.section = "main"
-if "user_inputs" not in st.session_state:
-    st.session_state.user_inputs = {}
 
 # ---- UTILITY: LOGO & TITLE ----
 def show_logo_and_title(title):
@@ -261,6 +253,67 @@ EBOSS_KVA = {
     "EBOSS 400 kVA": 400
 }
 
+def landing_page():
+    # Ensure global CSS is applied
+    apply_custom_css()
+
+    # Initialize required session state variables
+    if "landing_shown" not in st.session_state:
+        st.session_state.landing_shown = True
+    if "show_contact_form" not in st.session_state:
+        st.session_state.show_contact_form = False
+    if "form_type" not in st.session_state:
+        st.session_state.form_type = None
+    if "selected_form" not in st.session_state:
+        st.session_state.selected_form = None
+    if "section" not in st.session_state:
+        st.session_state.section = "main"
+    if "user_inputs" not in st.session_state:
+        st.session_state.user_inputs = {}
+
+    # Only show landing page if state is active
+    if st.session_state.landing_shown:
+        show_logo_and_title("EBOSS® Size Specs & Comparison Tool")
+
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("📋 Request a Demo", key="btn_demo"):
+                st.session_state.form_type = "demo"
+                st.session_state.show_contact_form = True
+                st.session_state.landing_shown = False
+                st.rerun()
+
+        with col2:
+            if st.button("📋 Request On-Site Training", key="btn_training"):
+                st.session_state.form_type = "training"
+                st.session_state.show_contact_form = True
+                st.session_state.landing_shown = False
+                st.rerun()
+
+        col3, col4 = st.columns(2)
+        with col3:
+            if st.button("🎥 Learn How EBOSS® Works", key="btn_learn"):
+                st.markdown("""
+                <script>
+                    window.open("https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc", "_blank");
+                </script>
+                """, unsafe_allow_html=True)
+
+        with col4:
+            if st.button("🚀 Launch EBOSS® Tool", key="btn_launch"):
+                st.session_state.selected_form = "tool"
+                st.session_state.section = "input"
+                st.session_state.landing_shown = False
+                st.session_state.show_contact_form = False
+                st.session_state.form_type = None
+                st.rerun()
+
+        st.stop()  # prevent anything else from rendering on this page
+
+    # If a contact form is requested
+    if st.session_state.show_contact_form:
+        render_contact_form(form_type=st.session_state.form_type)
+
 def enforce_session_validation():
     if "user_inputs" not in st.session_state or not st.session_state.user_inputs.get("model"):
         st.warning("⚠️ Please complete the system configuration first.")
@@ -328,44 +381,6 @@ def top_navbar():
             """, unsafe_allow_html=True)
 
 
-def landing_page():
-    apply_custom_css()
-    show_logo_and_title("EBOSS&reg Size & Specs Comparison Tool")
-    col1, col2 = st.columns(2, gap="large")
-    with col1:
-        if st.button("Request a Demo", key="btn_demo"):
-            st.session_state.selected_form = "demo"
-            st.session_state.landing_shown = False
-            st.rerun()
-        if st.button("Request On-Site Training", key="btn_training"):
-            st.session_state.selected_form = "training"
-            st.session_state.landing_shown = False
-            st.rerun()
-            with col2:
-                st.markdown("""
-                <a href="https://www.youtube.com/watch?v=0Om2qO-zZfM&list=PLT1sg9qKNOz-Oad0aB5L4D4EXvLiQo2gz&index=2" target="_blank" style="text-decoration:none;">
-                <button style="
-                background-color: transparent;
-                color: #81BD47;
-                border: 2px solid #81BD47;
-                font-weight: bold;
-                padding: 0.6rem 1.2rem;
-                border-radius: 8px;
-                cursor: pointer;
-                font-size: 1rem;
-                width: 100%;
-            ">
-                Learn How EBOSS® Works
-            </button>
-        </a>
-    """, unsafe_allow_html=True)
-        
-        if st.button("🚀 Launch EBOSS®Tool"):
-            st.session_state.landing_shown = False
-            st.session_state.show_contact_form = False
-            st.session_state.form_type = None
-            st.session_state.show_user_input = True
-            st.rerun()
 
 
 
@@ -436,51 +451,6 @@ def render_contact_form(form_type="demo"):
 # ──────────────────────────────
 # 🏠 Landing Page Logic
 # ──────────────────────────────
-if "landing_shown" not in st.session_state:
-    st.session_state.landing_shown = True
-if "show_contact_form" not in st.session_state:
-    st.session_state.show_contact_form = False
-if "form_type" not in st.session_state:
-    st.session_state.form_type = None
-
-if st.session_state.landing_shown:
-    apply_custom_css()
-    show_logo_and_title("EBOSS® Hybrid Energy System Specs and Comparison Tool")
-
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("📋 Request a Demo"):
-            st.session_state.form_type = "demo"
-            st.session_state.show_contact_form = True
-            st.session_state.landing_shown = False
-            st.rerun()
-    with col2:
-        if st.button("📋 Request On-Site Training"):
-            st.session_state.form_type = "training"
-            st.session_state.show_contact_form = True
-            st.session_state.landing_shown = False
-            st.rerun()
-
-    col3, col4 = st.columns(2)
-    with col3:
-        if st.button("🎥 Learn How EBOSS® Works"):
-            st.markdown("""
-    <script>
-    window.open(\"https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc\", \"_blank\");
-    </script>
-""", unsafe_allow_html=True)
-    with col4:
-        if st.button("🚀 Launch EBOSS® Tool", key="btn_launch"):
-            st.session_state.selected_form = "tool"
-            st.session_state.section = "input"
-            st.session_state.landing_shown = False
-            st.rerun()
-     
-    st.stop()
-
-
-if st.session_state.show_contact_form:
-    render_contact_form(form_type=st.session_state.form_type)
 
 #=============================================================================================================================
  # ──────────────────────────────────────────────────────────────
@@ -1337,6 +1307,9 @@ def render_parallel_results(results, view_mode="Equipment Only"):
         st.markdown("---")
 
 # ---- NAVIGATION BLOCK (at the bottom) ----
+def main():
+     apply_custom_css()
+    
 if st.session_state.landing_shown:
     landing_page()
     st.stop()
