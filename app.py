@@ -1,6 +1,8 @@
 import streamlit as st
 from datetime import date
 import pandas as pd
+from itertools import combinations_with_replacement
+
 def apply_custom_css():
     st.markdown("""
     <style>
@@ -997,218 +999,171 @@ def render_cost_analysis_page():
         </div>
         ''', unsafe_allow_html=True)
 
-
-# ==========Parallel Page============
-
 def render_parallel_calculator_page():
-    show_logo_and_title("Parallel Calculator")
+    apply_custom_css()
+    show_logo_and_title("Parallel Sizing Tool")
     top_navbar()
-    st.markdown('<div class="form-container">', unsafe_allow_html=True)
-    st.markdown("## Parallel/Hybrid Sizing Tool")
 
-    # --- Load requirements
-    st.markdown("### Required Project Load")
-    required_cont_kw = st.number_input("Required Continuous Load (kW)", 0, 2000, step=1)
-    required_peak_kw = st.number_input("Required Max Peak Load (kW)", 0, 2500, step=1)
+    # ----------------------------------
+    # User Input
+    cont_kw = st.number_input("Required Continuous Load (kW)", min_value=0.0, step=0.1)
+    peak_kw = st.number_input("Required Peak Load (kW)", min_value=0.0, step=0.1)
+    sizing_mode = st.radio("Sizing Strategy", ["No Efficiency Preference", "Max Fuel Efficiency"])
+    view_mode = st.selectbox("View Output As", ["Equipment Only", "Comparison EBOSS vs Gen-Only"])
 
-    # --- Sizing preference
-    st.markdown("### Sizing Criterion")
-    sizing_pref = st.radio(
-        "Do you want to size for **optimal fuel efficiency** (max continuous = 2/3 battery kWh) or **minimum number of items** (max allowed per your chart)?",
-        ["Optimal fuel efficiency", "Minimum item count"], horizontal=True
-    )
+    if st.button("Calculate"):
+        results = calculate_parallel_sizing(cont_kw, peak_kw, sizing_mode)
 
-    # --- Show user inventory
-    st.markdown("### EBOSS Units in Inventory")
-    eboss_inventory = {}
-    eboss_charge_overrides = {}
-    for model in EBOSS_KVA.keys():
-        col1, col2 = st.columns([2,1])
-        with col1:
-            qty = st.number_input(f"{model} (quantity)", 0, 20, step=1, key=f"eboss_{model}")
-        with col2:
-            eboss_kva = EBOSS_KVA[model]
-            set_rate = Eboss_Charge_Rates[eboss_kva]["power_module"]
-            max_rate = Eboss_Charge_Rates[eboss_kva]["max"]
-            charge_rate = st.number_input(
-                f"Set charge rate for {model} (default {set_rate} kW)", min_value=1.0, max_value=max_rate,
-                value=float(set_rate), step=0.5, key=f"charge_{model}"
-            )
-            if charge_rate > max_rate:
-                st.error(f"Charge rate for {model} cannot exceed max allowed ({max_rate} kW).")
-                st.stop()
-            eboss_charge_overrides[model] = charge_rate
-        eboss_inventory[model] = qty
+        # ----------------------------------
+        # Render Equipment Table
+        st.subheader("Equipment Requirement")
+        for section, rec in results.items():
+            st.markdown(f"### {section}")
+            cols = st.columns([1,1,1,1,1])
+            headers = ["Scenario","EBOSS QTY","Generator QTY","Charge kW","Fuel (gal/day)"]
+            for c, h in zip(cols, headers): c.markdown(f"**{h}**")
+            for rec_item in rec:
+                scenario, units, gens, charge, fuel = rec_item.values()
+                row = [scenario, units, gens, f"{charge:.1f}", f"{fuel:.2f}"]
+                for c, val in zip(cols, row): c.markdown(val)
 
-    st.markdown("### Generators in Inventory")
-    gen_inventory = {}
-    for gen in STANDARD_GENERATORS.keys():
-        qty = st.number_input(f"{gen} (quantity)", 0, 10, step=1, key=f"gen_{gen}")
-        gen_inventory[gen] = qty
+        # ----------------------------------
+        # Render Comparison if requested
+        if view_mode == "Comparison EBOSS vs Gen-Only":
+            st.subheader("Fuel Comparison")
+            # display side-by-side fuel totals
 
-    st.markdown("### What do you want to calculate?")
-    need_option = st.radio(
-        "Show me:",
-        ["Total number of items required", "Additional items needed (based on inventory)"],
-        horizontal=True
-    )
+        st.markdown("---")
 
-    # --- Calculate needed EBoss units
-    if st.button("🔢 Calculate Paralleled System"):
-        # Determine per-unit kW based on sizing_pref
-        unit_capacity = {}
-        for model in EBOSS_KVA.keys():
-            if sizing_pref == "Optimal fuel efficiency":
-                battery_kwh = {
-                    "EB25 kVA": 15,
-                    "EB70 kVA": 25,
-                    "EB125 kVA": 50,
-                    "EB220 kVA": 75,
-                    "EB400 kVA": 125,
-                }[model]
-                ideal_kw = (2/3) * battery_kwh
-            else:
-                ideal_kw = eboss_charge_overrides[model]
-            unit_capacity[model] = ideal_kw
 
-        # Step 1: Apply user's inventory
-        total_supported_kw = 0
-        used_inventory = {}
-        for model, qty in eboss_inventory.items():
-            if qty > 0:
-                model_kw = unit_capacity[model]
-                model_total_kw = qty * model_kw
-                total_supported_kw += model_total_kw
-                used_inventory[model] = qty
+ def calculate_parallel_sizing(required_cont_kw, required_peak_kw, sizing_mode):
+    {
+      "Full Hybrid Only": [
+         {"scenario": "EBOSS 70 kVA Only", "units": 3, "gens": 0, "charge": 108, "fuel":  shape},
+         {"scenario": "Mixed Option 1", ...},
+         {"scenario": "Mixed Option 2", ...}
+      ],
+      "Power Module + Gen Support": [...],
+      "Gen Only": [...]
+    }
+    """
+    from itertools import combinations_with_replacement
 
-        # Step 2: Determine how many more units are needed
-        additional_units = {}
-        deficit = max(0, required_cont_kw - total_supported_kw)
-        if deficit > 0:
-            for model, model_kw in sorted(unit_capacity.items(), key=lambda x: -x[1]):
-                need_qty = int(deficit // model_kw)
-                if deficit % model_kw != 0:
-                    need_qty += 1
-                if need_qty > 0:
-                    additional_units[model] = need_qty
-                    deficit -= need_qty * model_kw
-                    if deficit <= 0:
-                        break
+    results = {
+        "Full Hybrid Only": [],
+        "Power Module + Gen Support": [],
+        "Gen Only": []
+    }
 
-        # Results for EBoss units
-        st.markdown("### 📊 Results: EBOSS Units")
-        if need_option == "Total number of items required":
-            for model in unit_capacity:
-                total = used_inventory.get(model, 0) + additional_units.get(model, 0)
-                if total > 0:
-                    st.write(f"{model}: {total} (each set to {unit_capacity[model]:.1f} kW)")
-        else:
-            for model, qty in additional_units.items():
-                if qty > 0:
-                    st.write(f"Still need: {qty} x {model} (set to {unit_capacity[model]:.1f} kW)")
+    # Helper: generator fuel rate by kW
+    gen_fuel_gph = {25: 2.0, 45: 3.5, 65: 5.0, 125: 8.5, 220: 14.0}  # replace with real data
 
-        # Calculate recommended generator sizing for EBOSS units
-        st.markdown("### 🔌 Generator Sizing for EBOSS System")
-        pf = 0.8
-        total_eboss_kw = sum((used_inventory.get(model, 0) + additional_units.get(model, 0)) * unit_capacity[model] for model in EBOSS_KVA.keys())
-        min_gen_kva = total_eboss_kw / pf
-        st.write(f"Recommended generator size for charging: **{total_eboss_kw:.1f} kW** ({min_gen_kva:.1f} kVA, PF=0.8)")
+    # 1. Full Hybrid scenarios
+    for kva, spec in Eboss_Specs.items():
+        charge_rate = spec["full_hybrid"]
+        units_needed = -(-required_cont_kw // charge_rate)  # ceiling division
+        total_charge = units_needed * charge_rate
+        est_fuel = units_needed * (charge_rate * 0.015)  # eboss fuel formula
+        results["Full Hybrid Only"].append({
+            "scenario": f"EBOSS {kva} kVA Only",
+            "units": int(units_needed),
+            "gens": 0,
+            "charge": total_charge,
+            "fuel": est_fuel
+        })
 
-        # --- Standard Generator Comparison Button
-        if st.button("Compare to Standard Generator System"):
-            st.markdown("## Standard Generator Comparison")
+    # Mixed-model full hybrid combos
+    all_kvas = list(Eboss_Specs.keys())
+    combos = list(combinations_with_replacement(all_kvas, 2))  # pairs
+    mixed = []
+    for combo in combos:
+        charge = sum(Eboss_Specs[k]["full_hybrid"] for k in combo)
+        if charge >= required_cont_kw:
+            total_fuel = sum(c * (charge * 0.005) for c, k in zip([1,1], combo))
+            mixed.append((combo, charge, total_fuel))
+    mixed = sorted(mixed, key=lambda x: (len(x[0]), x[2]))[:2]
+    for idx, item in enumerate(mixed, 1):
+        kva_list, charge, fuel = item
+        results["Full Hybrid Only"].append({
+            "scenario": f"Mixed Option {idx}: " + " + ".join(f"{k} kVA" for k in kva_list),
+            "units": len(kva_list),
+            "gens": 0,
+            "charge": charge,
+            "fuel": fuel
+        })
 
-            # Calculate total kW output from all EBoss units
-            st.markdown(f"**Total EBoss kW Output:** {total_eboss_kw:.1f} kW")
+    # 2. Power Module + Gen Support
+    for kva, spec in Eboss_Specs.items():
+        charge_rate = spec["power_module"]
+        units_needed = -(-required_cont_kw // charge_rate)
+        total_charge = units_needed * charge_rate
+        gen_needed = -(-total_charge // spec["max_charge"])
+        # assume smallest generator kvas available
+        gens = gen_needed
+        total_fuel = gens * gen_fuel_gph.get(kva, 5.0) * 24
+        results["Power Module + Gen Support"].append({
+            "scenario": f"PM {kva} kVA Only",
+            "units": int(units_needed),
+            "gens": gens,
+            "charge": total_charge,
+            "fuel": total_fuel
+        })
 
-            # 1. Show generator count per size for EBoss system charging
-            st.markdown("#### Generator Count for EBOSS Charging:")
-            required_gen_kw = total_eboss_kw
-            generator_rows = []
-            remaining_gen_kw = required_gen_kw
-            for gen, gph in sorted(STANDARD_GENERATORS.items(), key=lambda x: -EBOSS_KVA.get(x[0].split(" ")[0] + " kVA", 0)):
-                gen_kw = float(gen.split("/")[1].replace("kW", "").strip())
-                qty = int(remaining_gen_kw // gen_kw)
-                if remaining_gen_kw % gen_kw != 0:
-                    qty += 1
-                if qty > 0:
-                    generator_rows.append((gen, qty))
-                    remaining_gen_kw -= qty * gen_kw
-                    if remaining_gen_kw <= 0:
-                        break
-            for gen, qty in generator_rows:
-                st.write(f"{gen}: {qty}")
+    # Mixed PM combos
+    pm_mixed = []
+    for combo in combos:
+        charge = sum(Eboss_Specs[k]["power_module"] for k in combo)
+        if charge >= required_cont_kw:
+            gens = -(-charge // max(Eboss_Specs[k]["max_charge"] for k in combo))
+            fuel = gens * gen_fuel_gph.get(combo[0], 5.0) * 24
+            pm_mixed.append((combo, charge, fuel))
+    pm_mixed = sorted(pm_mixed, key=lambda x: (len(x[0]), x[2]))[:2]
+    for idx, item in enumerate(pm_mixed, 1):
+        combo, charge, fuel = item
+        gens = -(-charge // max(Eboss_Specs[k]["max_charge"] for k in combo))
+        results["Power Module + Gen Support"].append({
+            "scenario": f"PM Mixed Option {idx}: " + " + ".join(f"{k} kVA" for k in combo),
+            "units": len(combo),
+            "gens": gens,
+            "charge": charge,
+            "fuel": fuel
+        })
 
-            # 2. Show generator runtime and fuel
-            st.markdown("#### Generator Runtime & Fuel Analysis:")
-            total_gph = sum(STANDARD_GENERATORS[gen] * qty for gen, qty in generator_rows)
-            st.write(f"**Total GPH (gallons per hour):** {total_gph:.2f} gph")
-            st.write(f"**Gallons per day:** {total_gph * 24:.1f} gal")
-            st.write(f"**Gallons per week:** {total_gph * 24 * 7:.1f} gal")
-            st.write(f"**Gallons per month (30 days):** {total_gph * 24 * 30:.1f} gal")
+    # 3. Generator only
+    for kva in gen_fuel_gph.keys():
+        gens_needed = -(-required_cont_kw // kva)
+        fuel = gens_needed * gen_fuel_gph[kva] * 24
+        results["Gen Only"].append({
+            "scenario": f"Gen {kva} kVA Only",
+            "units": 0,
+            "gens": gens_needed,
+            "charge": gens_needed * kva,
+            "fuel": fuel
+        })
+    # Mixed gen combos
+    gen_kvas = list(gen_fuel_gph.keys())
+    gen_combos = list(combinations_with_replacement(gen_kvas, 2))
+    mixed_gen = []
+    for combo in gen_combos:
+        charge = sum(combo)
+        if charge >= required_cont_kw:
+            fuel = sum(gen_fuel_gph[k] for k in combo) * 24
+            mixed_gen.append((combo, charge, fuel))
+    mixed_gen = sorted(mixed_gen, key=lambda x: (len(x[0]), x[2]))[:2]
+    for idx, item in enumerate(mixed_gen, 1):
+        combo, charge, fuel = item
+        results["Gen Only"].append({
+            "scenario": f"Gen Mixed Option {idx}: " + " + ".join(f"{k} kVA" for k in combo),
+            "units": 0,
+            "gens": len(combo),
+            "charge": charge,
+            "fuel": fuel
+        })
 
-            # 3. Now compare to using only standard generators (no EBOSS)
-            st.markdown("### Standard-Only Generator System (No EBOSS):")
-            std_rows = []
-            std_remaining_kw = required_cont_kw
-            for gen, gph in sorted(STANDARD_GENERATORS.items(), key=lambda x: -float(x[0].split("/")[1].replace("kW", "").strip())):
-                gen_kw = float(gen.split("/")[1].replace("kW", "").strip())
-                qty = int(std_remaining_kw // gen_kw)
-                if std_remaining_kw % gen_kw != 0:
-                    qty += 1
-                if qty > 0:
-                    std_rows.append((gen, qty))
-                    std_remaining_kw -= qty * gen_kw
-                    if std_remaining_kw <= 0:
-                        break
-            for gen, qty in std_rows:
-                st.write(f"{gen}: {qty}")
+    return results
+==========Parallel Page============
 
-            std_total_gph = sum(STANDARD_GENERATORS[gen] * qty for gen, qty in std_rows)
-            st.write(f"**Total Standard Gen GPH:** {std_total_gph:.2f} gph")
-            st.write(f"**Gallons per day:** {std_total_gph * 24:.1f} gal")
-            st.write(f"**Gallons per week:** {std_total_gph * 24 * 7:.1f} gal")
-            st.write(f"**Gallons per month (30 days):** {std_total_gph * 24 * 30:.1f} gal")
 
-            # --- Print-friendly button with logo and title ---
-            today = date.today().strftime("%B %d, %Y")
-            st.markdown("""
-            <style>
-            @media print {
-                body * { visibility: hidden; }
-                .print-logo, .print-logo * { visibility: visible; }
-                .form-container, .form-container * { visibility: visible; }
-                .form-container {
-                    position: relative;
-                    background: white !important;
-                    color: black !important;
-                    box-shadow: none !important;
-                }
-                .form-container h3, th, td {
-                    color: black !important;
-                    text-shadow: none !important;
-                }
-            }
-            </style>
-            """, unsafe_allow_html=True)
-            st.markdown(f'''
-            <div class="print-logo" style="text-align:center; margin-top:2rem;">
-              <img src="https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png" width="240"><br><br>
-              <div style="font-size:1.3rem; font-weight:bold;">
-                EBOSS&reg Parallel Sizing and Generator Comparison Report
-              </div>
-              <div style="font-size:0.9rem; margin-top:0.2rem;">{today}</div>
-              <div style="font-size:0.95rem; margin-top:0.8rem;">
-                <b>Load Parameters:</b> {required_cont_kw} kW continuous, {required_peak_kw} kW peak
-              </div>
-            </div>
-            ''', unsafe_allow_html=True)
-            st.markdown("""
-            <button class="eboss-hero-btn" onclick="window.print()" style="margin: 0 auto; display: block;">
-                 Print Parallel Calculation
-            </button>
-            """, unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
 
 
 
