@@ -205,6 +205,22 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+st.image("https://anacorp.com/wp-content/uploads/2023/10/ANA-ENERGY-LOGO-PADDED.png", width=250)
+
+st.markdown("""
+    <style>
+    .stButton > button {
+        transition: box-shadow 0.3s ease, color 0.3s ease;
+    }
+    .stButton > button:hover {
+        box-shadow: 0 0 10px #81BD47;
+        color: #81BD47 !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+btn1, btn2, btn3, btn4, btn5 = st.columns(5)
+
 with btn1:
     if st.button("View Specs"):
         st.session_state.section = "specs"
