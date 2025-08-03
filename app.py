@@ -13,7 +13,7 @@ def apply_custom_css():
         line-height: 1.6;
         background: url("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/bg.png") no-repeat center center fixed;
         background-size: cover;
-        color: #fff;
+        color: #000;
         margin: 0;
         padding: 0;
     }
