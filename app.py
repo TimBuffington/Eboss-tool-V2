@@ -72,6 +72,13 @@ def apply_custom_css():
 """, unsafe_allow_html=True)
 
 apply_custom_css()
+# FIX: Initialize session state key
+if "user_inputs" not in st.session_state:
+    st.session_state.user_inputs = {}
+
+# Now it's safe to access
+inputs = st.session_state.user_inputs
+
 # =========================================================================================================
 
 # ---- UTILITY: LOGO & TITLE ----
