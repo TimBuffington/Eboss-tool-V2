@@ -21,11 +21,7 @@ def apply_custom_css():
 
 }
 
-/* Selected value text */
-.stSelectbox div[role="combobox"] span,
-.stSelectbox div[role="combobox"] div {
-    color: #81BD47 !important;
-    font-weight: bold !important;
+
 }
 
 /* Optional fallback */
