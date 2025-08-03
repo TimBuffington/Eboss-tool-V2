@@ -62,7 +62,7 @@ def apply_custom_css():
 </style>
 """, unsafe_allow_html=True)
 
-
+apply_custom_css()
 # =========================================================================================================
 if "landing_shown" not in st.session_state:
     st.session_state.landing_shown = True
@@ -288,9 +288,10 @@ def top_navbar():
             margin-bottom: 1rem;
         }
         </style>
-    """, unsafe_allow_html=True)
 
-    st.markdown('<div class="logo-centered"><img src="https://anacorp.com/wp-content/uploads/2023/10/ANA-ENERGY-LOGO-PADDED.png" width="250"></div>', unsafe_allow_html=True)
+    st.markdown('<div class="logo-centered"><img src="https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png
+></div>
+""", unsafe_allow_html=True)
 
     # Ensure user_inputs are initialized to avoid KeyErrors
     user_inputs = st.session_state.get("user_inputs", {})
@@ -327,22 +328,16 @@ def top_navbar():
             """, unsafe_allow_html=True)
 
 
-
-
-
-
-# ===============================================================================================
-
 def landing_page():
     apply_custom_css()
-    show_logo_and_title("EBOSS&reg Hybrid Energy System<br>Specs and Comparison Tool")
+    show_logo_and_title("EBOSS&reg Size & Specs Comparison Tool")
     col1, col2 = st.columns(2, gap="large")
     with col1:
-        if st.button("📋 Request a Demo", key="btn_demo"):
+        if st.button("Request a Demo", key="btn_demo"):
             st.session_state.selected_form = "demo"
             st.session_state.landing_shown = False
             st.rerun()
-        if st.button("📋 Request On-Site Training", key="btn_training"):
+        if st.button("Request On-Site Training", key="btn_training"):
             st.session_state.selected_form = "training"
             st.session_state.landing_shown = False
             st.rerun()
@@ -360,11 +355,10 @@ def landing_page():
                 font-size: 1rem;
                 width: 100%;
             ">
-                🎥 Learn How EBOSS® Works
+                Learn How EBOSS® Works
             </button>
         </a>
     """, unsafe_allow_html=True)
-
         
         if st.button("🚀 Launch EBOSS®Tool"):
             st.session_state.landing_shown = False
