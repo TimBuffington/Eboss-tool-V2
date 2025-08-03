@@ -1336,7 +1336,7 @@ def render_parallel_results(results, view_mode="Equipment Only"):
 def main():
      apply_custom_css()
     
-if st.session_state.landing_shown:
+if st.session_state.get("landing_shown", True):
     landing_page()
     st.stop()
 elif st.session_state.selected_form == "demo":
