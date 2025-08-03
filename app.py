@@ -263,6 +263,10 @@ EBOSS_KVA = {
 def top_navbar():
     st.markdown("""
         <style>
+        .stApp {
+            background: url("https://raw.githubusercontent.com/anacorp/Eboss-tool-V2/main/assets/bg.png") no-repeat center center fixed;
+            background-size: cover;
+        }
         .stButton > button {
             transition: box-shadow 0.3s ease, color 0.3s ease;
             width: 100%;
@@ -314,6 +318,7 @@ def top_navbar():
                 window.open("https://anacorp.com/contact/", "_blank");
                 </script>
             """, unsafe_allow_html=True)
+
 
 
 
