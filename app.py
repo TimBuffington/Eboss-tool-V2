@@ -102,8 +102,15 @@ def apply_custom_css():
     font-weight: bold !important;
     box-shadow: none !important;
 }
-    
-
+    input:focus, select:focus, textarea:focus {
+    background-color: #000000 !important;  /* Black */
+    color: #81BD47 !important;             /* Energy Green text */
+    border: 1px solid #D3D3D3 !important;  /* Light Concrete Gray border */
+    border-radius: 8px !important;
+    padding: 0.5rem 1rem !important;
+    font-weight: bold !important;
+    box-shadow: none !important;
+}
 .top-navbar .stButton > button:hover {
     background: #2c2c2f;
     box-shadow: 0 0 12px #81BD47;
