@@ -192,37 +192,43 @@ EBOSS_KVA = {
     "EBOSS 400 kVA": 400
 }
 
-with st.container():
-    st.markdown('<div class="form-container">', unsafe_allow_html=True)
-    st.markdown('<h3 class="form-section-title">🔧 Navigation</h3>', unsafe_allow_html=True)
+btn1, btn2, btn3, btn4, btn5 = st.columns(5)
 
-    btn1, btn2, btn3, btn4, btn5 = st.columns(5)
+st.markdown("""
+    <style>
+    .stButton > button {
+        transition: box-shadow 0.3s ease;
+    }
+    .stButton > button:hover {
+        box-shadow: 0 0 10px #81BD47;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
-    with btn1:
-        if st.button("View Specs"):
-            st.session_state.section = "specs"
+with btn1:
+    if st.button("View Specs"):
+        st.session_state.section = "specs"
 
-    with btn2:
-        if st.button("Load-Based Specs"):
-            st.session_state.section = "load"
+with btn2:
+    if st.button("Load-Based Specs"):
+        st.session_state.section = "load"
 
-    with btn3:
-        if st.button("Compare"):
-            st.session_state.section = "compare"
+with btn3:
+    if st.button("Compare"):
+        st.session_state.section = "compare"
 
-    with btn4:
-        if st.button("Cost Analysis"):
-            st.session_state.section = "cost"
+with btn4:
+    if st.button("Cost Analysis"):
+        st.session_state.section = "cost"
 
-    with btn5:
-        if st.button("Contact Us"):
-            st.markdown("""
-                <script>
-                window.open("https://anacorp.com/contact/", "_blank");
-                </script>
-            """, unsafe_allow_html=True)
+with btn5:
+    if st.button("Contact Us"):
+        st.markdown("""
+            <script>
+            window.open("https://anacorp.com/contact/", "_blank");
+            </script>
+        """, unsafe_allow_html=True)
 
-    st.markdown('</div>', unsafe_allow_html=True)
 
 
 # ===============================================================================================
