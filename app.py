@@ -4,9 +4,9 @@ import pandas as pd
 from itertools import combinations_with_replacement
 
 def apply_custom_css():
+   def apply_custom_css():
     st.markdown("""
     <style>
-    /* === GLOBAL STYLES === */
     html, body, .stApp {
         font-family: 'Segoe UI', sans-serif;
         font-size: 1.1rem;
@@ -17,70 +17,7 @@ def apply_custom_css():
         margin: 0;
         padding: 0;
     }
-/* Selectbox wrapper field */
-.stSelectbox div[role="combobox"] {
-    background-color: #000000 !important;
-    border: 1px solid #D3D3D3 !important;
-    border-radius: 8px !important;
-    padding: 0.5rem 1rem !important;
-    font-weight: bold !important;
-}
 
-/* Selected value text */
-.stSelectbox div[role="combobox"] span,
-.stSelectbox div[role="combobox"] div {
-    color: #81BD47 !important;
-    font-weight: bold !important;
-}
-
-/* Optional fallback */
-.stSelectbox div[role="combobox"] * {
-    color: #81BD47 !important;
-}
-
-/* Dropdown menu styling */
-[data-baseweb="menu"] {
-    background-color: #000000 !important;
-    color: #81BD47 !important;
-    border: 1px solid #D3D3D3 !important;
-    border-radius: 6px !important;
-}
-
-
-}
-}
-[data-baseweb="menu"] {
-    background-color: #000000 !important;
-    color: #81BD47 !important;
-    border: 1px solid #D3D3D3 !important;
-    border-radius: 6px !important;
-}
-[data-baseweb="menu"] li:hover {
-    background-color: #81BD47 !important;
-    color: #000000 !important;
-    font-weight: bold !important;
-}
-
-}
-
-
-
-
-.stNumberInput input {
-    background-color: #000000 !important;
-    color: #81BD47 !important;
-    border: 1px solid #D3D3D3 !important;
-    border-radius: 8px !important;
-    padding: 0.5rem 1rem !important;
-    font-weight: bold !important;
-}
-.stNumberInput button {
-    background-color: #000000 !important;
-    color: #81BD47 !important;
-    border: 1px solid #D3D3D3 !important;
-    font-weight: bold !important;
-    border-radius: 4px !important;
-}
     h1, .form-section-title {
         font-family: 'Montserrat', sans-serif;
         font-size: 2.2rem;
@@ -91,107 +28,51 @@ def apply_custom_css():
         margin-bottom: 1.5rem;
     }
 
-    /* === CARD STYLE === */
-    .card {
-        background: linear-gradient(145deg, #000, #1b1b1b);
-        border-radius: 16px;
-        padding: 1.4rem 1.8rem;
-        margin-bottom: 1.5rem;
-        border: 1px solid #939598;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.65),
-                    inset 0 1px 2px rgba(255,255,255,0.05);
-        transition: transform 0.2s ease-in-out;
-        color: #fff;
+    .stSelectbox label,
+    .stNumberInput label {
+        color: #81BD47 !important;
+        font-weight: bold !important;
     }
 
-    .card-label {
-        font-size: 1rem;
-        font-weight: 600;
-        color: #81BD47;
-        margin-bottom: 0.4rem;
-        text-shadow: 0 1px 1px rgba(0,0,0,0.6);
+    .stSelectbox > div > div,
+    .stNumberInput input {
+        background-color: #000000 !important;
+        color: #81BD47 !important;
+        border: 1px solid #D3D3D3 !important;
+        border-radius: 8px !important;
+        padding: 0.5rem 1rem !important;
+        font-weight: bold !important;
     }
 
-    .card-value {
-        font-size: 1.2rem;
-        font-weight: 700;
-        color: #fff;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+    .stNumberInput button {
+        background-color: #000000 !important;
+        color: #81BD47 !important;
+        border: 1px solid #D3D3D3 !important;
+        font-weight: bold !important;
+        border-radius: 4px !important;
     }
 
-    /* === BUTTONS === */
-    .stButton > button, .eboss-hero-btn {
-        width: 100%;
-        max-width: 340px;
-        margin: 1rem auto;
-        padding: 1.1rem 0.5rem;
-        background: #232325;
-        color: #fff;
-        border-radius: 18px;
-        font-size: 1.2rem;
-        font-weight: 700;
-        border: none;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.36);
-        transition: all 0.2s ease-in-out;
+    .stSelectbox div[role="combobox"] span {
+        color: #81BD47 !important;
+        font-weight: bold !important;
     }
 
-    .stButton > button:hover {
-        background: #2c2c2f;
-        transform: scale(1.04) translateY(-2px);
-        box-shadow: 0 0 30px 8px #81BD47;
-    }
-/* Selectbox field (visible selected value) */
-.stSelectbox div[role="combobox"] {
-    background-color: #000000 !important;  /* Black */
-    color: #81BD47 !important;             /* Energy Green text */
-    border: 1px solid #D3D3D3 !important;  /* Light Concrete Gray border */
-    border-radius: 8px !important;
-    padding: 0.5rem 1rem !important;
-    font-weight: bold !important;
-    box-shadow: none !important;
-}
-
-
-}
-.top-navbar .stButton > button:hover {
-    background: #2c2c2f;
-    box-shadow: 0 0 12px #81BD47;
-    transform: translateY(-2px);
-}
-    /* === LOGO === */
-    .logo-header {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-bottom: 1rem;
+    [data-baseweb="menu"] {
+        background-color: #000000 !important;
+        color: #81BD47 !important;
+        border: 1px solid #D3D3D3 !important;
+        border-radius: 6px !important;
     }
 
-    .logo-header img {
-        width: 90%;
-        max-width: 360px;
-        height: auto;
-        filter: drop-shadow(0 2px 16px rgba(0,0,0,0.28));
-        border-radius: 0.4rem;
+    [data-baseweb="menu"] li:hover {
+        background-color: #81BD47 !important;
+        color: #000000 !important;
+        font-weight: bold !important;
     }
 
-    /* === MOBILE STYLES === */
-    @media (max-width: 768px) {
-        .stColumn {
-            flex: 1 0 100% !important;
-            max-width: 100% !important;
-        }
-        h1, .form-section-title {
-            font-size: 1.6rem !important;
-        }
-        .card-label, .card-value {
-            font-size: 1rem !important;
-        }
-        .logo-header img {
-            width: 80% !important;
-        }
-    }
     </style>
     """, unsafe_allow_html=True)
+
 
 
 # =========================================================================================================
