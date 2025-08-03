@@ -18,13 +18,7 @@ def apply_custom_css():
         padding: 0;
     }
 
-/* Selectbox wrapper field */
-.stSelectbox div[role="combobox"] {
-    background-color: #000000 !important;
-    border: 1px solid #D3D3D3 !important;
-    border-radius: 8px !important;
-    padding: 0.5rem 1rem !important;
-    font-weight: bold !important;
+
 }
 
 /* Selected value text */
