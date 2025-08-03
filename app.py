@@ -540,7 +540,7 @@ def validate_charge_rate(model, gen_type, entered_rate, gen_kw=None):
 
     return is_valid, messages
 
-def render_user_input_modal():
+def render_user_input_form():
     apply_custom_css()
     show_logo_and_title()
     if "show_user_input" not in st.session_state:
@@ -578,80 +578,6 @@ def render_user_input_modal():
 
         st.markdown('</div></div>', unsafe_allow_html=True)
 
-
-def render_user_input_form():
-    with st.container():
-        cols = st.columns([1, 1, 1], gap="large")
-
-        # ───── Column 1: EBOSS® ─────
-        with cols[0]:
-            st.markdown('''
-                <div class="card">
-                    <div class="card-label">EBOSS®</div>
-            ''', unsafe_allow_html=True)
-
-            st.session_state.user_inputs["model"] = st.selectbox(
-                "Model", list(EBOSS_KVA.keys()), key="model_select"
-            )
-
-            st.session_state.user_inputs["gen_type"] = st.selectbox(
-                "Type", ["Full Hybrid", "Power Module"], key="gen_type_select"
-            )
-
-            if st.session_state.user_inputs["gen_type"] == "Power Module":
-                st.session_state.user_inputs["kva_option"] = st.selectbox(
-                    "Generator Size", ["25kVA", "45kVA", "65kVA", "125kVA", "220kVA", "400kVA"],
-                    key="kva_select"
-                )
-
-            st.markdown('</div>', unsafe_allow_html=True)
-
-        # ───── Column 2: Load ─────
-        with cols[1]:
-            st.markdown('''
-                <div class="card">
-                    <div class="card-label">Load</div>
-            ''', unsafe_allow_html=True)
-
-            st.session_state.user_inputs["raw_cont_load"] = st.number_input(
-                "Continuous Load", 0, 500, step=1, format="%d", key="cont_input"
-            )
-
-            st.session_state.user_inputs["raw_peak_load"] = st.number_input(
-                "Max Peak Load", 0, 500, step=1, format="%d", key="peak_input"
-            )
-
-            st.markdown('</div>', unsafe_allow_html=True)
-
-        # ───── Column 3: Units ─────
-        with cols[2]:
-            st.markdown('''
-                <div class="card">
-                    <div class="card-label">Units</div>
-            ''', unsafe_allow_html=True)
-
-            st.session_state.user_inputs["load_units"] = st.selectbox(
-                "Units", ["kW", "Amps"], key="unit_select"
-            )
-
-            st.session_state.user_inputs["voltage"] = st.selectbox(
-                "Voltage", ["480V", "240V", "208V"], key="voltage_select"
-            )
-
-            st.markdown('</div>', unsafe_allow_html=True)
-
-    # ───── KW Conversion Logic ─────
-    pf = 0.8
-    v_val = int(st.session_state.user_inputs["voltage"].replace("V", ""))
-    cont = st.session_state.user_inputs["raw_cont_load"]
-    peak = st.session_state.user_inputs["raw_peak_load"]
-
-    if st.session_state.user_inputs["load_units"] == "Amps":
-        st.session_state.user_inputs["cont_kw"] = (cont * (3 ** 0.5) * v_val * pf) / 1000
-        st.session_state.user_inputs["peak_kw"] = (peak * (3 ** 0.5) * v_val * pf) / 1000
-    else:
-        st.session_state.user_inputs["cont_kw"] = cont
-        st.session_state.user_inputs["peak_kw"] = peak
 
 
 
