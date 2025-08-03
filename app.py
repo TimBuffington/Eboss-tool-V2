@@ -51,9 +51,7 @@ def apply_custom_css():
         border-radius: 4px !important;
     }
 
-    .stSelectbox div[role="combobox"] span {
-        color: #81BD47 !important;
-        font-weight: bold !important;
+   
     }
 
     
