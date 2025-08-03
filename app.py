@@ -295,9 +295,7 @@ EBOSS_KVA = {
 }
 
 def top_navbar():
-    st.markdown('<div class="top-navbar">', unsafe_allow_html=True)
-
-    col1, col2, col3, col4, col5, col6 = st.columns(6)
+        btn0, btn1, btn2, btn3, btn4, btn5 = st.columns(6)
 
     with col1:
         if st.button("📥 User Input", key="nav_input_button"):
