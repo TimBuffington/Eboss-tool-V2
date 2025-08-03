@@ -265,7 +265,9 @@ kva = st.session_state.user_inputs["kva_option"]
 
 
 def top_navbar():
-        st.markdown("""
+    st.image("https://anacorp.com/wp-content/uploads/2023/10/ANA-ENERGY-LOGO-PADDED.png", width=250)
+
+    st.markdown("""
         <style>
         .stButton > button {
             transition: box-shadow 0.3s ease, color 0.3s ease;
@@ -277,31 +279,40 @@ def top_navbar():
         </style>
     """, unsafe_allow_html=True)
 
-btn1, btn2, btn3, btn4, btn5 = st.columns(5)
+    # Ensure user_inputs are initialized to avoid KeyErrors
+    user_inputs = st.session_state.get("user_inputs", {})
+    model = user_inputs.get("model")
+    gen_type = user_inputs.get("gen_type")
+    kva_option = user_inputs.get("kva_option")
+    cont_kw = user_inputs.get("cont_kw")
+    peak_kw = user_inputs.get("peak_kw")
 
-with btn1:
+    btn1, btn2, btn3, btn4, btn5 = st.columns(5)
+
+    with btn1:
         if st.button("View Specs"):
             st.session_state.section = "specs"
 
-with btn2:
+    with btn2:
         if st.button("Load-Based Specs"):
             st.session_state.section = "load"
 
-with btn3:
+    with btn3:
         if st.button("Compare"):
             st.session_state.section = "compare"
 
-with btn4:
+    with btn4:
         if st.button("Cost Analysis"):
             st.session_state.section = "cost"
 
-with btn5:
+    with btn5:
         if st.button("Contact Us"):
             st.markdown("""
                 <script>
                 window.open("https://anacorp.com/contact/", "_blank");
                 </script>
             """, unsafe_allow_html=True)
+
 
 
 
