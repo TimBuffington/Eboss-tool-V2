@@ -286,10 +286,10 @@ def landing_page():
             margin: 2rem auto;
         }
         .stButton>button {
-            min-width: 310px;
+            min-width: 320px;
             max-width: 320px;
             height: 60px;
-            font-size: 1.3rem;
+            font-size: 1.8rem;
             font-weight: bold;
             color: #81BD47 !important;
             background-color: #000000 !important;
