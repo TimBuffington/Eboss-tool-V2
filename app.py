@@ -213,6 +213,8 @@ def show_logo_and_title(title):
             padding-top: 1rem;
             padding-bottom: 1rem;
         }
+            background: url("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/bg.png") no-repeat center center fixed;
+            background-size: cover;
 
         .logo-title-container img {
             max-width: 100%;
@@ -542,7 +544,7 @@ def validate_charge_rate(model, gen_type, entered_rate, gen_kw=None):
 
 def render_user_input_form():
     apply_custom_css()
-    show_logo_and_title()
+    show_logo_and_title("EBOSS&reg Size & Spec Tool)
     if "show_user_input" not in st.session_state:
         st.session_state.show_user_input = True
 
@@ -756,7 +758,6 @@ def calculate_runtime_specs(model, gen_type, cont_kw, kva):
 # ---- TECH SPECS PAGE ----
 def render_user_input_page():
     apply_custom_css()  # ✅ ADD THIS
-    show_logo_and_title("Eboss & Load Data")
     top_navbar()
     render_user_input_form()
     
