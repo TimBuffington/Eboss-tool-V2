@@ -555,8 +555,12 @@ def render_user_input_form():
     apply_custom_css()
     show_logo_and_title("EBOSS&reg & Load Data")
     top_navbar()
+   
+    if "user_inputs" not in st.session_state:
+        st.session_state.user_inputs = {}
     st.markdown("""
     <style>
+    
     .card {
         background-color: #000000;
         border: 2px solid #D3D3D3;
