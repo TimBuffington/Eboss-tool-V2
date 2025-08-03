@@ -3,6 +3,9 @@ from datetime import date
 import pandas as pd
 from itertools import combinations_with_replacement
 
+background: url("https://your-background-image.png") no-repeat center center fixed;
+background-size: cover;
+
 def apply_custom_css():
     st.markdown("""
     <style>
@@ -184,6 +187,49 @@ spec_data = {
         ]
     }
 }
+#========================================================================
+
+def show_logo_and_title(title="EBOSS® Hybrid Energy Tool"):
+    st.markdown("""
+        <style>
+        .logo-title-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+
+        .logo-title-container img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .logo-title-container h1 {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #81BD47;
+            text-align: center;
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        @media screen and (max-width: 768px) {
+            .logo-title-container h1 {
+                font-size: 1.2rem;
+            }
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown(f"""
+        <div class="logo-title-container">
+            <img src="https://anacorp.com/wp-content/uploads/2023/10/ANA-ENERGY-LOGO-PADDED.png" width="250">
+            <h1>{title}</h1>
+        </div>
+    """, unsafe_allow_html=True)
+
+
 EBOSS_KVA = {
     "EBOSS 25 kVA": 25,
     "EBOSS 70 kVA": 70,
