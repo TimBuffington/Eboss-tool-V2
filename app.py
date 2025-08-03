@@ -193,6 +193,7 @@ EBOSS_KVA = {
 }
 
 def top_navbar():
+    apply_custom_css()
     btn0, btn1, btn2, btn3, btn4, btn5 = st.columns(6)
 
     with btn0:
