@@ -343,7 +343,7 @@ with col6:
             st.session_state.landing_shown = False
             st.rerun()
 
-    st.markdown('</div>', unsafe_allow_html=True)
+st.markdown('</div>', unsafe_allow_html=True)
 
 # ===============================================================================================
 
