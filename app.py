@@ -4,16 +4,15 @@ import pandas as pd
 from itertools import combinations_with_replacement
 
 def apply_custom_css():
-   
     st.markdown("""
     <style>
     html, body, .stApp {
         font-family: 'Segoe UI', sans-serif;
         font-size: 1.1rem;
         line-height: 1.6;
-        background: url("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/bg.png");
+        background: url("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/bg.png") no-repeat center center fixed;
         background-size: cover;
-        color: #000;
+        color: #fff;
         margin: 0;
         padding: 0;
     }
@@ -31,13 +30,13 @@ def apply_custom_css():
     .stSelectbox label,
     .stNumberInput label {
         color: #81BD47 !important;
-        font-size: 1.5rem;
         font-weight: bold !important;
     }
 
     .stSelectbox > div > div,
     .stNumberInput input {
-        background-color: #81BD47 !important;
+        background-color: #000000 !important;
+        color: #81BD47 !important;
         border: 1px solid #D3D3D3 !important;
         border-radius: 8px !important;
         padding: 0.5rem 1rem !important;
@@ -64,21 +63,14 @@ def apply_custom_css():
         border-radius: 6px !important;
     }
 
-    
-/* Fix for invisible selectbox text */
-.stSelectbox div[role="combobox"] {
-    color: #81BD47 !important;
-    font-weight: bold !important;
-}
-.stNumberInput input {
-    color: #81BD47 !important;
-    background-color: #000 !important;
-    font-weight: bold !important;
-}
+    [data-baseweb="menu"] li:hover {
+        background-color: #81BD47 !important;
+        color: #000000 !important;
+        font-weight: bold !important;
+    }
 
     </style>
     """, unsafe_allow_html=True)
-
 
 
 # =========================================================================================================
