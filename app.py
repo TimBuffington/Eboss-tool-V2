@@ -1036,25 +1036,24 @@ def render_parallel_calculator_page():
         st.markdown("---")
 
 
-def calculate_parallel_sizing(required_cont_kw, required_peak_kw, sizing_mode):
-    {
-      "Full Hybrid Only": [
-         {"scenario": "EBOSS 70 kVA Only", "units": 3, "gens": 0, "charge": 108, "fuel":  shape},
-         {"scenario": "Mixed Option 1", ...},
-         {"scenario": "Mixed Option 2", ...}
-      ],
-      "Power Module + Gen Support": [...],
-      "Gen Only": [...]
-    }
-    """
-    from itertools import combinations_with_replacement
+from itertools import combinations_with_replacement
 
+def calculate_parallel_sizing(required_cont_kw, required_peak_kw, sizing_mode):
+    """
+    Determines EBOSS and generator sizing options based on required load and strategy.
+    
+    Returns:
+        dict: {
+            "Full Hybrid Only": [...],
+            "Power Module + Gen Support": [...],
+            "Gen Only": [...]
+        }
+    """
     results = {
         "Full Hybrid Only": [],
         "Power Module + Gen Support": [],
         "Gen Only": []
     }
-
     # Helper: generator fuel rate by kW
     gen_fuel_gph = {25: 2.0, 45: 3.5, 65: 5.0, 125: 8.5, 220: 14.0}  # replace with real data
 
@@ -1161,6 +1160,85 @@ def calculate_parallel_sizing(required_cont_kw, required_peak_kw, sizing_mode):
         })
 
     return results
+
+   from itertools import combinations_with_replacement
+from datetime import date
+
+# ─────────────────────────────────────────────────────────────────
+def render_parallel_calculator_page():
+    apply_custom_css()
+    show_logo_and_title("Parallel Sizing Tool")
+    top_navbar()
+
+    # ───────────── Inputs ─────────────
+    cont_kw = st.number_input("Required Continuous Load (kW)", min_value=0.0, step=0.1)
+    peak_kw = st.number_input("Required Peak Load (kW)", min_value=0.0, step=0.1)
+    sizing_mode = st.radio("Sizing Strategy:", ["No Efficiency Preference", "Max Fuel Efficiency"], horizontal=True)
+    view_mode = st.selectbox("View Output As:", ["Equipment Only", "Comparison: EBOSS vs Generator-Only"])
+
+    if st.button("🔢 Calculate"):
+        results = calculate_parallel_sizing(cont_kw, peak_kw, sizing_mode)
+
+        render_parallel_results(results, view_mode)
+
+        # ────────── Print‑Friendly Button ──────────
+        today = date.today().strftime("%B %d, %Y")
+        st.markdown(f'''
+            <div class="print-logo" style="text-align:center; margin-top:2rem;">
+              <img src="https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png" width="240"><br><br>
+              <div style="font-size:1.3rem; font-weight:bold;">EBOSS® Parallel Sizing Report</div>
+              <div style="font-size:0.9rem;">{today}</div>
+            </div>
+            <button class="eboss-hero-btn" onclick="window.print()" style="margin:2rem auto; display:block;">
+                🖨️ Print Report
+            </button>
+            <style>
+            @media print {{
+                body * {{ visibility: hidden; }}
+                .print-logo, .print-logo *, .stContainer, .stMarkdown {{ visibility: visible; }}
+                .stApp, .stButton, .topNavBar {{ display: none !important; }}
+                .stContainer {{ background: white !important; color: black !important; box-shadow: none !important; }}
+            }}
+            </style>
+        ''', unsafe_allow_html=True)
+
+# ─────────────────────────────────────────────────────────────────
+def render_parallel_results(results, view_mode="Equipment Only"):
+    st.markdown("---")
+    for category, items in results.items():
+        st.markdown(f"## {category}")
+        if not items:
+            st.info("No valid configuration found.")
+            continue
+
+        headers = ["Plan", "EBOSS Units", "Generators", "Charge (kW)", "Fuel (gal/day)"]
+        cols = st.columns([2,1,1,1.3,1])
+        for col, h in zip(cols, headers):
+            col.markdown(f"**{h}**")
+
+        for item in items:
+            row = [
+                item["scenario"],
+                str(item["units"]),
+                str(item["gens"]),
+                f"{item['charge']:.1f}",
+                f"{item['fuel']:.2f}"
+            ]
+            for col, val in zip(cols, row):
+                with col:
+                    st.markdown(f'<div class="card-value">{val}</div>' if headers[cols.index(col)]!="Plan"
+                                else f'<div class="card-label">{val}</div>', unsafe_allow_html=True)
+
+    if "Comparison" in view_mode:
+        st.markdown("### 🔍 Fuel Comparison Summary (gal/day)")
+        totals = {k: sum(x["fuel"] for x in v) for k, v in results.items()}
+        comp_cols = st.columns(3)
+        names = ["Full Hybrid", "Hybrid + PM Support", "Generator Only"]
+        for c, name in zip(comp_cols, names):
+            c.markdown(f"**{name}**\n\nFuel: {totals.get(name+' Only', totals.get(name,0)):.2f}")
+
+        st.markdown("---")
+ 
 ==========Parallel Page============
 
 
