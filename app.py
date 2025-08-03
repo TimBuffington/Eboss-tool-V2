@@ -345,10 +345,10 @@ def landing_page():
             st.session_state.selected_form = "training"
             st.session_state.landing_shown = False
             st.rerun()
-   with col2:
-    st.markdown("""
-        <a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank" style="text-decoration:none;">
-            <button style="
+            with col2:
+                st.markdown("""
+                <a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank" style="text-decoration:none;">
+                <button style="
                 background-color: transparent;
                 color: #81BD47;
                 border: 2px solid #81BD47;
