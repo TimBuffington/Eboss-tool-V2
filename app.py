@@ -824,10 +824,10 @@ def render_load_specs_page():
     show_logo_and_title("Load Specs")
 
     # 👉 Render form UI
-    render_user_input_form()
+    render_user_input_modal()
 
     # 👉 Validate inputs globally
-    enforce_session_validation()
+    enforce_validate_charge_rate()
     inputs = st.session_state.user_inputs
     kva = EBOSS_KVA[inputs["model"]]
     spec = Eboss_Specs[kva]
