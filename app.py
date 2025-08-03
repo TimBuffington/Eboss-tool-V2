@@ -261,19 +261,25 @@ EBOSS_KVA = {
 }
 
 def top_navbar():
-    st.image("https://anacorp.com/wp-content/uploads/2023/10/ANA-ENERGY-LOGO-PADDED.png", width=250)
-
     st.markdown("""
         <style>
         .stButton > button {
             transition: box-shadow 0.3s ease, color 0.3s ease;
+            width: 100%;
         }
         .stButton > button:hover {
             box-shadow: 0 0 10px #81BD47;
             color: #81BD47 !important;
         }
+        .logo-centered {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
         </style>
     """, unsafe_allow_html=True)
+
+    st.markdown('<div class="logo-centered"><img src="https://anacorp.com/wp-content/uploads/2023/10/ANA-ENERGY-LOGO-PADDED.png" width="250"></div>', unsafe_allow_html=True)
 
     # Ensure user_inputs are initialized to avoid KeyErrors
     user_inputs = st.session_state.get("user_inputs", {})
@@ -283,25 +289,25 @@ def top_navbar():
     cont_kw = user_inputs.get("cont_kw")
     peak_kw = user_inputs.get("peak_kw")
 
-    btn1, btn2, btn3, btn4, btn5 = st.columns(5)
+    col1, col2, col3, col4, col5 = st.columns(5)
 
-    with btn1:
+    with col1:
         if st.button("View Specs"):
             st.session_state.section = "specs"
 
-    with btn2:
+    with col2:
         if st.button("Load-Based Specs"):
             st.session_state.section = "load"
 
-    with btn3:
+    with col3:
         if st.button("Compare"):
             st.session_state.section = "compare"
 
-    with btn4:
+    with col4:
         if st.button("Cost Analysis"):
             st.session_state.section = "cost"
 
-    with btn5:
+    with col5:
         if st.button("Contact Us"):
             st.markdown("""
                 <script>
