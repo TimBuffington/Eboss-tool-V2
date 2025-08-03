@@ -554,6 +554,7 @@ def validate_charge_rate(model, gen_type, entered_rate, gen_kw=None):
 def render_user_input_form():
     apply_custom_css()
     show_logo_and_title("EBOSS&reg & Load Data")
+    top_navbar()
     st.markdown("""
     <style>
     .card {
@@ -562,6 +563,7 @@ def render_user_input_form():
         border-radius: 12px;
         padding: 1rem;
         height: 100%;
+        min-height: 120%;
     }
 
     .card-label {
@@ -829,7 +831,6 @@ def calculate_runtime_specs(model, gen_type, cont_kw, kva):
 # ---- TECH SPECS PAGE ----
 def render_user_input_page():
     apply_custom_css()  # ✅ ADD THIS
-    top_navbar()
     render_user_input_form()
     
 def render_tech_specs_page():
