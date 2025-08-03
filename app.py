@@ -36,7 +36,7 @@ def apply_custom_css():
 
     .stSelectbox > div > div,
     .stNumberInput input {
-        background-color: #000000 !important;
+        
         color: #81BD47 !important;
         border: 1px solid #D3D3D3 !important;
         border-radius: 8px !important;
