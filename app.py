@@ -562,8 +562,8 @@ def render_user_input_form():
         border: 2px solid #D3D3D3;
         border-radius: 12px;
         padding: 1rem;
-        height: 100%;
-        min-height: 120%;
+        height: 150%;
+        min-height: 150%;
     }
 
     .card-label {
@@ -572,6 +572,8 @@ def render_user_input_form():
         color: #81BD47;
         text-align: center;
         margin-bottom: 0.75rem;
+        height: 150%;
+        min-height: 150%;
     }
 
     .stSelectbox > div > div {
@@ -657,6 +659,28 @@ def render_user_input_form():
     else:
         st.session_state.user_inputs["cont_kw"] = cont
         st.session_state.user_inputs["peak_kw"] = peak
+
+# ───── Charge Rate Validation ─────
+inputs = st.session_state.user_inputs
+
+required_keys = ["model", "gen_type", "entered_rate", "cont_kw", "peak_kw", "voltage", "load_units"]
+
+if all(k in inputs and inputs[k] not in [None, ""] for k in required_keys):
+    gen_kw = inputs.get("gen_kw") if inputs["gen_type"] == "Power Module" else None
+
+    is_valid, messages = validate_charge_rate(
+        model=inputs["model"],
+        gen_type=inputs["gen_type"],
+        entered_rate=inputs["entered_rate"],
+        gen_kw=gen_kw
+    )
+
+    if not is_valid:
+        for msg in messages:
+            st.error(msg)
+    else:
+        st.success("✅ Charge rate is within valid range.")
+
 
 #========================================================================================================
 def display_load_threshold_check(user_inputs):
