@@ -4,7 +4,7 @@ import pandas as pd
 from itertools import combinations_with_replacement
 
 def apply_custom_css():
-   def apply_custom_css():
+   
     st.markdown("""
     <style>
     html, body, .stApp {
