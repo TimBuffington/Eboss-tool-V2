@@ -11,7 +11,7 @@ def apply_custom_css():
         font-family: 'Segoe UI', sans-serif;
         font-size: 1.1rem;
         line-height: 1.6;
-        background: url("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/bg.png") no-repeat center center fixed;
+        background: url("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/bg.png"), !Important; no-repeat center center fixed;
         background-size: cover;
         color: #000;
         margin: 0;
