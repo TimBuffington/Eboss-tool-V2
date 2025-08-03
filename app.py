@@ -256,7 +256,6 @@ EBOSS_KVA = {
 def landing_page():
     apply_custom_css()
 
-    # Ensure session state
     for key, val in {
         "landing_shown": True,
         "show_contact_form": False,
@@ -271,78 +270,81 @@ def landing_page():
     if st.session_state.landing_shown:
         show_logo_and_title("EBOSS® Size Specs & Comparison Tool")
 
-        # Inject proper CSS
+        # Inject fixed CSS
         st.markdown("""
         <style>
-        /* Fix background */
         .stApp {
             background: url("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/bg.png") no-repeat center center fixed;
             background-size: cover;
         }
-
-        /* Button layout grid */
-        .button-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.25rem;
-            max-width: 500px;
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            max-width: 700px;
             margin: 2rem auto;
         }
-
-        /* Styled Streamlit buttons */
         .stButton>button {
+            min-width: 300px;
+            max-width: 320px;
             height: 60px;
-            width: 100%;
-            background-color: #000000 !important;
-            color: #81BD47 !important;
+            font-size: 1.1rem;
             font-weight: bold;
-            font-size: 1.05rem;
+            color: #81BD47 !important;
+            background-color: #000000 !important;
             border: 2px solid #81BD47 !important;
-            border-radius: 10px;
-            transition: box-shadow 0.2s ease-in-out;
+            border-radius: 12px;
+            transition: all 0.2s ease-in-out;
         }
-
         .stButton>button:hover {
-            box-shadow: 0 0 12px #81BD47;
+            box-shadow: 0 0 18px #81BD47;
         }
         </style>
         """, unsafe_allow_html=True)
 
-        # Buttons in 2-column grid
-        st.markdown('<div class="button-grid">', unsafe_allow_html=True)
+        # Create a true 2-column, responsive layout
+        st.markdown('<div class="button-container">', unsafe_allow_html=True)
 
-        if st.button("Request a Demo", key="btn_demo"):
-            st.session_state.form_type = "demo"
-            st.session_state.show_contact_form = True
-            st.session_state.landing_shown = False
-            st.rerun()
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("Request a Demo", key="btn_demo"):
+                st.session_state.form_type = "demo"
+                st.session_state.show_contact_form = True
+                st.session_state.landing_shown = False
+                st.rerun()
 
-        if st.button("Request On-Site Training", key="btn_training"):
-            st.session_state.form_type = "training"
-            st.session_state.show_contact_form = True
-            st.session_state.landing_shown = False
-            st.rerun()
+        with col2:
+            if st.button("Request On-Site Training", key="btn_training"):
+                st.session_state.form_type = "training"
+                st.session_state.show_contact_form = True
+                st.session_state.landing_shown = False
+                st.rerun()
 
-        if st.button("Learn How EBOSS® Works", key="btn_learn"):
-            st.markdown("""
-            <script>
-                window.open("https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc", "_blank");
-            </script>
-            """, unsafe_allow_html=True)
+        col3, col4 = st.columns(2)
+        with col3:
+            if st.button("Learn How EBOSS® Works", key="btn_learn"):
+                st.markdown("""
+                <script>
+                    window.open("https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc", "_blank");
+                </script>
+                """, unsafe_allow_html=True)
 
-        if st.button("Launch EBOSS® Tool", key="btn_launch"):
-            st.session_state.selected_form = "tool"
-            st.session_state.section = "input"
-            st.session_state.landing_shown = False
-            st.session_state.show_contact_form = False
-            st.session_state.form_type = None
-            st.rerun()
+        with col4:
+            if st.button("Launch EBOSS® Tool", key="btn_launch"):
+                st.session_state.selected_form = "tool"
+                st.session_state.section = "input"
+                st.session_state.landing_shown = False
+                st.session_state.show_contact_form = False
+                st.session_state.form_type = None
+                st.rerun()
 
         st.markdown('</div>', unsafe_allow_html=True)
         st.stop()
 
     if st.session_state.show_contact_form:
         render_contact_form(form_type=st.session_state.form_type)
+
 
 
 
