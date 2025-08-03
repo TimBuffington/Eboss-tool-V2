@@ -4,12 +4,12 @@ import pandas as pd
 from itertools import combinations_with_replacement
 
 def apply_custom_css():
-st.markdown("""
-<style>
-/* Global input styling */
-.stSelectbox > div > div,
-.stTextInput > div > div,
-.stNumberInput > div > div {
+    st.markdown("""
+    <style>
+    /* Global input styling */
+    .stSelectbox > div > div,
+    .stTextInput > div > div,
+    .stNumberInput > div > div {
     background-color: #000000 !important;
     color: #81BD47 !important;
     font-weight: bold !important;
