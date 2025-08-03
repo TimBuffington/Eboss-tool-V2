@@ -296,6 +296,7 @@ EBOSS_KVA = {
 
 def top_navbar():
         btn0, btn1, btn2, btn3, btn4, btn5 = st.columns(6)
+    
 with col1:
         if st.button("📥 User Input", key="nav_input_button"):
             st.session_state.selected_form = "tool"
