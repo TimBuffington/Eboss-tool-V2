@@ -295,16 +295,16 @@ EBOSS_KVA = {
 }
 
 def top_navbar():
-        btn0, btn1, btn2, btn3, btn4, btn5 = st.columns(6)
-    
-with col1:
+    btn0, btn1, btn2, btn3, btn4, btn5 = st.columns(6)
+
+    with btn0:
         if st.button("📥 User Input", key="nav_input_button"):
             st.session_state.selected_form = "tool"
             st.session_state.section = "input"
             st.session_state.landing_shown = False
             st.rerun()
 
-with col2:
+    with btn1:
         if st.button("🧑‍🔧 Tech Specs", key="nav_tech_specs_button"):
             st.session_state.selected_form = "tool"
             st.session_state.section = "tech_specs"
@@ -312,7 +312,7 @@ with col2:
             st.session_state.landing_shown = False
             st.rerun()
 
-with col3:
+    with btn2:
         if st.button("⚡ Load Specs", key="nav_load_specs_button"):
             st.session_state.selected_form = "tool"
             st.session_state.section = "load_specs"
@@ -320,7 +320,7 @@ with col3:
             st.session_state.landing_shown = False
             st.rerun()
 
-with col4:
+    with btn3:
         if st.button("⚖️ Compare", key="nav_compare_button"):
             st.session_state.selected_form = "tool"
             st.session_state.section = "compare"
@@ -328,7 +328,7 @@ with col4:
             st.session_state.landing_shown = False
             st.rerun()
 
-with col5:
+    with btn4:
         if st.button("💰 Cost Analysis", key="nav_cost_button"):
             st.session_state.selected_form = "tool"
             st.session_state.section = "cost"
@@ -336,7 +336,7 @@ with col5:
             st.session_state.landing_shown = False
             st.rerun()
 
-with col6:
+    with btn5:
         if st.button("🧮 Parallel Calculator", key="nav_parallel_button"):
             st.session_state.selected_form = "tool"
             st.session_state.section = "parallel_calc"
@@ -344,7 +344,6 @@ with col6:
             st.session_state.landing_shown = False
             st.rerun()
 
-st.markdown('</div>', unsafe_allow_html=True)
 
 # ===============================================================================================
 
