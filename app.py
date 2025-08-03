@@ -64,11 +64,17 @@ def apply_custom_css():
         border-radius: 6px !important;
     }
 
-    [data-baseweb="menu"] li:hover {
-        background-color: #81BD47 !important;
-        color: #000000 !important;
-        font-weight: bold !important;
-    }
+    
+/* Fix for invisible selectbox text */
+.stSelectbox div[role="combobox"] * {
+    color: #81BD47 !important;
+    font-weight: bold !important;
+}
+.stNumberInput input {
+    color: #81BD47 !important;
+    background-color: #000 !important;
+    font-weight: bold !important;
+}
 
     </style>
     """, unsafe_allow_html=True)
