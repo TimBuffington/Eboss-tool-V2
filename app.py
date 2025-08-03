@@ -286,14 +286,14 @@ def landing_page():
             margin: 2rem auto;
         }
         .stButton>button {
-            min-width: 300px;
+            min-width: 310px;
             max-width: 320px;
             height: 60px;
             font-size: 1.3rem;
             font-weight: bold;
             color: #81BD47 !important;
             background-color: #000000 !important;
-            border: 2px solid #81BD47 !important;
+            border: 2px solid #D3D3D3 !important;
             border-radius: 12px;
             transition: all 0.2s ease-in-out;
         }
@@ -333,7 +333,7 @@ def landing_page():
         font-weight: bold;
         color: #81BD47;
         background-color: #000000;
-        border: 2px solid #81BD47;
+        border: 2px solid #D3D3D3;
         border-radius: 12px;
         display: flex;
         align-items: center;
