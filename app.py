@@ -192,56 +192,37 @@ EBOSS_KVA = {
     "EBOSS 400 kVA": 400
 }
 
-def top_navbar():
-    apply_custom_css()
-    btn0, btn1, btn2, btn3, btn4, btn5 = st.columns(6)
+with st.container():
+    st.markdown('<div class="form-container">', unsafe_allow_html=True)
+    st.markdown('<h3 class="form-section-title">🔧 Navigation</h3>', unsafe_allow_html=True)
 
-    with btn0:
-        if st.button("📥 User Input", key="nav_input_button"):
-            st.session_state.selected_form = "tool"
-            st.session_state.section = "input"
-            st.session_state.landing_shown = False
-            st.rerun()
+    btn1, btn2, btn3, btn4, btn5 = st.columns(5)
 
     with btn1:
-        if st.button("🧑‍🔧 Tech Specs", key="nav_tech_specs_button"):
-            st.session_state.selected_form = "tool"
-            st.session_state.section = "tech_specs"
-            st.session_state.run_tech_specs = True
-            st.session_state.landing_shown = False
-            st.rerun()
+        if st.button("View Specs"):
+            st.session_state.section = "specs"
 
     with btn2:
-        if st.button("⚡ Load Specs", key="nav_load_specs_button"):
-            st.session_state.selected_form = "tool"
-            st.session_state.section = "load_specs"
-            st.session_state.run_load_calc = True
-            st.session_state.landing_shown = False
-            st.rerun()
+        if st.button("Load-Based Specs"):
+            st.session_state.section = "load"
 
     with btn3:
-        if st.button("⚖️ Compare", key="nav_compare_button"):
-            st.session_state.selected_form = "tool"
+        if st.button("Compare"):
             st.session_state.section = "compare"
-            st.session_state.run_compare = True
-            st.session_state.landing_shown = False
-            st.rerun()
 
     with btn4:
-        if st.button("💰 Cost Analysis", key="nav_cost_button"):
-            st.session_state.selected_form = "tool"
+        if st.button("Cost Analysis"):
             st.session_state.section = "cost"
-            st.session_state.run_cost_calc = True
-            st.session_state.landing_shown = False
-            st.rerun()
 
     with btn5:
-        if st.button("🧮 Parallel Calculator", key="nav_parallel_button"):
-            st.session_state.selected_form = "tool"
-            st.session_state.section = "parallel_calc"
-            st.session_state.run_parallel_calc = True
-            st.session_state.landing_shown = False
-            st.rerun()
+        if st.button("Contact Us"):
+            st.markdown("""
+                <script>
+                window.open("https://anacorp.com/contact/", "_blank");
+                </script>
+            """, unsafe_allow_html=True)
+
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
 # ===============================================================================================
