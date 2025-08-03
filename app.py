@@ -473,29 +473,6 @@ if st.session_state.show_contact_form:
  # ──────────────────────────────────────────────────────────────
 # 🔋 CHARGE RATE ENGINE
 # ──────────────────────────────────────────────────────────────
-
-"""
-CHARGE RATE PROTOCOL
-
-• Automatically selects default charge rate based on:
-    - EBOSS model (e.g. "EBOSS 70 kVA")
-    - Gen type: "Full Hybrid" or "Power Module"
-
-• Validations include:
-    - Max charge rate check
-    - Generator capacity comparison
-    - Over/under warnings
-
-• Charge rate affects:
-    - Runtime cycles
-    - Generator GPH calculations
-    - Generator sizing per Power Module
-
-Use:
-    charge_kw = get_charge_rate(model, gen_type)
-    is_valid, message = validate_charge_rate(model, gen_type, charge_kw, gen_kw)
-"""
-
 def get_charge_rate(model, gen_type):
     try:
         kva = EBOSS_KVA[model]
