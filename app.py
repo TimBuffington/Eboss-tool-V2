@@ -4,89 +4,38 @@ import pandas as pd
 from itertools import combinations_with_replacement
 
 def apply_custom_css():
-    st.markdown("""
+st.markdown("""
 <style>
-.stSelectbox div[role="combobox"] {
+/* Global input styling */
+.stSelectbox > div > div,
+.stTextInput > div > div,
+.stNumberInput > div > div {
     background-color: #000000 !important;
-    border: 1px solid #81BD47 !important;
-    border-radius: 8px !important;
-    padding: 0.4rem 1rem !important;
-}
-.stSelectbox div[role="combobox"] span {
     color: #81BD47 !important;
     font-weight: bold !important;
+    border: 2px solid #D3D3D3 !important;
+    border-radius: 10px !important;
+    text-shadow: none !important;
 }
-.stSelectbox svg {
-    fill: #81BD47 !important;
-}
+
+/* Dropdown menu items */
 [data-baseweb="menu"] {
     background-color: #000000 !important;
-    border: 1px solid #81BD47 !important;
     color: #81BD47 !important;
-}
-[data-baseweb="menu"] li:hover {
-    background-color: #81BD47 !important;
-    color: #000000 !important;
     font-weight: bold !important;
+    border: 1px solid #D3D3D3 !important;
+    border-radius: 6px !important;
+}
+
+/* Hover and focus effect */
+.stSelectbox > div > div:hover,
+.stTextInput > div > div:hover,
+.stNumberInput > div > div:hover {
+    border-color: #A9E37A !important;
+    box-shadow: 0 0 8px #A9E37A;
 }
 </style>
 """, unsafe_allow_html=True)
-st.markdown("""
-<style>
-    <style>
-    html, body, .stApp {
-        font-family: 'Segoe UI', sans-serif;
-        font-size: 1.1rem;
-        line-height: 1.6;
-        background: url("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/bg.png") no-repeat center center fixed;
-        background-size: cover;
-        color: #fff;
-        margin: 0;
-        padding: 0;
-    }
-
-    h1, .form-section-title {
-        font-family: 'Montserrat', sans-serif;
-        font-size: 2.2rem;
-        font-weight: 800;
-        text-align: center;
-        color: #fff;
-        text-shadow: 2px 2px 10px rgba(0,0,0,0.6);
-        margin-bottom: 1.5rem;
-    }
-
-    .stSelectbox label,
-    .stNumberInput label {
-        color: #81BD47 !important;
-        font-weight: bold !important;
-    }
-
-    .stSelectbox > div > div,
-    .stNumberInput input {
-        background-color: #000000 !important;
-        color: #81BD47 !important;
-        border: 1px solid #D3D3D3 !important;
-        border-radius: 8px !important;
-        padding: 0.5rem 1rem !important;
-        font-weight: bold !important;
-    }
-
-    .stNumberInput button {
-        background-color: #000000 !important;
-        color: #81BD47 !important;
-        border: 1px solid #D3D3D3 !important;
-        font-weight: bold !important;
-        border-radius: 4px !important;
-    }
-
-   
-    }
-
-    
-    }
-
-    </style>
-    """, unsafe_allow_html=True)
 
 
 # =========================================================================================================
