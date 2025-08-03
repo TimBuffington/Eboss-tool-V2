@@ -583,8 +583,8 @@ def render_user_input_form():
         color: #81BD47;
         text-align: center;
         margin-bottom: 0.75rem;
-        min-height: 220px;
-        min-height: 260px;
+        min-height: 75px;
+        min-height: 75px;
     }
 
     .stSelectbox > div > div {
@@ -594,8 +594,8 @@ def render_user_input_form():
         border: 1px solid #D3D3D3 !important;
         border-radius: 8px !important;
         padding: 0.25rem 0.75rem !important;
-        min-height: 220px;
-        min-height: 260px;
+        min-height: 75px;
+        min-height: 75px;
     }
 
     input[type=number] {
@@ -605,8 +605,8 @@ def render_user_input_form():
         border: 1px solid #D3D3D3 !important;
         border-radius: 8px !important;
         padding: 0.4rem !important;
-        min-height: 220px;
-        min-height: 260px;
+        min-height: 75px;
+        min-height: 75px;
     }
     </style>
     """, unsafe_allow_html=True)
