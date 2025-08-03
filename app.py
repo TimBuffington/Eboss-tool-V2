@@ -1036,7 +1036,7 @@ def render_parallel_calculator_page():
         st.markdown("---")
 
 
- def calculate_parallel_sizing(required_cont_kw, required_peak_kw, sizing_mode):
+def calculate_parallel_sizing(required_cont_kw, required_peak_kw, sizing_mode):
     {
       "Full Hybrid Only": [
          {"scenario": "EBOSS 70 kVA Only", "units": 3, "gens": 0, "charge": 108, "fuel":  shape},
