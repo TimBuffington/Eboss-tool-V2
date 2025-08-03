@@ -348,9 +348,9 @@ def landing_page():
     with col2:
         if st.button("🎥 Learn How EBOSS® Works", key="btn_learn"):
         st.markdown("""
-    <script>
-    window.open(\"https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc\", \"_blank\");
-    </script>
+        <script>
+        window.open(\"https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc\", \"_blank\");
+        </script>
 """, unsafe_allow_html=True)
         
         if st.button("🚀 Launch EBOSS®Tool"):
