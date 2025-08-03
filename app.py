@@ -254,9 +254,9 @@ EBOSS_KVA = {
 }
 
 def landing_page():
-    apply_custom_css()
+    apply_custom_css()  # MUST be globally called BEFORE anything renders
 
-    # Init state
+    # Init session state
     for key, val in {
         "landing_shown": True,
         "show_contact_form": False,
@@ -271,9 +271,15 @@ def landing_page():
     if st.session_state.landing_shown:
         show_logo_and_title("EBOSS® Size Specs & Comparison Tool")
 
-        # ✅ Styling block
+        # ✅ Styling for buttons + layout + background
         st.markdown("""
         <style>
+        /* Global app background fix */
+        .stApp {
+            background: url("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/bg.png") no-repeat center center fixed;
+            background-size: cover;
+        }
+
         .landing-wrapper {
             display: flex;
             flex-direction: column;
@@ -281,53 +287,56 @@ def landing_page():
             justify-content: center;
             padding: 2rem 1rem;
         }
+
         .button-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1.25rem;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
             width: 100%;
-            max-width: 600px;
+            max-width: 500px;
         }
+
         .stButton>button {
             height: 60px;
             width: 100%;
-            font-size: 1.05rem;
+            font-size: 1.1rem;
             font-weight: bold;
             color: #81BD47 !important;
-            background-color: #1a1a1a !important;
+            background-color: #000000 !important;
             border: 2px solid #81BD47 !important;
             border-radius: 10px;
             transition: box-shadow 0.2s ease-in-out;
         }
+
         .stButton>button:hover {
             box-shadow: 0 0 12px #81BD47;
         }
         </style>
         """, unsafe_allow_html=True)
 
-        # ✅ Centered and aligned button layout
+        # ✅ Button layout (no icons, 2 columns, centered)
         st.markdown('<div class="landing-wrapper"><div class="button-grid">', unsafe_allow_html=True)
 
-        if st.button("📋 Request a Demo", key="btn_demo"):
+        if st.button("Request a Demo", key="btn_demo"):
             st.session_state.form_type = "demo"
             st.session_state.show_contact_form = True
             st.session_state.landing_shown = False
             st.rerun()
 
-        if st.button("📋 Request On-Site Training", key="btn_training"):
+        if st.button("Request On-Site Training", key="btn_training"):
             st.session_state.form_type = "training"
             st.session_state.show_contact_form = True
             st.session_state.landing_shown = False
             st.rerun()
 
-        if st.button("🎥 Learn How EBOSS® Works", key="btn_learn"):
+        if st.button("Learn How EBOSS® Works", key="btn_learn"):
             st.markdown("""
             <script>
                 window.open("https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc", "_blank");
             </script>
             """, unsafe_allow_html=True)
 
-        if st.button("🚀 Launch EBOSS® Tool", key="btn_launch"):
+        if st.button("Launch EBOSS® Tool", key="btn_launch"):
             st.session_state.selected_form = "tool"
             st.session_state.section = "input"
             st.session_state.landing_shown = False
@@ -335,12 +344,12 @@ def landing_page():
             st.session_state.form_type = None
             st.rerun()
 
-        st.markdown('</div></div>', unsafe_allow_html=True)  # Close layout
-
+        st.markdown('</div></div>', unsafe_allow_html=True)
         st.stop()
 
     if st.session_state.show_contact_form:
         render_contact_form(form_type=st.session_state.form_type)
+
 
 
 
