@@ -303,7 +303,7 @@ with col1:
             st.session_state.landing_shown = False
             st.rerun()
 
-    with col2:
+with col2:
         if st.button("🧑‍🔧 Tech Specs", key="nav_tech_specs_button"):
             st.session_state.selected_form = "tool"
             st.session_state.section = "tech_specs"
