@@ -17,6 +17,55 @@ def apply_custom_css():
         margin: 0;
         padding: 0;
     }
+st.markdown("""
+<style>
+/* Label text above fields */
+.stSelectbox label, .stNumberInput label {
+    color: #81BD47 !important;
+    font-weight: bold !important;
+}
+
+/* Dropdown & number input fields */
+.stSelectbox div[role="combobox"],
+.stNumberInput input {
+    background-color: #000 !important;       /* Black field */
+    color: #81BD47 !important;               /* Energy green text */
+    border: 1px solid #D3D3D3 !important;    /* Light concrete gray */
+    border-radius: 8px !important;
+    padding: 0.5rem 1rem !important;
+    font-weight: bold !important;
+}
+
+/* Stepper buttons (+ and -) */
+.stNumberInput button {
+    background-color: #000 !important;
+    color: #81BD47 !important;
+    border: 1px solid #D3D3D3 !important;
+    font-weight: bold;
+    border-radius: 4px;
+}
+
+/* Dropdown text value (span inside selectbox) */
+.stSelectbox div[role="combobox"] span {
+    color: #81BD47 !important;
+    font-weight: bold !important;
+}
+
+/* Dropdown menu items */
+[data-baseweb="menu"] {
+    background-color: #000 !important;
+    color: #81BD47 !important;
+    border: 1px solid #D3D3D3 !important;
+}
+
+/* Hovered item in dropdown */
+[data-baseweb="menu"] li:hover {
+    background-color: #81BD47 !important;
+    color: #000 !important;
+    font-weight: bold;
+}
+</style>
+""", unsafe_allow_html=True)
 
     h1, .form-section-title {
         font-family: 'Montserrat', sans-serif;
