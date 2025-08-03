@@ -833,7 +833,7 @@ def render_load_specs_page():
     render_user_input_modal()
 
     # 👉 Validate inputs globally
-    enforce_validate_charge_rate()
+    enforce_session_validation()
     inputs = st.session_state.user_inputs
     kva = EBOSS_KVA[inputs["model"]]
     spec = Eboss_Specs[kva]
