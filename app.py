@@ -259,10 +259,6 @@ EBOSS_KVA = {
     "EBOSS 220 kVA": 220,
     "EBOSS 400 kVA": 400
 }
-model = st.session_state.user_inputs["model"]
-gen_type = st.session_state.user_inputs["gen_type"]
-kva = st.session_state.user_inputs["kva_option"]
-
 
 def top_navbar():
     st.image("https://anacorp.com/wp-content/uploads/2023/10/ANA-ENERGY-LOGO-PADDED.png", width=250)
