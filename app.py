@@ -4,7 +4,34 @@ import pandas as pd
 from itertools import combinations_with_replacement
 
 def apply_custom_css():
-    st.markdown("""
+st.markdown("""
+<style>
+.stSelectbox div[role="combobox"] {
+    background-color: #000000 !important;
+    border: 1px solid #81BD47 !important;
+    border-radius: 8px !important;
+    padding: 0.4rem 1rem !important;
+}
+.stSelectbox div[role="combobox"] span {
+    color: #81BD47 !important;
+    font-weight: bold !important;
+}
+.stSelectbox svg {
+    fill: #81BD47 !important;
+}
+[data-baseweb="menu"] {
+    background-color: #000000 !important;
+    border: 1px solid #81BD47 !important;
+    color: #81BD47 !important;
+}
+[data-baseweb="menu"] li:hover {
+    background-color: #81BD47 !important;
+    color: #000000 !important;
+    font-weight: bold !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
     <style>
     html, body, .stApp {
         font-family: 'Segoe UI', sans-serif;
