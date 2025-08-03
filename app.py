@@ -573,8 +573,8 @@ def render_user_input_form():
         border: 2px solid #D3D3D3;
         border-radius: 12px;
         padding: 1rem;
-        height: 150%;
-        min-height: 150%;
+        height: 100%;
+        min-height: 100%;
     }
 
     .card-label {
@@ -583,8 +583,8 @@ def render_user_input_form():
         color: #81BD47;
         text-align: center;
         margin-bottom: 0.75rem;
-        height: 150%;
-        min-height: 150%;
+        height: 100%;
+        min-height: 100%;
     }
 
     .stSelectbox > div > div {
@@ -594,6 +594,8 @@ def render_user_input_form():
         border: 1px solid #D3D3D3 !important;
         border-radius: 8px !important;
         padding: 0.25rem 0.75rem !important;
+        height: 100%;
+        min-height: 100%;
     }
 
     input[type=number] {
@@ -603,6 +605,8 @@ def render_user_input_form():
         border: 1px solid #D3D3D3 !important;
         border-radius: 8px !important;
         padding: 0.4rem !important;
+        height: 100%;
+        min-height: 100%;
     }
     </style>
     """, unsafe_allow_html=True)
