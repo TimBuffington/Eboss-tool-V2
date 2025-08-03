@@ -17,8 +17,7 @@ def apply_custom_css():
         margin: 0;
         padding: 0;
     }
-st.markdown("""
-<style>
+
 /* Label text above selectboxes and number inputs */
 .stSelectbox label,
 .stNumberInput label {
