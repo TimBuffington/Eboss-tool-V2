@@ -31,7 +31,8 @@ st.markdown("""
 }
 </style>
 """, unsafe_allow_html=True)
-
+st.markdown("""
+<style>
     <style>
     html, body, .stApp {
         font-family: 'Segoe UI', sans-serif;
