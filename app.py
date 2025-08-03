@@ -346,13 +346,8 @@ def landing_page():
             st.session_state.landing_shown = False
             st.rerun()
     with col2:
-        st.markdown("""
-            <a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank" style="text-decoration:none;">
-                <button class="eboss-hero-btn" type="button">
-                    Learn How EBOSS&reg; Works
-                </button>
-            </a>
-        """, unsafe_allow_html=True)
+        if st.button("🎥 Learn How EBOSS® Works", key="btn_learn"):
+        st.markdown("""<script>window.open('https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc', '_blank');</script>""", unsafe_allow_html=True), unsafe_allow_html=True)
         
         if st.button("🚀 Launch EBOSS®Tool"):
             st.session_state.landing_shown = False
@@ -435,8 +430,7 @@ if "form_type" not in st.session_state:
 
 if st.session_state.landing_shown:
     apply_custom_css()
-    st.image("https://anacorp.com/wp-content/uploads/2023/10/ANA-ENERGY-LOGO-PADDED.png", width=250)
-    st.markdown("<h1>EBOSS® Hybrid Energy System Specs and Comparison Tool</h1>", unsafe_allow_html=True)
+    show_logo_and_title("EBOSS® Hybrid Energy System Specs and Comparison Tool")
 
     col1, col2 = st.columns(2)
     with col1:
@@ -502,6 +496,7 @@ def validate_charge_rate(model, gen_type, entered_rate, gen_kw=None):
     return is_valid, messages
 
 def render_user_input_modal():
+    apply_custom_css()
     show_logo_and_title()
     if "show_user_input" not in st.session_state:
         st.session_state.show_user_input = True
@@ -795,6 +790,7 @@ def render_user_input_page():
     render_user_input_form()
     
 def render_tech_specs_page():
+    apply_custom_css()
     show_logo_and_title("Tech Specs")
 
     model = st.session_state.get("model_select", "EBOSS 25 kVA")
@@ -827,6 +823,7 @@ def render_tech_specs_page():
 
 # ---- LOAD SPECS PAGE ----
 def render_load_specs_page():
+    apply_custom_css()
     show_logo_and_title("Load Specs")
 
     # 👉 Render form UI
@@ -868,6 +865,7 @@ def render_load_specs_page():
 
 
 def render_compare_page():
+    apply_custom_css()
     import re
 
     show_logo_and_title("Compare EBOSS vs Standard Generator")
@@ -960,6 +958,7 @@ def render_compare_page():
 
 # ---- COST ANALYSIS PAGE ----
 def render_cost_analysis_page():
+    apply_custom_css()
     from math import ceil
     from datetime import date
 
