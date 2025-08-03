@@ -29,7 +29,18 @@ def apply_custom_css():
     }
 
     /* === CARD STYLE === */
-    
+    .card {
+        background: linear-gradient(145deg, #000, #1b1b1b);
+        border-radius: 16px;
+        padding: 1.4rem 1.8rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #939598;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.65),
+                    inset 0 1px 2px rgba(255,255,255,0.05);
+        transition: transform 0.2s ease-in-out;
+        color: #fff;
+    }
+
     .card-label {
         font-size: 1rem;
         font-weight: 600;
@@ -67,18 +78,7 @@ def apply_custom_css():
         box-shadow: 0 0 30px 8px #81BD47;
     }
 
-    /* === FORMS: INPUT + SELECT === */
-    input, select, textarea {
-        background-color: #fff !important;
-        color: #111 !important;
-        font-weight: bold !important;
-        border-radius: 8px !important;
-        padding: 0.6rem 1rem !important;
-        border: 1px solid #bbb !important;
-        width: 100% !important;
-        margin-bottom: 1rem !important;
-        box-sizing: border-box !important;
-        transition: border 0.2s, box-shadow 0.2s;
+   
     }
 
     input:focus, select:focus, textarea:focus {
