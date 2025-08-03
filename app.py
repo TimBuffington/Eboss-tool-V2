@@ -51,10 +51,7 @@ def apply_custom_css():
     width: 100vw;
     height: 100vh;
     
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
+   
 }
 
 .modal-content {
