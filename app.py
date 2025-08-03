@@ -130,6 +130,16 @@ def apply_custom_css():
             width: 80% !important;
         }
     }
+    .card-label {
+    display: block;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #81BD47;
+    margin-bottom: 0.6rem;
+    text-align: left;
+    text-transform: uppercase;
+}
+
     </style>
     """, unsafe_allow_html=True)
 
@@ -512,10 +522,12 @@ def render_user_input_form():
     with st.container():
         cols = st.columns([1, 1, 1], gap="large")
 
-        # ──────── Column 1: EBOSS® ────────
+        # ───── Column 1: EBOSS® ─────
         with cols[0]:
-            st.markdown('<div class="card">', unsafe_allow_html=True)
-            st.markdown('<div class="card-label">EBOSS®</div>', unsafe_allow_html=True)
+            st.markdown('''
+                <div class="card">
+                    <div class="card-label">EBOSS®</div>
+            ''', unsafe_allow_html=True)
 
             st.session_state.user_inputs["model"] = st.selectbox(
                 "Model", list(EBOSS_KVA.keys()), key="model_select"
@@ -533,10 +545,12 @@ def render_user_input_form():
 
             st.markdown('</div>', unsafe_allow_html=True)
 
-        # ──────── Column 2: Load ────────
+        # ───── Column 2: Load ─────
         with cols[1]:
-            st.markdown('<div class="card">', unsafe_allow_html=True)
-            st.markdown('<div class="card-label">Load</div>', unsafe_allow_html=True)
+            st.markdown('''
+                <div class="card">
+                    <div class="card-label">Load</div>
+            ''', unsafe_allow_html=True)
 
             st.session_state.user_inputs["raw_cont_load"] = st.number_input(
                 "Continuous Load", 0, 500, step=1, format="%d", key="cont_input"
@@ -548,10 +562,12 @@ def render_user_input_form():
 
             st.markdown('</div>', unsafe_allow_html=True)
 
-        # ──────── Column 3: Units ────────
+        # ───── Column 3: Units ─────
         with cols[2]:
-            st.markdown('<div class="card">', unsafe_allow_html=True)
-            st.markdown('<div class="card-label">Units</div>', unsafe_allow_html=True)
+            st.markdown('''
+                <div class="card">
+                    <div class="card-label">Units</div>
+            ''', unsafe_allow_html=True)
 
             st.session_state.user_inputs["load_units"] = st.selectbox(
                 "Units", ["kW", "Amps"], key="unit_select"
@@ -563,7 +579,7 @@ def render_user_input_form():
 
             st.markdown('</div>', unsafe_allow_html=True)
 
-    # ──────── kW Conversion Logic ────────
+    # ───── KW Conversion Logic ─────
     pf = 0.8
     v_val = int(st.session_state.user_inputs["voltage"].replace("V", ""))
     cont = st.session_state.user_inputs["raw_cont_load"]
