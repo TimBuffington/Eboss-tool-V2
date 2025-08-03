@@ -19,53 +19,65 @@ def apply_custom_css():
     }
 st.markdown("""
 <style>
-
-.stSelectbox label, .stNumberInput label {
+/* Label text above selectboxes and number inputs */
+.stSelectbox label,
+.stNumberInput label {
     color: #81BD47 !important;
     font-weight: bold !important;
 }
 
-
-.stSelectbox div[role="combobox"],
-.stNumberInput input {
-    background-color: #000 !important;       /* Black field */
-    color: #81BD47 !important;               /* Energy green text */
-    border: 1px solid #D3D3D3 !important;    /* Light concrete gray */
-    border-radius: 8px !important;
-    padding: 0.5rem 1rem !important;
-    font-weight: bold !important;
-}
-
-
-.stNumberInput button {
-    background-color: #000 !important;
+/* Selectbox field (visible dropdown container) */
+.stSelectbox > div > div {
+    background-color: #000000 !important;
     color: #81BD47 !important;
     border: 1px solid #D3D3D3 !important;
-    font-weight: bold;
-    border-radius: 4px;
+    border-radius: 8px !important;
+    font-weight: bold !important;
+    padding: 0.5rem 1rem !important;
 }
 
-
+/* Selected value inside dropdown field */
 .stSelectbox div[role="combobox"] span {
     color: #81BD47 !important;
     font-weight: bold !important;
 }
 
-
+/* Dropdown menu popup */
 [data-baseweb="menu"] {
-    background-color: #000 !important;
+    background-color: #000000 !important;
     color: #81BD47 !important;
     border: 1px solid #D3D3D3 !important;
+    border-radius: 6px !important;
 }
 
-
+/* Hovered dropdown item */
 [data-baseweb="menu"] li:hover {
     background-color: #81BD47 !important;
-    color: #000 !important;
-    font-weight: bold;
+    color: #000000 !important;
+    font-weight: bold !important;
+}
+
+/* Number input field */
+.stNumberInput input {
+    background-color: #000000 !important;
+    color: #81BD47 !important;
+    border: 1px solid #D3D3D3 !important;
+    border-radius: 8px !important;
+    padding: 0.5rem 1rem !important;
+    font-weight: bold !important;
+}
+
+/* Stepper buttons (+/-) */
+.stNumberInput button {
+    background-color: #000000 !important;
+    color: #81BD47 !important;
+    border: 1px solid #D3D3D3 !important;
+    font-weight: bold !important;
+    border-radius: 4px !important;
 }
 </style>
 """, unsafe_allow_html=True)
+
 
     h1, .form-section-title {
         font-family: 'Montserrat', sans-serif;
