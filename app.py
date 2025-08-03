@@ -296,12 +296,12 @@ def top_navbar():
     col1, col2, col3, col4, col5 = st.columns(5)
 
     with col1:
-        if st.button("View Specs"):
-            st.session_state.section = "specs"
+        if st.button("Technical Specs"):
+            st.session_state.section = "tech_specs"
 
     with col2:
         if st.button("Load-Based Specs"):
-            st.session_state.section = "load"
+            st.session_state.section = "load_specs"
 
     with col3:
         if st.button("Compare"):
