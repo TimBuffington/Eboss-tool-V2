@@ -207,7 +207,7 @@ def top_navbar():
 
 btn1, btn2, btn3, btn4, btn5 = st.columns(5)
 
-    with btn1:
+with btn1:
         if st.button("View Specs"):
             st.session_state.section = "specs"
 
