@@ -345,13 +345,25 @@ def landing_page():
             st.session_state.selected_form = "training"
             st.session_state.landing_shown = False
             st.rerun()
-    with col2:
-        if st.button("🎥 Learn How EBOSS® Works", key="btn_learn"):
-            st.markdown("""
-            <script>
-            window.open(\"https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc\", \"_blank\");
-            </script>
-""", unsafe_allow_html=True)
+   with col2:
+    st.markdown("""
+        <a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank" style="text-decoration:none;">
+            <button style="
+                background-color: transparent;
+                color: #81BD47;
+                border: 2px solid #81BD47;
+                font-weight: bold;
+                padding: 0.6rem 1.2rem;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 1rem;
+                width: 100%;
+            ">
+                🎥 Learn How EBOSS® Works
+            </button>
+        </a>
+    """, unsafe_allow_html=True)
+
         
         if st.button("🚀 Launch EBOSS®Tool"):
             st.session_state.landing_shown = False
