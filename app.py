@@ -485,6 +485,7 @@ def validate_charge_rate(model, gen_type, entered_rate, gen_kw=None):
     return is_valid, messages
 
 def render_user_input_modal():
+    show_logo_and_title()
     if "show_user_input" not in st.session_state:
         st.session_state.show_user_input = True
 
