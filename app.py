@@ -19,13 +19,13 @@ def apply_custom_css():
     }
 st.markdown("""
 <style>
-/* Label text above fields */
+
 .stSelectbox label, .stNumberInput label {
     color: #81BD47 !important;
     font-weight: bold !important;
 }
 
-/* Dropdown & number input fields */
+
 .stSelectbox div[role="combobox"],
 .stNumberInput input {
     background-color: #000 !important;       /* Black field */
@@ -36,7 +36,7 @@ st.markdown("""
     font-weight: bold !important;
 }
 
-/* Stepper buttons (+ and -) */
+
 .stNumberInput button {
     background-color: #000 !important;
     color: #81BD47 !important;
@@ -45,20 +45,20 @@ st.markdown("""
     border-radius: 4px;
 }
 
-/* Dropdown text value (span inside selectbox) */
+
 .stSelectbox div[role="combobox"] span {
     color: #81BD47 !important;
     font-weight: bold !important;
 }
 
-/* Dropdown menu items */
+
 [data-baseweb="menu"] {
     background-color: #000 !important;
     color: #81BD47 !important;
     border: 1px solid #D3D3D3 !important;
 }
 
-/* Hovered item in dropdown */
+
 [data-baseweb="menu"] li:hover {
     background-color: #81BD47 !important;
     color: #000 !important;
