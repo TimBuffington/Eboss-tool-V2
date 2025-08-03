@@ -26,7 +26,7 @@ st.markdown("""
     font-weight: bold !important;
 }
 
-/* Selectbox field (visible dropdown container) */
+/* Selectbox field */
 .stSelectbox > div > div {
     background-color: #000000 !important;
     color: #81BD47 !important;
@@ -36,13 +36,13 @@ st.markdown("""
     padding: 0.5rem 1rem !important;
 }
 
-/* Selected value inside dropdown field */
+/* Selected text inside selectbox */
 .stSelectbox div[role="combobox"] span {
     color: #81BD47 !important;
     font-weight: bold !important;
 }
 
-/* Dropdown menu popup */
+/* Dropdown menu */
 [data-baseweb="menu"] {
     background-color: #000000 !important;
     color: #81BD47 !important;
@@ -50,7 +50,7 @@ st.markdown("""
     border-radius: 6px !important;
 }
 
-/* Hovered dropdown item */
+/* Hovered item in dropdown */
 [data-baseweb="menu"] li:hover {
     background-color: #81BD47 !important;
     color: #000000 !important;
@@ -77,6 +77,7 @@ st.markdown("""
 }
 </style>
 """, unsafe_allow_html=True)
+
 
 
     h1, .form-section-title {
