@@ -470,7 +470,60 @@ if st.session_state.show_contact_form:
     render_contact_form(form_type=st.session_state.form_type)
 
 #=============================================================================================================================
-   
+ # ──────────────────────────────────────────────────────────────
+# 🔋 CHARGE RATE ENGINE
+# ──────────────────────────────────────────────────────────────
+
+"""
+CHARGE RATE PROTOCOL
+
+• Automatically selects default charge rate based on:
+    - EBOSS model (e.g. "EBOSS 70 kVA")
+    - Gen type: "Full Hybrid" or "Power Module"
+
+• Validations include:
+    - Max charge rate check
+    - Generator capacity comparison
+    - Over/under warnings
+
+• Charge rate affects:
+    - Runtime cycles
+    - Generator GPH calculations
+    - Generator sizing per Power Module
+
+Use:
+    charge_kw = get_charge_rate(model, gen_type)
+    is_valid, message = validate_charge_rate(model, gen_type, charge_kw, gen_kw)
+"""
+
+def get_charge_rate(model, gen_type):
+    try:
+        kva = EBOSS_KVA[model]
+        spec = Eboss_Specs[kva]
+        return spec["power_module"] if gen_type == "Power Module" else spec["full_hybrid"]
+    except KeyError:
+        raise ValueError(f"Invalid model or type: {model}, {gen_type}")
+
+def validate_charge_rate(model, gen_type, entered_rate, gen_kw=None):
+    kva = EBOSS_KVA[model]
+    spec = Eboss_Specs[kva]
+    max_rate = spec["max_charge"]
+    messages = []
+    is_valid = True
+
+    if entered_rate > max_rate:
+        messages.append(f"❌ Charge rate ({entered_rate} kW) exceeds max for {model}: {max_rate} kW")
+        is_valid = False
+
+    if gen_type == "Power Module" and gen_kw:
+        if gen_kw < spec["power_module"]:
+            messages.append(f"❌ Generator ({gen_kw} kW) undersized for charge rate {spec['power_module']} kW")
+            is_valid = False
+        elif gen_kw > max_rate:
+            messages.append(f"⚠️ Generator output ({gen_kw} kW) exceeds max charge rate {max_rate} kW. May reduce fuel efficiency.")
+
+    return is_valid, messages
+  
 def render_user_input_form():
     with st.container():
         col1, col2, col3 = st.columns([1, 1, 1], gap="large")
@@ -537,11 +590,7 @@ def render_user_input_form():
         st.session_state.user_inputs["peak_kw"] = peak
 
 
-def render_user_input_page():
-    apply_custom_css()  # ✅ ADD THIS
-    show_logo_and_title("Eboss & Load Data")
-    render_user_input_form()
-    top_navbar()
+
    
 #========================================================================================================
 def display_load_threshold_check(user_inputs):
@@ -679,6 +728,14 @@ def render_calculate_buttons():
             return round(y1 + (load_pct - x1) * (y2 - y1) / (x2 - x1), 3)
     return values[0]
 #=======================================================================================================
+def render_card(label, value):
+    st.markdown(f'''
+        <div class="card">
+            <div class="card-label">{label}</div>
+            <div class="card-value">{value}</div>
+        </div>
+    ''', unsafe_allow_html=True)
+
 def calculate_runtime_specs(model, gen_type, cont_kw, kva):
     gen_kva = EBOSS_KVA.get(model, 0) if gen_type == "Full Hybrid" else float(kva.replace("kVA", ""))
     gen_kw = gen_kva * 0.8
@@ -706,14 +763,12 @@ def calculate_runtime_specs(model, gen_type, cont_kw, kva):
     }
 
 # ---- TECH SPECS PAGE ----
-def render_card(label, value):
-    st.markdown(f'''
-        <div class="card">
-            <div class="card-label">{label}</div>
-            <div class="card-value">{value}</div>
-        </div>
-    ''', unsafe_allow_html=True)
-
+def render_user_input_page():
+    apply_custom_css()  # ✅ ADD THIS
+    show_logo_and_title("Eboss & Load Data")
+    render_user_input_form()
+    top_navbar()
+    
 def render_tech_specs_page():
     show_logo_and_title("Tech Specs")
 
@@ -1035,9 +1090,46 @@ def render_parallel_calculator_page():
 
         st.markdown("---")
 
+# ─────────────────────────────────────────────────────────────────
+def render_parallel_calculator_page():
+    apply_custom_css()
+    show_logo_and_title("Parallel Sizing Tool")
+    top_navbar()
+
+    # ───────────── Inputs ─────────────
+    cont_kw = st.number_input("Required Continuous Load (kW)", min_value=0.0, step=0.1)
+    peak_kw = st.number_input("Required Peak Load (kW)", min_value=0.0, step=0.1)
+    sizing_mode = st.radio("Sizing Strategy:", ["No Efficiency Preference", "Max Fuel Efficiency"], horizontal=True)
+    view_mode = st.selectbox("View Output As:", ["Equipment Only", "Comparison: EBOSS vs Generator-Only"])
+
+    if st.button("🔢 Calculate"):
+        results = calculate_parallel_sizing(cont_kw, peak_kw, sizing_mode)
+
+        render_parallel_results(results, view_mode)
+
+        # ────────── Print‑Friendly Button ──────────
+        today = date.today().strftime("%B %d, %Y")
+        st.markdown(f'''
+            <div class="print-logo" style="text-align:center; margin-top:2rem;">
+              <img src="https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png" width="240"><br><br>
+              <div style="font-size:1.3rem; font-weight:bold;">EBOSS® Parallel Sizing Report</div>
+              <div style="font-size:0.9rem;">{today}</div>
+            </div>
+            <button class="eboss-hero-btn" onclick="window.print()" style="margin:2rem auto; display:block;">
+                🖨️ Print Report
+            </button>
+            <style>
+            @media print {{
+                body * {{ visibility: hidden; }}
+                .print-logo, .print-logo *, .stContainer, .stMarkdown {{ visibility: visible; }}
+                .stApp, .stButton, .topNavBar {{ display: none !important; }}
+                .stContainer {{ background: white !important; color: black !important; box-shadow: none !important; }}
+            }}
+            </style>
+        ''', unsafe_allow_html=True)
+
 
 from itertools import combinations_with_replacement
-
 def calculate_parallel_sizing(required_cont_kw, required_peak_kw, sizing_mode):
     """
     Determines EBOSS and generator sizing options based on required load and strategy.
@@ -1165,44 +1257,6 @@ def calculate_parallel_sizing(required_cont_kw, required_peak_kw, sizing_mode):
 from datetime import date
 
 # ─────────────────────────────────────────────────────────────────
-def render_parallel_calculator_page():
-    apply_custom_css()
-    show_logo_and_title("Parallel Sizing Tool")
-    top_navbar()
-
-    # ───────────── Inputs ─────────────
-    cont_kw = st.number_input("Required Continuous Load (kW)", min_value=0.0, step=0.1)
-    peak_kw = st.number_input("Required Peak Load (kW)", min_value=0.0, step=0.1)
-    sizing_mode = st.radio("Sizing Strategy:", ["No Efficiency Preference", "Max Fuel Efficiency"], horizontal=True)
-    view_mode = st.selectbox("View Output As:", ["Equipment Only", "Comparison: EBOSS vs Generator-Only"])
-
-    if st.button("🔢 Calculate"):
-        results = calculate_parallel_sizing(cont_kw, peak_kw, sizing_mode)
-
-        render_parallel_results(results, view_mode)
-
-        # ────────── Print‑Friendly Button ──────────
-        today = date.today().strftime("%B %d, %Y")
-        st.markdown(f'''
-            <div class="print-logo" style="text-align:center; margin-top:2rem;">
-              <img src="https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png" width="240"><br><br>
-              <div style="font-size:1.3rem; font-weight:bold;">EBOSS® Parallel Sizing Report</div>
-              <div style="font-size:0.9rem;">{today}</div>
-            </div>
-            <button class="eboss-hero-btn" onclick="window.print()" style="margin:2rem auto; display:block;">
-                🖨️ Print Report
-            </button>
-            <style>
-            @media print {{
-                body * {{ visibility: hidden; }}
-                .print-logo, .print-logo *, .stContainer, .stMarkdown {{ visibility: visible; }}
-                .stApp, .stButton, .topNavBar {{ display: none !important; }}
-                .stContainer {{ background: white !important; color: black !important; box-shadow: none !important; }}
-            }}
-            </style>
-        ''', unsafe_allow_html=True)
-
-# ─────────────────────────────────────────────────────────────────
 def render_parallel_results(results, view_mode="Equipment Only"):
     st.markdown("---")
     for category, items in results.items():
@@ -1238,12 +1292,6 @@ def render_parallel_results(results, view_mode="Equipment Only"):
             c.markdown(f"**{name}**\n\nFuel: {totals.get(name+' Only', totals.get(name,0)):.2f}")
 
         st.markdown("---")
- 
-==========Parallel Page============
-
-
-
-
 
 # ---- NAVIGATION BLOCK (at the bottom) ----
 if st.session_state.landing_shown:
