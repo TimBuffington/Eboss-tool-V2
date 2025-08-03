@@ -311,7 +311,7 @@ with col2:
             st.session_state.landing_shown = False
             st.rerun()
 
-    with col3:
+with col3:
         if st.button("⚡ Load Specs", key="nav_load_specs_button"):
             st.session_state.selected_form = "tool"
             st.session_state.section = "load_specs"
@@ -319,7 +319,7 @@ with col2:
             st.session_state.landing_shown = False
             st.rerun()
 
-    with col4:
+with col4:
         if st.button("⚖️ Compare", key="nav_compare_button"):
             st.session_state.selected_form = "tool"
             st.session_state.section = "compare"
@@ -327,7 +327,7 @@ with col2:
             st.session_state.landing_shown = False
             st.rerun()
 
-    with col5:
+with col5:
         if st.button("💰 Cost Analysis", key="nav_cost_button"):
             st.session_state.selected_form = "tool"
             st.session_state.section = "cost"
@@ -335,7 +335,7 @@ with col2:
             st.session_state.landing_shown = False
             st.rerun()
 
-    with col6:
+with col6:
         if st.button("🧮 Parallel Calculator", key="nav_parallel_button"):
             st.session_state.selected_form = "tool"
             st.session_state.section = "parallel_calc"
