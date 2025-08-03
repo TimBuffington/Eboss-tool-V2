@@ -192,6 +192,8 @@ EBOSS_KVA = {
     "EBOSS 400 kVA": 400
 }
 
+st.image("https://anacorp.com/wp-content/uploads/2023/10/ANA-ENERGY-LOGO-PADDED.png", width=250)
+
 btn1, btn2, btn3, btn4, btn5 = st.columns(5)
 
 st.markdown("""
@@ -204,8 +206,6 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
-
-st.image("https://anacorp.com/wp-content/uploads/2023/10/ANA-ENERGY-LOGO-PADDED.png", width=250)
 
 st.markdown("""
     <style>
