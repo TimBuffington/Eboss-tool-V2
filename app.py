@@ -333,69 +333,56 @@ def top_navbar():
     st.markdown('<div class="top-navbar">', unsafe_allow_html=True)
 
     col1, col2, col3, col4, col5, col6 = st.columns(6)
+
     with col1:
-        if st.button("📥 User Input", key="nav_input"):
+        if st.button("📥 User Input", key="nav_input_button"):
             st.session_state.selected_form = "tool"
             st.session_state.section = "input"
             st.session_state.landing_shown = False
             st.rerun()
+
     with col2:
-        if st.button("🧑‍🔧 Tech Specs", key="nav_tech_specs"):
-            st.session_state.selected_form = "tool"
-            st.session_state.section = "tech_specs"
-            st.session_state.run_tech_specs = True
-            st.session_state.landing_shown = False
-            st.rerun()
-    btn0, btn1, btn2, btn3, btn4, btn5 = st.columns(6)
-
-    with btn0:
-        if st.button("📥 User Input", key="nav_input"):
-            st.session_state.selected_form = "tool"
-            st.session_state.section = "input"
-            st.session_state.landing_shown = False
-            st.rerun()
-
-    with btn1:
-        if st.button("🧑‍🔧 Tech Specs", key="nav_tech_specs"):
+        if st.button("🧑‍🔧 Tech Specs", key="nav_tech_specs_button"):
             st.session_state.selected_form = "tool"
             st.session_state.section = "tech_specs"
             st.session_state.run_tech_specs = True
             st.session_state.landing_shown = False
             st.rerun()
 
-    with btn2:
-        if st.button("⚡ Load Specs", key="nav_load_specs"):
+    with col3:
+        if st.button("⚡ Load Specs", key="nav_load_specs_button"):
             st.session_state.selected_form = "tool"
             st.session_state.section = "load_specs"
             st.session_state.run_load_calc = True
             st.session_state.landing_shown = False
             st.rerun()
 
-    with btn3:
-        if st.button("⚖️ Compare", key="nav_compare"):
+    with col4:
+        if st.button("⚖️ Compare", key="nav_compare_button"):
             st.session_state.selected_form = "tool"
             st.session_state.section = "compare"
             st.session_state.run_compare = True
             st.session_state.landing_shown = False
             st.rerun()
 
-    with btn4:
-        if st.button("💰 Cost Analysis", key="nav_cost"):
+    with col5:
+        if st.button("💰 Cost Analysis", key="nav_cost_button"):
             st.session_state.selected_form = "tool"
             st.session_state.section = "cost"
             st.session_state.run_cost_calc = True
             st.session_state.landing_shown = False
             st.rerun()
 
-    with btn5:
-        if st.button("🧮 Parallel Calculator", key="nav_parallel_calc"):
+    with col6:
+        if st.button("🧮 Parallel Calculator", key="nav_parallel_button"):
             st.session_state.selected_form = "tool"
             st.session_state.section = "parallel_calc"
             st.session_state.run_parallel_calc = True
             st.session_state.landing_shown = False
             st.rerun()
 
-st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+
 # ===============================================================================================
 
 def landing_page():
