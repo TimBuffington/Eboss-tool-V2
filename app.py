@@ -553,52 +553,51 @@ def validate_charge_rate(model, gen_type, entered_rate, gen_kw=None):
 
 def render_user_input_form():
     apply_custom_css()
-    show_logo_and_title("EBOSS&reg Size & Spec Tool")
-    if "show_user_input" not in st.session_state:
-        st.session_state.show_user_input = True
+    show_logo_and_title("EBOSS&reg & Load Data")
+    st.markdown("""
+    <style>
+    .card {
+        background-color: #000000;
+        border: 2px solid #D3D3D3;
+        border-radius: 12px;
+        padding: 1rem;
+        height: 100%;
+    }
 
-    if st.session_state.show_user_input:
-         with st.container():
-        cols = st.columns([1, 1, 1], gap="large")
-        st.markdown('<h3 style="color:#81BD47; text-align:center;">⚙️ EBOSS® System Configuration</h3>', unsafe_allow_html=True)
+    .card-label {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #81BD47;
+        text-align: center;
+        margin-bottom: 0.75rem;
+    }
 
-        st.session_state.user_inputs = {}
+    .stSelectbox > div > div {
+        background-color: #000000 !important;
+        color: #81BD47 !important;
+        font-weight: bold;
+        border: 1px solid #D3D3D3 !important;
+        border-radius: 8px !important;
+        padding: 0.25rem 0.75rem !important;
+    }
 
-        st.session_state.user_inputs["model"] = st.selectbox(
-            "EBOSS® Model", list(EBOSS_KVA.keys()), key="model_select"
-        )
+    input[type=number] {
+        background-color: #000000 !important;
+        color: #81BD47 !important;
+        font-weight: bold;
+        border: 1px solid #D3D3D3 !important;
+        border-radius: 8px !important;
+        padding: 0.4rem !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
-        st.session_state.user_inputs["gen_type"] = st.selectbox(
-            "EBOSS® Type", ["Full Hybrid", "Power Module"], key="gen_type_select"
-        )
-
-        if st.session_state.user_inputs["gen_type"] == "Power Module":
-            st.session_state.user_inputs["kva_option"] = st.selectbox(
-                "Generator Size", ["25kVA", "45kVA", "65kVA", "125kVA", "220kVA", "400kVA"], key="kva_select"
-            )
-        else:
-            st.session_state.user_inputs["kva_option"] = None
-
-        st.session_state.user_inputs["cont_kw"] = st.number_input("Continuous Load (kW)", 0.0, 500.0, step=1.0)
-        st.session_state.user_inputs["peak_kw"] = st.number_input("Max Peak Load (kW)", 0.0, 500.0, step=1.0)
-
-        # "Go" button closes modal
-        if st.button("🚀 Go", key="go_button"):
-            st.session_state.show_user_input = False
-            st.session_state.user_inputs["submitted"] = True
-            st.rerun()
-
-        st.markdown('</div></div>', unsafe_allow_html=True)
-def render_user_input_form():
     with st.container():
         cols = st.columns([1, 1, 1], gap="large")
 
         # ───── Column 1: EBOSS® ─────
         with cols[0]:
-            st.markdown('''
-                <div class="card">
-                    <div class="card-label">EBOSS®</div>
-            ''', unsafe_allow_html=True)
+            st.markdown('<div class="card"><div class="card-label">EBOSS®</div>', unsafe_allow_html=True)
 
             st.session_state.user_inputs["model"] = st.selectbox(
                 "Model", list(EBOSS_KVA.keys()), key="model_select"
@@ -618,10 +617,7 @@ def render_user_input_form():
 
         # ───── Column 2: Load ─────
         with cols[1]:
-            st.markdown('''
-                <div class="card">
-                    <div class="card-label">Load</div>
-            ''', unsafe_allow_html=True)
+            st.markdown('<div class="card"><div class="card-label">Load</div>', unsafe_allow_html=True)
 
             st.session_state.user_inputs["raw_cont_load"] = st.number_input(
                 "Continuous Load", 0, 500, step=1, format="%d", key="cont_input"
@@ -635,10 +631,7 @@ def render_user_input_form():
 
         # ───── Column 3: Units ─────
         with cols[2]:
-            st.markdown('''
-                <div class="card">
-                    <div class="card-label">Units</div>
-            ''', unsafe_allow_html=True)
+            st.markdown('<div class="card"><div class="card-label">Units</div>', unsafe_allow_html=True)
 
             st.session_state.user_inputs["load_units"] = st.selectbox(
                 "Units", ["kW", "Amps"], key="unit_select"
@@ -663,12 +656,6 @@ def render_user_input_form():
         st.session_state.user_inputs["cont_kw"] = cont
         st.session_state.user_inputs["peak_kw"] = peak
 
-
-
-
-
-
-   
 #========================================================================================================
 def display_load_threshold_check(user_inputs):
     # Reference data
