@@ -211,19 +211,19 @@ with btn1:
         if st.button("View Specs"):
             st.session_state.section = "specs"
 
-    with btn2:
+with btn2:
         if st.button("Load-Based Specs"):
             st.session_state.section = "load"
 
-    with btn3:
+with btn3:
         if st.button("Compare"):
             st.session_state.section = "compare"
 
-    with btn4:
+with btn4:
         if st.button("Cost Analysis"):
             st.session_state.section = "cost"
 
-    with btn5:
+with btn5:
         if st.button("Contact Us"):
             st.markdown("""
                 <script>
