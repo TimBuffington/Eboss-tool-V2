@@ -254,9 +254,9 @@ EBOSS_KVA = {
 }
 
 def landing_page():
-    apply_custom_css()  # MUST be globally called BEFORE anything renders
+    apply_custom_css()
 
-    # Init session state
+    # Ensure session state
     for key, val in {
         "landing_shown": True,
         "show_contact_form": False,
@@ -271,38 +271,32 @@ def landing_page():
     if st.session_state.landing_shown:
         show_logo_and_title("EBOSS® Size Specs & Comparison Tool")
 
-        # ✅ Styling for buttons + layout + background
+        # Inject proper CSS
         st.markdown("""
         <style>
-        /* Global app background fix */
+        /* Fix background */
         .stApp {
             background: url("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/bg.png") no-repeat center center fixed;
             background-size: cover;
         }
 
-        .landing-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem 1rem;
-        }
-
+        /* Button layout grid */
         .button-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-            width: 100%;
+            gap: 1.25rem;
             max-width: 500px;
+            margin: 2rem auto;
         }
 
+        /* Styled Streamlit buttons */
         .stButton>button {
             height: 60px;
             width: 100%;
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: #81BD47 !important;
             background-color: #000000 !important;
+            color: #81BD47 !important;
+            font-weight: bold;
+            font-size: 1.05rem;
             border: 2px solid #81BD47 !important;
             border-radius: 10px;
             transition: box-shadow 0.2s ease-in-out;
@@ -314,8 +308,8 @@ def landing_page():
         </style>
         """, unsafe_allow_html=True)
 
-        # ✅ Button layout (no icons, 2 columns, centered)
-        st.markdown('<div class="landing-wrapper"><div class="button-grid">', unsafe_allow_html=True)
+        # Buttons in 2-column grid
+        st.markdown('<div class="button-grid">', unsafe_allow_html=True)
 
         if st.button("Request a Demo", key="btn_demo"):
             st.session_state.form_type = "demo"
@@ -344,11 +338,12 @@ def landing_page():
             st.session_state.form_type = None
             st.rerun()
 
-        st.markdown('</div></div>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
         st.stop()
 
     if st.session_state.show_contact_form:
         render_contact_form(form_type=st.session_state.form_type)
+
 
 
 
