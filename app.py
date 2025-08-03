@@ -254,65 +254,91 @@ EBOSS_KVA = {
 }
 
 def landing_page():
-    # Ensure global CSS is applied
     apply_custom_css()
 
-    # Initialize required session state variables
-    if "landing_shown" not in st.session_state:
-        st.session_state.landing_shown = True
-    if "show_contact_form" not in st.session_state:
-        st.session_state.show_contact_form = False
-    if "form_type" not in st.session_state:
-        st.session_state.form_type = None
-    if "selected_form" not in st.session_state:
-        st.session_state.selected_form = None
-    if "section" not in st.session_state:
-        st.session_state.section = "main"
-    if "user_inputs" not in st.session_state:
-        st.session_state.user_inputs = {}
+    # Set up session state
+    for key, default in {
+        "landing_shown": True,
+        "show_contact_form": False,
+        "form_type": None,
+        "selected_form": None,
+        "section": "main",
+        "user_inputs": {}
+    }.items():
+        if key not in st.session_state:
+            st.session_state[key] = default
 
-    # Only show landing page if state is active
+    # Render landing page
     if st.session_state.landing_shown:
         show_logo_and_title("EBOSS® Size Specs & Comparison Tool")
 
+        # Inject CSS styles
+        st.markdown("""
+        <style>
+        .custom-btn button {
+            width: 100% !important;
+            height: 4rem;
+            font-weight: bold;
+            font-size: 1.1rem;
+            background-color: #1a1a1a !important;
+            color: #81BD47 !important;
+            border: 2px solid #81BD47 !important;
+            border-radius: 12px !important;
+            transition: box-shadow 0.3s ease;
+        }
+        .custom-btn button:hover {
+            box-shadow: 0 0 15px #81BD47;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
+        # Row 1
         col1, col2 = st.columns(2)
         with col1:
-            if st.button("📋 Request a Demo", key="btn_demo"):
-                st.session_state.form_type = "demo"
-                st.session_state.show_contact_form = True
-                st.session_state.landing_shown = False
-                st.rerun()
-
+            with st.container():
+                if st.button("📋 Request a Demo", key="btn_demo"):
+                    st.session_state.form_type = "demo"
+                    st.session_state.show_contact_form = True
+                    st.session_state.landing_shown = False
+                    st.rerun()
+                st.markdown('<div class="custom-btn"></div>', unsafe_allow_html=True)
         with col2:
-            if st.button("📋 Request On-Site Training", key="btn_training"):
-                st.session_state.form_type = "training"
-                st.session_state.show_contact_form = True
-                st.session_state.landing_shown = False
-                st.rerun()
+            with st.container():
+                if st.button("📋 Request On-Site Training", key="btn_training"):
+                    st.session_state.form_type = "training"
+                    st.session_state.show_contact_form = True
+                    st.session_state.landing_shown = False
+                    st.rerun()
+                st.markdown('<div class="custom-btn"></div>', unsafe_allow_html=True)
 
+        # Row 2
         col3, col4 = st.columns(2)
         with col3:
-            if st.button("🎥 Learn How EBOSS® Works", key="btn_learn"):
-                st.markdown("""
-                <script>
-                    window.open("https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc", "_blank");
-                </script>
-                """, unsafe_allow_html=True)
-
+            with st.container():
+                if st.button("🎥 Learn How EBOSS® Works", key="btn_learn"):
+                    st.markdown("""
+                    <script>
+                        window.open("https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc", "_blank");
+                    </script>
+                    """, unsafe_allow_html=True)
+                st.markdown('<div class="custom-btn"></div>', unsafe_allow_html=True)
         with col4:
-            if st.button("🚀 Launch EBOSS® Tool", key="btn_launch"):
-                st.session_state.selected_form = "tool"
-                st.session_state.section = "input"
-                st.session_state.landing_shown = False
-                st.session_state.show_contact_form = False
-                st.session_state.form_type = None
-                st.rerun()
+            with st.container():
+                if st.button("🚀 Launch EBOSS® Tool", key="btn_launch"):
+                    st.session_state.selected_form = "tool"
+                    st.session_state.section = "input"
+                    st.session_state.landing_shown = False
+                    st.session_state.show_contact_form = False
+                    st.session_state.form_type = None
+                    st.rerun()
+                st.markdown('<div class="custom-btn"></div>', unsafe_allow_html=True)
 
-        st.stop()  # prevent anything else from rendering on this page
+        st.stop()
 
-    # If a contact form is requested
+    # Show contact form if triggered
     if st.session_state.show_contact_form:
         render_contact_form(form_type=st.session_state.form_type)
+
 
 def enforce_session_validation():
     if "user_inputs" not in st.session_state or not st.session_state.user_inputs.get("model"):
