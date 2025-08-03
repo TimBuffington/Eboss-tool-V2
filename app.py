@@ -289,7 +289,7 @@ def landing_page():
             min-width: 320px;
             max-width: 320px;
             height: 60px;
-            font-size: 1.8rem;
+            font-size: 2.5rem;
             font-weight: bold;
             color: #81BD47 !important;
             background-color: #000000 !important;
