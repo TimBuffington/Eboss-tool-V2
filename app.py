@@ -211,7 +211,7 @@ spec_data = {
 }
 #========================================================================
 
-def show_logo_and_title(title="EBOSS® Hybrid Energy Tool"):
+def show_logo_and_title(title):
     st.markdown("""
         <style>
         .logo-title-container {
@@ -246,7 +246,8 @@ def show_logo_and_title(title="EBOSS® Hybrid Energy Tool"):
 
     st.markdown(f"""
         <div class="logo-title-container">
-            <img src="https://anacorp.com/wp-content/uploads/2023/10/ANA-ENERGY-LOGO-PADDED.png" width="250">
+            <img src="https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png
+">
             <h1>{title}</h1>
         </div>
     """, unsafe_allow_html=True)
