@@ -544,7 +544,7 @@ def validate_charge_rate(model, gen_type, entered_rate, gen_kw=None):
 
 def render_user_input_form():
     apply_custom_css()
-    show_logo_and_title("EBOSS&reg Size & Spec Tool)
+    show_logo_and_title("EBOSS&reg Size & Spec Tool")
     if "show_user_input" not in st.session_state:
         st.session_state.show_user_input = True
 
