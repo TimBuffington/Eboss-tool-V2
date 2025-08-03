@@ -97,48 +97,13 @@ def apply_custom_css():
         box-shadow: 0 0 0 2px rgba(129,189,71,0.25) !important;
     }
 
-    /* === STREAMLIT SELECTBOX OVERRIDE === */
-    div[class*="stSelectbox"] > div {
-        background-color: #fff !important;
-        border: 1px solid #81BD47 !important;
-        border-radius: 8px !important;
-        color: #111 !important;
-        padding: 6px 10px !important;
-        font-weight: bold !important;
-        margin-bottom: 1rem;
-    }
-
-   /* === STATIC NAVBAR STYLING === */
-.top-navbar {
-    background-color: #000;
-    padding: 1rem;
-    margin-bottom: 2rem;
-    border-radius: 10px;
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
-
-/* Nav bar button override */
-.top-navbar .stButton > button {
-    background: #232325;
-    color: white;
-    border: 2px solid #81BD47;
-    padding: 0.6rem 1.2rem;
-    border-radius: 12px;
-    font-weight: 700;
-    transition: all 0.2s ease-in-out;
-    min-width: 140px;
-}
+    
 
 .top-navbar .stButton > button:hover {
     background: #2c2c2f;
     box-shadow: 0 0 12px #81BD47;
     transform: translateY(-2px);
 }
-
-
     /* === LOGO === */
     .logo-header {
         display: flex;
