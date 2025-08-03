@@ -108,17 +108,36 @@ def apply_custom_css():
         margin-bottom: 1rem;
     }
 
-    /* === NAVBAR CONTAINER === */
-    .top-navbar {
-        background-color: #000;
-        padding: 1rem 0.5rem;
-        margin-bottom: 1.5rem;
-        border-radius: 10px;
-    }
+   /* === STATIC NAVBAR STYLING === */
+.top-navbar {
+    background-color: #000;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
 
-    .top-navbar .stButton > button {
-        border: 2px solid #81BD47;
-    }
+/* Nav bar button override */
+.top-navbar .stButton > button {
+    background: #232325;
+    color: white;
+    border: 2px solid #81BD47;
+    padding: 0.6rem 1.2rem;
+    border-radius: 12px;
+    font-weight: 700;
+    transition: all 0.2s ease-in-out;
+    min-width: 140px;
+}
+
+.top-navbar .stButton > button:hover {
+    background: #2c2c2f;
+    box-shadow: 0 0 12px #81BD47;
+    transform: translateY(-2px);
+}
+
 
     /* === LOGO === */
     .logo-header {
@@ -311,6 +330,22 @@ EBOSS_KVA = {
 }
 
 def top_navbar():
+    st.markdown('<div class="top-navbar">', unsafe_allow_html=True)
+
+    col1, col2, col3, col4, col5, col6 = st.columns(6)
+    with col1:
+        if st.button("📥 User Input", key="nav_input"):
+            st.session_state.selected_form = "tool"
+            st.session_state.section = "input"
+            st.session_state.landing_shown = False
+            st.rerun()
+    with col2:
+        if st.button("🧑‍🔧 Tech Specs", key="nav_tech_specs"):
+            st.session_state.selected_form = "tool"
+            st.session_state.section = "tech_specs"
+            st.session_state.run_tech_specs = True
+            st.session_state.landing_shown = False
+            st.rerun()
     btn0, btn1, btn2, btn3, btn4, btn5 = st.columns(6)
 
     with btn0:
@@ -360,7 +395,7 @@ def top_navbar():
             st.session_state.landing_shown = False
             st.rerun()
 
-
+st.markdown('</div>', unsafe_allow_html=True)
 # ===============================================================================================
 
 def landing_page():
