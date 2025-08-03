@@ -347,7 +347,11 @@ def landing_page():
             st.rerun()
     with col2:
         if st.button("🎥 Learn How EBOSS® Works", key="btn_learn"):
-        st.markdown("""<script>window.open('https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc', '_blank');</script>""", unsafe_allow_html=True), unsafe_allow_html=True)
+        st.markdown("""
+    <script>
+    window.open(\"https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc\", \"_blank\");
+    </script>
+""", unsafe_allow_html=True), unsafe_allow_html=True)
         
         if st.button("🚀 Launch EBOSS®Tool"):
             st.session_state.landing_shown = False
@@ -414,7 +418,11 @@ def render_contact_form(form_type="demo"):
                 st.rerun()
         with col2:
             if st.button("🌐 Visit ANA Website"):
-                st.markdown("""<script>window.open("https://anacorp.com", "_blank");</script>""", unsafe_allow_html=True)
+                st.markdown("""
+    <script>
+    window.open(\"https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc\", \"_blank\");
+    </script>
+""", unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -449,7 +457,11 @@ if st.session_state.landing_shown:
     col3, col4 = st.columns(2)
     with col3:
         if st.button("🎥 Learn How EBOSS® Works"):
-            st.markdown("""<script>window.open("https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc", "_blank");</script>""", unsafe_allow_html=True)
+            st.markdown("""
+    <script>
+    window.open(\"https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc\", \"_blank\");
+    </script>
+""", unsafe_allow_html=True)
     with col4:
         if st.button("🚀 Launch EBOSS® Tool", key="btn_launch"):
             st.session_state.selected_form = "tool"
