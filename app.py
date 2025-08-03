@@ -260,6 +260,12 @@ EBOSS_KVA = {
     "EBOSS 400 kVA": 400
 }
 
+def enforce_session_validation():
+    if "user_inputs" not in st.session_state or not st.session_state.user_inputs.get("model"):
+        st.warning("⚠️ Please complete the system configuration first.")
+        st.session_state.show_user_input = True
+        st.rerun()
+
 def top_navbar():
     st.markdown("""
         <style>
@@ -296,12 +302,12 @@ def top_navbar():
     col1, col2, col3, col4, col5 = st.columns(5)
 
     with col1:
-        if st.button("Technical Specs"):
+        if st.button("View Specs"):
             st.session_state.section = "tech_specs"
 
     with col2:
         if st.button("Load-Based Specs"):
-            st.session_state.section = "load_specs"
+            st.session_state.section = "load_"
 
     with col3:
         if st.button("Compare"):
