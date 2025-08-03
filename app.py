@@ -31,6 +31,7 @@ def apply_custom_css():
     .stSelectbox label,
     .stNumberInput label {
         color: #81BD47 !important;
+        font-size: 1.5rem;
         font-weight: bold !important;
     }
 
@@ -65,7 +66,7 @@ def apply_custom_css():
 
     
 /* Fix for invisible selectbox text */
-.stSelectbox div[role="combobox"] * {
+.stSelectbox div[role="combobox"] {
     color: #81BD47 !important;
     font-weight: bold !important;
 }
