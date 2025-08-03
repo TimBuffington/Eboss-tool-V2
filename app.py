@@ -18,23 +18,35 @@ def apply_custom_css():
         padding: 0;
     }
 
-/* Label text above selectboxes and number inputs */
-.stSelectbox label,
-.stNumberInput label {
+/* Selectbox wrapper field */
+.stSelectbox div[role="combobox"] {
+    background-color: #000000 !important;
+    border: 1px solid #D3D3D3 !important;
+    border-radius: 8px !important;
+    padding: 0.5rem 1rem !important;
+    font-weight: bold !important;
+}
+
+/* Selected value text */
+.stSelectbox div[role="combobox"] span,
+.stSelectbox div[role="combobox"] div {
     color: #81BD47 !important;
     font-weight: bold !important;
 }
-.stSelectbox > div > div {
+
+/* Optional fallback */
+.stSelectbox div[role="combobox"] * {
+    color: #81BD47 !important;
+}
+
+/* Dropdown menu styling */
+[data-baseweb="menu"] {
     background-color: #000000 !important;
     color: #81BD47 !important;
     border: 1px solid #D3D3D3 !important;
-    border-radius: 8px !important;
-    font-weight: bold !important;
-    padding: 0.5rem 1rem !important;
+    border-radius: 6px !important;
 }
-.stSelectbox div[role="combobox"] span {
-    color: #81BD47 !important;
-    font-weight: bold !important;
+
 }
 [data-baseweb="menu"] {
     background-color: #000000 !important;
