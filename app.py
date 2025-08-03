@@ -62,11 +62,6 @@ def apply_custom_css():
     font-weight: bold !important;
     border-radius: 4px !important;
 }
-</style>
-""", unsafe_allow_html=True)
-
-
-
     h1, .form-section-title {
         font-family: 'Montserrat', sans-serif;
         font-size: 2.2rem;
