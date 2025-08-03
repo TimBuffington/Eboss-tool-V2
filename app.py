@@ -1253,7 +1253,7 @@ def calculate_parallel_sizing(required_cont_kw, required_peak_kw, sizing_mode):
 
     return results
 
-   from itertools import combinations_with_replacement
+  
 from datetime import date
 
 # ─────────────────────────────────────────────────────────────────
