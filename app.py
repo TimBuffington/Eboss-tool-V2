@@ -18,7 +18,6 @@ def apply_custom_css():
         padding: 0;
     }
 
-    /* === HEADER & SECTION TITLES === */
     h1, .form-section-title {
         font-family: 'Montserrat', sans-serif;
         font-size: 2.2rem;
@@ -29,7 +28,7 @@ def apply_custom_css():
         margin-bottom: 1.5rem;
     }
 
-    /* === CARD === */
+    /* === CARD STYLE === */
     .card {
         background: linear-gradient(145deg, #000, #1b1b1b);
         border-radius: 16px;
@@ -79,23 +78,46 @@ def apply_custom_css():
         box-shadow: 0 0 30px 8px #81BD47;
     }
 
-    /* === FORM INPUTS === */
+    /* === FORMS: INPUT + SELECT === */
     input, select, textarea {
-        background-color: #fff;
-        color: #111;
-        font-weight: bold;
-        border-radius: 8px;
-        padding: 0.6rem 1rem;
-        border: 1px solid #bbb;
-        width: 100%;
-        box-sizing: border-box;
-        margin-bottom: 1rem;
+        background-color: #fff !important;
+        color: #111 !important;
+        font-weight: bold !important;
+        border-radius: 8px !important;
+        padding: 0.6rem 1rem !important;
+        border: 1px solid #bbb !important;
+        width: 100% !important;
+        margin-bottom: 1rem !important;
+        box-sizing: border-box !important;
         transition: border 0.2s, box-shadow 0.2s;
     }
 
     input:focus, select:focus, textarea:focus {
-        border-color: #81BD47;
-        box-shadow: 0 0 0 2px rgba(129,189,71,0.25);
+        border-color: #81BD47 !important;
+        box-shadow: 0 0 0 2px rgba(129,189,71,0.25) !important;
+    }
+
+    /* === STREAMLIT SELECTBOX OVERRIDE === */
+    div[class*="stSelectbox"] > div {
+        background-color: #fff !important;
+        border: 1px solid #81BD47 !important;
+        border-radius: 8px !important;
+        color: #111 !important;
+        padding: 6px 10px !important;
+        font-weight: bold !important;
+        margin-bottom: 1rem;
+    }
+
+    /* === NAVBAR CONTAINER === */
+    .top-navbar {
+        background-color: #000;
+        padding: 1rem 0.5rem;
+        margin-bottom: 1.5rem;
+        border-radius: 10px;
+    }
+
+    .top-navbar .stButton > button {
+        border: 2px solid #81BD47;
     }
 
     /* === LOGO === */
@@ -130,18 +152,9 @@ def apply_custom_css():
             width: 80% !important;
         }
     }
-    .card-label {
-    display: block;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #81BD47;
-    margin-bottom: 0.6rem;
-    text-align: left;
-    text-transform: uppercase;
-}
-
     </style>
     """, unsafe_allow_html=True)
+
 
 # =========================================================================================================
 if "landing_shown" not in st.session_state:
