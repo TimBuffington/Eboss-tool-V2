@@ -323,12 +323,32 @@ def landing_page():
 
         col3, col4 = st.columns(2)
         with col3:
-            if st.button("Learn How EBOSS® Works", key="btn_learn"):
-                st.markdown("""
-                <script>
-                    window.open("https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc", "_blank");
-                </script>
-                """, unsafe_allow_html=True)
+            st.markdown("""
+<a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank" style="text-decoration: none;">
+    <div style="
+        min-width: 300px;
+        max-width: 320px;
+        height: 60px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #81BD47;
+        background-color: #000000;
+        border: 2px solid #81BD47;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: box-shadow 0.2s ease-in-out;
+        margin-bottom: 1rem;
+    "
+    onmouseover="this.style.boxShadow='0 0 18px #81BD47'"
+    onmouseout="this.style.boxShadow='none'"
+    >
+        Learn How EBOSS® Works
+    </div>
+</a>
+""", unsafe_allow_html=True)
+
 
         with col4:
             if st.button("Launch EBOSS® Tool", key="btn_launch"):
