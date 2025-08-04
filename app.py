@@ -26,14 +26,21 @@ def apply_custom_css():
     border: 2px solid #D3D3D3 !important;
     border-radius: 10px !important;
     text-shadow: none !important;
+    min-height: 50px !important;   
+    max-height: 80px !important;     
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    z-index: 9999 !important;
 }
 .card {
     background color: #0000
     border: 2px solid #D3D3D3;
     border-radius: 12px;
     padding: 1rem;
-    min-height: 50px !important;    /* 👈 minimum height */
-    max-height: 80px !important;      /* 👈 max height (optional) */
+    min-height: 50px !important;   
+    max-height: 80px !important;     
     display: flex !important;
     flex-direction: column !important;
     justify-content: center !important;
