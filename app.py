@@ -2,7 +2,9 @@
 import streamlit as st
 from datetime import date
 
-# Global CSS and floating logo
+# ───────────────────────────────
+# ✅ GLOBAL STYLING + LOGO
+# ───────────────────────────────
 def apply_custom_css():
     st.markdown("""
     <style>
@@ -45,22 +47,6 @@ def apply_custom_css():
         text-align: center;
         margin-top: 0.2rem;
     }
-    .stSelectbox > div > div,
-    .stTextInput > div > div,
-    .stNumberInput > div > div {
-        background-color: #000000 !important;
-        color: #81BD47 !important;
-        border: 1px solid #D3D3D3 !important;
-        border-radius: 8px !important;
-        font-weight: bold !important;
-        padding: 0.5rem 1rem !important;
-    }
-    [data-baseweb="menu"] {
-        background-color: #000000 !important;
-        color: #81BD47 !important;
-        border: 1px solid #D3D3D3 !important;
-        border-radius: 6px !important;
-    }
     </style>
     """, unsafe_allow_html=True)
     st.markdown("""
@@ -69,7 +55,9 @@ def apply_custom_css():
         </div>
     """, unsafe_allow_html=True)
 
-# Spec layout and placeholder data
+# ───────────────────────────────
+# ✅ STATIC SPECS FORMAT
+# ───────────────────────────────
 SPEC_LAYOUT = {
     "Maximum Intermittent Power Output": [
         "Three-phase", "Single-phase", "Frequency", "Simultaneous voltage",
@@ -96,23 +84,55 @@ SPEC_LAYOUT = {
     ]
 }
 
-spec_data = {}  # Inject your model data here
+spec_data = {}  # Replace with your full dictionary from earlier
 
+# ───────────────────────────────
+# ✅ NAVBAR + LOGIC
+# ───────────────────────────────
 def show_logo_and_title(title):
     st.markdown(f"<h1 style='text-align:center; color:#81BD47;'>{title}</h1>", unsafe_allow_html=True)
 
 def top_navbar():
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4, col5 = st.columns(5)
     with col1:
-        if st.button("← Back to Input"):
+        if st.button("🧰 Input"):
             st.session_state.section = "input"
-            st.rerun()
     with col2:
-        st.empty()
+        if st.button("📋 Specs"):
+            st.session_state.section = "tech_specs"
     with col3:
-        if st.button("🛠 View Specs Again"):
-            st.rerun()
+        if st.button("📊 Load"):
+            st.session_state.section = "load"
+    with col4:
+        if st.button("⚖️ Compare"):
+            st.session_state.section = "compare"
+    with col5:
+        if st.button("💰 Cost"):
+            st.session_state.section = "cost"
 
+# ───────────────────────────────
+# ✅ USER INPUT PAGE
+# ───────────────────────────────
+def render_user_input_page():
+    apply_custom_css()
+    show_logo_and_title("EBOSS® User Input")
+    top_navbar()
+
+    st.session_state.user_inputs = st.session_state.get("user_inputs", {})
+    with st.container():
+        cols = st.columns(2)
+        with cols[0]:
+            st.session_state.user_inputs["model"] = st.selectbox(
+                "Model", ["EBOSS 25 kVA", "EBOSS 70 kVA", "EBOSS 125 kVA", "EBOSS 220 kVA", "EBOSS 400 kVA"]
+            )
+        with cols[1]:
+            st.session_state.user_inputs["gen_type"] = st.selectbox(
+                "Type", ["Full Hybrid", "Power Module"]
+            )
+
+# ───────────────────────────────
+# ✅ TECH SPECS PAGE
+# ───────────────────────────────
 def render_tech_specs_page():
     apply_custom_css()
     show_logo_and_title("Tech Specs")
@@ -140,17 +160,53 @@ def render_tech_specs_page():
 
     for section, labels in SPEC_LAYOUT.items():
         values = spec_data[model].get(section, ["—"] * len(labels))
-        st.markdown(f'''
-            <div class="card" style="background-color: #636569; color: white; font-weight: 700;
-                font-size: 1.2rem; padding: 0.8rem 1.5rem; border-radius: 12px;
-                margin: 2rem 0 1rem 0; text-align: center; text-transform: uppercase;
-                box-shadow: 0 4px 8px rgba(0,0,0,0.3);">
-                {section}
-            </div>
-        ''', unsafe_allow_html=True)
+        st.markdown(f"<h3 style='color:#81BD47;'>{section}</h3>", unsafe_allow_html=True)
         for label, value in zip(labels, values):
             col1, col2 = st.columns([1, 2])
             with col1:
                 st.markdown(f'<div class="card"><div class="card-label">{label}</div></div>', unsafe_allow_html=True)
             with col2:
                 st.markdown(f'<div class="card"><div class="card-value">{value}</div></div>', unsafe_allow_html=True)
+
+# ───────────────────────────────
+# 🧼 PLACEHOLDER PAGES
+# ───────────────────────────────
+def render_compare_page():
+    apply_custom_css()
+    show_logo_and_title("Compare Page")
+    top_navbar()
+    st.info("⚠️ Compare logic not implemented yet.")
+
+def render_cost_analysis_page():
+    apply_custom_css()
+    show_logo_and_title("Cost Analysis")
+    top_navbar()
+    st.info("⚠️ Cost logic not implemented yet.")
+
+def render_load_specs_page():
+    apply_custom_css()
+    show_logo_and_title("Load Specs")
+    top_navbar()
+    st.info("⚠️ Load specs logic not implemented yet.")
+
+# ───────────────────────────────
+# 🚀 ROUTING
+# ───────────────────────────────
+def main():
+    if "section" not in st.session_state:
+        st.session_state.section = "input"
+    if "user_inputs" not in st.session_state:
+        st.session_state.user_inputs = {}
+
+    if st.session_state.section == "input":
+        render_user_input_page()
+    elif st.session_state.section == "tech_specs":
+        render_tech_specs_page()
+    elif st.session_state.section == "compare":
+        render_compare_page()
+    elif st.session_state.section == "cost":
+        render_cost_analysis_page()
+    elif st.session_state.section == "load":
+        render_load_specs_page()
+
+main()
