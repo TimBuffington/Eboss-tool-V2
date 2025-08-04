@@ -2,6 +2,7 @@ import streamlit as st
 from datetime import date
 import pandas as pd
 from itertools import combinations_with_replacement
+
 def apply_custom_css():
     st.markdown("""
     <style>
@@ -107,10 +108,6 @@ inputs = st.session_state.user_inputs
 
 # ---- UTILITY: LOGO & TITLE ----
 def show_logo_and_title(title):
-    st.markdown(
-        '<div class="logo-header"><img src="https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png" alt="Company Logo"></div>',
-        unsafe_allow_html=True
-    )
     st.markdown(f'<h1 class="form-section-title">{title}</h1>', unsafe_allow_html=True)
 
 #=====================================================================================================
@@ -243,46 +240,6 @@ spec_data = {
 }
 #========================================================================
 
-def show_logo_and_title(title):
-    st.markdown("""
-        <style>
-        .logo-title-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 1rem;
-            padding-bottom: 1rem;
-        }
-
-        .logo-title-container img {
-            max-width: 100%;
-            height: auto;
-        }
-
-        .logo-title-container h1 {
-            font-size: 1.6rem;
-            font-weight: bold;
-            color: #81BD47;
-            text-align: center;
-            margin-top: 0.5rem;
-            margin-bottom: 1rem;
-        }
-
-        @media screen and (max-width: 768px) {
-            .logo-title-container h1 {
-                font-size: 1.2rem;
-            }
-        }
-        </style>
-    """, unsafe_allow_html=True)
-
-    st.markdown(f"""
-        <div class="logo-title-container">
-            <img src="https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png
-">
-            <h1>{title}</h1>
-        </div>
-    """, unsafe_allow_html=True)
 
 
 EBOSS_KVA = {
