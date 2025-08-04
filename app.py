@@ -4,14 +4,19 @@ import pandas as pd
 from itertools import combinations_with_replacement
 
 def apply_custom_css():
+    def apply_custom_css():
     st.markdown("""
     <style>
     .stApp {
         background: url("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/bg.png") no-repeat center center fixed;
         background-size: cover;
+        background-color: #000000;  /* fallback for no-image */
     }
     </style>
     """, unsafe_allow_html=True)
+
+    # Add any other styling here, like .card, .stSelectbox, etc
+
     
     st.markdown("""
         <style>
@@ -231,8 +236,6 @@ def show_logo_and_title(title):
             padding-top: 1rem;
             padding-bottom: 1rem;
         }
-            background: url("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/bg.png") no-repeat center center fixed;
-            background-size: cover;
 
         .logo-title-container img {
             max-width: 100%;
@@ -293,11 +296,7 @@ def landing_page():
         # Inject fixed CSS
         st.markdown("""
         <style>
-        .stApp {
-            background: url("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/bg.png") no-repeat center center fixed;
-            background-size: cover;
-        }
-        .button-container {
+           .button-container {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
@@ -385,11 +384,6 @@ def landing_page():
     if st.session_state.show_contact_form:
         render_contact_form(form_type=st.session_state.form_type)
 
-
-
-
-
-
 def enforce_session_validation():
     if "user_inputs" not in st.session_state or not st.session_state.user_inputs.get("model"):
         st.warning("⚠️ Please complete the system configuration first.")
@@ -399,11 +393,7 @@ def enforce_session_validation():
 def top_navbar():
     st.markdown("""
         <style>
-        .stApp {
-            background: url("https://raw.githubusercontent.com/anacorp/Eboss-tool-V2/main/assets/bg.png") no-repeat center center fixed;
-            background-size: cover;
-        }
-        .stButton > button {
+            .stButton > button {
             transition: box-shadow 0.3s ease, color 0.3s ease;
             width: 100%;
         }
