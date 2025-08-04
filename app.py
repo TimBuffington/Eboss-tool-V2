@@ -330,16 +330,17 @@ def landing_page():
             margin: 2rem auto;
         }
         .stButton>button {
-            min-width: 320px;
-            max-width: 320px;
-            height: 60px;
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #81BD47 !important;
-            background-color: #000000 !important;
-            border: 2px solid #D3D3D3 !important;
-            border-radius: 12px;
-            transition: all 0.2s ease-in-out;
+        min-width: 320px !important;
+        max-width: 320px !important;
+        height: 60px !important;
+        font-family: Arial, sans serif !important;
+        font-size: 2.0rem !important;
+        font-weight: bold !important;
+        color: #81BD47 !important;
+        background-color: #000000 !important;
+        border: 2px solid #D3D3D3 !important;
+        border-radius: 12px;
+        transition: all 0.2s ease-in-out;
         }
         .stButton>button:hover {
             box-shadow: 0 0 18px #81BD47;
@@ -370,12 +371,13 @@ def landing_page():
             st.markdown("""
 <a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank" style="text-decoration: none;">
     <div style="
-        min-width: 300px;
-        max-width: 320px;
-        height: 60px;
-        font-size: 1.1rem;
-        font-weight: bold;
-        color: #81BD47;
+        min-width: 320px !important;
+        max-width: 320px !important;
+        height: 60px !important;
+        font-family: Arial, sans serif !important;
+        font-size: 2.0rem !important;
+        font-weight: bold !important;
+        color: #81BD47 !important;
         background-color: #000000;
         border: 2px solid #D3D3D3;
         border-radius: 12px;
