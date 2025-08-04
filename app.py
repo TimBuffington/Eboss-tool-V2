@@ -32,8 +32,8 @@ def apply_custom_css():
     border: 2px solid #D3D3D3;
     border-radius: 12px;
     padding: 1rem;
-    min-height: 100px;      /* 👈 minimum height */
-    max-height: 120px;      /* 👈 max height (optional) */
+    min-height: 50px;      /* 👈 minimum height */
+    max-height: 80px;      /* 👈 max height (optional) */
     display: flex;
     flex-direction: column;
     justify-content: center;
