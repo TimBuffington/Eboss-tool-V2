@@ -873,34 +873,57 @@ def render_user_input_page():
 def render_tech_specs_page():
     apply_custom_css()
     show_logo_and_title("Tech Specs")
+    top_navbar()
 
-    model = st.session_state.get("model_select", "EBOSS 25 kVA")
-    specs = spec_data.get(model)
-
-    if not specs:
-        st.warning(f"No data available for {model}")
+    model = st.session_state.user_inputs.get("model", "EBOSS 25 kVA")
+    if model not in spec_data:
+        st.warning("⚠️ No model selected or data missing.")
         return
 
-    for section, items in specs.items():
-        st.markdown(f'''
-        <div class="card" style="background-color: #636569; color: white; font-weight: 700;
-            font-size: 1.2rem; padding: 0.8rem 1.5rem; border-radius: 12px;
-            margin: 2rem 0 1rem 0; text-align: center; text-transform: uppercase;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);">
-            {section}
+    # Show selected model
+    st.markdown(f'''
+        <div class="card" style="margin-top: -1rem; margin-bottom: 2rem;">
+            <div class="card-label" style="font-size: 1.1rem;">
+                Showing specs for: <strong style="color:#81BD47;">{model}</strong>
+            </div>
         </div>
+    ''', unsafe_allow_html=True)
+
+    # Optional dropdown to switch models
+    with st.container():
+        st.markdown('<div class="card"><div class="card-label">🔁 Change EBOSS Model</div>', unsafe_allow_html=True)
+        st.session_state.user_inputs["model"] = st.selectbox(
+            "Model", list(spec_data.keys()), index=list(spec_data.keys()).index(model)
+        )
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # Render all sections
+    for section, labels in SPEC_LAYOUT.items():
+        values = spec_data[model].get(section, ["—"] * len(labels))
+
+        # Section title card
+        st.markdown(f'''
+            <div class="card" style="background-color: #636569; color: white; font-weight: 700;
+                font-size: 1.2rem; padding: 0.8rem 1.5rem; border-radius: 12px;
+                margin: 2rem 0 1rem 0; text-align: center; text-transform: uppercase;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.3);">
+                {section}
+            </div>
         ''', unsafe_allow_html=True)
 
-        for i in range(0, len(items), 2):
-            col1, col2 = st.columns(2)
+        # Spec rows: label + value in two-column card layout
+        for label, value in zip(labels, values):
+            col1, col2 = st.columns([1, 2])
+            with col1:
+                st.markdown(f'<div class="card"><div class="card-label">{label}</div></div>', unsafe_allow_html=True)
+            with col2:
+                st.markdown(f'<div class="card"><div class="card-value">{value}</div></div>', unsafe_allow_html=True)
 
-            for idx, col in enumerate([col1, col2]):
-                if i + idx < len(items):
-                    label, value = items[i + idx]
-                    with col:
-                        render_card(label, value)
+    # Go Back button at bottom
+    if st.button("🔧 Go Back to User Input"):
+        st.session_state.section = "input"
+        st.rerun()
 
-    top_navbar()
 
 # ---- LOAD SPECS PAGE ----
 def render_load_specs_page():
