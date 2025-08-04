@@ -575,8 +575,8 @@ def render_user_input_form():
         border: 2px solid #D3D3D3;
         border-radius: 12px;
         padding: 1rem;
-        min-height: 110px important;
-        min-height: 100px important;
+        min-height: 75px !important;
+        max-height: 100px !important;
         justify-content: center;
         align-items: center;
         z-index: 9999;
@@ -587,8 +587,8 @@ def render_user_input_form():
         font-weight: bold;
         color: #81BD47;
         text-align: center;
-        min-height: 110px !important;
-        min-height: 100px !important;
+        min-height: 75px !important;
+        max-height: 100px !important;
         justify-content: center;
         align-items: center;
         z-index: 9999;
@@ -601,8 +601,8 @@ def render_user_input_form():
         border: 1px solid #D3D3D3 !important;
         border-radius: 8px !important;
         padding: 0.25rem 0.75rem !important;
-        min-height: 110px !important;
-        min-height: 100px !important;
+        min-height: 75px !important;
+        max-height: 100px !important;
         justify-content: center;
         align-items: center;
         z-index: 9999;
@@ -615,8 +615,8 @@ def render_user_input_form():
         border: 1px solid #D3D3D3 !important;
         border-radius: 8px !important;
         padding: 0.4rem !important;
-        min-height: 110px !important;
-        min-height: 100px !important;
+        min-height: 75px !important;
+        max-height: 100px !important;
         justify-content: center;
         align-items: center;
         z-index: 9999;
