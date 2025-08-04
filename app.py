@@ -26,13 +26,6 @@ def apply_custom_css():
     border: 2px solid #D3D3D3 !important;
     border-radius: 10px !important;
     text-shadow: none !important;
-    min-height: 50px !important;   
-    max-height: 80px !important;     
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
-    align-items: center !important;
-    z-index: 9999 !important;
 }
 .card {
     background color: #0000
