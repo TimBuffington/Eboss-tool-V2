@@ -32,22 +32,20 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-   
-    st.markdown("""
-        <style>
-            
-    /* Global input styling */
-    .stSelectbox > div > div,
-    .stTextInput > div > div,
-    .stNumberInput > div > div {
-    background-color: #000000 !important;
-    color: #81BD47 !important;
-    font-weight: bold !important;
-    border: 2px solid #D3D3D3 !important;
-    border-radius: 10px !important;
-    text-shadow: none !important;
+st.markdown("""
+<style>
+/* Global input styling */
+stSelectbox > div > div,
+.stTextInput > div > div,
+.stNumberInput > div > div {
+background-color: #000000 !important;
+color: #81BD47 !important;
+font-weight: bold !important;
+border: 2px solid #D3D3D3 !important;
+border-radius: 10px !important;
+text-shadow: none !important;
 }
-    .card {
+.card {
     background color: #0000
     border: 2px solid #D3D3D3;
     border-radius: 12px;
