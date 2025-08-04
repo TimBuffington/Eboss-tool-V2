@@ -550,8 +550,8 @@ def render_user_input_form():
         border: 2px solid #D3D3D3;
         border-radius: 12px;
         padding: 1rem;
-        min-height: 50px important;
-        min-height: 50px important;
+        min-height: 110px important;
+        min-height: 100px important;
     }
 
     .card-label {
