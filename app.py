@@ -63,9 +63,9 @@ def apply_custom_css():
 }
 
 /* Hover and focus effect */
-.stSelectbox > div > div:hover,
-.stTextInput > div > div:hover,
-.stNumberInput > div > div:hover {
+.stSelectbox :hover,
+.stTextInput :hover,
+.stNumberInput > div :hover {
     border-color: #A9E37A !important;
     box-shadow: 0 0 8px #A9E37A;
 }
