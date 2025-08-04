@@ -32,13 +32,13 @@ def apply_custom_css():
     border: 2px solid #D3D3D3;
     border-radius: 12px;
     padding: 1rem;
-    min-height: 50px;      /* 👈 minimum height */
-    max-height: 80px;      /* 👈 max height (optional) */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
+    min-height: 50px !important;    /* 👈 minimum height */
+    max-height: 80px !important;      /* 👈 max height (optional) */
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    z-index: 9999 !important;
 }
     
 /* Dropdown menu items */
