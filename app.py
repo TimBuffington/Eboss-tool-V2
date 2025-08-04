@@ -3,20 +3,36 @@ from datetime import date
 import pandas as pd
 from itertools import combinations_with_replacement
 
-def apply_custom_css():
-    st.markdown("""
+st.markdown("""
     <style>
+    .logo-absolute {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999;
+        padding: 0;
+        margin: 0;
+    }
+    .logo-absolute img {
+        height: 80px;  /* Adjust if needed */
+        margin-top: 0;
+    }
+
+    /* Push down rest of content */
     .stApp {
-    background: url("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/bg.png") no-repeat center center fixed;
-    background-size: cover;
-    background-color: #000000;  /* fallback for no-image */
-}
+        padding-top: 90px !important;
+    }
     </style>
-    """, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
-    # Add any other styling here, like .card, .stSelectbox, etc
+st.markdown("""
+    <div class="logo-absolute">
+        <img src="https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png">
+    </div>
+""", unsafe_allow_html=True)
 
-    
+   
     st.markdown("""
         <style>
             
