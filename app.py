@@ -43,7 +43,7 @@ def apply_custom_css():
     .stTextInput {
     background color: #0000
     border: 2px solid #D3D3D3;
-    border-radius: 12px;
+    border-radius: 6px;
     padding: .25rem;
     min-height: 25px !important;   
     max-height: 35px !important;     
