@@ -27,7 +27,20 @@ def apply_custom_css():
     border-radius: 10px !important;
     text-shadow: none !important;
 }
-
+.card(
+    background color: #0000
+    border: 2px solid #D3D3D3;
+    border-radius: 12px;
+    padding: 1rem;
+    min-height: 100px;      /* 👈 minimum height */
+    max-height: 120px;      /* 👈 max height (optional) */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+    
 /* Dropdown menu items */
 [data-baseweb="menu"] {
     background-color: #000000 !important;
