@@ -623,7 +623,6 @@ def render_user_input_form():
         border-radius: 8px !important;
         padding: 0.25rem !important;
         min-height: 35px !important;
-        
         justify-content: center;
         align-items: center;
         z-index: 9999;
