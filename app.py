@@ -91,7 +91,6 @@ text-shadow: none !important;
 </style>
 """, unsafe_allow_html=True)
 
-apply_custom_css()
 # FIX: Initialize session state key
 if "user_inputs" not in st.session_state:
     st.session_state.user_inputs = {}
