@@ -872,35 +872,83 @@ def render_user_input_page():
     
 def render_tech_specs_page():
     apply_custom_css()
-    show_logo_and_title("Tech Specs")
+    show_logo_and_title("EBOSS® Tech Specs")
 
-    model = st.session_state.get("model_select", "EBOSS 25 kVA")
+    model = st.session_state.user_inputs.get("model", "EBOSS 25 kVA")
     specs = spec_data.get(model)
 
     if not specs:
         st.warning(f"No data available for {model}")
         return
 
-    for section, items in specs.items():
+    top_navbar()
+
+    layout = {
+        "Maximum Intermittent Power Output": [
+            "Three-phase", "Single-phase", "Frequency", "Simultaneous voltage", "Voltage regulation",
+            "Max. Intermittent amp-load 208v", "Max. Intermittent amp-load 480v",
+            "Motor start rating - 3 second 208v", "Motor start rating - 3 second 480v"
+        ],
+        "Maximum Continuous Power Output": [
+            "Generator Size", "Generator charge rate", "Three-phase output", "Single-phase output",
+            "Simultaneous voltage", "Max. Continuous amp-load @208v", "Max. Continuous amp-load @480v"
+        ],
+        "Technology": [
+            "Battery chemistry", "Battery capacity", "Total battery life or energy throughout",
+            "Charge time (no load)", "Inverter output max", "Parallel capability"
+        ],
+        "Battery Life*": [
+            "Battery type", "Est. Cycle life @ 77°f enclosure temp",
+            "Est. Cycle life @ 100°f enclosure temp",
+            "Battery life (100°f @ 3 kw average load)"
+        ],
+        "Operating temperatures": [
+            "Inverter cold start temperature (minimum)", "Running operating temperature",
+            "Arctic package operating temp. (optional)"
+        ],
+        "Weights & Dimensions": [
+            "L x w x h x (Eboss only)", "Eboss weight only",
+            "L x w x h (trailer and generator)", "Total weight (without/with fuel)",
+            "Integral fuel tank capacity"
+        ]
+    }
+
+    for section, keys in layout.items():
         st.markdown(f'''
-        <div class="card" style="background-color: #636569; color: white; font-weight: 700;
-            font-size: 1.2rem; padding: 0.8rem 1.5rem; border-radius: 12px;
-            margin: 2rem 0 1rem 0; text-align: center; text-transform: uppercase;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);">
-            {section}
-        </div>
+            <div class="card" style="background-color: #636569; color: white; font-weight: 700;
+                font-size: 1.2rem; padding: 0.8rem 1.5rem; border-radius: 12px;
+                margin: 2rem 0 1rem 0; text-align: center; text-transform: uppercase;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.3);">
+                {section}
+            </div>
         ''', unsafe_allow_html=True)
 
-        for i in range(0, len(items), 2):
-            col1, col2 = st.columns(2)
+        for label in keys:
+            # Horizontal row: Left = label, Right = value
+            col1, col2 = st.columns([1, 2])
+            with col1:
+                st.markdown(f'''
+                    <div class="card">
+                        <div class="card-label">{label}</div>
+                    </div>
+                ''', unsafe_allow_html=True)
+            with col2:
+                # Search all sections for matching label
+                value = None
+                for spec_group in specs.values():
+                    if isinstance(spec_group, list):
+                        for item in spec_group:
+                            if item[0].strip().lower() == label.strip().lower():
+                                value = item[1]
+                                break
+                    if value:
+                        break
+                st.markdown(f'''
+                    <div class="card">
+                        <div class="card-value" style="color: #81BD47; font-weight: bold;">{value if value else "—"}</div>
+                    </div>
+                ''', unsafe_allow_html=True)
 
-            for idx, col in enumerate([col1, col2]):
-                if i + idx < len(items):
-                    label, value = items[i + idx]
-                    with col:
-                        render_card(label, value)
-
-    top_navbar()
 
 # ---- LOAD SPECS PAGE ----
 def render_load_specs_page():
