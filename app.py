@@ -87,6 +87,11 @@ text-shadow: none !important;
     border-color: #A9E37A !important;
     box-shadow: 0 0 8px #A9E37A;
 }
+@media screen and (max-width: 768px) {
+    .logo-absolute img {
+        height: 60px;
+    }
+}
 
 </style>
 """, unsafe_allow_html=True)
