@@ -36,8 +36,8 @@ def apply_custom_css():
     border: 2px solid #D3D3D3;
     border-radius: 12px;
     padding: .25rem;
-    min-height: 25px !important;   
-    max-height: 35px !important;     
+    min-height: 40px !important;   
+     
     display: flex !important;
     flex-direction: column !important;
     justify-content: center !important;
