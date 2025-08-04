@@ -6,6 +6,13 @@ from itertools import combinations_with_replacement
 def apply_custom_css():
     st.markdown("""
     <style>
+    /* Force background across entire app */
+    .stApp {
+        background: url("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/bg.png") no-repeat center center fixed !important;
+        background-size: cover !important;
+        background-color: #000000 !important;
+        padding-top: 90px !important;
+    }
     .logo-absolute {
     position: absolute;
     top: 0;
