@@ -569,7 +569,7 @@ def render_user_input_form():
         st.session_state.user_inputs = {}
     st.markdown("""
     <style>
-    .stNumberInput {
+    .stNumberInput > div {
         background-color: #000000;
         border: 2px solid #D3D3D3;
         border-radius: 12px;
