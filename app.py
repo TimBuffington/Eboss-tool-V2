@@ -2,17 +2,17 @@ import streamlit as st
 from datetime import date
 import pandas as pd
 from itertools import combinations_with_replacement
-
-st.markdown("""
+def apply_custom_css():
+    st.markdown("""
     <style>
     .logo-absolute {
-        position: absolute;
-        top: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 9999;
-        padding: 0;
-        margin: 0;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    padding: 0;
+    margin: 0;
     }
     .logo-absolute img {
         height: 80px;  /* Adjust if needed */
@@ -885,7 +885,7 @@ def calculate_runtime_specs(model, gen_type, cont_kw, kva):
 
 # ---- TECH SPECS PAGE ----
 def render_user_input_page():
-    apply_custom_css()  # ✅ ADD THIS
+    
     render_user_input_form()
     
 def render_tech_specs_page():
