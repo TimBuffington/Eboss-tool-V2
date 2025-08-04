@@ -96,6 +96,32 @@ def show_logo_and_title(title):
     st.markdown(f'<h1 class="form-section-title">{title}</h1>', unsafe_allow_html=True)
 
 #=====================================================================================================
+SPEC_LAYOUT = {
+    "Maximum Intermittent Power Output": [
+        "Three-phase", "Single-phase", "Frequency", "Simultaneous voltage",
+        "Voltage regulation", "Amp-load @ 208V", "Amp-load @ 480V",
+        "Motor start (3 sec @ 208V)", "Motor start (3 sec @ 480V)"
+    ],
+    "Maximum Continuous Power Output": [
+        "Generator size", "Three-phase output", "Single-phase output",
+        "Simultaneous voltage", "Amp-load @ 208V", "Amp-load @ 480V"
+    ],
+    "Technology": [
+        "Battery chemistry", "Battery capacity", "Energy throughput",
+        "Charge time (no load)", "Inverter output max", "Parallel capability"
+    ],
+    "Battery Life": [
+        "Battery type", "Cycle life @ 77°F", "Cycle life @ 100°F", "Life @ 3kW load (100°F)"
+    ],
+    "Operating Temperatures": [
+        "Inverter cold start (min)", "Running temp range", "Arctic package (optional)"
+    ],
+    "Weights & Dimensions": [
+        "EBOSS only (L×W×H)", "EBOSS weight only", "With trailer & generator",
+        "Total weight (no fuel / full)", "Fuel tank capacity"
+    ]
+}
+
 spec_data = {
     "EBOSS 25 kVA": {
         "Maximum Intermittent Load": [
