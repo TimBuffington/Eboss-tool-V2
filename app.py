@@ -369,26 +369,26 @@ def landing_page():
         col3, col4 = st.columns(2)
         with col3:
             st.markdown("""
-<a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank" style="text-decoration: none;">
-    <div style="
-        min-width: 320px !important;
-        max-width: 320px !important;
-        height: 60px !important;
-        font-family: Arial, sans serif !important;
-        font-size: 2.0rem !important;
-        font-weight: bold !important;
-        color: #81BD47 !important;
-        background-color: #000000;
-        border: 2px solid #D3D3D3;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: box-shadow 0.2s ease-in-out;
-        margin-bottom: 1rem;
-    "
-    onmouseover="this.style.boxShadow='0 0 18px #81BD47'"
-    onmouseout="this.style.boxShadow='none'"
+            <a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank" style="text-decoration: none;">
+            <div style="
+            min-width: 320px !important;
+            max-width: 320px !important;
+            height: 60px !important;
+            font-family: Arial, sans serif !important;
+            font-size: 2.0rem !important;
+            font-weight: bold !important;
+            color: #81BD47 !important;
+            background-color: #000000;
+            border: 2px solid #D3D3D3;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: box-shadow 0.2s ease-in-out;
+            margin-bottom: 1rem;
+            "
+            onmouseover="this.style.boxShadow='0 0 18px #81BD47'"
+            onmouseout="this.style.boxShadow='none'"
     >
         Learn How EBOSS® Works
     </div>
