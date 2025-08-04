@@ -575,7 +575,7 @@ def render_user_input_form():
         border: 2px solid #D3D3D3;
         border-radius: 12px;
         padding: .25rem;
-        min-height: 30px !important;
+        min-height: 40px !important;
         
         justify-content: center;
         align-items: center;
@@ -587,9 +587,7 @@ def render_user_input_form():
         font-weight: bold;
         color: #81BD47;
         text-align: center;
-        padding: 0.25rem 0.25rem !important;
-        min-height: 10px !important;
-        max-height: 35px !important;
+        min-height: 40px !important;
         justify-content: center;
         align-items: center;
         z-index: 9999;
