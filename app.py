@@ -407,9 +407,6 @@ def top_navbar():
             margin-bottom: 1rem;
         }
         </style>
-
-    st.markdown('<div class="logo-centered"><img src="https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png
-></div>
 """, unsafe_allow_html=True)
 
     # Ensure user_inputs are initialized to avoid KeyErrors
@@ -445,14 +442,7 @@ def top_navbar():
                 window.open("https://anacorp.com/contact/", "_blank");
                 </script>
             """, unsafe_allow_html=True)
-
-
-
-
-
-
-
-# ──────────────────────────────
+───────────────────────
 # 📝 Contact Form Logic
 # ──────────────────────────────
 def render_contact_form(form_type="demo"):
