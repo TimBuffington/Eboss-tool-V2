@@ -552,6 +552,9 @@ def render_user_input_form():
         padding: 1rem;
         min-height: 110px important;
         min-height: 100px important;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
     }
 
     .card-label {
@@ -562,6 +565,9 @@ def render_user_input_form():
         margin-bottom: 0.75rem;
         min-height: 110px important;
         min-height: 100px important;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
     }
 
     .stSelectbox > div > div {
@@ -573,6 +579,9 @@ def render_user_input_form():
         padding: 0.25rem 0.75rem !important;
         min-height: 110px important;
         min-height: 100px important;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
     }
 
     input[type=number] {
@@ -584,6 +593,9 @@ def render_user_input_form():
         padding: 0.4rem !important;
         min-height: 110px important;
         min-height: 100px important;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
     }
     </style>
     """, unsafe_allow_html=True)
