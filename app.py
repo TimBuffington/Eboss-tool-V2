@@ -31,9 +31,9 @@ def apply_custom_css():
     background color: #0000
     border: 2px solid #D3D3D3;
     border-radius: 12px;
-    padding: 1rem;
-    min-height: 50px !important;   
-    max-height: 80px !important;     
+    padding: .25rem;
+    min-height: 25px !important;   
+    max-height: 35px !important;     
     display: flex !important;
     flex-direction: column !important;
     justify-content: center !important;
@@ -44,9 +44,9 @@ def apply_custom_css():
     background color: #0000
     border: 2px solid #D3D3D3;
     border-radius: 12px;
-    padding: 1rem;
-    min-height: 50px !important;   
-    max-height: 80px !important;     
+    padding: .25rem;
+    min-height: 25px !important;   
+    max-height: 35px !important;     
     display: flex !important;
     flex-direction: column !important;
     justify-content: center !important;
