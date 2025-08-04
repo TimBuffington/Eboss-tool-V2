@@ -27,7 +27,7 @@ def apply_custom_css():
     border-radius: 10px !important;
     text-shadow: none !important;
 }
-.card(
+.card {
     background color: #0000
     border: 2px solid #D3D3D3;
     border-radius: 12px;
