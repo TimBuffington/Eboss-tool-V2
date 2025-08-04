@@ -571,14 +571,14 @@ def render_user_input_form():
     <style>
     .stNumberInput > div {
         background-color: #000000;
-        border: 2px solid #D3D3D3;
+        border: 1px solid #D3D3D3;
         border-radius: 12px;
         padding: .25rem;
         min-height: 40px !important;
         justify-content: center;
         align-items: center;
         z-index: 9999;
-        }
+    }
     .card {
         background-color: #000000;
         border: 2px solid #D3D3D3;
@@ -622,8 +622,8 @@ def render_user_input_form():
         border: 1px solid #D3D3D3 !important;
         border-radius: 8px !important;
         padding: 0.25rem !important;
-        min-height: 25px !important;
-        max-height: 50px !important;
+        min-height: 35px !important;
+        
         justify-content: center;
         align-items: center;
         z-index: 9999;
