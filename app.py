@@ -588,7 +588,7 @@ def render_user_input_form():
         color: #81BD47;
         text-align: center;
         min-height: 40px !important;
-        padding: .5rem 0rem 0rem 0rem;
+        padding: .4rem 0rem 0rem 0rem;
         justify-content: center;
         align-items: center;
         z-index: 9999;
