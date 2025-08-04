@@ -569,19 +569,26 @@ def render_user_input_form():
         st.session_state.user_inputs = {}
     st.markdown("""
     <style>
-    
+    .stNumberInput {
+        background-color: #000000;
+        border: 2px solid #D3D3D3;
+        border-radius: 12px;
+        padding: .25rem;
+        min-height: 40px !important;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        }
     .card {
         background-color: #000000;
         border: 2px solid #D3D3D3;
         border-radius: 12px;
         padding: .25rem;
         min-height: 40px !important;
-        
         justify-content: center;
         align-items: center;
         z-index: 9999;
     }
-
     .card-label {
         font-size: 1.1rem;
         font-weight: bold;
