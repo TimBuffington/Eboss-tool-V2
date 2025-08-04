@@ -371,9 +371,10 @@ def landing_page():
             st.markdown("""
     <a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank" style="text-decoration: none; color: inherit;">
         <div style="
-            min-width: 320px !important;
-            max-width: 320px !important;
-            height: 60px !important;
+            width: 100% !important;
+            padding: 0.5rem 1rem;
+            line-height: 1.6;
+            display: flex;
             font-family: Arial, sans-serif !important;
             font-size: 2.0rem !important;
             font-weight: bold !important;
