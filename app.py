@@ -44,26 +44,6 @@ def apply_custom_css():
     border-color: #A9E37A !important;
     box-shadow: 0 0 8px #A9E37A;
 }
-#=================================================> User input pop up
-.modal-container {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw;
-    height: 100vh;
-    
-   
-}
-
-.modal-content {
-    background-color: #1a1a1a;
-    border: 2px solid #81BD47;
-    border-radius: 15px;
-    padding: 2rem;
-    max-width: 500px;
-    width: 90%;
-    box-shadow: 0 0 15px #81BD47;
-}
-
 
 </style>
 """, unsafe_allow_html=True)
