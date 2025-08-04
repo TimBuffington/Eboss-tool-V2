@@ -5,9 +5,9 @@ from itertools import combinations_with_replacement
 
 def apply_custom_css():
     def apply_custom_css():
-    st.markdown("""
-    <style>
-    .stApp {
+        st.markdown("""
+        <style>
+        .stApp {
         background: url("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/bg.png") no-repeat center center fixed;
         background-size: cover;
         background-color: #000000;  /* fallback for no-image */
