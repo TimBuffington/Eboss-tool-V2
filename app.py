@@ -366,15 +366,15 @@ def landing_page():
                 st.session_state.landing_shown = False
                 st.rerun()
 
-        col3, col4 = st.columns(2)
-        with col3:
-            st.markdown("""
-            <a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank" style="text-decoration: none;">
-            <div style="
+       col3, col4 = st.columns(2)
+with col3:
+    st.markdown("""
+    <a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank" style="text-decoration: none; color: inherit;">
+        <div style="
             min-width: 320px !important;
             max-width: 320px !important;
             height: 60px !important;
-            font-family: Arial, sans serif !important;
+            font-family: Arial, sans-serif !important;
             font-size: 2.0rem !important;
             font-weight: bold !important;
             color: #81BD47 !important;
@@ -388,12 +388,12 @@ def landing_page():
             margin-bottom: 1rem;
             "
             onmouseover="this.style.boxShadow='0 0 18px #81BD47'"
-            onmouseout="this.style.boxShadow='none'"
-    >
-        Learn How EBOSS® Works
-    </div>
-</a>
-""", unsafe_allow_html=True)
+            onmouseout="this.style.boxShadow='none'">
+            Learn How EBOSS® Works
+        </div>
+    </a>
+    """, unsafe_allow_html=True)
+
 
 
         with col4:
