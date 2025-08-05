@@ -1,8 +1,6 @@
 
 import streamlit as st
 
-spec_data = 
-
 EBOSS_KVA = {
     "EBOSS 25 kVA": 25,
     "EBOSS 70 kVA": 70,
