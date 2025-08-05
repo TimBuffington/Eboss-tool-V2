@@ -450,6 +450,7 @@ def top_navbar():
     # Inside your rendering loop or wherever this is happening:
 col1, col2 = st.columns([1, 2])
 with col1:
+   for label in SPEC_LABELS:
     st.markdown(f"**{label}**")
 with col2:
     st.markdown(model_data.get(label, "N/A"))
