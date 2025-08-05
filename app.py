@@ -9,8 +9,7 @@ response = requests.get(url)
 # DEBUG — Check what code you're trying to exec
 print(response.text)  # This helps find syntax errors in the downloaded code
 
-# Now execute
-exec(response.text)
+
 EBOSS_KVA = {
     "EBOSS 25 kVA": 25,
     "EBOSS 70 kVA": 70,
