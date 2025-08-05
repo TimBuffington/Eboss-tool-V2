@@ -945,7 +945,7 @@ def render_tech_specs_page():
     ''', unsafe_allow_html=True)
 
     # ✅ This block guarantees label is defined before it's used
-   for label in SPEC_LABELS:
+    for label in SPEC_LABELS:
     value = model_data.get(label, "N/A")
     col1, col2 = st.columns([1, 2])
     with col1:
