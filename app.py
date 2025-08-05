@@ -1,6 +1,14 @@
 
 import streamlit as st
 
+
+import requests
+
+url = "https://github.com/TimBuffington/Eboss-tool-V2/blob/8fd20f024b5af5aa88eca94de8871223d9b208b5/spec_data.py"
+
+response = requests.get(url)
+exec(response.text)
+
 EBOSS_KVA = {
     "EBOSS 25 kVA": 25,
     "EBOSS 70 kVA": 70,
@@ -87,7 +95,7 @@ def render_user_input_page():
 def render_tech_specs_page():
     show_logo_and_title("EBOSS® Technical Specs")
     top_navbar()
-
+    st.selectbox("Select Model", list(spec_data.keys()), key="model")
     model = st.session_state.get("model", "EBOSS 25 kVA")
     model_data = spec_data[model]
 
