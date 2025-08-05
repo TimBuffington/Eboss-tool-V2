@@ -1,5 +1,10 @@
 import streamlit as st
-from spec_data import spec_data
+mport requests
+
+url = "https://raw.githubusercontent.comTimBuffington/EBOSS®-tool-V2/main/assets/spec_data.py"
+
+response = requests.get(url)
+exec(response.text)  # This will define spec_data if it's inside that file
 
 def apply_custom_css():
     st.markdown("""
