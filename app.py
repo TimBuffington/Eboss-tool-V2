@@ -2,8 +2,6 @@ import streamlit as st
 from datetime import date
 import pandas as pd
 from itertools import combinations_with_replacement
-from spec_labels import SPEC_LABELS
-from spec_values_full import EBOSS_SPECS
 
 def apply_custom_css():
     st.markdown("""
@@ -447,24 +445,25 @@ def top_navbar():
     cont_kw = user_inputs.get("cont_kw")
     peak_kw = user_inputs.get("peak_kw")
 
-    # Inside your rendering loop or wherever this is happening:
-col1, col2 = st.columns([1, 2])
-with col1:
-   for label in SPEC_LABELS:
-    st.markdown(f"**{label}**")
-with col2:
-    st.markdown(model_data.get(label, "N/A"))
+    col1, col2, col3, col4, col5 = st.columns(5)
 
+    with col1:
+        if st.button("View Specs"):
+            st.session_state.section = "tech_specs"
 
-with col3:
+    with col2:
+        if st.button("Load-Based Specs"):
+            st.session_state.section = "load_"
+
+    with col3:
         if st.button("Compare"):
             st.session_state.section = "compare"
 
-with col4:
+    with col4:
         if st.button("Cost Analysis"):
             st.session_state.section = "cost"
 
-with col5:
+    with col5:
         if st.button("Contact Us"):
             st.markdown("""
                 <script>
@@ -900,58 +899,103 @@ def render_user_input_page():
     apply_custom_css()  # ✅ ADD THIS
     render_user_input_form()
     
-
-
-
-# ---- LOAD SPECS PAGE ----
 def render_tech_specs_page():
     apply_custom_css()
-    show_logo_and_title("EBOSS Technical Specifications")
+    show_logo_and_title("Tech Specs")
     top_navbar()
 
-    # Get model from session state
-    user_inputs = st.session_state.get("user_inputs", {})
-    current_model = user_inputs.get("model", "EBOSS 25 kVA")
+    model = st.session_state.user_inputs.get("model", "EBOSS 25 kVA")
+    if model not in spec_data:
+        st.warning("⚠️ No model selected or data missing.")
+        return
 
-    # Selectbox container
-    st.markdown('<div class="form-container" style="margin-top: 2rem;">', unsafe_allow_html=True)
-    st.markdown('<div class="card-label">🔁 Change EBOSS Model</div>', unsafe_allow_html=True)
-
-    selected_model = st.selectbox(
-        "Select EBOSS® Model",
-        list(EBOSS_SPECS.keys()),
-        index=list(EBOSS_SPECS.keys()).index(current_model),
-        key="tech_specs_model_select"
-    )
-
-    if selected_model != current_model:
-        st.session_state.user_inputs["model"] = selected_model
-        st.rerun()
-
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    # Spec display
-    model_data = EBOSS_SPECS.get(selected_model, {})
-
+    # Show selected model
     st.markdown(f'''
-        <div class="card" style="margin-bottom: 2rem;">
+        <div class="card" style="margin-top: -1rem; margin-bottom: 2rem;">
             <div class="card-label" style="font-size: 1.1rem;">
-                Showing specs for: <strong style="color:#81BD47;">{selected_model}</strong>
+                Showing specs for: <strong style="color:#81BD47;">{model}</strong>
             </div>
         </div>
     ''', unsafe_allow_html=True)
 
-    for label in SPEC_LABELS:
-        value = model_data.get(label, "N/A")
-        col1, col2 = st.columns([1, 2])
-        with col1:
-            st.markdown(f'<div class="card"><div class="card-label">{label}</div></div>', unsafe_allow_html=True)
-        with col2:
-            st.markdown(f'<div class="card"><div class="card-value">{value}</div></div>', unsafe_allow_html=True)
+    # Optional dropdown to switch models
+    with st.container():
+        st.markdown('<div class="card"><div class="card-label">🔁 Change EBOSS Model</div>', unsafe_allow_html=True)
+        st.session_state.user_inputs["model"] = st.selectbox(
+            "Model", list(spec_data.keys()), index=list(spec_data.keys()).index(model)
+        )
+        st.markdown('</div>', unsafe_allow_html=True)
 
+    # Render all sections
+    for section, labels in SPEC_LAYOUT.items():
+        values = spec_data[model].get(section, ["—"] * len(labels))
+
+        # Section title card
+        st.markdown(f'''
+            <div class="card" style="background-color: #636569; color: white; font-weight: 700;
+                font-size: 1.2rem; padding: 0.8rem 1.5rem; border-radius: 12px;
+                margin: 2rem 0 1rem 0; text-align: center; text-transform: uppercase;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.3);">
+                {section}
+            </div>
+        ''', unsafe_allow_html=True)
+
+        # Spec rows: label + value in two-column card layout
+        for label, value in zip(labels, values):
+            col1, col2 = st.columns([1, 2])
+            with col1:
+                st.markdown(f'<div class="card"><div class="card-label">{label}</div></div>', unsafe_allow_html=True)
+            with col2:
+                st.markdown(f'<div class="card"><div class="card-value">{value}</div></div>', unsafe_allow_html=True)
+
+    # Go Back button at bottom
     if st.button("🔧 Go Back to User Input"):
         st.session_state.section = "input"
         st.rerun()
+
+
+# ---- LOAD SPECS PAGE ----
+def render_load_specs_page():
+    apply_custom_css()
+    show_logo_and_title("Load Specs")
+
+    # 👉 Render form UI
+    render_user_input_modal()
+
+    # 👉 Validate inputs globally
+    enforce_session_validation()
+    inputs = st.session_state.user_inputs
+    kva = EBOSS_KVA[inputs["model"]]
+    spec = Eboss_Specs[kva]
+
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.markdown("### 🔒 Load Threshold Check")
+
+    charge_rate = inputs["charge_rate"]
+    battery_kwh = spec["battery_kwh"]
+    cont_kw = inputs["cont_kw"]
+    peak_kw = inputs["peak_kw"]
+    max_safe_limit = spec["max_charge"] * 0.9
+    efficiency_target = battery_kwh * (2 / 3)
+
+    # ⚙️ Threshold visual feedback
+    if cont_kw > spec["max_charge"]:
+        st.error(f"❌ Load ({cont_kw:.1f} kW) exceeds max charge rate ({spec['max_charge']} kW).")
+    elif cont_kw > max_safe_limit:
+        st.warning(f"⚠️ Load is above 90% of the charge rate ({max_safe_limit:.1f} kW).")
+    elif cont_kw > efficiency_target:
+        st.info(f"ℹ️ Load is within safe range but above the fuel-efficiency threshold (~{efficiency_target:.1f} kW).")
+    else:
+        st.success(f"✅ Load is optimal for fuel efficiency (≤ {efficiency_target:.1f} kW).")
+
+    # 🔺 Peak load check
+    if peak_kw > spec["max_peak"]:
+        st.error(f"❌ Peak load ({peak_kw:.1f} kW) exceeds EBOSS peak limit ({spec['max_peak']} kW).")
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    top_navbar()
+
 
 def render_compare_page():
     apply_custom_css()
