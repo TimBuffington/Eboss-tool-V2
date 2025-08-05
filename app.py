@@ -948,7 +948,7 @@ def render_tech_specs_page():
         </div>
     ''', unsafe_allow_html=True)
 
-    # Render each spec in a 2-column layout
+    # ✅ This block guarantees label is defined before it's used
     for label in SPEC_LABELS:
         value = model_data.get(label, "N/A")
         col1, col2 = st.columns([1, 2])
@@ -958,10 +958,9 @@ def render_tech_specs_page():
             st.markdown(f'<div class="card"><div class="card-value">{value}</div></div>', unsafe_allow_html=True)
 
     # Go back
-    if st.button(" Go Back to User Input"):
+    if st.button("🔧 Go Back to User Input"):
         st.session_state.section = "input"
         st.rerun()
-
 
 
 
