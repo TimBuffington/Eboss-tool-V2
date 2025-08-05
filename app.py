@@ -446,18 +446,13 @@ def top_navbar():
     cont_kw = user_inputs.get("cont_kw")
     peak_kw = user_inputs.get("peak_kw")
 
-    col1, col2, col3, col4, col5 = st.columns(5)
-
-    with col1:
-        if st.button("View Specs"):
-          st.session_state.section = "tech_specs"
-    if "user_inputs" in st.session_state:
-            st.session_state.model = st.session_state.user_inputs.get("model")
-    st.rerun()
-st.session_state.section = "tech_specs"
+    # Inside your rendering loop or wherever this is happening:
+col1, col2 = st.columns([1, 2])
+with col1:
+    st.markdown(f"**{label}**")
 with col2:
-        if st.button("Load-Based Specs"):
-            st.session_state.section = "load_"
+    st.markdown(model_data.get(label, "N/A"))
+
 
 with col3:
         if st.button("Compare"):
