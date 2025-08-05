@@ -904,11 +904,6 @@ def render_user_input_page():
 
 
 # ---- LOAD SPECS PAGE ----
-import streamlit as st
-from spec_labels import SPEC_LABELS
-from spec_values_full import EBOSS_SPECS
-from your_nav_module import top_navbar  # Adjust import if needed
-
 def render_tech_specs_page():
     # Logo and title
     st.markdown("<h2 style='text-align: center; color: #81BD47;'>EBOSS Technical Specifications</h2>", unsafe_allow_html=True)
@@ -950,13 +945,14 @@ def render_tech_specs_page():
     ''', unsafe_allow_html=True)
 
     # ✅ This block guarantees label is defined before it's used
-    for label in SPEC_LABELS:
-        value = model_data.get(label, "N/A")
-        col1, col2 = st.columns([1, 2])
-        with col1:
-            st.markdown(f'<div class="card"><div class="card-label">{label}</div></div>', unsafe_allow_html=True)
-        with col2:
-            st.markdown(f'<div class="card"><div class="card-value">{value}</div></div>', unsafe_allow_html=True)
+   for label in SPEC_LABELS:
+    value = model_data.get(label, "N/A")
+    col1, col2 = st.columns([1, 2])
+    with col1:
+        st.markdown(f"**{label}**")
+    with col2:
+        st.markdown(value)
+
 
     # Go back
     if st.button("🔧 Go Back to User Input"):
