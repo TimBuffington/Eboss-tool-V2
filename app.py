@@ -6,9 +6,15 @@ import requests
 url = "https://github.com/TimBuffington/Eboss-tool-V2/blob/8fd20f024b5af5aa88eca94de8871223d9b208b5/spec_data.py"
 response = requests.get(url)
 
-# DEBUG — Check what code you're trying to exec
-print(response.text)  # This helps find syntax errors in the downloaded code
+# Step 2: Execute code in a controlled namespace
+context = {}
+exec(response.text, context)
 
+# Step 3: Extract spec_data
+spec_data = context.get("spec_data")
+
+if spec_data is None:
+    raise ValueError("spec_data was not defined in the fetched file.")
 
 EBOSS_KVA = {
     "EBOSS 25 kVA": 25,
