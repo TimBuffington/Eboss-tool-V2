@@ -4,10 +4,13 @@ import streamlit.components.v1 as components
 import requests
 
 url = "https://github.com/TimBuffington/Eboss-tool-V2/blob/8fd20f024b5af5aa88eca94de8871223d9b208b5/spec_data.py"
-
 response = requests.get(url)
-exec(response.text)
 
+# DEBUG — Check what code you're trying to exec
+print(response.text)  # This helps find syntax errors in the downloaded code
+
+# Now execute
+exec(response.text)
 EBOSS_KVA = {
     "EBOSS 25 kVA": 25,
     "EBOSS 70 kVA": 70,
