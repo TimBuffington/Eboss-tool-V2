@@ -4,7 +4,7 @@ import pandas as pd
 from itertools import combinations_with_replacement
 from spec_labels import SPEC_LABELS
 from spec_values_full import EBOSS_SPECS
-from your_nav_module import top_navbar
+
 def apply_custom_css():
     st.markdown("""
     <style>
