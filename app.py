@@ -1,6 +1,5 @@
-
 import streamlit as st
-
+import streamlit.components.v1 as components
 
 import requests
 
@@ -74,13 +73,15 @@ def top_navbar():
     with cols[3]:
         if st.button("Cost Analysis"):
             st.session_state.section = "cost"
+            
     with cols[4]:
         if st.button("Contact Us"):
-            st.markdown("""
-                <script>
+            components.html("""
+            <script>
                 window.open("https://anacorp.com/contact/", "_blank");
-                </script>
-            """, unsafe_allow_html=True)
+            </script>
+        """, height=0)
+
 
 def render_user_input_page():
     show_logo_and_title("EBOSS® Load Entry")
