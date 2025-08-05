@@ -1119,9 +1119,19 @@ def render_card(label, value):
         </div>
     ''', unsafe_allow_html=True)
 
+def show_logo_and_title(title):
+    st.markdown("""
+        <div style="text-align: center;">
+            <img src="https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png" width="240">
+        </div>
+    """, unsafe_allow_html=True)
+    st.markdown(f"<h1 style='text-align:center;color:#81BD47;'>{title}</h1>", unsafe_allow_html=True)
+
 def render_tech_specs_page():
     st.set_page_config(layout="wide")
-    st.title("📘 EBOSS® Technical Specifications")
+
+    # 👇 Show logo and title FIRST
+    show_logo_and_title("📘 EBOSS® Technical Specifications")
 
     model = st.selectbox("Choose EBOSS® Model", list(spec_data.keys()))
     model_data = spec_data[model]
@@ -1137,8 +1147,6 @@ def render_tech_specs_page():
             with col2:
                 render_card("Value", value)
 
-if __name__ == "__main__":
-    render_tech_specs_page()
 
 
 # ---- LOAD SPECS PAGE ----
