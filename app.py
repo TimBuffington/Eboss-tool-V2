@@ -4,6 +4,7 @@ import pandas as pd
 from itertools import combinations_with_replacement
 from spec_labels import SPEC_LABELS
 from spec_values_full import EBOSS_SPECS
+from your_nav_module import top_navbar
 def apply_custom_css():
     st.markdown("""
     <style>
@@ -902,59 +903,59 @@ def render_user_input_page():
 
 
 # ---- LOAD SPECS PAGE ----
+import streamlit as st
+from spec_labels import SPEC_LABELS
+from spec_values_full import EBOSS_SPECS
+from your_nav_module import top_navbar  # Adjust import if needed
+
 def render_tech_specs_page():
     apply_custom_css()
-    show_logo_and_title("Tech Specs")
+    st.markdown("<h2 style='text-align: center; color: #81BD47;'>EBOSS Technical Specifications</h2>", unsafe_allow_html=True)
+
+    # Nav bar
     top_navbar()
 
-    model = st.session_state.user_inputs.get("model", "EBOSS 25 kVA")
-    if model not in spec_data:
-        st.warning("⚠️ No model selected or data missing.")
-        return
+    # Get selected model from session state
+    user_inputs = st.session_state.get("user_inputs", {})
+    current_model = user_inputs.get("model", "EBOSS 25 kVA")
 
-    # Show selected model
+    # Model selectbox with rerun
+    st.markdown('<div class="form-container">', unsafe_allow_html=True)
+    selected_model = st.selectbox(
+        "Select EBOSS® Model",
+        list(EBOSS_SPECS.keys()),
+        index=list(EBOSS_SPECS.keys()).index(current_model),
+        key="tech_specs_model_select"
+    )
+
+    if selected_model != current_model:
+        st.session_state.user_inputs["model"] = selected_model
+        st.rerun()
+
+    model_data = EBOSS_SPECS.get(selected_model, {})
+
     st.markdown(f'''
-        <div class="card" style="margin-top: -1rem; margin-bottom: 2rem;">
+        <div class="card" style="margin-bottom: 2rem;">
             <div class="card-label" style="font-size: 1.1rem;">
-                Showing specs for: <strong style="color:#81BD47;">{model}</strong>
+                Showing specs for: <strong style="color:#81BD47;">{selected_model}</strong>
             </div>
         </div>
     ''', unsafe_allow_html=True)
 
-    # Optional dropdown to switch models
-    with st.container():
-        st.markdown('<div class="card"><div class="card-label">🔁 Change EBOSS Model</div>', unsafe_allow_html=True)
-        st.session_state.user_inputs["model"] = st.selectbox(
-            "Model", list(spec_data.keys()), index=list(spec_data.keys()).index(model)
-        )
-        st.markdown('</div>', unsafe_allow_html=True)
+    # Render spec table in 2-column layout
+    col_left, col_right = st.columns([1, 2])
+    for label in SPEC_LABELS:
+        with col_left:
+            st.markdown(f'<div class="card"><div class="card-label">{label}</div></div>', unsafe_allow_html=True)
+        with col_right:
+            value = model_data.get(label, "N/A")
+            st.markdown(f'<div class="card"><div class="card-value">{value}</div></div>', unsafe_allow_html=True)
 
-    # Render all sections
-    for section, labels in SPEC_LAYOUT.items():
-        values = spec_data[model].get(section, ["—"] * len(labels))
-
-        # Section title card
-        st.markdown(f'''
-            <div class="card" style="background-color: #636569; color: white; font-weight: 700;
-                font-size: 1.2rem; padding: 0.8rem 1.5rem; border-radius: 12px;
-                margin: 2rem 0 1rem 0; text-align: center; text-transform: uppercase;
-                box-shadow: 0 4px 8px rgba(0,0,0,0.3);">
-                {section}
-            </div>
-        ''', unsafe_allow_html=True)
-
-        # Spec rows: label + value in two-column card layout
-        for label, value in zip(labels, values):
-            col1, col2 = st.columns([1, 2])
-            with col1:
-                st.markdown(f'<div class="card"><div class="card-label">{label}</div></div>', unsafe_allow_html=True)
-            with col2:
-                st.markdown(f'<div class="card"><div class="card-value">{value}</div></div>', unsafe_allow_html=True)
-
-    # Go Back button at bottom
+    # Go back button
     if st.button("🔧 Go Back to User Input"):
         st.session_state.section = "input"
         st.rerun()
+
 
 
 def render_compare_page():
