@@ -1,7 +1,14 @@
 import streamlit as st
 import requests
 
-
+def render_card(label, value):
+    st.markdown(f'''
+        <div style="border:1px solid #ccc;border-radius:10px;padding:0.5rem 1rem;margin-bottom:0.5rem;
+                    background-color:#111;color:#81BD47;font-weight:bold;">
+            <div style="margin-bottom:0.3rem;">{label}</div>
+            <div style="color:#fff;">{value}</div>
+        </div>
+    ''', unsafe_allow_html=False)  # Use False to prevent XSS vulnerabilities
 
 def show_logo_and_title(title):
     st.markdown("""
@@ -59,15 +66,6 @@ def top_navbar():
             </script>
         """, height=0)
 
-def render_card(label, value):
-    st.markdown(f'''
-        <div style="border:1px solid #ccc;border-radius:10px;padding:0.5rem 1rem;margin-bottom:0.5rem;
-                    background-color:#111;color:#81BD47;font-weight:bold;">
-            <div style="margin-bottom:0.3rem;">{label}</div>
-            <div style="color:#fff;">{value}</div>
-        </div>
-    ''', unsafe_allow_html=False)  # Use False to prevent XSS vulnerabilities
-
 def render_user_input_page():
     show_logo_and_title("EBOSS® Load Entry")
     top_navbar()
@@ -110,3 +108,4 @@ def main():
     else:
         st.error("Page not found.")
 
+main()
