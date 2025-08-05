@@ -1,141 +1,162 @@
-import streamlit as st
-mport requests
-
-url = "https://raw.githubusercontent.comTimBuffington/EBOSS®-tool-V2/main/assets/spec_data.py"
-
-response = requests.get(url)
-exec(response.text)  # This will define spec_data if it's inside that file
-
-def apply_custom_css():
-    st.markdown("""
-    <style>
-    html, body, [class*="css"]  {
-        max-width: 100vw;
-        overflow-x: hidden;
-    }
-
-    .stApp {
-        background: url("https://raw.githubusercontent.com/TimBuffington/EBOSS®-tool-V2/main/assets/bg.png") no-repeat center center fixed;
-        background-size: cover;
-    }
-
-    .stSelectbox > div > div,
-    .stTextInput > div > div,
-    .stNumberInput > div > div,
-    .stSlider > div,
-    .stButton > button {
-        background-color: #000000 !important;
-        color: #81BD47 !important;
-        border: 1px solid #D3D3D3 !important;
-        border-radius: 8px !important;
-        font-weight: bold !important;
-        padding: 0.5rem 1rem !important;
-        transition: all 0.3s ease-in-out;
-    }
-
-    .stSelectbox div[role="combobox"] span,
-    .stTextInput input,
-    .stNumberInput input {
-        color: #81BD47 !important;
-        font-weight: bold !important;
-    }
-
-    .stButton > button:hover,
-    .stSelectbox:hover > div > div,
-    .stTextInput:hover > div > div,
-    .stNumberInput:hover > div > div,
-    .stSlider > div:hover {
-        box-shadow: 0 0 20px 4px #81BD47 !important;
-        border-color: #81BD47 !important;
-        transform: scale(1.03);
-    }
-
-    .st-expanderHeader {
-        color: #81BD47 !important;
-        font-weight: bold !important;
-    }
-
-    .logo-header {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-top: 1rem;
-        margin-bottom: 2rem;
-        width: 100%;
-    }
-
-    .logo-header img {
-        max-width: 80%;
-        height: auto;
-        filter: drop-shadow(0 0 10px #81BD47);
-    }
-
-    .top-nav-print {
-        display: flex;
-        justify-content: center;
-        gap: 1rem;
-        margin-bottom: 1rem;
-    }
-
-    .print-button,
-    .back-button {
-        background-color: #000000 !important;
-        color: #81BD47 !important;
-        font-weight: bold;
-        border: 1px solid #D3D3D3 !important;
-        border-radius: 8px;
-        padding: 0.5rem 1rem;
-        cursor: pointer;
-    }
-
-    .print-button:hover,
-    .back-button:hover {
-        box-shadow: 0 0 20px 4px #81BD47;
-        border-color: #81BD47;
-        transform: scale(1.03);
-    }
-
-    .footer {
-        text-align: center;
-        font-size: 12px;
-        color: #81BD47;
-        margin-top: 3rem;
-        padding: 1rem 0;
-        border-top: 1px solid #81BD47;
-    }
-
-    @media (max-width: 768px) {
-        .stSelectbox > div > div,
-        .stTextInput > div > div,
-        .stNumberInput > div > div {
-            font-size: 16px !important;
-            padding: 0.4rem 0.8rem !important;
-        }
-
-        .stButton > button {
-            font-size: 14px !important;
-        }
-
-        .logo-header img {
-            max-width: 90%;
-        }
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-    st.markdown("""
-    <script>
-    function printPage() {
-        window.print();
-    }
-    </script>
-    <div class="top-nav-print">
-        <button class="back-button" onclick="window.location.reload()">Back to Input</button>
-        <button class="print-button" onclick="printPage()">Print This Page</button>
-        <a href='mailto:EBOSSAPPLICATIONS@ANACORP.COM'><button class="print-button">Contact Support</button></a>
-    </div>
-    <div class="footer">
-        EBOSS® Tool &copy; 2025 ANA Energy. All rights reserved. |
-        <a href='https://anacorp.com' style='color:#81BD47; text-decoration: none;'>anacorp.com</a>
-    </div>
-    """, unsafe_allow_html=True)
+EBOSS_SPECS = {
+    "EBOSS 25 kVA": {
+        "Three-phase": "30 kva / 24 kw",
+        "Single-phase": "20 kva / 16 kw",
+        "Frequency": "60 Hz",
+        "Simultaneous voltage": "120/240 (1Φ) • 208/480 (3Φ)",
+        "Voltage regulation": "Adjustable",
+        "Amp-load @ 208V": "70 A / 13.5 kW",
+        "Amp-load @ 480V": "30 A / 19 kW",
+        "Motor start (3 sec @ 208V)": "104 A / 19.5 kW",
+        "Motor start (3 sec @ 480V)": "45 A / 29 kW",
+        "Generator size": "Airman SDG25",
+        "Three-phase output": "23 kva / 19 kw",
+        "Single-phase output": "20 kva / 16 kw",
+        "Battery chemistry": "Lithium Titanate Oxide (LTO)",
+        "Battery capacity": "15 kwh",
+        "Energy throughput": "1,200 mwh",
+        "Charge time (no load)": "< 45 min",
+        "Inverter output max": "24 kw",
+        "Parallel capability": "Available",
+        "Battery type": "Lithium Titanate Oxide (LTO)",
+        "Cycle life @ 77°F": "90K Cycles at 90% DOD",
+        "Cycle life @ 100°F": "80K Cycles at 90% DOD",
+        "Life @ 3kW load (100°F)": "41 Years",
+        "Inverter cold start (min)": "14°F",
+        "Running temp range": "-22°F to 130°F",
+        "Arctic package (optional)": "-50°F to 130°F",
+        "EBOSS only (L×W×H)": "40” x 48” x 46”",
+        "EBOSS weight only": "2,120 lbs",
+        "With trailer & generator": "160” x 74” x 75”",
+        "Total weight (no fuel / full)": "5100 / 5500 lbs",
+        "Fuel tank capacity": "51.5 gal",
+    },
+    "EBOSS 70 kVA": {
+        "Three-phase": "70 kVA / 56 kW",
+        "Single-phase": "47 kVA / 37 kW",
+        "Frequency": "60 Hz",
+        "Simultaneous voltage": "120/240 (1Φ) • 208/480 (3Φ)",
+        "Voltage regulation": "Adjustable",
+        "Amp-load @ 208V": "194 A 37.2 kW",
+        "Amp-load @ 480V": "84 A / 55 kW",
+        "Motor start (3 sec @ 208V)": "291 A / 55 kW",
+        "Motor start (3 sec @ 480V)": "126 A / 175  kW",
+        "Generator size": "Airman SDG45",
+        "Three-phase output": "42 kVA / 33 kW",
+        "Single-phase output": "28 kVA / 22 kW",
+        "Battery chemistry": "Lithium Titanate Oxide (LTO)",
+        "Battery capacity": "25 kWh",
+        "Energy throughput": "2,000 MWh",
+        "Charge time (no load)": "≈ 45 Minutes",
+        "Inverter output max": "56 kW",
+        "Parallel capability": "Available",
+        "Battery type": "Lithium Titanate Oxide (LTO)",
+        "Cycle life @ 77°F": "90K Cycles at 90% DOD",
+        "Cycle life @ 100°F": "80K Cycles at 90% DOD",
+        "Life @ 3kW load (100°F)": "20 Years",
+        "Inverter cold start (min)": "14°F",
+        "Running temp range": "-22°F to 130°F",
+        "Arctic package (optional)": "-50°F to 130°F",
+        "EBOSS only (L×W×H)": "55” x 44” x 62”",
+        "EBOSS weight only": "2,700 lbs",
+        "With trailer & generator": "167” x 71” x 76”",
+        "Total weight (no fuel / full)": "6950 / 7600 lbs",
+        "Fuel tank capacity": "80.5 gal",
+    },
+    "EBOSS 125 kVA": {
+        "Three-phase": "125 kVA / 100 kW",
+        "Single-phase": "N/A / N/A",
+        "Frequency": "60 Hz",
+        "Simultaneous voltage": "120V (1Φ) • 208/480 (3Φ)",
+        "Voltage regulation": "Adjustable",
+        "Amp-load @ 208V": "345 A 66.2 kW",
+        "Amp-load @ 480V": "150 A / 99 kW",
+        "Motor start (3 sec @ 208V)": "532 A / 291 kW",
+        "Motor start (3 sec @ 480V)": "231  / 532 kW",
+        "Generator size": "Airman SDG65",
+        "Three-phase output": "62 kVA / 50 kW",
+        "Single-phase output": "2.4 kW x 2",
+        "Battery chemistry": "Lithium Titanate Oxide (LTO)",
+        "Battery capacity": "50 kWh",
+        "Energy throughput": "4,000 MWh",
+        "Charge time (no load)": "= 1 Hour",
+        "Inverter output max": "100 kW",
+        "Parallel capability": "Available",
+        "Battery type": "Lithium Titanate Oxide (LTO)",
+        "Cycle life @ 77°F": "90K Cycles at 90% DOD",
+        "Cycle life @ 100°F": "80K Cycles at 90% DOD",
+        "Life @ 3kW load (100°F)": "20 Years",
+        "Inverter cold start (min)": "14°F",
+        "Running temp range": "-22°F to 130°F",
+        "Arctic package (optional)": "-50°F to 130°F",
+        "EBOSS only (L×W×H)": "≈ 73.5” x 61” x 104.5”",
+        "EBOSS weight only": "9,600 lbs",
+        "With trailer & generator": "233” x 52” x 97”",
+        "Total weight (no fuel / full)": "≈ 18,000 lbs",
+        "Fuel tank capacity": "111 gal",
+    },
+    "EBOSS 220 kVA": {
+        "Three-phase": "220 kVA / 176 kW",
+        "Single-phase": "N/A / N/A",
+        "Frequency": "60 Hz",
+        "Simultaneous voltage": "120V (1Φ) • 208/480 (3Φ)",
+        "Voltage regulation": "Adjustable",
+        "Amp-load @ 208V": "700 A / 134 kW",
+        "Amp-load @ 480V": "303 A / 201 kW",
+        "Motor start (3 sec @ 208V)": "1065 A / 204 kW",
+        "Motor start (3 sec @ 480V)": "461 A / 708 kW",
+        "Generator size": "Airman SDG125",
+        "Three-phase output": "120 kVA / 96 kW",
+        "Single-phase output": "2.4 kW x 2",
+        "Battery chemistry": "Lithium Titanate Oxide (LTO)",
+        "Battery capacity": "75 kWh",
+        "Energy throughput": "6,000 MWh",
+        "Charge time (no load)": "≈ 50 Minutes",
+        "Inverter output max": "176 kW",
+        "Parallel capability": "Available",
+        "Battery type": "Lithium Titanate Oxide (LTO)",
+        "Cycle life @ 77°F": "90K Cycles at 90% DOD",
+        "Cycle life @ 100°F": "80K Cycles at 90% DOD",
+        "Life @ 3kW load (100°F)": "20 Years",
+        "Inverter cold start (min)": "14°F",
+        "Running temp range": "-22°F to 130°F",
+        "Arctic package (optional)": "-50°F to 130°F",
+        "EBOSS only (L×W×H)": "≈73.5” x 61” x 104.5”",
+        "EBOSS weight only": "11,200 lbs",
+        "With trailer & generator": "≈249” x 52” x 97”",
+        "Total weight (no fuel / full)": "≈21,000 lbs",
+        "Fuel tank capacity": "168 gal",
+    },
+    "EBOSS 400 kVA": {
+        "Three-phase": "400 kVA / 320 kW",
+        "Single-phase": "N/A",
+        "Frequency": "60 Hz",
+        "Simultaneous voltage": "120V (Courtesy Outlets) • 480 (3Φ)",
+        "Voltage regulation": "Adjustable",
+        "Amp-load @ 208V": "481 A / 92.5 kW",
+        "Amp-load @ 480V": "769 A / 319 kW",
+        "Motor start (3 sec @ 208V)": "1776 A / 341 kW",
+        "Motor start (3 sec @ 480V)": "769 A / 511 kW",
+        "Generator size": "Airman SDG220",
+        "Three-phase output": "210 kVA / 168 kW",
+        "Single-phase output": "2.4 kW x 2",
+        "Battery chemistry": "Lithium Titanate Oxide (LTO)",
+        "Battery capacity": "125 kWh",
+        "Energy throughput": "10,000 MWh",
+        "Charge time (no load)": "≈ 45 Minutes",
+        "Inverter output max": "320 kW",
+        "Parallel capability": "Available",
+        "Battery type": "Lithium Titanate Oxide (LTO)",
+        "Cycle life @ 77°F": "90K Cycles at 90% DOD",
+        "Cycle life @ 100°F": "80K Cycles at 90% DOD",
+        "Life @ 3kW load (100°F)": "21 Years",
+        "Inverter cold start (min)": "14°F",
+        "Running temp range": "-22°F to 130°F",
+        "Arctic package (optional)": "-50°F to 130°F",
+        "EBOSS only (L×W×H)": "≈ TBD",
+        "EBOSS weight only": "11,037 lbs",
+        "With trailer & generator": "≈ 262” x 74” x 75”",
+        "Total weight (no fuel / full)": "≈ 21,600 lbs / 24,000 lbs",
+        "Fuel tank capacity": "285 gal",
+    },
+}
