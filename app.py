@@ -905,17 +905,15 @@ def render_user_input_page():
 
 # ---- LOAD SPECS PAGE ----
 def render_tech_specs_page():
-    # Logo and title
-    st.markdown("<h2 style='text-align: center; color: #81BD47;'>EBOSS Technical Specifications</h2>", unsafe_allow_html=True)
-
-    # Nav bar
+    apply_custom_css()
+    show_logo_and_title("EBOSS Technical Specifications")
     top_navbar()
 
-    # Grab model from session state
+    # Get model from session state
     user_inputs = st.session_state.get("user_inputs", {})
     current_model = user_inputs.get("model", "EBOSS 25 kVA")
 
-    # Styled container for selectbox
+    # Selectbox container
     st.markdown('<div class="form-container" style="margin-top: 2rem;">', unsafe_allow_html=True)
     st.markdown('<div class="card-label">🔁 Change EBOSS Model</div>', unsafe_allow_html=True)
 
@@ -932,10 +930,9 @@ def render_tech_specs_page():
 
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # Pull values
+    # Spec display
     model_data = EBOSS_SPECS.get(selected_model, {})
 
-    # Model display card
     st.markdown(f'''
         <div class="card" style="margin-bottom: 2rem;">
             <div class="card-label" style="font-size: 1.1rem;">
@@ -944,22 +941,17 @@ def render_tech_specs_page():
         </div>
     ''', unsafe_allow_html=True)
 
-    # ✅ This block guarantees label is defined before it's used
     for label in SPEC_LABELS:
         value = model_data.get(label, "N/A")
         col1, col2 = st.columns([1, 2])
-    with col1:
-        st.markdown(f"**{label}**")
-    with col2:
-        st.markdown(value)
+        with col1:
+            st.markdown(f'<div class="card"><div class="card-label">{label}</div></div>', unsafe_allow_html=True)
+        with col2:
+            st.markdown(f'<div class="card"><div class="card-value">{value}</div></div>', unsafe_allow_html=True)
 
-
-    # Go back
     if st.button("🔧 Go Back to User Input"):
         st.session_state.section = "input"
         st.rerun()
-
-
 
 def render_compare_page():
     apply_custom_css()
