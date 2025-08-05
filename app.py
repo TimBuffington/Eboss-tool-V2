@@ -450,21 +450,24 @@ def top_navbar():
 
     with col1:
         if st.button("View Specs"):
-            st.session_state.section = "tech_specs"
-
-    with col2:
+          st.session_state.section = "tech_specs"
+    if "user_inputs" in st.session_state:
+            st.session_state.model = st.session_state.user_inputs.get("model")
+    st.rerun()
+st.session_state.section = "tech_specs"
+with col2:
         if st.button("Load-Based Specs"):
             st.session_state.section = "load_"
 
-    with col3:
+with col3:
         if st.button("Compare"):
             st.session_state.section = "compare"
 
-    with col4:
+with col4:
         if st.button("Cost Analysis"):
             st.session_state.section = "cost"
 
-    with col5:
+with col5:
         if st.button("Contact Us"):
             st.markdown("""
                 <script>
