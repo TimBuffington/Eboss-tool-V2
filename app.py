@@ -909,18 +909,20 @@ from spec_values_full import EBOSS_SPECS
 from your_nav_module import top_navbar  # Adjust import if needed
 
 def render_tech_specs_page():
-    apply_custom_css()
+    # Logo and title
     st.markdown("<h2 style='text-align: center; color: #81BD47;'>EBOSS Technical Specifications</h2>", unsafe_allow_html=True)
 
     # Nav bar
     top_navbar()
 
-    # Get selected model from session state
+    # Grab model from session state
     user_inputs = st.session_state.get("user_inputs", {})
     current_model = user_inputs.get("model", "EBOSS 25 kVA")
 
-    # Model selectbox with rerun
-    st.markdown('<div class="form-container">', unsafe_allow_html=True)
+    # Styled container for selectbox
+    st.markdown('<div class="form-container" style="margin-top: 2rem;">', unsafe_allow_html=True)
+    st.markdown('<div class="card-label">🔁 Change EBOSS Model</div>', unsafe_allow_html=True)
+
     selected_model = st.selectbox(
         "Select EBOSS® Model",
         list(EBOSS_SPECS.keys()),
@@ -932,8 +934,12 @@ def render_tech_specs_page():
         st.session_state.user_inputs["model"] = selected_model
         st.rerun()
 
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    # Pull values
     model_data = EBOSS_SPECS.get(selected_model, {})
 
+    # Model display card
     st.markdown(f'''
         <div class="card" style="margin-bottom: 2rem;">
             <div class="card-label" style="font-size: 1.1rem;">
@@ -942,19 +948,20 @@ def render_tech_specs_page():
         </div>
     ''', unsafe_allow_html=True)
 
-    # Render spec table in 2-column layout
-    col_left, col_right = st.columns([1, 2])
+    # Render each spec in a 2-column layout
     for label in SPEC_LABELS:
-        with col_left:
+        value = model_data.get(label, "N/A")
+        col1, col2 = st.columns([1, 2])
+        with col1:
             st.markdown(f'<div class="card"><div class="card-label">{label}</div></div>', unsafe_allow_html=True)
-        with col_right:
-            value = model_data.get(label, "N/A")
+        with col2:
             st.markdown(f'<div class="card"><div class="card-value">{value}</div></div>', unsafe_allow_html=True)
 
-    # Go back button
-    if st.button("🔧 Go Back to User Input"):
+    # Go back
+    if st.button(" Go Back to User Input"):
         st.session_state.section = "input"
         st.rerun()
+
 
 
 
