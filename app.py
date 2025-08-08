@@ -241,9 +241,12 @@ EBOSS_KVA = {
     "EBOSS 400 kVA": 400
 }
 
+import streamlit as st
+
 def landing_page():
     apply_custom_css()
 
+    # ✅ Session state defaults
     for key, val in {
         "landing_shown": True,
         "show_contact_form": False,
@@ -255,12 +258,8 @@ def landing_page():
         if key not in st.session_state:
             st.session_state[key] = val
 
-
-  
     if st.session_state.landing_shown:
-        show_logo_and_title("EBOSS® Size Specs & Comparison Tool")
-
-        # Inject fixed CSS
+        # Responsive CSS
         st.markdown("""
         <style>
            .button-container {
@@ -270,29 +269,34 @@ def landing_page():
             gap: 1rem;
             max-width: 700px;
             margin: 2rem auto;
-        }
-        .stButton>button {
-        min-width: 320px !important;
-        max-width: 320px !important;
-        height: 60px !important;
-        font-family: Arial, sans serif !important;
-        font-size: 2.0rem !important;
-        font-weight: bold !important;
-        color: #81BD47 !important;
-        background-color: #000000 !important;
-        border: 2px solid #D3D3D3 !important;
-        border-radius: 12px;
-        transition: all 0.2s ease-in-out;
-        }
-        .stButton>button:hover {
+           }
+           .stButton>button {
+            width: clamp(200px, 40vw, 340px) !important;
+            height: 60px !important;
+            font-family: Arial, sans-serif !important;
+            font-size: clamp(1.1rem, 2.4vw, 2rem) !important;
+            font-weight: bold !important;
+            color: #81BD47 !important;
+            background-color: #000000 !important;
+            border: 2px solid #D3D3D3 !important;
+            border-radius: 12px;
+            transition: all 0.2s ease-in-out;
+           }
+           .stButton>button:hover {
             box-shadow: 0 0 18px #81BD47;
-        }
+           }
+           /* Make columns stack on small screens */
+           @media (max-width: 640px) {
+               .st-emotion-cache-ocqkz7 {
+                   flex-direction: column !important;
+               }
+           }
         </style>
         """, unsafe_allow_html=True)
 
-        # Create a true 2-column, responsive layout
         st.markdown('<div class="button-container">', unsafe_allow_html=True)
 
+        # Row 1
         col1, col2 = st.columns(2)
         with col1:
             if st.button("Request a Demo", key="btn_demo"):
@@ -301,58 +305,37 @@ def landing_page():
                 st.session_state.landing_shown = False
                 st.rerun()
 
-        with col2:
-            if st.button("Request On-Site Training", key="btn_training"):
-                st.session_state.form_type = "training"
-                st.session_state.show_contact_form = True
-                st.session_state.landing_shown = False
-                st.rerun()
-                
-        col3, col4 = st.columns(2)
-        with col3:
+with col3:
             st.markdown("""
-    <a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank" style="text-decoration: none; color: inherit;">
-        <div style="
-            width: 100% !important;
-            padding: 0.5rem 1rem;
-            line-height: 1.6;
-            display: flex;
-            font-family: Arial, sans-serif !important;
-            font-size: 2.0rem !important;
-            font-weight: bold !important;
-            color: #81BD47 !important;
-            background-color: #000000;
-            border: 2px solid #D3D3D3;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: box-shadow 0.2s ease-in-out;
-            margin-bottom: 1rem;
-            "
-            onmouseover="this.style.boxShadow='0 0 18px #81BD47'"
-            onmouseout="this.style.boxShadow='none'">
-            Learn How EBOSS® Works
-        </div>
-    </a>
-    """, unsafe_allow_html=True)
-
-
-
-        with col4:
-            if st.button("Launch EBOSS® Tool", key="btn_launch"):
-                st.session_state.selected_form = "tool"
-                st.session_state.section = "input"
-                st.session_state.landing_shown = False
-                st.session_state.show_contact_form = False
-                st.session_state.form_type = None
-                st.rerun()
-
-        st.markdown('</div>', unsafe_allow_html=True)
-        st.stop()
-
-    if st.session_state.show_contact_form:
-        render_contact_form(form_type=st.session_state.form_type)
+            <style>
+                .video-link {
+                    width: clamp(200px, 40vw, 340px);
+                    padding: 0.5rem 1rem;
+                    line-height: 1.6;
+                    font-family: Arial, sans-serif !important;
+                    font-size: clamp(1.1rem, 2.4vw, 2rem) !important;
+                    font-weight: bold !important;
+                    color: #81BD47 !important;
+                    background-color: #000000;
+                    border: 2px solid #D3D3D3;
+                    border-radius: 12px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: box-shadow 0.2s ease-in-out;
+                    margin-bottom: 1rem;
+                    text-decoration: none !important;
+                }
+                .video-link:hover {
+                    box-shadow: 0 0 18px #81BD47;
+                }
+            </style>
+            <a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" 
+               target="_blank" 
+               class="video-link">
+               Learn How EBOSS® Works
+            </a>
+            """, unsafe_allow_html=True)
 
 def enforce_session_validation():
     if "user_inputs" not in st.session_state or not st.session_state.user_inputs.get("model"):
