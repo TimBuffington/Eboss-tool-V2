@@ -851,78 +851,166 @@ def render_user_input_page():
     show_logo_and_title("Eboss & Load Data")
     top_navbar()
     render_user_input_form()
-    
+
+def render_tech_specs_page():
+    apply_custom_css()
+    show_logo_and_title("Tech Specs")
+    top_navbar()
+
+    # model selected elsewhere; fall back to first available
+    model = st.session_state.get("model_select")
+    if not model:
+        model = next(iter(spec_data.keys()))
+
+    # handle inconsistent key for 125 kVA
+    if model not in spec_data and model.replace(" 125 kVA", "125 kVA") in spec_data:
+        model = model.replace(" 125 kVA", "125 kVA")
+
+    specs = spec_data.get(model)
+    if not specs:
+        st.warning(f"No data available for {model}")
+        return
+
+    # Render each section as: one full-width header card, followed by rows of (spec card | value card)
+    for section, items in specs.items():
+        st.markdown(f"""
+        <div class="card" style="background-color:#636569;color:white;font-weight:700;
+             font-size:1.2rem;padding:0.8rem 1.5rem;border-radius:12px;margin:2rem 0 1rem 0;
+             text-align:center;text-transform:uppercase;box-shadow:0 4px 8px rgba(0,0,0,0.3);">
+            {section}
+        </div>
+        """, unsafe_allow_html=True)
+
+        for label, value in items:
+            render_spec_value_row(label, value)
+
+
 def render_compare_page():
     import re
     apply_custom_css()
-    show_logo_and_title("Compare EBOSS® vs Standard Generator")
+    show_logo_and_title("Compare — EBOSS® vs Standard Generator")
     top_navbar()
 
+    # Selected EBOSS model
     model = st.session_state.get("model_select", "EBOSS 25 kVA")
+
+    # Normalize odd key for 125
+    if model not in spec_data and model.replace(" 125 kVA", "125 kVA") in spec_data:
+        model = model.replace(" 125 kVA", "125 kVA")
+
     eboss_specs = spec_data.get(model, {})
-    std_specs = std_gen_data.get(model, {})
-    cont_kw = st.session_state.user_inputs.get("cont_kw", 10)
+    # If you have a dict of std-gen specs keyed similarly; otherwise leave it empty
+    std_specs = globals().get("std_gen_data", {}).get(model, {})
 
-    def extract_kva(m):
-        match = re.search(r"(\d+)", m)
-        return int(match.group(1)) if match else 0
+    cont_kw = float(st.session_state.user_inputs.get("cont_kw", 10))
 
-    kva = extract_kva(model)
-    charge_kw = Eboss_Charge_Rates[kva]["full_hybrid"]
+    # Extract kVA and simple performance envelope
+    m = re.search(r"(\d+)", model)
+    kva = int(m.group(1)) if m else 25
     gen_kw = kva * 0.8
-    battery_kwh = {
-        "EBOSS 25 kVA": 15,
-        "EBOSS 70 kVA": 25,
-        "EBOSS 125 kVA": 50,
-        "EBOSS 220 kVA": 75,
-        "EBOSS 400 kVA": 125
-    }.get(model, 0)
 
-    battery_life = battery_kwh / cont_kw if cont_kw else 0
-    charge_time = battery_kwh / charge_kw if charge_kw else 0
-    cycles_per_day = 24 / (battery_life + charge_time) if battery_life + charge_time > 0 else 0
-    runtime_hrs = charge_time * cycles_per_day
-    eboss_gph = interpolate_gph(kva, charge_kw / gen_kw if gen_kw else 1)
-    std_gph = interpolate_gph(kva, 1.0)
+    # Charge rate and battery (adjust with your real tables)
+    charge_kw = Eboss_Specs[kva]["full_hybrid"]
+    battery_kwh = Eboss_Specs[kva]["battery_kwh"]
+
+    # Duty-cycle estimates
+    batt_runtime_h = battery_kwh / cont_kw if cont_kw > 0 else 0
+    charge_time_h = battery_kwh / charge_kw if charge_kw > 0 else 0
+    cycles_per_day = 24 / (batt_runtime_h + charge_time_h) if (batt_runtime_h + charge_time_h) > 0 else 0
+    runtime_hrs = charge_time_h * cycles_per_day
+
+    # Fuel estimates (EBOSS runs only during charge; Std Gen runs 24h @ ~100%)
+    eboss_gph = interpolate_gph(kva, min(max(charge_kw / gen_kw, 0.25), 1.0))
+    std_gph   = interpolate_gph(kva, 1.0)
 
     eboss_gpd = round(eboss_gph * runtime_hrs, 2)
-    std_gpd = round(std_gph * 24, 2)
-    eboss_gpw = round(eboss_gpd * 7, 2)
-    std_gpw = round(std_gpd * 7, 2)
-    eboss_gpm = round(eboss_gpd * 30, 2)
-    std_gpm = round(std_gpd * 30, 2)
+    std_gpd   = round(std_gph * 24.0, 2)
+    eboss_gpw, std_gpw = round(eboss_gpd * 7, 2), round(std_gpd * 7, 2)
+    eboss_gpm, std_gpm = round(eboss_gpd * 30, 2), round(std_gpd * 30, 2)
 
-    spec_layout = {
+    # ---- Sections ----
+    sections = {
         "Maximum Intermittent Load": eboss_specs.get("Maximum Intermittent Load", []),
-        "Maximum Continuous Load": eboss_specs.get("Maximum Continuous Load", []),
-        "Engine Specs": [
-            ("Runtime Hrs per Day", f"{round(runtime_hrs,1)} h  (EBOSS®)", f"24 h (Std Gen)"),
-            ("Battery Storage", f"{battery_kwh} kWh", "0 kWh"),
-            ("Gallons per Day", f"{eboss_gpd} gal", f"{std_gpd} gal"),
-            ("Gallons per Week", f"{eboss_gpw} gal", f"{std_gpw} gal"),
-            ("Gallons per Month", f"{eboss_gpm} gal", f"{std_gpm} gal")
-        ]
+        "Maximum Continuous Load":   eboss_specs.get("Maximum Continuous Load",   []),
     }
 
-    for section, rows in spec_layout.items():
-        st.markdown(f'''
+    # Render tech sections (for each metric show EBOSS vs Std Gen as a two-card row)
+    for section, rows in sections.items():
+        st.markdown(f"""
         <div class="card" style="background-color:#636569;color:white;font-weight:700;
-            font-size:1.2rem;padding:0.8rem 1.5rem;border-radius:12px;
-            margin:2rem 0 1rem 0;text-align:center;text-transform:uppercase;
-            box-shadow:0 4px 8px rgba(0,0,0,0.3);">
+             font-size:1.2rem;padding:0.8rem 1.5rem;border-radius:12px;margin:2rem 0 1rem 0;
+             text-align:center;text-transform:uppercase;box-shadow:0 4px 8px rgba(0,0,0,0.3);">
             {section}
         </div>
-        ''', unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
 
-        if section != "Engine Specs":
-            std_sec = dict(std_specs.get(section, []))
-            for label, eboss_val in rows:
-                render_spec_value_row(label, eboss_val)
-                render_spec_value_row("Standard Generator", std_sec.get(label, "–"))
-        else:
-            for label, eboss_val, std_val in rows:
-                render_spec_value_row(label + " (EBOSS®)", eboss_val)
-                render_spec_value_row(label + " (Std Gen)", std_val)
+        std_sec = dict(std_specs.get(section, []))
+
+        for label, eboss_val in rows:
+            # little header row for the metric label
+            st.markdown(f"""
+            <div class="card" style="background-color:#47484b;color:#fff;font-weight:700;
+                 font-size:1.0rem;padding:0.5rem 1rem;border-radius:10px;margin:0.2rem 0 0.4rem 0;">
+                {label}
+            </div>
+            """, unsafe_allow_html=True)
+            # then the two cards: EBOSS vs Std Gen
+            col1, col2 = st.columns(2, gap="large")
+            with col1:
+                st.markdown(f"""
+                    <div class="card">
+                        <div class="card-label">EBOSS®</div>
+                        <div class="card-value">{eboss_val}</div>
+                    </div>
+                """, unsafe_allow_html=True)
+            with col2:
+                st.markdown(f"""
+                    <div class="card">
+                        <div class="card-label">Standard Gen</div>
+                        <div class="card-value">{std_sec.get(label, "–")}</div>
+                    </div>
+                """, unsafe_allow_html=True)
+
+    # Engine / fuel comparison section
+    st.markdown("""
+    <div class="card" style="background-color:#636569;color:white;font-weight:700;
+         font-size:1.2rem;padding:0.8rem 1.5rem;border-radius:12px;margin:2rem 0 1rem 0;
+         text-align:center;text-transform:uppercase;box-shadow:0 4px 8px rgba(0,0,0,0.3);">
+        Engine Specs & Fuel Use
+    </div>
+    """, unsafe_allow_html=True)
+
+    metrics = [
+        ("Runtime Hrs per Day", f"{runtime_hrs:.1f} h", "24 h"),
+        ("Battery Storage",     f"{battery_kwh} kWh",  "0 kWh"),
+        ("Gallons per Day",     f"{eboss_gpd} gal",    f"{std_gpd} gal"),
+        ("Gallons per Week",    f"{eboss_gpw} gal",    f"{std_gpw} gal"),
+        ("Gallons per Month",   f"{eboss_gpm} gal",    f"{std_gpm} gal"),
+    ]
+    for label, eb_val, st_val in metrics:
+        # metric label header
+        st.markdown(f"""
+        <div class="card" style="background-color:#47484b;color:#fff;font-weight:700;
+             font-size:1.0rem;padding:0.5rem 1rem;border-radius:10px;margin:0.2rem 0 0.4rem 0;">
+            {label}
+        </div>
+        """, unsafe_allow_html=True)
+        # EBOSS vs Std Gen as two cards
+        col1, col2 = st.columns(2, gap="large")
+        with col1:
+            st.markdown(f"""
+                <div class="card">
+                    <div class="card-label">EBOSS®</div>
+                    <div class="card-value">{eb_val}</div>
+                </div>
+            """, unsafe_allow_html=True)
+        with col2:
+            st.markdown(f"""
+                <div class="card">
+                    <div class="card-label">Standard Gen</div>
+                    <div class="card-value">{st_val}</div>
+                </div>
+            """, unsafe_allow_html=True)
 
     
 def render_spec_value_row(spec_label: str, spec_value: str):
