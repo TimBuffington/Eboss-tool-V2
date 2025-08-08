@@ -14,68 +14,51 @@ def apply_custom_css():
     </style>
     """, unsafe_allow_html=True)
 
-    # Add any other styling here, like .card, .stSelectbox, etc
 
-    
     st.markdown("""
-        <style>
-            
-    /* Global input styling */
-    .stSelectbox > div > div,
-    .stTextInput > div > div,
-    .stNumberInput > div > div {
-    background-color: #000000 !important;
-    color: #81BD47 !important;
-    font-weight: bold !important;
-    border: 2px solid #D3D3D3 !important;
-    border-radius: 10px !important;
-    text-shadow: none !important;
-}
-    .card {
-    background color: #0000
-    border: 2px solid #D3D3D3;
-    border-radius: 12px;
-    padding: .25rem;
-    min-height: 30px !important;   
-     
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
-    align-items: center !important;
-    z-index: 9999 !important;
-}
-    .stTextInput {
-    background color: #0000
-    border: 2px solid #D3D3D3;
-    border-radius: 6px;
-    padding: .25rem;
-    min-height: 35px !important;   
-    max-height: 35px !important;     
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
-    align-items: center !important;
-    z-index: 9999 !important;
-    
-/* Dropdown menu items */
-[data-baseweb="menu"] {
-    background-color: #000000 !important;
-    color: #81BD47 !important;
-    font-weight: bold !important;
-    border: 1px solid #D3D3D3 !important;
-    border-radius: 6px !important;
-}
+    <style>
+      :root{
+        --eboss-green:#81BD47;
+        --eboss-black:#000;
+        --eboss-gray:#D3D3D3;
+        --btn-radius:12px;
+        --btn-h:60px;
+      }
+      /* make Streamlit columns breathe on mobile */
+      [data-testid="stVerticalBlock"] > div {
+        gap: 0.75rem;
+      }
+      /* Base button styles (works for st.button and st.link_button) */
+      .stButton > button, .stLinkButton > a {
+        width: clamp(220px, 45vw, 340px) !important;
+        height: var(--btn-h) !important;
+        font-family: Arial, sans-serif !important;
+        font-size: clamp(1.1rem, 2.4vw, 2.0rem) !important;
+        font-weight: 700 !important;
+        color: var(--eboss-green) !important;
+        background-color: var(--eboss-black) !important;
+        border: 2px solid var(--eboss-gray) !important;
+        border-radius: var(--btn-radius) !important;
+        transition: box-shadow .18s ease, transform .06s ease;
+      }
+      .stButton > button:hover, .stLinkButton > a:hover{
+        box-shadow: 0 0 18px var(--eboss-green);
+      }
+      .stButton > button:active, .stLinkButton > a:active{ transform: translateY(1px); }
 
-/* Hover and focus effect */
-.stSelectbox :hover,
-.stTextInput :hover,
-.stNumberInput > div :hover {
-    border-color: #A9E37A !important;
-    box-shadow: 0 0 8px #A9E37A;
-}
+      /* A utility wrapper to center groups of buttons */
+      .button-wrap{
+        display:flex; flex-wrap:wrap; justify-content:center; gap:1rem;
+        max-width: 800px; margin: 1.5rem auto 0;
+      }
 
-</style>
-""", unsafe_allow_html=True)
+      /* Video CTA look (uses link_button under the hood) */
+      .cta-video a{
+        display:flex; align-items:center; justify-content:center;
+        color: var(--eboss-green) !important; text-decoration:none !important;
+      }
+    </style>
+    """, unsafe_allow_html=True)
 
 apply_custom_css()
 # FIX: Initialize session state key
@@ -258,7 +241,7 @@ def show_logo_and_title(title):
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding-top: 1rem;
+            padding-top: 0rem;
             padding-bottom: 1rem;
         }
 
@@ -272,7 +255,7 @@ def show_logo_and_title(title):
             font-weight: bold;
             color: #81BD47;
             text-align: center;
-            margin-top: 0.5rem;
+            margin-top:0rem;
             margin-bottom: 1rem;
         }
 
