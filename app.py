@@ -516,6 +516,20 @@ def calculate_charge_rate(model: str, eboss_type: str, pm_gen: str | None) -> fl
     # Safety: never exceed EBOSS max_charge
     return min(charge_rate, max_charge)
 
+def get_charge_rate(model: str, eboss_type: str) -> float:
+    """
+    Charge rate depends only on model + mode.
+    PM generator size does NOT affect the rate; it's validated separately.
+    Always clamp to max_charge for safety.
+    """
+    if model not in EBOSS_KVA:
+        raise ValueError(f"Unknown model: {model}")
+
+    kva = EBOSS_KVA[model]              # numeric kVA for the EBOSS model
+    spec = Eboss_Specs[kva]             # envelope for this kVA
+    base_rate = spec["power_module"] if eboss_type == "Power Module" else spec["full_hybrid"]
+    return min(float(base_rate), float(spec["max_charge"]))  # safety cap only
+
 def validate_pm_generator(model: str, pm_gen: str) -> tuple[bool, list[str]]:
     """
     Power Module validation.
@@ -727,19 +741,7 @@ if st.session_state.show_contact_form:
  # ──────────────────────────────────────────────────────────────
 # 🔋 CHARGE RATE ENGINE
 # ──────────────────────────────────────────────────────────────
-def get_charge_rate(model: str, eboss_type: str) -> float:
-    """
-    Charge rate depends only on model + mode.
-    PM generator size does NOT affect the rate; it's validated separately.
-    Always clamp to max_charge for safety.
-    """
-    if model not in EBOSS_KVA:
-        raise ValueError(f"Unknown model: {model}")
 
-    kva = EBOSS_KVA[model]              # numeric kVA for the EBOSS model
-    spec = Eboss_Specs[kva]             # envelope for this kVA
-    base_rate = spec["power_module"] if eboss_type == "Power Module" else spec["full_hybrid"]
-    return min(float(base_rate), float(spec["max_charge"]))  # safety cap only
 
 
 def validate_charge_rate(model: str,
