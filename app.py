@@ -592,16 +592,6 @@ Eboss_Specs = {
     220: {"full_hybrid": 100, "power_module": 96, "max_charge": 125,"max_peak": 252.0, "max_cont":112, "battery_kwh": 75},
     400: {"full_hybrid": 176.0,"power_module": 166,"max_charge": 220.0,"max_peak": 639.0, "max_cont":198, "battery_kwh": 125},
 }
-# --- Fuel interpolation (use your existing one; this is a safe fallback) ---
-# --- Fuel comparison core (single source of truth) ---
-import re
-
-# Reuse existing mappings if present; otherwise provide safe fallbacks.
-EBOSS_KVA = globals().get("EBOSS_KVA", {
-    "EBOSS 25 kVA": 25, "EBOSS 70 kVA": 70, "EBOSS 125 kVA": 125, "EBOSS 220 kVA": 220, "EBOSS 400 kVA": 400
-
-# --- put this near your other helpers (above page functions) ---
-# --- put this near your other helpers (above page functions) ---
 import re
 
 # Reuse existing dicts if they exist
