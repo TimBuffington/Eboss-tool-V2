@@ -13,7 +13,7 @@ def apply_custom_css():
         font-family: 'Segoe UI', sans-serif;
         font-size: 1.1rem;
         line-height: 1.6;
-        background: url("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/bg.png") no-repeat center center fixed;
+        background: url("https://raw.githubusercontent.com/TimBuffington/EBOSS&reg&reg-tool-V2/main/assets/bg.png") no-repeat center center fixed;
         background-size: cover;
         color: #fff;
         margin: 0;
@@ -60,7 +60,7 @@ def apply_custom_css():
     }
 
     /* === BUTTONS === */
-    .stButton > button, .eboss-hero-btn {
+    .stButton > button, .EBOSS&reg&reg-hero-btn {
         width: 100%;
         max-width: 340px;
         margin: 1rem auto;
@@ -235,14 +235,14 @@ if "user_inputs" not in st.session_state:
 # ---- UTILITY: LOGO & TITLE ----
 def show_logo_and_title(title):
     st.markdown(
-        '<div class="logo-header"><img src="https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png" alt="Company Logo"></div>',
+        '<div class="logo-header"><img src="https://raw.githubusercontent.com/TimBuffington/EBOSS&reg&reg-tool-V2/main/assets/logo.png" alt="Company Logo"></div>',
         unsafe_allow_html=True
     )
     st.markdown(f'<h1 class="form-section-title">{title}</h1>', unsafe_allow_html=True)
 
 #=====================================================================================================
 spec_data = {
-    "EBOSS 25 kVA": {
+    "EBOSS&reg&reg 25 kVA": {
         "Maximum Intermittent Load": [
             ("Three-phase", "30 kva / 24 kw"),
             ("Single-phase", "20 kva / 16 kw"),
@@ -267,7 +267,7 @@ spec_data = {
             ("Battery Storage", "15 kWH")
         ]
     },
-    "EBOSS 70 kVA": {
+    "EBOSS&reg&reg 70 kVA": {
         "Maximum Intermittent Load": [
             ("Three-phase", "70 kVA / 56 kW"),
             ("Single-phase", "47 kVA / 37 kW"),
@@ -292,7 +292,7 @@ spec_data = {
             ("Battery Storage", "25 kWH")
         ]
     },
-    "EBOSS 125 kVA": {
+    "EBOSS&reg&reg 125 kVA": {
         "Maximum Intermittent Load": [
             ("Three-phase", "125 kVA / 100 kW"),
             ("Single-phase", "N/A / N/A"),
@@ -317,7 +317,7 @@ spec_data = {
             ("Battery Storage", "50 kWH")
         ]
     },
-    "EBOSS 220 kVA": {
+    "EBOSS&reg&reg 220 kVA": {
         "Maximum Intermittent Load": [
             ("Three-phase", "220 kVA / 176 kW"),
             ("Single-phase", "N/A / N/A"),
@@ -342,7 +342,7 @@ spec_data = {
             ("Battery Storage", "75 kWH")
         ]
     },
-    "EBOSS 400 kVA": {
+    "EBOSS&reg&reg 400 kVA": {
         "Maximum Intermittent Load": [
             ("Three-phase", "400 kVA / 320 kW"),
             ("Single-phase", "N/A"),
@@ -497,12 +497,12 @@ std_specs = {
     }
 }
 
-EBOSS_KVA = {
-    "EBOSS 25 kVA": 25,
-    "EBOSS 70 kVA": 70,
-    "EBOSS 125 kVA": 125,
-    "EBOSS 220 kVA": 220,
-    "EBOSS 400 kVA": 400
+EBOSS&reg&reg_KVA = {
+    "EBOSS&reg&reg 25 kVA": 25,
+    "EBOSS&reg&reg 70 kVA": 70,
+    "EBOSS&reg&reg 125 kVA": 125,
+    "EBOSS&reg&reg 220 kVA": 220,
+    "EBOSS&reg&reg 400 kVA": 400
 }
 
 std_gen = {
@@ -564,28 +564,28 @@ def top_navbar():
             st.rerun()
 
 # ==== UNIFIED MODEL KEYS (make sure your spec_data uses these exact strings) ====
-VALID_MODELS = ["EBOSS 25 kVA", "EBOSS 70 kVA", "EBOSS 125 kVA", "EBOSS 220 kVA", "EBOSS 400 kVA"]
+VALID_MODELS = ["EBOSS&reg&reg 25 kVA", "EBOSS&reg&reg 70 kVA", "EBOSS&reg&reg 125 kVA", "EBOSS&reg&reg 220 kVA", "EBOSS&reg&reg 400 kVA"]
 
 # kVA name -> kVA value
-EBOSS_KVA = {
-    "EBOSS 25 kVA": 25,
-    "EBOSS 70 kVA": 70,
-    "EBOSS 125 kVA": 125,
-    "EBOSS 220 kVA": 220,
-    "EBOSS 400 kVA": 400,
+EBOSS&reg&reg_KVA = {
+    "EBOSS&reg&reg 25 kVA": 25,
+    "EBOSS&reg&reg 70 kVA": 70,
+    "EBOSS&reg&reg 125 kVA": 125,
+    "EBOSS&reg&reg 220 kVA": 220,
+    "EBOSS&reg&reg 400 kVA": 400,
 }
 
-# Battery sizes (kWh) for EBOSS®
-EBOSS_BATTERY_KWH = {
-    "EBOSS 25 kVA": 15,
-    "EBOSS 70 kVA": 25,
-    "EBOSS 125 kVA": 50,
-    "EBOSS 220 kVA": 75,
-    "EBOSS 400 kVA": 125,
+# Battery sizes (kWh) for EBOSS&reg&reg®
+EBOSS&reg&reg_BATTERY_KWH = {
+    "EBOSS&reg&reg 25 kVA": 15,
+    "EBOSS&reg&reg 70 kVA": 25,
+    "EBOSS&reg&reg 125 kVA": 50,
+    "EBOSS&reg&reg 220 kVA": 75,
+    "EBOSS&reg&reg 400 kVA": 125,
 }
 
 # Charge-rate envelope per kVA (you can tune these with real data)
-Eboss_Specs = {
+EBOSS&reg&reg_Specs = {
     25:  {"full_hybrid": 19.5, "power_module": 18.5,  "max_charge": 20, "max_peak": 20.0, "max_cont":18, "battery_kwh": 15},
     70:  {"full_hybrid": 36, "power_module": 233, "max_charge": 45, "max_peak": 56.0, "max_cont": 40, "battery_kwh": 25},
     125: {"full_hybrid": 52, "power_module": 48, "max_charge": 65, "max_peak": 125.0, "max_cont":58, "battery_kwh": 50},
@@ -595,8 +595,8 @@ Eboss_Specs = {
 import re
 
 # Reuse existing dicts if they exist
-EBOSS_KVA = globals().get("EBOSS_KVA", {
-    "EBOSS 25 kVA": 25, "EBOSS 70 kVA": 70, "EBOSS 125 kVA": 125, "EBOSS 220 kVA": 220, "EBOSS 400 kVA": 400
+EBOSS&reg&reg_KVA = globals().get("EBOSS&reg&reg_KVA", {
+    "EBOSS&reg&reg 25 kVA": 25, "EBOSS&reg&reg 70 kVA": 70, "EBOSS&reg&reg 125 kVA": 125, "EBOSS&reg&reg 220 kVA": 220, "EBOSS&reg&reg 400 kVA": 400
 })
 FH_ATTACHED_GEN_KW = globals().get("FH_ATTACHED_GEN_KW", {25: 20, 70: 36, 125: 56, 220: 100, 400: 176})
 
@@ -608,7 +608,7 @@ def _first_int(s: str | None) -> int:
 
 def get_fuel_use(
     model: str,
-    eboss_type: str,
+    EBOSS&reg&reg_type: str,
     cont_kw: float,
     charge_kw: float,
     pm_gen: str | None,
@@ -624,11 +624,11 @@ def get_fuel_use(
       }
     Notes:
       - All GPH from interpolate_gph(kva, load_pct)
-      - EBOSS GPD = runtime_hrs_per_day * GPH
+      - EBOSS&reg&reg GPD = runtime_hrs_per_day * GPH
       - Standard Gen GPD = 24 * GPH
     """
-    # EBOSS model → kVA; fallback to parsing
-    kva = EBOSS_KVA.get(model, _first_int(model))
+    # EBOSS&reg&reg model → kVA; fallback to parsing
+    kva = EBOSS&reg&reg_KVA.get(model, _first_int(model))
 
     # Full Hybrid
     attached_kw = FH_ATTACHED_GEN_KW.get(kva, 0.8 * kva)
@@ -643,7 +643,7 @@ def get_fuel_use(
 
     # Power Module (if selected)
     power_module = None
-    if eboss_type == "Power Module" and pm_gen:
+    if EBOSS&reg&reg_type == "Power Module" and pm_gen:
         pm_kva = _first_int(pm_gen)
         pm_kw = 0.8 * pm_kva
         pm_load = max(0.25, min((cont_kw / pm_kw) if pm_kw else 0.25, 1.0))
@@ -671,19 +671,19 @@ def get_fuel_use(
 def update_fuel_use_in_session(std_kva_choice: int) -> dict:
     """Compute fuel_use dict from current session inputs and save to st.session_state['fuel_use']."""
     ui = st.session_state.user_inputs
-    model      = ui.get("model", "EBOSS 25 kVA")
-    eboss_type = ui.get("eboss_type", "Full Hybrid")
+    model      = ui.get("model", "EBOSS&reg&reg 25 kVA")
+    EBOSS&reg&reg_type = ui.get("EBOSS&reg&reg_type", "Full Hybrid")
     cont_kw    = float(ui.get("cont_kw", 0.0))
     charge_kw  = float(ui.get("charge_rate", 0.0))
     pm_gen     = ui.get("pm_gen")
 
-    # use your existing runtime calc so EBOSS uses actual engine-hours/day
-    rt = calculate_runtime_specs(model, eboss_type, cont_kw, pm_gen)
+    # use your existing runtime calc so EBOSS&reg&reg uses actual engine-hours/day
+    rt = calculate_runtime_specs(model, EBOSS&reg&reg_type, cont_kw, pm_gen)
     runtime_hrs_per_day = float(rt.get("runtime", 0.0))
 
     fuel_use = get_fuel_use(
         model=model,
-        eboss_type=eboss_type,
+        EBOSS&reg&reg_type=EBOSS&reg&reg_type,
         cont_kw=cont_kw,
         charge_kw=charge_kw,
         pm_gen=pm_gen,
@@ -704,8 +704,8 @@ def render_fuel_table_from_session(show_pm: bool) -> None:
     st.markdown("### 🔥 Fuel Use (GPH / GPD / GPW / GPM)")
     hdr = st.columns(4)
     hdr[0].markdown("**Metric**")
-    hdr[1].markdown("**EBOSS Full Hybrid**")
-    hdr[2].markdown("**EBOSS Power Module**")
+    hdr[1].markdown("**EBOSS&reg&reg Full Hybrid**")
+    hdr[2].markdown("**EBOSS&reg&reg Power Module**")
     hdr[3].markdown("**Standard Generator**")
 
     def row(label, a, b, c):
@@ -723,43 +723,43 @@ def render_fuel_table_from_session(show_pm: bool) -> None:
 
 
 
-def calculate_charge_rate(model: str, eboss_type: str, pm_gen: str | None) -> float:
+def calculate_charge_rate(model: str, EBOSS&reg&reg_type: str, pm_gen: str | None) -> float:
     """
-    Charge rate is determined ONLY by the EBOSS model + mode.
+    Charge rate is determined ONLY by the EBOSS&reg&reg model + mode.
     PM generator size does NOT change the charge rate; it's validated separately.
     Always clamp to max_charge for safety.
     """
-    # Resolve model kVA (handles "EBOSS 125 kVA" and minor key quirks)
-    model_kva = EBOSS_KVA.get(model)
+    # Resolve model kVA (handles "EBOSS&reg&reg 125 kVA" and minor key quirks)
+    model_kva = EBOSS&reg&reg_KVA.get(model)
     if model_kva is None:
         import re
         m = re.search(r"(\d+)", model or "")
         model_kva = int(m.group(1)) if m else 0
 
-    spec = Eboss_Specs[model_kva]
+    spec = EBOSS&reg&reg_Specs[model_kva]
     max_charge = float(spec["max_charge"])
 
-    if eboss_type == "Full Hybrid":
+    if EBOSS&reg&reg_type == "Full Hybrid":
         charge_rate = float(spec["full_hybrid"])
     else:
         # Power Module
         charge_rate = float(spec["power_module"])
 
-    # Safety: never exceed EBOSS max_charge
+    # Safety: never exceed EBOSS&reg&reg max_charge
     return min(charge_rate, max_charge)
 
-def get_charge_rate(model: str, eboss_type: str) -> float:
+def get_charge_rate(model: str, EBOSS&reg&reg_type: str) -> float:
     """
     Charge rate depends only on model + mode.
     PM generator size does NOT affect the rate; it's validated separately.
     Always clamp to max_charge for safety.
     """
-    if model not in EBOSS_KVA:
+    if model not in EBOSS&reg&reg_KVA:
         raise ValueError(f"Unknown model: {model}")
 
-    kva = EBOSS_KVA[model]              # numeric kVA for the EBOSS model
-    spec = Eboss_Specs[kva]             # envelope for this kVA
-    base_rate = spec["power_module"] if eboss_type == "Power Module" else spec["full_hybrid"]
+    kva = EBOSS&reg&reg_KVA[model]              # numeric kVA for the EBOSS&reg&reg model
+    spec = EBOSS&reg&reg_Specs[kva]             # envelope for this kVA
+    base_rate = spec["power_module"] if EBOSS&reg&reg_type == "Power Module" else spec["full_hybrid"]
     return min(float(base_rate), float(spec["max_charge"]))  # safety cap only
 
 def validate_pm_generator(model: str, pm_gen: str) -> tuple[bool, list[str]]:
@@ -773,13 +773,13 @@ def validate_pm_generator(model: str, pm_gen: str) -> tuple[bool, list[str]]:
     can_continue = True
 
     # Model → kVA → PM charge rate
-    model_kva = EBOSS_KVA.get(model)
+    model_kva = EBOSS&reg&reg_KVA.get(model)
     if model_kva is None:
         import re
         m = re.search(r"(\d+)", model or "")
         model_kva = int(m.group(1)) if m else 0
 
-    pm_charge_rate = float(Eboss_Specs[model_kva]["power_module"])
+    pm_charge_rate = float(EBOSS&reg&reg_Specs[model_kva]["power_module"])
 
     # Parse PM generator kW capacity (~0.8 × kVA)
     import re
@@ -812,11 +812,11 @@ def enforce_session_validation():
     ui = st.session_state.user_inputs
 
     model = ui.get("model")
-    eboss_type = ui.get("eboss_type") or "Full Hybrid"
+    EBOSS&reg&reg_type = ui.get("EBOSS&reg&reg_type") or "Full Hybrid"
     pm_gen = ui.get("pm_gen")
 
     # PM validation rules (do NOT change rate, just gate + warn)
-    if eboss_type == "Power Module":
+    if EBOSS&reg&reg_type == "Power Module":
         if not pm_gen:
             st.error("❌ Please select a PM Generator size to continue.")
             st.stop()
@@ -835,7 +835,7 @@ def submit_training_request(_): return 200
 
 def landing_page():
     apply_custom_css()
-    show_logo_and_title("EBOSS&reg Hybrid Energy System<br>Specs and Comparison Tool")
+    show_logo_and_title("EBOSS&reg Specs and Comparison Tool")
     col1, col2 = st.columns(2, gap="large")
     with col1:
         if st.button("📋 Request a Demo", key="btn_demo"):
@@ -847,15 +847,19 @@ def landing_page():
             st.session_state.landing_shown = False
             st.rerun()
     with col2:
-        st.markdown("""
-            <a href="https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc" target="_blank" style="text-decoration:none;">
-                <button class="eboss-hero-btn" type="button">
-                    Learn How EBOSS&reg; Works
-                </button>
-            </a>
-        """, unsafe_allow_html=True)
+        # ✅ Works reliably: opens YouTube in a new tab
+        link_button("🎥 Learn How EBOSS® Works",
+                    "https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc",
+                    key="btn_learn")
 
+        # Keep a normal Streamlit button for launching the tool
         if st.button("🚀 Launch EBOSS® Tool", key="btn_launch"):
+            st.session_state.selected_form = "tool"
+            st.session_state.section = "input"  # or "tech_specs"
+            st.session_state.landing_shown = False
+            st.rerun()
+
+        if st.button("🚀 Launch EBOSS&reg&reg® Tool", key="btn_launch"):
             st.session_state.selected_form = "tool"
             st.session_state.section = "input"  # 👈 or "tech_specs" if you prefer
             st.session_state.landing_shown = False
@@ -883,9 +887,9 @@ def render_contact_form(form_type="demo"):
         st.text_input("Email Address", key="email")
 
         if form_type == "training":
-            st.selectbox("EBOSS® Model for Training", ["EB25 kVA", "EB70 kVA", "EB125 kVA", "EB220 kVA", "EB400 kVA"], key="model")
+            st.selectbox("EBOSS&reg&reg® Model for Training", ["EB25 kVA", "EB70 kVA", "EB125 kVA", "EB220 kVA", "EB400 kVA"], key="model")
             st.radio("Training Type", ["Sales", "Technical"], horizontal=True, key="train_type")
-            st.radio("Is an EBOSS® unit already onsite?", ["Yes", "No"], horizontal=True, key="onsite")
+            st.radio("Is an EBOSS&reg&reg® unit already onsite?", ["Yes", "No"], horizontal=True, key="onsite")
             st.date_input("Preferred Training Date", key="train_date")
             st.number_input("Number of Attendees", min_value=1, step=1, key="attendees")
             tv = st.checkbox("A TV is available to present training materials")
@@ -934,7 +938,7 @@ if "form_type" not in st.session_state:
 if st.session_state.landing_shown:
     apply_custom_css()
     st.image("https://anacorp.com/wp-content/uploads/2023/10/ANA-ENERGY-LOGO-PADDED.png", width=250)
-    st.markdown("<h1>EBOSS® Hybrid Energy System Specs and Comparison Tool</h1>", unsafe_allow_html=True)
+    st.markdown("<h1>EBOSS&reg&reg® Hybrid Energy System Specs and Comparison Tool</h1>", unsafe_allow_html=True)
 
     col1, col2 = st.columns(2)
     with col1:
@@ -952,10 +956,10 @@ if st.session_state.landing_shown:
 
     col3, col4 = st.columns(2)
     with col3:
-        if st.button("🎥 Learn How EBOSS® Works"):
+        if st.button("🎥 Learn How EBOSS&reg&reg® Works"):
             st.markdown("""<script>window.open("https://youtu.be/0Om2qO-zZfM?si=iTiPgIL2t-xDFixc", "_blank");</script>""", unsafe_allow_html=True)
     with col4:
-        if st.button("🚀 Launch EBOSS® Tool", key="btn_launch"):
+        if st.button("🚀 Launch EBOSS&reg&reg® Tool", key="btn_launch"):
             st.session_state.selected_form = "tool"
             st.session_state.section = "input"
             st.session_state.landing_shown = False
@@ -974,7 +978,7 @@ if st.session_state.show_contact_form:
 
 
 def validate_charge_rate(model: str,
-                         eboss_type: str,
+                         EBOSS&reg&reg_type: str,
                          entered_rate: float,
                          gen_kw: float | None = None) -> tuple[bool, list[str]]:
     """
@@ -986,11 +990,11 @@ def validate_charge_rate(model: str,
           * WARN if gen_kw > (2/3) * power_module  (may reduce fuel efficiency)
     """
     messages: list[str] = []
-    if model not in EBOSS_KVA:
+    if model not in EBOSS&reg&reg_KVA:
         return False, [f"❌ Unknown model: {model}"]
 
-    kva = EBOSS_KVA[model]
-    spec = Eboss_Specs[kva]
+    kva = EBOSS&reg&reg_KVA[model]
+    spec = EBOSS&reg&reg_Specs[kva]
     max_rate = float(spec["max_charge"])
     pm_rate  = float(spec["power_module"])
 
@@ -1002,7 +1006,7 @@ def validate_charge_rate(model: str,
         is_valid = False
 
     # PM generator checks (gen_kw optional; only applies in PM mode)
-    if eboss_type == "Power Module" and gen_kw is not None:
+    if EBOSS&reg&reg_type == "Power Module" and gen_kw is not None:
         gen_kw = float(gen_kw)
 
         # Hard fail if undersized versus PM charge rate
@@ -1025,22 +1029,22 @@ def render_user_input_form():
     with st.container():
         cols = st.columns([1, 1, 1], gap="large")
 
-        # ───── Column 1: EBOSS® ─────
+        # ───── Column 1: EBOSS&reg&reg® ─────
         with cols[0]:
             st.markdown('''
                 <div class="card">
-                    <div class="card-label">EBOSS®</div>
+                    <div class="card-label">EBOSS&reg&reg®</div>
             ''', unsafe_allow_html=True)
 
             st.session_state.user_inputs["model"] = st.selectbox(
-                "Model", list(EBOSS_KVA.keys()), key="model_select"
+                "Model", list(EBOSS&reg&reg_KVA.keys()), key="model_select"
             )
 
-            st.session_state.user_inputs["eboss_type"] = st.selectbox(
-                "Type", ["Full Hybrid", "Power Module"], key="eboss_type_select"
+            st.session_state.user_inputs["EBOSS&reg&reg_type"] = st.selectbox(
+                "Type", ["Full Hybrid", "Power Module"], key="EBOSS&reg&reg_type_select"
             )
 
-            if st.session_state.user_inputs["eboss_type"] == "Power Module":
+            if st.session_state.user_inputs["EBOSS&reg&reg_type"] == "Power Module":
                 st.session_state.user_inputs["pm_gen"] = st.selectbox(
                     "Generator Size", ["25kVA", "45kVA", "65kVA", "125kVA", "220kVA", "400kVA"],
                     key="pm_gen_select"
@@ -1101,7 +1105,7 @@ def render_user_input_form():
 #========================================================================================================
 def display_load_threshold_check(user_inputs):
     # Reference data
-    EBOSS_KVA = {
+    EBOSS&reg&reg_KVA = {
         "EB25 kVA": 25,
         "EB70 kVA": 45,
         "EB125 kVA": 65,
@@ -1109,7 +1113,7 @@ def display_load_threshold_check(user_inputs):
         "EB400 kVA": 220
     }
 
-    EBOSS_BATTERY_KWH = {
+    EBOSS&reg&reg_BATTERY_KWH = {
         "EB25 kVA": 15,
         "EB70 kVA": 25,
         "EB125 kVA": 50,
@@ -1118,18 +1122,18 @@ def display_load_threshold_check(user_inputs):
     }
 
     model = user_inputs.get("model")
-    eboss_type = user_inputs.get("eboss_type")
+    EBOSS&reg&reg_type = user_inputs.get("EBOSS&reg&reg_type")
     cont_kw = user_inputs.get("cont_kw")
 
-    if not model or model not in EBOSS_KVA or model not in EBOSS_BATTERY_KWH:
+    if not model or model not in EBOSS&reg&reg_KVA or model not in EBOSS&reg&reg_BATTERY_KWH:
         st.warning("⚠️ Invalid model selected or missing data.")
         return
 
-    pm_kva = EBOSS_KVA[model]
-    battery_kwh = EBOSS_BATTERY_KWH[model]
+    pm_kva = EBOSS&reg&reg_KVA[model]
+    battery_kwh = EBOSS&reg&reg_BATTERY_KWH[model]
 
     try:
-        charge_rate = Eboss_Charge_Rates[pm_kva]["power_module" if eboss_type == "Power Module" else "full_hybrid"]
+        charge_rate = EBOSS&reg&reg_Charge_Rates[pm_kva]["power_module" if EBOSS&reg&reg_type == "Power Module" else "full_hybrid"]
         max_safe_limit = charge_rate * 0.9
         efficiency_target = battery_kwh * (2 / 3)
     except Exception as e:
@@ -1144,18 +1148,18 @@ def display_load_threshold_check(user_inputs):
 
         # 🔍 Find recommended model
         recommended = None
-        for name, kva in EBOSS_KVA.items():
-            new_rate = Eboss_Charge_Rates[kva]["power_module" if eboss_type == "Power Module" else "full_hybrid"]
+        for name, kva in EBOSS&reg&reg_KVA.items():
+            new_rate = EBOSS&reg&reg_Charge_Rates[kva]["power_module" if EBOSS&reg&reg_type == "Power Module" else "full_hybrid"]
             if cont_kw <= new_rate * 0.9:
                 recommended = name
                 break
 
         if recommended:
-            st.warning(f"💡 Recommended EBOSS size: **{recommended}** for your current load.")
+            st.warning(f"💡 Recommended EBOSS&reg&reg size: **{recommended}** for your current load.")
         else:
-            st.error("❌ No EBOSS size can handle this load. Consider splitting into multiple units.")
+            st.error("❌ No EBOSS&reg&reg size can handle this load. Consider splitting into multiple units.")
     elif cont_kw > max_safe_limit:
-        st.warning(f"⚠️ Load is above 90% of the EBOSS charge rate ({charge_rate:.1f} kW).")
+        st.warning(f"⚠️ Load is above 90% of the EBOSS&reg&reg charge rate ({charge_rate:.1f} kW).")
     elif cont_kw > efficiency_target:
         st.info(f"ℹ️ Load is within safe range but above the fuel-efficiency threshold (~{efficiency_target:.1f} kW).")
     else:
@@ -1197,7 +1201,7 @@ def render_calculate_buttons():
         if st.button("♻️ Clear", key="btn_clear"):
             st.session_state.user_inputs = {
                 "model": "EB25 kVA",
-                "eboss_type": "Full Hybrid",
+                "EBOSS&reg&reg_type": "Full Hybrid",
                 "pm_gen": None,
                 "cont_kw": 0,
                 "peak_kw": 0,
@@ -1222,15 +1226,15 @@ def render_card(label, value):
         </div>
     ''', unsafe_allow_html=True)
 
-def calculate_runtime_specs(model, eboss_type, cont_kw, pm_gen):
+def calculate_runtime_specs(model, EBOSS&reg&reg_type, cont_kw, pm_gen):
     # Determine generator size based on mode
-    gen_kva = EBOSS_KVA.get(model, 0) if eboss_type == "Full Hybrid" else int(__import__("re").search(r"(\d+)", str(pm_gen or "")).group(1)) if pm_gen else 0
+    gen_kva = EBOSS&reg&reg_KVA.get(model, 0) if EBOSS&reg&reg_type == "Full Hybrid" else int(__import__("re").search(r"(\d+)", str(pm_gen or "")).group(1)) if pm_gen else 0
     gen_kw = gen_kva * 0.8
 
     # Use the unified envelope for charge/battery
-    model_kva = EBOSS_KVA.get(model, gen_kva)
-    charge_kw = calculate_charge_rate(model, eboss_type, pm_gen)
-    battery_kwh = Eboss_Specs[model_kva]["battery_kwh"]  # ← unified & correct
+    model_kva = EBOSS&reg&reg_KVA.get(model, gen_kva)
+    charge_kw = calculate_charge_rate(model, EBOSS&reg&reg_type, pm_gen)
+    battery_kwh = EBOSS&reg&reg_Specs[model_kva]["battery_kwh"]  # ← unified & correct
 
     battery_life = battery_kwh / cont_kw if cont_kw else 0
     charge_time  = battery_kwh / (charge_kw - cont_kW) if (charge_kw - cont_kW) > 0 else 0
@@ -1251,7 +1255,7 @@ def calculate_runtime_specs(model, eboss_type, cont_kw, pm_gen):
 # ---- TECH SPECS PAGE ----
 def render_user_input_page():
     apply_custom_css()  # ✅ ADD THIS
-    show_logo_and_title("Eboss & Load Data")
+    show_logo_and_title("EBOSS&reg&reg & Load Data")
     top_navbar()
     render_user_input_form()
 
@@ -1291,17 +1295,17 @@ def render_tech_specs_page():
 def render_compare_page():
     import re
     apply_custom_css()
-    show_logo_and_title("Compare — EBOSS® vs Standard Generator")
+    show_logo_and_title("Compare — EBOSS&reg&reg® vs Standard Generator")
     top_navbar()
 
-    # Selected EBOSS model
+    # Selected EBOSS&reg&reg model
     model = st.session_state.user_inputs.get("model_select")
 
     # Normalize odd key for 125
     if model not in spec_data and model.replace(" 125 kVA", "125 kVA") in spec_data:
         model = model.replace(" 125 kVA", "125 kVA")
 
-    eboss_specs = spec_data.get(model, {})
+    EBOSS&reg&reg_specs = spec_data.get(model, {})
     # If you have a dict of std-gen specs keyed similarly; otherwise leave it empty
     std_specs = globals().get("std_gen_data", {}).get(model, {})
 
@@ -1313,8 +1317,8 @@ def render_compare_page():
     gen_kw = kva * 0.8
 
     # Charge rate and battery (adjust with your real tables)
-    charge_kw = Eboss_Specs[kva]["full_hybrid"]
-    battery_kwh = Eboss_Specs[kva]["battery_kwh"]
+    charge_kw = EBOSS&reg&reg_Specs[kva]["full_hybrid"]
+    battery_kwh = EBOSS&reg&reg_Specs[kva]["battery_kwh"]
 
     # Duty-cycle estimates
     batt_runtime_h = battery_kwh / cont_kw if cont_kw > 0 else 0
@@ -1322,22 +1326,22 @@ def render_compare_page():
     cycles_per_day = 24 / (batt_runtime_h + charge_time_h) if (batt_runtime_h + charge_time_h) > 0 else 0
     runtime_hrs = charge_time_h * cycles_per_day
 
-    # Fuel estimates (EBOSS runs only during charge; Std Gen runs 24h @ ~100%)
-    eboss_gph = interpolate_gph(kva, min(max(charge_kw / gen_kw, 0.25), 1.0))
+    # Fuel estimates (EBOSS&reg&reg runs only during charge; Std Gen runs 24h @ ~100%)
+    EBOSS&reg&reg_gph = interpolate_gph(kva, min(max(charge_kw / gen_kw, 0.25), 1.0))
     std_gph   = interpolate_gph(kva, 1.0)
 
-    eboss_gpd = round(eboss_gph * runtime_hrs, 2)
+    EBOSS&reg&reg_gpd = round(EBOSS&reg&reg_gph * runtime_hrs, 2)
     std_gpd   = round(std_gph * 24.0, 2)
-    eboss_gpw, std_gpw = round(eboss_gpd * 7, 2), round(std_gpd * 7, 2)
-    eboss_gpm, std_gpm = round(eboss_gpd * 30, 2), round(std_gpd * 30, 2)
+    EBOSS&reg&reg_gpw, std_gpw = round(EBOSS&reg&reg_gpd * 7, 2), round(std_gpd * 7, 2)
+    EBOSS&reg&reg_gpm, std_gpm = round(EBOSS&reg&reg_gpd * 30, 2), round(std_gpd * 30, 2)
 
     # ---- Sections ----
     sections = {
-        "Maximum Intermittent Load": eboss_specs.get("Maximum Intermittent Load", []),
-        "Maximum Continuous Load":   eboss_specs.get("Maximum Continuous Load",   []),
+        "Maximum Intermittent Load": EBOSS&reg&reg_specs.get("Maximum Intermittent Load", []),
+        "Maximum Continuous Load":   EBOSS&reg&reg_specs.get("Maximum Continuous Load",   []),
     }
 
-    # Render tech sections (for each metric show EBOSS vs Std Gen as a two-card row)
+    # Render tech sections (for each metric show EBOSS&reg&reg vs Std Gen as a two-card row)
     for section, rows in sections.items():
         st.markdown(f"""
         <div class="card" style="background-color:#636569;color:white;font-weight:700;
@@ -1349,7 +1353,7 @@ def render_compare_page():
 
         std_sec = dict(std_specs.get(section, []))
 
-        for label, eboss_val in rows:
+        for label, EBOSS&reg&reg_val in rows:
             # little header row for the metric label
             st.markdown(f"""
             <div class="card" style="background-color:#47484b;color:#fff;font-weight:700;
@@ -1357,13 +1361,13 @@ def render_compare_page():
                 {label}
             </div>
             """, unsafe_allow_html=True)
-            # then the two cards: EBOSS vs Std Gen
+            # then the two cards: EBOSS&reg&reg vs Std Gen
             col1, col2 = st.columns(2, gap="large")
             with col1:
                 st.markdown(f"""
                     <div class="card">
-                        <div class="card-label">EBOSS®</div>
-                        <div class="card-value">{eboss_val}</div>
+                        <div class="card-label">EBOSS&reg&reg®</div>
+                        <div class="card-value">{EBOSS&reg&reg_val}</div>
                     </div>
                 """, unsafe_allow_html=True)
             with col2:
@@ -1386,9 +1390,9 @@ def render_compare_page():
     metrics = [
         ("Runtime Hrs per Day", f"{runtime_hrs:.1f} h", "24 h"),
         ("Battery Storage",     f"{battery_kwh} kWh",  "0 kWh"),
-        ("Gallons per Day",     f"{eboss_gpd} gal",    f"{std_gpd} gal"),
-        ("Gallons per Week",    f"{eboss_gpw} gal",    f"{std_gpw} gal"),
-        ("Gallons per Month",   f"{eboss_gpm} gal",    f"{std_gpm} gal"),
+        ("Gallons per Day",     f"{EBOSS&reg&reg_gpd} gal",    f"{std_gpd} gal"),
+        ("Gallons per Week",    f"{EBOSS&reg&reg_gpw} gal",    f"{std_gpw} gal"),
+        ("Gallons per Month",   f"{EBOSS&reg&reg_gpm} gal",    f"{std_gpm} gal"),
     ]
     for label, eb_val, st_val in metrics:
         # metric label header
@@ -1398,12 +1402,12 @@ def render_compare_page():
             {label}
         </div>
         """, unsafe_allow_html=True)
-        # EBOSS vs Std Gen as two cards
+        # EBOSS&reg&reg vs Std Gen as two cards
         col1, col2 = st.columns(2, gap="large")
         with col1:
             st.markdown(f"""
                 <div class="card">
-                    <div class="card-label">EBOSS®</div>
+                    <div class="card-label">EBOSS&reg&reg®</div>
                     <div class="card-value">{eb_val}</div>
                 </div>
             """, unsafe_allow_html=True)
@@ -1450,12 +1454,12 @@ def render_spec_value_row_2(left_label: str, left_value: str, right_label: str, 
             </div>
         """, unsafe_allow_html=True)
 
-def render_spec_value_row_4(spec_label: str, eboss_val: str, std_val: str, diff_val: str | None = None):
-    """Four cards in one row: Spec | EBOSS | Std Gen | Difference (if numeric)."""
+def render_spec_value_row_4(spec_label: str, EBOSS&reg&reg_val: str, std_val: str, diff_val: str | None = None):
+    """Four cards in one row: Spec | EBOSS&reg&reg | Std Gen | Difference (if numeric)."""
     c1, c2, c3, c4 = st.columns(4, gap="large")
 
     # auto-compute pretty delta unless caller supplies one
-    diff_html = _delta_badge(eboss_val, std_val) if diff_val is None else _delta_badge(diff_val, "0")
+    diff_html = _delta_badge(EBOSS&reg&reg_val, std_val) if diff_val is None else _delta_badge(diff_val, "0")
 
     with c1:
         st.markdown(f"""
@@ -1466,8 +1470,8 @@ def render_spec_value_row_4(spec_label: str, eboss_val: str, std_val: str, diff_
     with c2:
         st.markdown(f"""
             <div class="card">
-                <div class="card-label">EBOSS®</div>
-                <div class="card-value">{eboss_val}</div>
+                <div class="card-label">EBOSS&reg&reg®</div>
+                <div class="card-value">{EBOSS&reg&reg_val}</div>
             </div>
         """, unsafe_allow_html=True)
     with c3:
@@ -1520,8 +1524,8 @@ def render_load_specs_page():
     # 👉 Validate inputs
     enforce_session_validation()
     inputs = st.session_state.user_inputs
-    kva = EBOSS_KVA[inputs["model"]]
-    spec = Eboss_Specs[kva]
+    kva = EBOSS&reg&reg_KVA[inputs["model"]]
+    spec = EBOSS&reg&reg_Specs[kva]
 
     charge_rate = inputs["charge_rate"]
     battery_kwh = spec["battery_kwh"]
@@ -1542,7 +1546,7 @@ def render_load_specs_page():
     else:
         st.success(f"✅ Load is optimal for fuel efficiency (≤ {efficiency_target:.1f} kW).")
     if peak_kw > spec["max_peak"]:
-        st.error(f"❌ Peak load ({peak_kw:.1f} kW) exceeds EBOSS peak limit ({spec['max_peak']} kW).")
+        st.error(f"❌ Peak load ({peak_kw:.1f} kW) exceeds EBOSS&reg&reg peak limit ({spec['max_peak']} kW).")
     st.markdown('</div>', unsafe_allow_html=True)
 
     # ---- Calculations ----
@@ -1558,8 +1562,8 @@ def render_load_specs_page():
     fuel_month = fuel_day * 30
     co2_day_lbs = fuel_day * 22.4
     # --- Fuel comparison block (stores dict in session) ---
-    # Default the standard-gen to the same kVA as the EBOSS model for convenience
-    default_kva = EBOSS_KVA.get(inputs["model"], 125)
+    # Default the standard-gen to the same kVA as the EBOSS&reg&reg model for convenience
+    default_kva = EBOSS&reg&reg_KVA.get(inputs["model"], 125)
     std_kva_choice = st.selectbox(
         "Standard Generator Size (kVA)",
         [25, 45, 65, 125, 220, 400],
@@ -1567,7 +1571,7 @@ def render_load_specs_page():
         key="std_kva_for_load_specs"
     )
     update_fuel_use_in_session(std_kva_choice)
-    render_fuel_table_from_session(show_pm=(inputs["eboss_type"] == "Power Module" and inputs.get("pm_gen") is not None))
+    render_fuel_table_from_session(show_pm=(inputs["EBOSS&reg&reg_type"] == "Power Module" and inputs.get("pm_gen") is not None))
 
 
       # ---- Battery & Charging ----
@@ -1578,7 +1582,7 @@ def render_load_specs_page():
         Battery & Charging
     </div>
     """, unsafe_allow_html=True)
-    render_spec_value_row("EBOSS® Model", inputs["model"])
+    render_spec_value_row("EBOSS&reg&reg® Model", inputs["model"])
     render_spec_value_row("Battery Capacity", f"{battery_kwh} kWh")
     render_spec_value_row("Selected Charge Rate", f"{charge_rate:.1f} kW")
     render_spec_value_row("Battery-only Runtime", f"{batt_runtime_h:.2f} h @ {cont_kw:.1f} kW")
@@ -1613,7 +1617,7 @@ def render_load_specs_page():
     render_spec_value_row("Continuous Load", f"{cont_kw:.1f} kW")
     render_spec_value_row("Peak Load", f"{peak_kw:.1f} kW")
     render_spec_value_row("Max Charge Rate", f"{spec['max_charge']:.1f} kW")
-    render_spec_value_row("Max Peak (EBOSS®)", f"{spec['max_peak']:.1f} kW")
+    render_spec_value_row("Max Peak (EBOSS&reg&reg®)", f"{spec['max_peak']:.1f} kW")
 
 
 
@@ -1621,18 +1625,18 @@ def render_load_specs_page():
 def render_compare_page():
     import re
     apply_custom_css()
-    show_logo_and_title("Compare — EBOSS® vs Standard Generator")
+    show_logo_and_title("Compare — EBOSS&reg&reg® vs Standard Generator")
     top_navbar()
 
     # Load the diesel reference once (cached)
     STD_REF = load_std_gen_specs_from_excel("/mnt/data/Grn Compare.xlsx")
 
-    # Selected EBOSS model (normalize the 125 key if needed)
+    # Selected EBOSS&reg&reg model (normalize the 125 key if needed)
     model = st.session_state.get("model_select")
     if model not in spec_data and model.replace(" 125 kVA", "125 kVA") in spec_data:
         model = model.replace(" 125 kVA", "125 kVA")
 
-    eboss_specs = spec_data.get(model, {})
+    EBOSS&reg&reg_specs = spec_data.get(model, {})
 
     # Determine kVA and map to Excel block
     m = re.search(r"(\d+)", model)
@@ -1655,7 +1659,7 @@ def render_compare_page():
         Maximum Intermittent Load
     </div>
     """, unsafe_allow_html=True)
-    e_rows = eboss_specs.get("Maximum Intermittent Load", [])
+    e_rows = EBOSS&reg&reg_specs.get("Maximum Intermittent Load", [])
     s_rows = dict(std_specs.get("Maximum Intermittent Load", []))
     for label, e_val in e_rows:
         s_val = s_rows.get(label, "–")
@@ -1669,36 +1673,36 @@ def render_compare_page():
         Maximum Continuous Load
     </div>
     """, unsafe_allow_html=True)
-    e_rows = eboss_specs.get("Maximum Continuous Load", [])
+    e_rows = EBOSS&reg&reg_specs.get("Maximum Continuous Load", [])
     s_rows = dict(std_specs.get("Maximum Continuous Load", []))
     for label, e_val in e_rows:
         s_val = s_rows.get(label, "–")
         render_spec_value_row_4(label, e_val, s_val, _delta(e_val, s_val))
 
     # ---------- SECTION 3: Engine / Fuel (computed + Excel) ----------
-    # Compute EBOSS duty-cycle metrics from your envelopes (same method you used before)
+    # Compute EBOSS&reg&reg duty-cycle metrics from your envelopes (same method you used before)
     inputs = st.session_state.user_inputs
     cont_kw = float(inputs.get("cont_kw", 10))
     kva = int(kva_key)
     gen_kw = kva * 0.8
-    charge_kw   = Eboss_Specs[kva]["full_hybrid"]
-    battery_kwh = Eboss_Specs[kva]["battery_kwh"]
+    charge_kw   = EBOSS&reg&reg_Specs[kva]["full_hybrid"]
+    battery_kwh = EBOSS&reg&reg_Specs[kva]["battery_kwh"]
 
     batt_runtime_h  = battery_kwh / cont_kw if cont_kw > 0 else 0
     charge_time_h   = battery_kwh / charge_kw if charge_kw > 0 else 0
     cycles_per_day  = 24 / (batt_runtime_h + charge_time_h) if (batt_runtime_h + charge_time_h) > 0 else 0
     runtime_hrs     = charge_time_h * cycles_per_day
 
-    eboss_gph = interpolate_gph(kva, min(max(charge_kw / gen_kw, 0.25), 1.0))
+    EBOSS&reg&reg_gph = interpolate_gph(kva, min(max(charge_kw / gen_kw, 0.25), 1.0))
     std_gph   = interpolate_gph(kva, 1.0)
 
-    eboss_gpd = round(eboss_gph * runtime_hrs, 2)
+    EBOSS&reg&reg_gpd = round(EBOSS&reg&reg_gph * runtime_hrs, 2)
     std_gpd   = round(std_gph * 24.0, 2)
-    eboss_gpw, std_gpw = round(eboss_gpd * 7, 2), round(std_gpd * 7, 2)
-    eboss_gpm, std_gpm = round(eboss_gpd * 30, 2), round(std_gpd * 30, 2)
+    EBOSS&reg&reg_gpw, std_gpw = round(EBOSS&reg&reg_gpd * 7, 2), round(std_gpd * 7, 2)
+    EBOSS&reg&reg_gpm, std_gpm = round(EBOSS&reg&reg_gpd * 30, 2), round(std_gpd * 30, 2)
     # --- Fuel comparison block (stores dict in session) ---
     ui = st.session_state.user_inputs
-    default_kva = int(kva_key) if str(kva_key).isdigit() else EBOSS_KVA.get(ui["model"], 125)
+    default_kva = int(kva_key) if str(kva_key).isdigit() else EBOSS&reg&reg_KVA.get(ui["model"], 125)
     std_kva_choice = st.selectbox(
         "Standard Generator Size (kVA)",
         [25, 45, 65, 125, 220, 400],
@@ -1706,7 +1710,7 @@ def render_compare_page():
         key="std_kva_for_compare"
     )
     update_fuel_use_in_session(std_kva_choice)
-    render_fuel_table_from_session(show_pm=(ui["eboss_type"] == "Power Module" and ui.get("pm_gen") is not None))
+    render_fuel_table_from_session(show_pm=(ui["EBOSS&reg&reg_type"] == "Power Module" and ui.get("pm_gen") is not None))
 
     st.markdown("""
     <div class="card" style="background-color:#636569;color:white;font-weight:700;
@@ -1719,9 +1723,9 @@ def render_compare_page():
     engine_rows = [
         ("Runtime Hrs per Day", f"{runtime_hrs:.1f} h", "24 h"),
         ("Battery Storage",     f"{battery_kwh} kWh",  "0 kWh"),
-        ("Gallons per Day",     f"{eboss_gpd} gal",    f"{std_gpd} gal"),
-        ("Gallons per Week",    f"{eboss_gpw} gal",    f"{std_gpw} gal"),
-        ("Gallons per Month",   f"{eboss_gpm} gal",    f"{std_gpm} gal"),
+        ("Gallons per Day",     f"{EBOSS&reg&reg_gpd} gal",    f"{std_gpd} gal"),
+        ("Gallons per Week",    f"{EBOSS&reg&reg_gpw} gal",    f"{std_gpw} gal"),
+        ("Gallons per Month",   f"{EBOSS&reg&reg_gpm} gal",    f"{std_gpm} gal"),
     ]
     for label, e_val, s_val in engine_rows:
         render_spec_value_row_4(label, e_val, s_val, _delta(e_val, s_val))
@@ -1737,7 +1741,7 @@ def render_cost_analysis_page():
 
     inputs = st.session_state.user_inputs
     model = inputs.get("model")
-    eboss_type = inputs.get("eboss_type")
+    EBOSS&reg&reg_type = inputs.get("EBOSS&reg&reg_type")
     cont_kw = inputs.get("cont_kw")
     pm_gen = inputs.get("pm_gen")
 
@@ -1748,14 +1752,14 @@ def render_cost_analysis_page():
     delivery_fee = st.number_input("Delivery Fee ($)", 0.0, 1000.0, 75.0, 1.0)
     pm_interval = st.number_input("PM Interval (hrs)", 10.0, 1000.0, 500.0, 10.0)
     pm_cost = st.number_input("Cost per PM ($)", 0.0, 5000.0, 150.0, 10.0)
-    eboss_rent = st.number_input("EBOSS® Monthly Rental ($)", 0.0, 100000.0, 3800.0, 50.0)
+    EBOSS&reg&reg_rent = st.number_input("EBOSS&reg&reg® Monthly Rental ($)", 0.0, 100000.0, 3800.0, 50.0)
     std_rent = st.number_input("Standard Generator Monthly Rental ($)", 0.0, 100000.0, 3500.0, 50.0)
     std_gen = st.selectbox("Standard Generator Size", list(STANDARD_GENERATORS.keys()))
 
     st.markdown('</div>', unsafe_allow_html=True)
 
     if st.button("✅ Run Cost Comparison"):
-        runtime = calculate_runtime_specs(model, eboss_type, cont_kw, pm_gen)
+        runtime = calculate_runtime_specs(model, EBOSS&reg&reg_type, cont_kw, pm_gen)
         std_runtime = 720  # 30 days × 24 hrs
         std_gph = STANDARD_GENERATORS[std_gen]
 
@@ -1771,14 +1775,14 @@ def render_cost_analysis_page():
         s_pm_cost = s_pms * pm_cost
         e_co2 = e_fuel * 22.4
         s_co2 = s_fuel * 22.4
-        e_total = eboss_rent + e_cost + delivery_fee + e_pm_cost
+        e_total = EBOSS&reg&reg_rent + e_cost + delivery_fee + e_pm_cost
         s_total = std_rent + s_cost + delivery_fee + s_pm_cost
         diff = s_total - e_total
 
         # ---- COST TABLE ----
         rows = [
-            ("Generator Size", f"{EBOSS_KVA[model]} kVA / {int(EBOSS_KVA[model]*0.8)} kW", std_gen, ""),
-            ("Rental Cost ($)", eboss_rent, std_rent, std_rent - eboss_rent),
+            ("Generator Size", f"{EBOSS&reg&reg_KVA[model]} kVA / {int(EBOSS&reg&reg_KVA[model]*0.8)} kW", std_gen, ""),
+            ("Rental Cost ($)", EBOSS&reg&reg_rent, std_rent, std_rent - EBOSS&reg&reg_rent),
             ("Fuel Used (gal)", e_fuel, s_fuel, s_fuel - e_fuel),
             ("Fuel Cost ($)", e_cost, s_cost, s_cost - e_cost),
             ("PM Services", e_pms, s_pms, s_pms - e_pms),
@@ -1796,7 +1800,7 @@ def render_cost_analysis_page():
             <thead>
                 <tr>
                     <th>Metric</th>
-                    <th>EBOSS® Model<br>{model}</th>
+                    <th>EBOSS&reg&reg® Model<br>{model}</th>
                     <th>Standard Generator<br>{std_gen}</th>
                     <th>Difference</th>
                 </tr>
@@ -1839,10 +1843,10 @@ def render_cost_analysis_page():
         st.markdown(f'''
         <div class="card" style="text-align:center;">
             <div style="font-size:1.3rem;font-weight:bold;margin-bottom:1rem;">
-                EBOSS® Cost Analysis Report
+                EBOSS&reg&reg® Cost Analysis Report
             </div>
             <div style="font-size:0.9rem;">{today}</div>
-            <button class="eboss-hero-btn" onclick="window.print()" style="margin-top:1.5rem;">
+            <button class="EBOSS&reg&reg-hero-btn" onclick="window.print()" style="margin-top:1.5rem;">
                  🖨️ Print Cost Report
             </button>
         </div>
@@ -1858,7 +1862,7 @@ def render_parallel_calculator_page():
     cont_kw = st.number_input("Required Continuous Load (kW)", min_value=0.0, step=0.1)
     peak_kw = st.number_input("Required Peak Load (kW)", min_value=0.0, step=0.1)
     sizing_mode = st.radio("Sizing Strategy", ["No Efficiency Preference", "Max Fuel Efficiency"])
-    view_mode = st.selectbox("View Output As", ["Equipment Only", "Comparison EBOSS vs Gen-Only"])
+    view_mode = st.selectbox("View Output As", ["Equipment Only", "Comparison EBOSS&reg&reg vs Gen-Only"])
 
     if st.button("Calculate"):
         results = calculate_parallel_sizing(cont_kw, peak_kw, sizing_mode)
@@ -1869,7 +1873,7 @@ def render_parallel_calculator_page():
         for section, rec in results.items():
             st.markdown(f"### {section}")
             cols = st.columns([1,1,1,1,1])
-            headers = ["Scenario","EBOSS QTY","Generator QTY","Charge kW","Fuel (gal/day)"]
+            headers = ["Scenario","EBOSS&reg&reg QTY","Generator QTY","Charge kW","Fuel (gal/day)"]
             for c, h in zip(cols, headers): c.markdown(f"**{h}**")
             for rec_item in rec:
                 scenario, units, gens, charge, fuel = rec_item.values()
@@ -1878,7 +1882,7 @@ def render_parallel_calculator_page():
 
         # ----------------------------------
         # Render Comparison if requested
-        if view_mode == "Comparison EBOSS vs Gen-Only":
+        if view_mode == "Comparison EBOSS&reg&reg vs Gen-Only":
             st.subheader("Fuel Comparison")
             # display side-by-side fuel totals
 
@@ -1894,7 +1898,7 @@ def render_parallel_calculator_page():
     cont_kw = st.number_input("Required Continuous Load (kW)", min_value=0.0, step=0.1)
     peak_kw = st.number_input("Required Peak Load (kW)", min_value=0.0, step=0.1)
     sizing_mode = st.radio("Sizing Strategy:", ["No Efficiency Preference", "Max Fuel Efficiency"], horizontal=True)
-    view_mode = st.selectbox("View Output As:", ["Equipment Only", "Comparison: EBOSS vs Generator-Only"])
+    view_mode = st.selectbox("View Output As:", ["Equipment Only", "Comparison: EBOSS&reg&reg vs Generator-Only"])
 
     if st.button("🔢 Calculate"):
         results = calculate_parallel_sizing(cont_kw, peak_kw, sizing_mode)
@@ -1905,11 +1909,11 @@ def render_parallel_calculator_page():
         today = date.today().strftime("%B %d, %Y")
         st.markdown(f'''
             <div class="print-logo" style="text-align:center; margin-top:2rem;">
-              <img src="https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png" width="240"><br><br>
-              <div style="font-size:1.3rem; font-weight:bold;">EBOSS® Parallel Sizing Report</div>
+              <img src="https://raw.githubusercontent.com/TimBuffington/EBOSS&reg&reg-tool-V2/main/assets/logo.png" width="240"><br><br>
+              <div style="font-size:1.3rem; font-weight:bold;">EBOSS&reg&reg® Parallel Sizing Report</div>
               <div style="font-size:0.9rem;">{today}</div>
             </div>
-            <button class="eboss-hero-btn" onclick="window.print()" style="margin:2rem auto; display:block;">
+            <button class="EBOSS&reg&reg-hero-btn" onclick="window.print()" style="margin:2rem auto; display:block;">
                 🖨️ Print Report
             </button>
             <style>
@@ -1925,7 +1929,7 @@ def render_parallel_calculator_page():
 from itertools import combinations_with_replacement
 def calculate_parallel_sizing(required_cont_kw, required_peak_kw, sizing_mode):
     """
-    Determines EBOSS and generator sizing options based on required load and strategy.
+    Determines EBOSS&reg&reg and generator sizing options based on required load and strategy.
     
     Returns:
         dict: {
@@ -1943,13 +1947,13 @@ def calculate_parallel_sizing(required_cont_kw, required_peak_kw, sizing_mode):
     gen_fuel_gph = {25: 2.0, 45: 3.5, 65: 5.0, 125: 8.5, 220: 14.0}  # replace with real data
 
     # 1. Full Hybrid scenarios
-    for kva, spec in Eboss_Specs.items():
+    for kva, spec in EBOSS&reg&reg_Specs.items():
         charge_rate = spec["full_hybrid"]
         units_needed = -(-required_cont_kw // charge_rate)  # ceiling division
         total_charge = units_needed * charge_rate
-        est_fuel = units_needed * (charge_rate * 0.015)  # eboss fuel formula
+        est_fuel = units_needed * (charge_rate * 0.015)  # EBOSS&reg&reg fuel formula
         results["Full Hybrid Only"].append({
-            "scenario": f"EBOSS {kva} kVA Only",
+            "scenario": f"EBOSS&reg&reg {kva} kVA Only",
             "units": int(units_needed),
             "gens": 0,
             "charge": total_charge,
@@ -1957,11 +1961,11 @@ def calculate_parallel_sizing(required_cont_kw, required_peak_kw, sizing_mode):
         })
 
     # Mixed-model full hybrid combos
-    all_kvas = list(Eboss_Specs.keys())
+    all_kvas = list(EBOSS&reg&reg_Specs.keys())
     combos = list(combinations_with_replacement(all_kvas, 2))  # pairs
     mixed = []
     for combo in combos:
-        charge = sum(Eboss_Specs[k]["full_hybrid"] for k in combo)
+        charge = sum(EBOSS&reg&reg_Specs[k]["full_hybrid"] for k in combo)
         if charge >= required_cont_kw:
             total_fuel = sum(c * (charge * 0.005) for c, k in zip([1,1], combo))
             mixed.append((combo, charge, total_fuel))
@@ -1977,7 +1981,7 @@ def calculate_parallel_sizing(required_cont_kw, required_peak_kw, sizing_mode):
         })
 
     # 2. Power Module + Gen Support
-    for kva, spec in Eboss_Specs.items():
+    for kva, spec in EBOSS&reg&reg_Specs.items():
         charge_rate = spec["power_module"]
         units_needed = -(-required_cont_kw // charge_rate)
         total_charge = units_needed * charge_rate
@@ -1996,15 +2000,15 @@ def calculate_parallel_sizing(required_cont_kw, required_peak_kw, sizing_mode):
     # Mixed PM combos
     pm_mixed = []
     for combo in combos:
-        charge = sum(Eboss_Specs[k]["power_module"] for k in combo)
+        charge = sum(EBOSS&reg&reg_Specs[k]["power_module"] for k in combo)
         if charge >= required_cont_kw:
-            gens = -(-charge // max(Eboss_Specs[k]["max_charge"] for k in combo))
+            gens = -(-charge // max(EBOSS&reg&reg_Specs[k]["max_charge"] for k in combo))
             fuel = gens * gen_fuel_gph.get(combo[0], 5.0) * 24
             pm_mixed.append((combo, charge, fuel))
     pm_mixed = sorted(pm_mixed, key=lambda x: (len(x[0]), x[2]))[:2]
     for idx, item in enumerate(pm_mixed, 1):
         combo, charge, fuel = item
-        gens = -(-charge // max(Eboss_Specs[k]["max_charge"] for k in combo))
+        gens = -(-charge // max(EBOSS&reg&reg_Specs[k]["max_charge"] for k in combo))
         results["Power Module + Gen Support"].append({
             "scenario": f"PM Mixed Option {idx}: " + " + ".join(f"{k} kVA" for k in combo),
             "units": len(combo),
@@ -2058,7 +2062,7 @@ def render_parallel_results(results, view_mode="Equipment Only"):
             st.info("No valid configuration found.")
             continue
 
-        headers = ["Plan", "EBOSS Units", "Generators", "Charge (kW)", "Fuel (gal/day)"]
+        headers = ["Plan", "EBOSS&reg&reg Units", "Generators", "Charge (kW)", "Fuel (gal/day)"]
         cols = st.columns([2,1,1,1.3,1])
         for col, h in zip(cols, headers):
             col.markdown(f"**{h}**")
