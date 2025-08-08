@@ -933,7 +933,7 @@ def render_load_specs_page():
     st.markdown('</div>', unsafe_allow_html=True)
 
     # ---- Calculations ----
-  gen_kw = kva * 0.8
+    gen_kw = kva * 0.8
     batt_runtime_h = battery_kwh / cont_kw if cont_kw > 0 else 0
     charge_time_h = battery_kwh / charge_rate if charge_rate > 0 else 0
     cycles_per_day = 24 / (batt_runtime_h + charge_time_h) if (batt_runtime_h + charge_time_h) > 0 else 0
