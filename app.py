@@ -449,21 +449,21 @@ EBOSS_BATTERY_KWH = {
 
 # Charge-rate envelope per kVA (you can tune these with real data)
 Eboss_Specs = {
-    25:  {"full_hybrid": 10.0, "power_module": 7.5,  "max_charge": 12.0, "max_peak": 20.0, "battery_kwh": 15},
-    70:  {"full_hybrid": 28.0, "power_module": 20.0, "max_charge": 36.0, "max_peak": 56.0, "battery_kwh": 25},
-    125: {"full_hybrid": 50.0, "power_module": 36.0, "max_charge": 64.0, "max_peak": 100.0, "battery_kwh": 50},
-    220: {"full_hybrid": 90.0, "power_module": 64.0, "max_charge": 100.0,"max_peak": 176.0,"battery_kwh": 75},
-    400: {"full_hybrid": 160.0,"power_module": 120.0,"max_charge": 200.0,"max_peak": 320.0,"battery_kwh": 125},
+    25:  {"full_hybrid": 19.5, "power_module": 18.5,  "max_charge": 20, "max_peak": 20.0, "max_cont":18, "battery_kwh": 15},
+    70:  {"full_hybrid": 36, "power_module": 233, "max_charge": 45, "max_peak": 56.0, "max_cont": 40, "battery_kwh": 25},
+    125: {"full_hybrid": 52, "power_module": 48, "max_charge": 65, "max_peak": 125.0, "max_cont":58, "battery_kwh": 50},
+    220: {"full_hybrid": 100, "power_module": 96, "max_charge": 125,"max_peak": 252.0, "max_cont":112, "battery_kwh": 75},
+    400: {"full_hybrid": 176.0,"power_module": 166,"max_charge": 220.0,"max_peak": 639.0, "max_cont":198, "battery_kwh": 125},
 }
 
 # Simple fuel maps for a standard generator running near nameplate (gal/hour)
 STANDARD_GENERATORS = {
-    "25 kVA (≈20 kW)": 1.8,
-    "45 kVA (≈36 kW)": 3.1,
-    "65 kVA (≈52 kW)": 4.6,
-    "125 kVA (≈100 kW)": 7.8,
-    "220 kVA (≈176 kW)": 13.5,
-    "400 kVA (≈320 kW)": 22.0,
+    "25 kVA (≈20 kW)",
+    "45 kVA (≈36 kW)",
+    "65 kVA (≈52 kW)",
+    "125 kVA (≈100 kW)",
+    "220 kVA (≈176 kW)",
+    "400 kVA (≈320 kW)"
 }
 
 def interpolate_gph(kva: int, load_pct: float) -> float:
@@ -491,10 +491,10 @@ def interpolate_gph(kva: int, load_pct: float) -> float:
             return y1 + (load - x1) * (y2 - y1) / (x2 - x1)
     return ys[-1]
 
-def calculate_charge_rate(model: str, gen_type: str, kva_option: str | None) -> float:
-    kva = EBOSS_KVA[model] if gen_type == "Full Hybrid" else int((kva_option or "0kVA").replace("kVA", ""))
+def calculate_charge_rate(model: str, eboss_type: str, pm_gen: str | None) -> float:
+    kva = EBOSS_KVA[model] if eboss_type == "Full Hybrid" else int((pm_gen or "0kVA").replace("kVA", ""))
     base = Eboss_Specs[EBOSS_KVA[model]]
-    if gen_type == "Full Hybrid":
+    if eboss_type == "Full Hybrid":
         return base["full_hybrid"]
     # Power Module uses the PM envelope but cannot exceed its max_charge
     return min(base["power_module"], base["max_charge"])
@@ -502,10 +502,10 @@ def calculate_charge_rate(model: str, gen_type: str, kva_option: str | None) -> 
 def enforce_session_validation():
     """Ensures the calc inputs exist and derives a charge_rate into session."""
     ui = st.session_state.user_inputs
-    model = ui.get("model") or "EBOSS 25 kVA"
-    gen_type = ui.get("gen_type") or "Full Hybrid"
-    kva_opt = ui.get("kva_option")
-    ui["charge_rate"] = calculate_charge_rate(model, gen_type, kva_opt)
+    model = ui.get("model")
+    eboss_type = ui.get("eboss_type") or "Full Hybrid"
+    kva_opt = ui.get("pm_gen")
+    ui["charge_rate"] = calculate_charge_rate(model, eboss_type, kva_opt)
 
 # No-op backends so buttons won't crash in Cloud
 def submit_demo_request(_): return 200
@@ -650,16 +650,16 @@ if st.session_state.show_contact_form:
  # ──────────────────────────────────────────────────────────────
 # 🔋 CHARGE RATE ENGINE
 # ──────────────────────────────────────────────────────────────
-def get_charge_rate(model, gen_type):
+def get_charge_rate(model, eboss_type):
     try:
-        kva = EBOSS_KVA[model]
+        eb = EBOSS_KVA[model]
         spec = Eboss_Specs[kva]
-        return spec["power_module"] if gen_type == "Power Module" else spec["full_hybrid"]
+        return spec["power_module"] if eboss_type == "Power Module" else spec["full_hybrid"]
     except KeyError:
-        raise ValueError(f"Invalid model or type: {model}, {gen_type}")
+        raise ValueError(f"Invalid model or type: {model}, {eboss_type}")
 
-def validate_charge_rate(model, gen_type, entered_rate, gen_kw=None):
-    kva = EBOSS_KVA[model]
+def validate_charge_rate(model, eboss_type, entered_rate, gen_kw=None):
+    eb = EBOSS_KVA[model]
     spec = Eboss_Specs[kva]
     max_rate = spec["max_charge"]
     messages = []
@@ -669,7 +669,7 @@ def validate_charge_rate(model, gen_type, entered_rate, gen_kw=None):
         messages.append(f"❌ Charge rate ({entered_rate} kW) exceeds max for {model}: {max_rate} kW")
         is_valid = False
 
-    if gen_type == "Power Module" and gen_kw:
+    if eboss_type == "Power Module" and gen_kw:
         if gen_kw < spec["power_module"]:
             messages.append(f"❌ Generator ({gen_kw} kW) undersized for charge rate {spec['power_module']} kW")
             is_valid = False
@@ -693,14 +693,14 @@ def render_user_input_form():
                 "Model", list(EBOSS_KVA.keys()), key="model_select"
             )
 
-            st.session_state.user_inputs["gen_type"] = st.selectbox(
-                "Type", ["Full Hybrid", "Power Module"], key="gen_type_select"
+            st.session_state.user_inputs["eboss_type"] = st.selectbox(
+                "Type", ["Full Hybrid", "Power Module"], key="eboss_type_select"
             )
 
-            if st.session_state.user_inputs["gen_type"] == "Power Module":
-                st.session_state.user_inputs["kva_option"] = st.selectbox(
+            if st.session_state.user_inputs["eboss_type"] == "Power Module":
+                st.session_state.user_inputs["pm_gen"] = st.selectbox(
                     "Generator Size", ["25kVA", "45kVA", "65kVA", "125kVA", "220kVA", "400kVA"],
-                    key="kva_select"
+                    key="pm_gen_select"
                 )
 
             st.markdown('</div>', unsafe_allow_html=True)
@@ -775,7 +775,7 @@ def display_load_threshold_check(user_inputs):
     }
 
     model = user_inputs.get("model")
-    gen_type = user_inputs.get("gen_type")
+    eboss_type = user_inputs.get("eboss_type")
     cont_kw = user_inputs.get("cont_kw")
 
     if not model or model not in EBOSS_KVA or model not in EBOSS_BATTERY_KWH:
@@ -786,7 +786,7 @@ def display_load_threshold_check(user_inputs):
     battery_kwh = EBOSS_BATTERY_KWH[model]
 
     try:
-        charge_rate = Eboss_Charge_Rates[pm_kva]["power_module" if gen_type == "Power Module" else "full_hybrid"]
+        charge_rate = Eboss_Charge_Rates[pm_kva]["power_module" if eboss_type == "Power Module" else "full_hybrid"]
         max_safe_limit = charge_rate * 0.9
         efficiency_target = battery_kwh * (2 / 3)
     except Exception as e:
@@ -802,7 +802,7 @@ def display_load_threshold_check(user_inputs):
         # 🔍 Find recommended model
         recommended = None
         for name, kva in EBOSS_KVA.items():
-            new_rate = Eboss_Charge_Rates[kva]["power_module" if gen_type == "Power Module" else "full_hybrid"]
+            new_rate = Eboss_Charge_Rates[kva]["power_module" if eboss_type == "Power Module" else "full_hybrid"]
             if cont_kw <= new_rate * 0.9:
                 recommended = name
                 break
@@ -854,8 +854,8 @@ def render_calculate_buttons():
         if st.button("♻️ Clear", key="btn_clear"):
             st.session_state.user_inputs = {
                 "model": "EB25 kVA",
-                "gen_type": "Full Hybrid",
-                "kva_option": None,
+                "eboss_type": "Full Hybrid",
+                "pm_gen": None,
                 "cont_kw": 0,
                 "peak_kw": 0,
                 "raw_cont_load": 0,
@@ -898,10 +898,10 @@ def render_card(label, value):
         </div>
     ''', unsafe_allow_html=True)
 
-def calculate_runtime_specs(model, gen_type, cont_kw, kva):
-    gen_kva = EBOSS_KVA.get(model, 0) if gen_type == "Full Hybrid" else float(kva.replace("kVA", ""))
+def calculate_runtime_specs(model, eboss_type, cont_kw, kva):
+    gen_kva = EBOSS_KVA.get(model, 0) if eboss_type == "Full Hybrid" else float(kva.replace("kVA", ""))
     gen_kw = gen_kva * 0.8
-    charge_kw = calculate_charge_rate(model, gen_type, kva)
+    charge_kw = calculate_charge_rate(model, eboss_type, kva)
     battery_kwh = {
         "EB25 kVA": 15,
         "EB70 kVA": 25,
@@ -917,8 +917,8 @@ def calculate_runtime_specs(model, gen_type, cont_kw, kva):
     fuel_gph = interpolate_gph(int(gen_kva), engine_pct)
     return {
         "battery_kwh": battery_kwh,
-        "battery_life": battery_life,
         "charge_time": charge_time,
+        "battery_life": battery_life,
         "runtime": total_runtime,
         "engine_pct": engine_pct,
         "fuel_gph": fuel_gph
@@ -1387,9 +1387,9 @@ def render_cost_analysis_page():
 
     inputs = st.session_state.user_inputs
     model = inputs.get("model")
-    gen_type = inputs.get("gen_type")
+    eboss_type = inputs.get("eboss_type")
     cont_kw = inputs.get("cont_kw")
-    kva_option = inputs.get("kva_option")
+    pm_gen = inputs.get("pm_gen")
 
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.markdown("### 💰 Cost Inputs")
@@ -1405,7 +1405,7 @@ def render_cost_analysis_page():
     st.markdown('</div>', unsafe_allow_html=True)
 
     if st.button("✅ Run Cost Comparison"):
-        runtime = calculate_runtime_specs(model, gen_type, cont_kw, kva_option)
+        runtime = calculate_runtime_specs(model, eboss_type, cont_kw, pm_gen)
         std_runtime = 720  # 30 days × 24 hrs
         std_gph = STANDARD_GENERATORS[std_gen]
 
