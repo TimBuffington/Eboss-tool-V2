@@ -260,7 +260,36 @@ def landing_page():
     if st.session_state.landing_shown:
         show_logo_and_title("EBOSS® Size Specs & Comparison Tool")
 
-      
+        # Inject fixed CSS
+        st.markdown("""
+        <style>
+           .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            max-width: 700px;
+            margin: 2rem auto;
+        }
+        .stButton>button {
+        min-width: 320px !important;
+        max-width: 320px !important;
+        height: 60px !important;
+        font-family: Arial, sans serif !important;
+        font-size: 2.0rem !important;
+        font-weight: bold !important;
+        color: #81BD47 !important;
+        background-color: #000000 !important;
+        border: 2px solid #D3D3D3 !important;
+        border-radius: 12px;
+        transition: all 0.2s ease-in-out;
+        }
+        .stButton>button:hover {
+            box-shadow: 0 0 18px #81BD47;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
         # Create a true 2-column, responsive layout
         st.markdown('<div class="button-container">', unsafe_allow_html=True)
 
