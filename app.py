@@ -1,4 +1,461 @@
 import streamlit as st
+import re
+from typing import Dict, Any, List
+
+# ---------------------------
+# APP CONFIG
+# ---------------------------
+st.set_page_config(
+    page_title="ANA Energy — EBOSS® Selection & Comparison",
+    page_icon="⚡",
+    layout="wide",
+    initial_sidebar_state="collapsed",
+)
+
+# ---------------------------
+# BRAND / ASSETS
+# ---------------------------
+LOGO_URL = "https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png"
+BG_URL   = "https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/bg.png"
+
+# Color palette
+COLOR_CHARCOAL = "#333333"  # Charcoal Grey
+COLOR_ASPHALT  = "#0B0B0B"  # Asphalt Black
+COLOR_ENERGY   = "#00C853"  # Energy Green
+COLOR_CONCRETE = "#DADADA"  # Light Concrete Grey
+COLOR_ASPEN    = "#FFFFFF"  # Aspen White
+
+# ---------------------------
+# EBOSS® NORMALIZATION
+# ---------------------------
+# Replace any Eboss/EBOSS/ E boss etc with EBOSS®
+EBOSS_WORD = re.compile(r"\b(e\s*?b\s*?o\s*?s\s*?s)\b", re.IGNORECASE)
+
+def normalize_eboss(s: str) -> str:
+    if not s:
+        return s
+    return EBOSS_WORD.sub("EBOSS®", s)
+
+# Wrap Streamlit text calls to normalize automatically
+def nwrite(s: str):
+    st.write(normalize_eboss(s))
+
+def nmarkdown(s: str, **kwargs):
+    st.markdown(normalize_eboss(s), **kwargs)
+
+# ---------------------------
+# GLOBAL CSS
+# ---------------------------
+GLOBAL_CSS = f"""
+<style>
+/* Full-page background */
+.stApp {{
+  background: url('{BG_URL}') center center / cover no-repeat fixed;
+}}
+
+/* Typography: Arial, bold, ~12px, light text-shadow */
+html, body, [class*="css"] {{
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 12px !important;
+  color: {COLOR_ASPEN} !important;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.4) !important;
+}}
+
+.main .block-container {{
+  padding-top: 0.5rem !important;
+  padding-bottom: 2rem !important;
+  max-width: 1200px;
+}}
+
+/* Centered logo */
+.logo-wrap {{
+  display: flex; align-items: center; justify-content: center;
+  margin: 12px 0 14px 0;
+}}
+.logo-wrap img {{
+  max-height: 62px; height: auto; width: auto;
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.55));
+}}
+
+/* Card sections */
+.section {{
+  background: rgba(11,11,11,0.8);
+  border: 1px solid {COLOR_CONCRETE};
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+}}
+
+/* NavBar container */
+.navbar {{
+  background: rgba(51,51,51,0.92);
+  border: 1px solid {COLOR_CONCRETE};
+  border-radius: 12px;
+  padding: 8px;
+  margin: 6px 0 16px 0;
+}}
+
+/* Buttons — borders + energy hover */
+.stButton > button {{
+  width: 100%;
+  border: 1px solid {COLOR_CONCRETE};
+  background: linear-gradient(180deg, {COLOR_CHARCOAL} 0%, {COLOR_ASPHALT} 100%);
+  color: {COLOR_ASPEN};
+  border-radius: 8px;
+  padding: 10px 12px;
+  box-shadow: none;
+  transition: all .2s ease;
+}}
+.stButton > button:hover {{
+  border-color: {COLOR_ENERGY};
+  box-shadow: 0 0 0 3px rgba(0, 200, 83, 0.35);
+}}
+
+/* Inputs / selects / textareas — border + hover glow */
+div[data-baseweb="input"] > div,
+div[data-baseweb="select"] > div,
+div[data-baseweb="textarea"] > div,
+.stSlider > div {{
+  border: 1px solid {COLOR_CONCRETE} !important;
+  border-radius: 6px !important;
+  box-shadow: none !important;
+  background: rgba(20,20,20,0.5);
+  color: {COLOR_ASPEN};
+}}
+div[data-baseweb="input"] > div:hover,
+div[data-baseweb="select"] > div:hover,
+div[data-baseweb="textarea"] > div:hover,
+.stSlider > div:hover {{
+  border-color: {COLOR_ENERGY} !important;
+  box-shadow: 0 0 0 3px rgba(0, 200, 83, 0.35) !important;
+}}
+
+/* Metrics and tables */
+.dataframe tbody tr td, .dataframe thead tr th {{
+  color: {COLOR_ASPEN} !important;
+}}
+.stMetric label, .stMetricValue {{
+  color: {COLOR_ASPEN} !important;
+}}
+
+h1, h2, h3, h4, h5 {{
+  color: {COLOR_ASPEN} !important;
+}}
+hr {{ border: none; height: 1px; background: {COLOR_CONCRETE}; opacity: 0.5; }}
+
+/* Mobile tweaks */
+@media (max-width: 640px) {{
+  .logo-wrap img {{ max-height: 54px; }}
+  .section {{ padding: 12px; }}
+  .navbar {{ padding: 6px; }}
+}}
+</style>
+"""
+st.markdown(GLOBAL_CSS, unsafe_allow_html=True)
+
+# ---------------------------
+# DEMO CATALOG (replace with live EBOSS® data when ready)
+# ---------------------------
+MODELS: Dict[str, Dict[str, Any]] = {
+    "EBOSS®-25": {
+        "rated_kW": 20, "voltage": "120/240V", "battery_kWh": 40, "weight_lb": 980,
+        "dimensions_in": "60 × 32 × 42", "fuel": "Hybrid (Diesel + Battery)", "noise_dBA@7m": 58
+    },
+    "EBOSS®-70": {
+        "rated_kW": 35, "voltage": "120/240V", "battery_kWh": 64, "weight_lb": 1450,
+        "dimensions_in": "72 × 40 × 48", "fuel": "Hybrid (Diesel + Battery)", "noise_dBA@7m": 60
+    },
+    "EBOSS®-50": {
+        "rated_kW": 50, "voltage": "208/480V", "battery_kWh": 80, "weight_lb": 1900,
+        "dimensions_in": "84 × 44 × 54", "fuel": "Hybrid (Diesel + Battery)", "noise_dBA@7m": 62
+    },
+}
+MODEL_NAMES = list(MODELS.keys())
+
+# ---------------------------
+# SESSION STATE
+# ---------------------------
+if "first_visit" not in st.session_state:
+    st.session_state.first_visit = True
+if "page" not in st.session_state:
+    st.session_state.page = "Landing"
+
+# ---------------------------
+# SHARED UI
+# ---------------------------
+def show_logo():
+    st.markdown(f"""
+        <div class="logo-wrap">
+            <img src="{LOGO_URL}" alt="ANA Energy — EBOSS®" />
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+def navbar():
+    # Visible on all pages except Landing
+    st.markdown('<div class="navbar">', unsafe_allow_html=True)
+    c1, c2, c3, c4, c5 = st.columns(5)
+    with c1:
+        if st.button("EBOSS® & Data", use_container_width=True):
+            st.session_state.page = "EBOSS® & Data"
+    with c2:
+        if st.button("Tech Specs", use_container_width=True):
+            st.session_state.page = "Tech Specs"
+    with c3:
+        if st.button("Load Based Specs", use_container_width=True):
+            st.session_state.page = "Load Based Specs"
+    with c4:
+        if st.button("Compare", use_container_width=True):
+            st.session_state.page = "Compare"
+    with c5:
+        if st.button("Parallel Calculator", use_container_width=True):
+            st.session_state.page = "Parallel Calculator"
+    st.markdown("</div>", unsafe_allow_html=True)
+
+def hero(title: str, subtitle: str = ""):
+    show_logo()
+    st.markdown(
+        f"""
+        <div class="section" style="text-align:center;">
+            <h2 style="margin:0 0 6px 0;">{normalize_eboss(title)}</h2>
+            <p style="margin:0; opacity:0.9;">{normalize_eboss(subtitle)}</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+# ---------------------------
+# CALCS
+# ---------------------------
+def battery_only_runtime_hours(battery_kWh: float, avg_load_kW: float, roundtrip_eff: float = 0.92) -> float:
+    """Very simple estimator: 80% usable * round-trip efficiency / avg load."""
+    if avg_load_kW <= 0:
+        return 0.0
+    usable = battery_kWh * 0.8 * roundtrip_eff
+    return max(usable / avg_load_kW, 0.0)
+
+# ---------------------------
+# PAGES
+# ---------------------------
+def page_landing():
+    hero(
+        "Welcome to the EBOSS® Selection & Comparison Tool",
+        "Find the right EBOSS® hybrid generator for your load and deployment constraints.",
+    )
+    st.markdown('<div class="section">', unsafe_allow_html=True)
+    nmarkdown("""
+    ### What you can do
+    - Explore **Tech Specs** for each EBOSS® model  
+    - Enter your **site load** to see runtime and sizing guidance  
+    - **Compare** models side-by-side  
+    - Use the **Parallel Calculator** to plan multi-unit deployments  
+    """)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    c1, c2, c3 = st.columns([1, 2, 1])
+    with c2:
+        if st.button("Enter Tool", type="primary", use_container_width=True):
+            st.session_state.first_visit = False
+            st.session_state.page = "EBOSS® & Data"
+
+def page_data():
+    show_logo()
+    navbar()
+
+    st.markdown('<div class="section">', unsafe_allow_html=True)
+    nmarkdown("### EBOSS® & Data")
+    nmarkdown("Upload load profiles (CSV), capture site info, and set default assumptions.")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    with st.container():
+        st.markdown('<div class="section">', unsafe_allow_html=True)
+        nmarkdown("#### Site Information")
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            site_name = st.text_input("Site Name", value="EBOSS Demo Site")
+            site_name = normalize_eboss(site_name)
+        with col2:
+            ambient = st.number_input("Ambient Temp (°C)", min_value=-40, max_value=60, value=25)
+        with col3:
+            altitude = st.number_input("Altitude (m)", min_value=0, max_value=4000, value=0)
+        st.caption(f"Site: {site_name} • Ambient: {ambient} °C • Altitude: {altitude} m")
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    with st.container():
+        st.markdown('<div class="section">', unsafe_allow_html=True)
+        nmarkdown("#### Load Profile (Optional)")
+        lp = st.file_uploader("Upload CSV with columns: time,kW", type=["csv"])
+        if lp is not None:
+            try:
+                import pandas as pd
+                df = pd.read_csv(lp)
+                # Ensure common columns exist
+                expected = {"time", "kW"}
+                if not expected.issubset(set(map(str.lower, df.columns))):
+                    st.error("CSV must contain columns: time, kW (case-insensitive).")
+                else:
+                    # Normalize headers & preview
+                    df.columns = [c.strip() for c in df.columns]
+                    st.dataframe(df.head(25), use_container_width=True, hide_index=True)
+                    # Basic stats
+                    avg_kw = float(df[df.columns[1]].mean())
+                    st.metric("Average Load from CSV", f"{avg_kw:.2f} kW")
+            except Exception as e:
+                st.error(f"Failed to parse CSV: {e}")
+        else:
+            st.caption("No file uploaded yet.")
+        st.markdown("</div>", unsafe_allow_html=True)
+
+def page_specs():
+    show_logo()
+    navbar()
+
+    st.markdown('<div class="section">', unsafe_allow_html=True)
+    nmarkdown("### Tech Specs")
+    model = st.selectbox("Select EBOSS® Model", MODEL_NAMES, index=0)
+    data = MODELS[model]
+
+    colA, colB = st.columns(2)
+    with colA:
+        nmarkdown("#### Nameplate")
+        nmarkdown(f"- **Rated Power:** {data['rated_kW']} kW")
+        nmarkdown(f"- **Voltage:** {data['voltage']}")
+        nmarkdown(f"- **Battery:** {data['battery_kWh']} kWh")
+        nmarkdown(f"- **Fuel:** {data['fuel']}")
+
+    with colB:
+        nmarkdown("#### Physical")
+        nmarkdown(f"- **Weight:** {data['weight_lb']} lb")
+        nmarkdown(f"- **Dimensions:** {data['dimensions_in']}")
+        nmarkdown(f"- **Noise:** {data['noise_dBA@7m']} dBA @7m")
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+def page_load_specs():
+    show_logo()
+    navbar()
+
+    st.markdown('<div class="section">', unsafe_allow_html=True)
+    nmarkdown("### Load Based Specs")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        model = st.selectbox("EBOSS® Model", MODEL_NAMES, index=1, key="lbs_model")
+        m = MODELS[model]
+    with col2:
+        avg_load = st.number_input("Average Load (kW)", min_value=0.0, value=12.0, step=0.5)
+    with col3:
+        peak_load = st.number_input("Peak Load (kW)", min_value=0.0, value=20.0, step=0.5)
+
+    sized_ok = peak_load <= m["rated_kW"]
+    runtime_h = battery_only_runtime_hours(m["battery_kWh"], avg_load)
+
+    colA, colB = st.columns(2)
+    with colA:
+        nmarkdown("#### Sizing Check")
+        st.metric("Rated kW", f"{m['rated_kW']} kW")
+        st.metric("Peak Load", f"{peak_load:.1f} kW")
+        st.metric("Within Nameplate?", "Yes ✅" if sized_ok else "No ❗")
+    with colB:
+        nmarkdown("#### Battery-Only Runtime (Est.)")
+        st.metric("Battery kWh", f"{m['battery_kWh']} kWh")
+        st.metric("Avg Load", f"{avg_load:.1f} kW")
+        st.metric("Runtime", f"{runtime_h:.2f} h")
+
+    st.info("Estimate excludes generator assist/controls. Validate final design with ANA Energy engineering.")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+def page_compare():
+    import pandas as pd
+
+    show_logo()
+    navbar()
+
+    st.markdown('<div class="section">', unsafe_allow_html=True)
+    nmarkdown("### Compare EBOSS® Models")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        m1 = st.selectbox("Model A", MODEL_NAMES, index=0, key="cmp1")
+    with col2:
+        m2 = st.selectbox("Model B", MODEL_NAMES, index=1, key="cmp2")
+    with col3:
+        m3 = st.selectbox("Model C (optional)", ["— None —"] + MODEL_NAMES, index=0, key="cmp3")
+
+    chosen = [m1, m2] + ([m3] if m3 != "— None —" else [])
+    records: List[Dict[str, Any]] = []
+    for name in chosen:
+        rec = {"Model": name}
+        rec.update(MODELS[name])
+        records.append(rec)
+
+    cols = ["Model", "rated_kW", "voltage", "battery_kWh", "fuel", "weight_lb", "dimensions_in", "noise_dBA@7m"]
+    df = pd.DataFrame(records)[cols].rename(columns={
+        "rated_kW": "Rated kW",
+        "battery_kWh": "Battery (kWh)",
+        "weight_lb": "Weight (lb)",
+        "dimensions_in": "Dimensions (in)",
+        "noise_dBA@7m": "Noise dBA@7m",
+    })
+    st.dataframe(df, use_container_width=True, hide_index=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+def page_parallel():
+    show_logo()
+    navbar()
+
+    st.markdown('<div class="section">', unsafe_allow_html=True)
+    nmarkdown("### Parallel Calculator")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        model = st.selectbox("EBOSS® Model", MODEL_NAMES, index=2, key="par_model")
+        m = MODELS[model]
+    with col2:
+        units = st.number_input("Units in Parallel", min_value=1, max_value=50, value=3, step=1)
+    with col3:
+        diversity = st.slider("Diversity Factor", min_value=0.6, max_value=1.0, value=0.9, step=0.05,
+                              help="Accounts for non-coincident peaks across units.")
+
+    total_kW = m["rated_kW"] * units * diversity
+    total_kWh = m["battery_kWh"] * units
+
+    colA, colB = st.columns(2)
+    with colA:
+        nmarkdown("#### Capacity")
+        st.metric("Nameplate kW (diversified)", f"{total_kW:.1f} kW")
+        st.metric("Total Battery", f"{total_kWh:.0f} kWh")
+    with colB:
+        site_load = st.number_input("Planned Avg Site Load (kW)", min_value=0.0, value=35.0, step=0.5)
+        rt = battery_only_runtime_hours(total_kWh, site_load) if site_load > 0 else 0.0
+        st.metric("Battery-Only Runtime (Est.)", f"{rt:.2f} h" if site_load > 0 else "—")
+
+    st.caption("Planning tool only. Validate with ANA Energy engineering.")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+# ---------------------------
+# ROUTER
+# ---------------------------
+if st.session_state.first_visit:
+    page_landing()
+else:
+    if st.session_state.page == "Landing":
+        st.session_state.page = "EBOSS® & Data"
+
+    page = st.session_state.page
+    if page == "EBOSS® & Data":
+        page_data()
+    elif page == "Tech Specs":
+        page_specs()
+    elif page == "Load Based Specs":
+        page_load_specs()
+    elif page == "Compare":
+        page_compare()
+    elif page == "Parallel Calculator":
+        page_parallel()
+    else:
+        page_data()
+import streamlit as st
 from datetime import date
 import pandas as pd
 from itertools import combinations_with_replacement
