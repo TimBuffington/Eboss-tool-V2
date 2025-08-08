@@ -885,44 +885,123 @@ def render_tech_specs_page():
 
 # ---- LOAD SPECS PAGE ----
 def render_load_specs_page():
-    show_logo_and_title("Load Specs")
+    # --- Global chrome ---
+    apply_custom_css()
+    show_logo_and_title("Load Based Specs")
+    top_navbar()
 
-    # 👉 Render form UI
-    render_user_input_form()
+    # --- Inputs ---
+    render_user_input_form()             # your 3-column input UI
+    enforce_session_validation()         # derives charge_rate into session
 
-    # 👉 Validate inputs globally
-    enforce_session_validation()
-    inputs = st.session_state.user_inputs
-    kva = EBOSS_KVA[inputs["model"]]
-    spec = Eboss_Specs[kva]
+    ui = st.session_state.user_inputs
+    model       = ui["model"]                         # e.g. "EBOSS 125 kVA"
+    gen_type    = ui.get("gen_type", "Full Hybrid")
+    kva_option  = ui.get("kva_option")
+    cont_kw     = float(ui.get("cont_kw", 0.0))
+    peak_kw     = float(ui.get("peak_kw", 0.0))
 
+    # --- Lookups (use your unified tables) ---
+    kva         = EBOSS_KVA[model]                    # name -> integer kVA
+    spec        = Eboss_Specs[kva]                    # envelope for that kVA
+    charge_kw   = ui["charge_rate"]                   # set by enforce_session_validation()
+    battery_kwh = spec["battery_kwh"]                 # avoids the older mixed key dicts
+    gen_kw      = kva * 0.8                           # simple kVA→kW
+
+    # --- Core calcs (engine-assisted cycling model) ---
+    # battery-only runtime @ continuous load:
+    batt_only_runtime_h = (battery_kwh / cont_kw) if cont_kw > 0 else 0.0
+    # charge time at selected charge rate:
+    charge_time_h       = (battery_kwh / charge_kw)   if charge_kw > 0 else 0.0
+    # cycles/day and engine runtime/day (hours the engine actually runs to recharge):
+    cycle_len_h         = batt_only_runtime_h + charge_time_h
+    cycles_per_day      = (24.0 / cycle_len_h)        if cycle_len_h > 0 else 0.0
+    engine_runtime_day  = charge_time_h * cycles_per_day
+
+    # engine loading and fuel
+    engine_load_pct     = (charge_kw / gen_kw) if gen_kw > 0 else 0.0
+    engine_load_pct     = max(0.25, min(engine_load_pct, 1.0))  # clamp to our fuel map domain
+    gph                 = interpolate_gph(kva, engine_load_pct)
+    gpd                 = gph * engine_runtime_day
+    gpw, gpm            = gpd * 7.0, gpd * 30.0
+    co2_lbs_per_gal     = 22.4
+    co2_lbs_day         = gpd * co2_lbs_per_gal
+
+    # --- 1) Load Threshold banner (kept) ---
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.markdown("### 🔒 Load Threshold Check")
 
-    charge_rate = inputs["charge_rate"]
-    battery_kwh = spec["battery_kwh"]
-    cont_kw = inputs["cont_kw"]
-    peak_kw = inputs["peak_kw"]
-    max_safe_limit = spec["max_charge"] * 0.9
-    efficiency_target = battery_kwh * (2 / 3)
+    max_safe_limit   = spec["max_charge"] * 0.9
+    efficiency_kw    = battery_kwh * (2.0 / 3.0)
 
-    # ⚙️ Threshold visual feedback
     if cont_kw > spec["max_charge"]:
         st.error(f"❌ Load ({cont_kw:.1f} kW) exceeds max charge rate ({spec['max_charge']} kW).")
     elif cont_kw > max_safe_limit:
         st.warning(f"⚠️ Load is above 90% of the charge rate ({max_safe_limit:.1f} kW).")
-    elif cont_kw > efficiency_target:
-        st.info(f"ℹ️ Load is within safe range but above the fuel-efficiency threshold (~{efficiency_target:.1f} kW).")
+    elif cont_kw > efficiency_kw:
+        st.info(f"ℹ️ Load is within safe range but above the fuel-efficiency threshold (~{efficiency_kw:.1f} kW).")
     else:
-        st.success(f"✅ Load is optimal for fuel efficiency (≤ {efficiency_target:.1f} kW).")
+        st.success(f"✅ Load is optimal for fuel efficiency (≤ {efficiency_kw:.1f} kW).")
 
-    # 🔺 Peak load check
     if peak_kw > spec["max_peak"]:
-        st.error(f"❌ Peak load ({peak_kw:.1f} kW) exceeds EBOSS peak limit ({spec['max_peak']} kW).")
+        st.error(f"❌ Peak load ({peak_kw:.1f} kW) exceeds EBOSS® peak limit ({spec['max_peak']} kW).")
 
     st.markdown('</div>', unsafe_allow_html=True)
 
-    top_navbar()
+    # --- 2) Two-column spec cards ---
+    col_left, col_right = st.columns(2, gap="large")
+
+    # Left: Battery / Charging
+    with col_left:
+        st.markdown("""
+        <div class="card" style="background-color:#636569;color:#fff;font-weight:700;
+             font-size:1.1rem;padding:0.6rem 1.2rem;border-radius:12px;margin:1rem 0 0.8rem 0;
+             text-align:center;text-transform:uppercase;box-shadow:0 4px 8px rgba(0,0,0,0.3);">
+            Battery & Charging
+        </div>
+        """, unsafe_allow_html=True)
+
+        render_card("EBOSS® Model",            model)
+        render_card("Battery Capacity",        f"{battery_kwh:.0f} kWh")
+        render_card("Selected Charge Rate",    f"{charge_kw:.1f} kW")
+        render_card("Battery‑only Runtime",    f"{batt_only_runtime_h:.2f} h @ {cont_kw:.1f} kW")
+        render_card("Charge Time",             f"{charge_time_h:.2f} h")
+        render_card("Cycles per Day",          f"{cycles_per_day:.2f} cycles/day")
+
+    # Right: Engine / Fuel
+    with col_right:
+        st.markdown("""
+        <div class="card" style="background-color:#636569;color:#fff;font-weight:700;
+             font-size:1.1rem;padding:0.6rem 1.2rem;border-radius:12px;margin:1rem 0 0.8rem 0;
+             text-align:center;text-transform:uppercase;box-shadow:0 4px 8px rgba(0,0,0,0.3);">
+            Engine & Fuel
+        </div>
+        """, unsafe_allow_html=True)
+
+        render_card("Generator Nameplate",     f"{kva} kVA / {gen_kw:.0f} kW")
+        render_card("Engine Load (approx.)",   f"{engine_load_pct*100:.0f}%")
+        render_card("Engine Runtime / Day",    f"{engine_runtime_day:.2f} h")
+        render_card("Fuel Burn (gph)",         f"{gph:.2f} gal/h")
+        render_card("Fuel / Day",              f"{gpd:.2f} gal")
+        render_card("Fuel / Week",             f"{gpw:.2f} gal")
+        render_card("Fuel / Month",            f"{gpm:.2f} gal")
+        render_card("CO₂ / Day",               f"{co2_lbs_day:.0f} lbs")
+
+    # --- 3) Nameplate & Limits (quick glance) ---
+    st.markdown("""
+    <div class="card" style="background-color:#636569;color:#fff;font-weight:700;
+         font-size:1.1rem;padding:0.6rem 1.2rem;border-radius:12px;margin:1.4rem 0 0.8rem 0;
+         text-align:center;text-transform:uppercase;box-shadow:0 4px 8px rgba(0,0,0,0.3);">
+        Nameplate & Limits
+    </div>
+    """, unsafe_allow_html=True)
+
+    c1, c2, c3, c4 = st.columns(4)
+    with c1: render_card("Continuous Load",  f"{cont_kw:.1f} kW")
+    with c2: render_card("Peak Load",        f"{peak_kw:.1f} kW")
+    with c3: render_card("Max Charge Rate",  f"{spec['max_charge']:.1f} kW")
+    with c4: render_card("Max Peak (EBOSS®)",f"{spec['max_peak']:.1f} kW")
+
 
 def render_compare_page():
     import re
