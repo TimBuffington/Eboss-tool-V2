@@ -882,18 +882,21 @@ def render_tech_specs_page():
                         render_card(label, value)
 
     top_navbar()
-def render_kv_card(label: str, value: str):
-    """Card with spec on the left and value on the right."""
-    st.markdown(f"""
-        <div class="card">
-            <div style="
-                display:flex; align-items:center; justify-content:space-between;
-                gap:1rem; flex-wrap:wrap;">
-                <div class="card-label" style="margin:0;">{label}</div>
-                <div class="card-value" style="margin:0; text-align:right;">{value}</div>
+def render_spec_value_row(spec_label: str, spec_value: str):
+    """Render a row with two separate cards: left for spec, right for value."""
+    col1, col2 = st.columns(2, gap="large")
+    with col1:
+        st.markdown(f'''
+            <div class="card">
+                <div class="card-label">{spec_label}</div>
             </div>
-        </div>
-    """, unsafe_allow_html=True)
+        ''', unsafe_allow_html=True)
+    with col2:
+        st.markdown(f'''
+            <div class="card">
+                <div class="card-value">{spec_value}</div>
+            </div>
+        ''', unsafe_allow_html=True)
 
 # ---- LOAD SPECS PAGE ----
 def render_load_specs_page():
@@ -946,6 +949,7 @@ def render_load_specs_page():
     co2_day_lbs = fuel_day * 22.4
 
     # ---- Battery & Charging (section header uses your card styling) ----
+      # ---- Battery & Charging ----
     st.markdown("""
     <div class="card" style="background-color:#636569;color:#fff;font-weight:700;
          font-size:1.1rem;padding:0.6rem 1.2rem;border-radius:12px;margin:1rem 0 0.8rem 0;
@@ -953,12 +957,12 @@ def render_load_specs_page():
         Battery & Charging
     </div>
     """, unsafe_allow_html=True)
-    render_kv_card("EBOSS® Model", inputs["model"])
-    render_kv_card("Battery Capacity", f"{battery_kwh} kWh")
-    render_kv_card("Selected Charge Rate", f"{charge_rate:.1f} kW")
-    render_kv_card("Battery‑only Runtime", f"{batt_runtime_h:.2f} h @ {cont_kw:.1f} kW")
-    render_kv_card("Charge Time", f"{charge_time_h:.2f} h")
-    render_kv_card("Cycles per Day", f"{cycles_per_day:.2f}")
+    render_spec_value_row("EBOSS® Model", inputs["model"])
+    render_spec_value_row("Battery Capacity", f"{battery_kwh} kWh")
+    render_spec_value_row("Selected Charge Rate", f"{charge_rate:.1f} kW")
+    render_spec_value_row("Battery-only Runtime", f"{batt_runtime_h:.2f} h @ {cont_kw:.1f} kW")
+    render_spec_value_row("Charge Time", f"{charge_time_h:.2f} h")
+    render_spec_value_row("Cycles per Day", f"{cycles_per_day:.2f}")
 
     # ---- Engine & Fuel ----
     st.markdown("""
@@ -968,14 +972,14 @@ def render_load_specs_page():
         Engine & Fuel
     </div>
     """, unsafe_allow_html=True)
-    render_kv_card("Generator Nameplate", f"{kva} kVA / {gen_kw:.0f} kW")
-    render_kv_card("Engine Load (approx.)", f"{engine_load_pct*100:.0f}%")
-    render_kv_card("Engine Runtime / Day", f"{engine_runtime_day:.2f} h")
-    render_kv_card("Fuel Burn (gph)", f"{fuel_gph:.2f} gal/h")
-    render_kv_card("Fuel / Day", f"{fuel_day:.2f} gal")
-    render_kv_card("Fuel / Week", f"{fuel_week:.2f} gal")
-    render_kv_card("Fuel / Month", f"{fuel_month:.2f} gal")
-    render_kv_card("CO₂ / Day", f"{co2_day_lbs:.0f} lbs")
+    render_spec_value_row("Generator Nameplate", f"{kva} kVA / {gen_kw:.0f} kW")
+    render_spec_value_row("Engine Load (approx.)", f"{engine_load_pct*100:.0f}%")
+    render_spec_value_row("Engine Runtime / Day", f"{engine_runtime_day:.2f} h")
+    render_spec_value_row("Fuel Burn (gph)", f"{fuel_gph:.2f} gal/h")
+    render_spec_value_row("Fuel / Day", f"{fuel_day:.2f} gal")
+    render_spec_value_row("Fuel / Week", f"{fuel_week:.2f} gal")
+    render_spec_value_row("Fuel / Month", f"{fuel_month:.2f} gal")
+    render_spec_value_row("CO₂ / Day", f"{co2_day_lbs:.0f} lbs")
 
     # ---- Nameplate & Limits ----
     st.markdown("""
@@ -985,10 +989,11 @@ def render_load_specs_page():
         Nameplate & Limits
     </div>
     """, unsafe_allow_html=True)
-    render_kv_card("Continuous Load", f"{cont_kw:.1f} kW")
-    render_kv_card("Peak Load", f"{peak_kw:.1f} kW")
-    render_kv_card("Max Charge Rate", f"{spec['max_charge']:.1f} kW")
-    render_kv_card("Max Peak (EBOSS®)", f"{spec['max_peak']:.1f} kW")
+    render_spec_value_row("Continuous Load", f"{cont_kw:.1f} kW")
+    render_spec_value_row("Peak Load", f"{peak_kw:.1f} kW")
+    render_spec_value_row("Max Charge Rate", f"{spec['max_charge']:.1f} kW")
+    render_spec_value_row("Max Peak (EBOSS®)", f"{spec['max_peak']:.1f} kW")
+
 
 
 
