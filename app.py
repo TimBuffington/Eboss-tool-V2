@@ -971,7 +971,7 @@ def render_compare_page():
     top_navbar()
 
     # Selected EBOSS model
-    model = st.session_state.get("model_select", "EBOSS 25 kVA")
+    model = st.session_state.get("model_select")
 
     # Normalize odd key for 125
     if model not in spec_data and model.replace(" 125 kVA", "125 kVA") in spec_data:
@@ -1289,7 +1289,7 @@ def render_compare_page():
     STD_REF = load_std_gen_specs_from_excel("/mnt/data/Grn Compare.xlsx")
 
     # Selected EBOSS model (normalize the 125 key if needed)
-    model = st.session_state.get("model_select", "EBOSS 25 kVA")
+    model = st.session_state.get("model_select")
     if model not in spec_data and model.replace(" 125 kVA", "125 kVA") in spec_data:
         model = model.replace(" 125 kVA", "125 kVA")
 
