@@ -601,6 +601,7 @@ EBOSS_KVA = globals().get("EBOSS_KVA", {
     "EBOSS 25 kVA": 25, "EBOSS 70 kVA": 70, "EBOSS 125 kVA": 125, "EBOSS 220 kVA": 220, "EBOSS 400 kVA": 400
 
 # --- put this near your other helpers (above page functions) ---
+# --- put this near your other helpers (above page functions) ---
 import re
 
 # Reuse existing dicts if they exist
@@ -612,7 +613,7 @@ FH_ATTACHED_GEN_KW = globals().get("FH_ATTACHED_GEN_KW", {25: 20, 70: 36, 125: 5
 def _first_int(s: str | None) -> int:
     if not s: return 0
     m = re.search(r"(\d+)", str(s))
-    return int(m.group(1)) if m else 0
+    return int(m.group(1)) if m else 
 
 def get_fuel_use(
     model: str,
