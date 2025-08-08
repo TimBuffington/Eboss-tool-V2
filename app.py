@@ -592,30 +592,103 @@ Eboss_Specs = {
     220: {"full_hybrid": 100, "power_module": 96, "max_charge": 125,"max_peak": 252.0, "max_cont":112, "battery_kwh": 75},
     400: {"full_hybrid": 176.0,"power_module": 166,"max_charge": 220.0,"max_peak": 639.0, "max_cont":198, "battery_kwh": 125},
 }
-def interpolate_gph(kva: int, load_pct: float) -> float:
+# --- Fuel interpolation (use your existing one; this is a safe fallback) ---
+# --- Fuel comparison core (single source of truth) ---
+import re
+
+# Reuse existing mappings if present; otherwise provide safe fallbacks.
+EBOSS_KVA = globals().get("EBOSS_KVA", {
+    "EBOSS 25 kVA": 25, "EBOSS 70 kVA": 70, "EBOSS 125 kVA": 125, "EBOSS 220 kVA": 220, "EBOSS 400 kVA": 400
+})
+FH_ATTACHED_GEN_KW = globals().get("FH_ATTACHED_GEN_KW", {25: 20, 70: 36, 125: 56, 220: 100, 400: 176})
+
+def _first_int(s: str | None) -> int:
+    if not s: return 0
+    m = re.search(r"(\d+)", str(s))
+    return int(m.group(1)) if m else 0
+
+def get_fuel_use(
+    model: str,
+    eboss_type: str,
+    cont_kw: float,
+    charge_kw: float,
+    pm_gen: str | None,
+    runtime_hrs_per_day: float,
+    std_kva_choice: int
+) -> dict:
     """
-    Very rough interpolation of fuel burn (gallons/hour) vs. load % for a generator of given kVA.
-    Calibrated with made-up but monotonic points—replace with field data when available.
-    """
-    # piecewise points per kVA @ 25/50/75/100% load
-    table = {
-        25:  [0.7, 1.0, 1.3, 1.6],
-        45:  [1.0, 1.5, 2.1, 2.7],
-        65:  [1.5, 2.3, 3.3, 4.3],
-        125: [2.9, 4.2, 5.9, 7.8],
-        220: [5.5, 8.2, 11.0, 13.5],
-        400: [9.5, 14.0, 18.5, 22.0],
+    Returns:
+    {
+      "full_hybrid": {"gph","gpd","gpw","gpm"},
+      "power_module": {...} or None,
+      "standard_gen": {"gph","gpd","gpw","gpm"}
     }
-    xs = [0.25, 0.5, 0.75, 1.0]
-    ys = table.get(int(kva), table[25])
-    load = max(0.25, min(load_pct or 0.25, 1.0))
-    # linear interpolate
-    for i in range(len(xs) - 1):
-        if xs[i] <= load <= xs[i + 1]:
-            x1, x2 = xs[i], xs[i + 1]
-            y1, y2 = ys[i], ys[i + 1]
-            return y1 + (load - x1) * (y2 - y1) / (x2 - x1)
-    return ys[-1]
+    All GPH values come from your interpolate_gph(kva, load_pct).
+    - EBOSS GPD = runtime_hrs_per_day * GPH
+    - Standard Gen GPD = 24 * GPH
+    """
+    # EBOSS model → kVA; fallback: pull int from string
+    kva = EBOSS_KVA.get(model, _first_int(model))
+
+    # Full Hybrid: engine load = charge_kw / attached_gen_kw (map: 25→20, 70→36, 125→56, 220→100, 400→176)
+    attached_kw = FH_ATTACHED_GEN_KW.get(kva, 0.8 * kva)
+    fh_load = max(0.25, min((charge_kw / attached_kw) if attached_kw else 0.25, 1.0))
+    fh_gph = interpolate_gph(kva, fh_load)
+    full_hybrid = {
+        "gph": fh_gph,
+        "gpd": fh_gph * runtime_hrs_per_day,
+        "gpw": fh_gph * runtime_hrs_per_day * 7,
+        "gpm": fh_gph * runtime_hrs_per_day * 30,
+    }
+
+    # Power Module (only if selected): engine load = cont_kw / (pm_kva*0.8)
+    power_module = None
+    if eboss_type == "Power Module" and pm_gen:
+        pm_kva = _first_int(pm_gen)
+        pm_kw = 0.8 * pm_kva
+        pm_load = max(0.25, min((cont_kw / pm_kw) if pm_kw else 0.25, 1.0))
+        pm_gph = interpolate_gph(pm_kva, pm_load)
+        power_module = {
+            "gph": pm_gph,
+            "gpd": pm_gph * runtime_hrs_per_day,
+            "gpw": pm_gph * runtime_hrs_per_day * 7,
+            "gpm": pm_gph * runtime_hrs_per_day * 30,
+        }
+
+    # Standard generator (always 24h/day): engine load = cont_kw / (std_kva*0.8)
+    std_kw = 0.8 * std_kva_choice
+    std_load = max(0.25, min((cont_kw / std_kw) if std_kw else 0.25, 1.0))
+    std_gph = interpolate_gph(std_kva_choice, std_load)
+    standard_gen = {
+        "gph": std_gph,
+        "gpd": std_gph * 24,
+        "gpw": std_gph * 24 * 7,
+        "gpm": std_gph * 24 * 30,
+    }
+
+    return {"full_hybrid": full_hybrid, "power_module": power_module, "standard_gen": standard_gen}
+
+# Small renderer for a clean table
+def render_fuel_table(fuel_dict: dict, show_pm: bool) -> None:
+    import streamlit as st
+    st.markdown("### 🔥 Fuel Use (GPH / GPD / GPW / GPM)")
+    header = st.columns(4)
+    header[0].markdown("**Metric**")
+    header[1].markdown("**EBOSS Full Hybrid**")
+    header[2].markdown("**EBOSS Power Module**")
+    header[3].markdown("**Standard Generator**")
+    def row(label, a, b, c):
+        cols = st.columns(4)
+        cols[0].markdown(label)
+        cols[1].markdown(f"{a:.2f}")
+        cols[2].markdown(f"{b:.2f}" if show_pm and b is not None else "—")
+        cols[3].markdown(f"{c:.2f}")
+    fh, pm, sg = fuel_dict["full_hybrid"], fuel_dict["power_module"], fuel_dict["standard_gen"]
+    row("GPH", fh["gph"], (pm["gph"] if pm else None), sg["gph"])
+    row("GPD", fh["gpd"], (pm["gpd"] if pm else None), sg["gpd"])
+    row("GPW", fh["gpw"], (pm["gpw"] if pm else None), sg["gpw"])
+    row("GPM", fh["gpm"], (pm["gpm"] if pm else None), sg["gpm"])
+
 
 def calculate_charge_rate(model: str, eboss_type: str, pm_gen: str | None) -> float:
     """
