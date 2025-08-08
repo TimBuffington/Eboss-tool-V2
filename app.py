@@ -368,12 +368,149 @@ spec_data = {
         ]
     }
 }
+
+std_specs = {
+    "25": {
+        "Maximum Intermittent Load": [
+            ("Three-phase", "27.5 kVA / 22 kW"),
+            ("Single-phase", "19.75 kVA / 15.8 kW"),
+            ("Frequency", "60 Hz"),
+            ("Simultaneous voltage", "No"),
+            ("Voltage regulation", "Adjustable"),
+            ("Max. Intermittent 208v", "60 A / 17.29 kW"),
+            ("Max. Intermittent amp-load 480v", "30 A / 20 kW"),
+            ("Motor start rating - 3 second 208v", "60 A / 17.3 kW"),
+            ("Motor start rating - 3 second 480v", "30 A / 20 kW"),
+        ],
+        "Maximum Continuous Load": [
+            ("Generator Size", "25 kVA / 20 kW"),
+            ("Three-phase output", "25 kVA / 20 kW"),
+            ("Single-phase output", "16.4 kVA / 14.4 kW"),
+            ("Simultaneous voltage", "No"),
+            ("Max. Continuous load @208v", "60 A"),
+            ("Max. Continuous load @480v", "30 A"),
+        ],
+        "Engine Specs & Fuel Use": []
+            ("Runtime Hrs per Day", "24"),
+            ("Battery Storage", "0 kWH")
+        ]
+    },
+    "70": {
+        "Maximum Intermittent Load": [
+            ("Three-phase", "77 kVA / 62 kW"),
+            ("Single-phase", "N/A / N/A"),
+            ("Frequency", "60 Hz"),
+            ("Simultaneous voltage", "No"),
+            ("Voltage regulation", "Adjustable"),
+            ("Max. Intermittent 208v", "168 A / 48 kW"),
+            ("Max. Intermittent amp-load 480v", "84 A / 56 kW"),
+            ("Motor start rating - 3 second 208v", "200 A / 57 kW"),
+            ("Motor start rating - 3 second 480v", "84 A / 56 kW"),
+        ],
+        "Maximum Continuous Load": [
+            ("Generator Size", "70 kVA / 56 kW"),
+            ("Three-phase output", "70 kVA / 56 kW"),
+            ("Single-phase output", "45.5 kVA / 40 kW"),
+            ("Simultaneous voltage", "No"),
+            ("Max. Continuous load @208v", "168 A"),
+            ("Max. Continuous load @480v", "84 A"),
+        ],
+        "Engine Specs": [
+            ("Runtime Hrs per Day", "24"),
+            ("Battery Storage", "0 kWH")
+        ]
+    },
+    "125": {
+        "Maximum Intermittent Load": [
+            ("Three-phase", "137.5 kVA / 110 kW"),
+            ("Single-phase", "89.8 kVA / 79 kW"),
+            ("Frequency", "60 Hz"),
+            ("Simultaneous voltage", "No"),
+            ("Voltage regulation", "Adjustable"),
+            ("Max. Intermittent 208v", "300 A / 86 kW"),
+            ("Max. Intermittent amp-load 480v", "150 A / 100 kW"),
+            ("Motor start rating - 3 second 208v", "300 A / 86 kW"),
+            ("Motor start rating - 3 second 480v", "152 A / 101 kW"),
+        ],
+        "Maximum Continuous Load": [
+            ("Generator Size", "125 kVA / 100 kW"),
+            ("Three-phase output", "125 kVA / 100 kW"),
+            ("Single-phase output", "81.8 kVA / 72 kW"),
+            ("Simultaneous voltage", "No"),
+            ("Max. Continuous load @208v", "300 A"),
+            ("Max. Continuous load @480v", "150 A"),
+        ],
+        "Engine Specs": [
+            ("Runtime Hrs per Day", "24"),
+            ("Battery Storage", "0 kWH")
+        ]
+    },
+    "220": {
+        "Maximum Intermittent Load": [
+            ("Three-phase", "242 kVA / 194 kW"),
+            ("Single-phase", "N/A"),
+            ("Frequency", "60 Hz"),
+            ("Simultaneous voltage", "No"),
+            ("Voltage regulation", "Adjustable"),
+            ("Max. Intermittent 208v", "529 A / 152.5 kW"),
+            ("Max. Intermittent amp-load 480v", "264 A / 175.6 kW"),
+            ("Motor start rating - 3 second 208v", "600 A / 172.9 kW"),
+            ("Motor start rating - 3 second 480v", "256 A / 170.2 kW"),
+        ],
+        "Maximum Continuous Load": [
+            ("Generator Size", "220 kVA / 176 kW"),
+            ("Three-phase output", "210 kVA / 168 kW"),
+            ("Single-phase output", "244.4 A"),  # no kW provided
+            ("Simultaneous voltage", "No"),
+            ("Max. Continuous load @208v", "529 A"),
+            ("Max. Continuous load @480v", "264 A"),
+        ],
+        "Engine Specs": [
+            ("Runtime Hrs per Day", "24"),
+            ("Battery Storage", "0 kWH")
+        ]
+    },
+    "400": {
+        "Maximum Intermittent Load": [
+            ("Three-phase", "420 kVA / 336 kW"),
+            ("Single-phase", "TBD"),
+            ("Frequency", "TBD"),
+            ("Simultaneous voltage", "TBD"),
+            ("Voltage regulation", "TBD"),
+            ("Max. Intermittent 208v", "TBD"),
+            ("Max. Intermittent amp-load 480v", "TBD"),
+            ("Motor start rating - 3 second 208v", "TBD"),
+            ("Motor start rating - 3 second 480v", "TBD"),
+        ],
+        "Maximum Continuous Load": [
+            ("Generator Size", "TBD"),
+            ("Three-phase output", "TBD"),
+            ("Single-phase output", "TBD"),
+            ("Simultaneous voltage", "TBD"),
+            ("Max. Continuous load @208v", "TBD"),
+            ("Max. Continuous load @480v", "TBD"),
+        ],
+        "Engine Specs & Fuel Use": []
+            ("Runtime Hrs per Day", "24"),
+            ("Battery Storage", "0 kWH")
+        ]
+    }
+}
+
 EBOSS_KVA = {
     "EBOSS 25 kVA": 25,
     "EBOSS 70 kVA": 70,
     "EBOSS 125 kVA": 125,
     "EBOSS 220 kVA": 220,
     "EBOSS 400 kVA": 400
+}
+
+std_gen = {
+    "25 kVA": 25,
+    "70 kVA": 70,
+    "125 kVA": 125,
+    "220 kVA": 220,
+    "400 kVA": 400
 }
 
 def top_navbar():
@@ -458,12 +595,12 @@ Eboss_Specs = {
 
 # Simple fuel maps for a standard generator running near nameplate (gal/hour)
 STANDARD_GENERATORS = {
-    "25 kVA (≈20 kW)",
-    "45 kVA (≈36 kW)",
-    "65 kVA (≈52 kW)",
-    "125 kVA (≈100 kW)",
-    "220 kVA (≈176 kW)",
-    "400 kVA (≈320 kW)"
+    "25 kVA (≈20 kW)": 1.6,
+    "45 kVA (≈36 kW)": 2.7,
+    "65 kVA (≈52 kW)": 4.3,
+    "125 kVA (≈100 kW)": 7.8,
+    "220 kVA (≈176 kW)": 13.5,
+    "400 kVA (≈320 kW)": 22.0,
 }
 
 def interpolate_gph(kva: int, load_pct: float) -> float:
@@ -582,9 +719,6 @@ def enforce_session_validation():
     model = ui.get("model")
     eboss_type = ui.get("eboss_type") or "Full Hybrid"
     pm_gen = ui.get("pm_gen")
-
-    # Store charge rate back into session (used everywhere else)
-    ui["charge_rate"] = calculate_charge_rate(model, eboss_type, pm_gen)
 
     # PM validation rules (do NOT change rate, just gate + warn)
     if eboss_type == "Power Module":
@@ -985,25 +1119,6 @@ def render_calculate_buttons():
                 st.session_state[key] = False
             st.rerun()
 
-#==============================================================================================================================
-    kva_map = {
-        25: [0.67, 0.94, 1.26, 1.62],
-        45: [1.04, 1.60, 2.20, 2.03],
-        65: [2.9, 3.8, 4.8, 5.6],
-        125: [5.0, 7.1, 9.1, 10.8],
-        220: [8.8, 12.5, 16.6, 20.2],
-        400: [14.9, 21.3, 28.6, 35.4]
-    }
-    breakpoints = [0.25, 0.5, 0.75, 1.0]
-    values = kva_map.get(kva, kva_map[25])
-    load_pct = max(0.25, min(load_pct, 1.0))
-    for i in range(len(breakpoints) - 1):
-        if breakpoints[i] <= load_pct <= breakpoints[i + 1]:
-            x1, x2 = breakpoints[i], breakpoints[i + 1]
-            y1, y2 = values[i], values[i + 1]
-            return round(y1 + (load_pct - x1) * (y2 - y1) / (x2 - x1), 3)
-    return values[0]
-#=======================================================================================================
 def render_card(label, value):
     st.markdown(f'''
         <div class="card">
@@ -1023,7 +1138,7 @@ def calculate_runtime_specs(model, eboss_type, cont_kw, pm_gen):
     battery_kwh = Eboss_Specs[model_kva]["battery_kwh"]  # ← unified & correct
 
     battery_life = battery_kwh / cont_kw if cont_kw else 0
-    charge_time  = battery_kwh / charge_kw if charge_kw else 0
+    charge_time  = battery_kwh / (charge_kw - cont_kW) if (charge_kw - cont_kW) > 0 else 0
     cycles_per_day = 24 / (battery_life + charge_time) if (battery_life + charge_time) > 0 else 0
     total_runtime  = charge_time * cycles_per_day
     engine_pct     = charge_kw / gen_kw if gen_kw else 0
@@ -1085,7 +1200,7 @@ def render_compare_page():
     top_navbar()
 
     # Selected EBOSS model
-    model = st.session_state.get("model_select")
+    model = st.session_state.user_inputs["model"]
 
     # Normalize odd key for 125
     if model not in spec_data and model.replace(" 125 kVA", "125 kVA") in spec_data:
