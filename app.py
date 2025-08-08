@@ -792,6 +792,8 @@ def validate_charge_rate(model: str,
 
     return is_valid, messages
 
+ui["charge_rate"] = get_charge_rate(ui["model"], ui.get("eboss_type") or "Full Hybrid")
+
 def render_user_input_form():
     with st.container():
         cols = st.columns([1, 1, 1], gap="large")
@@ -1240,13 +1242,9 @@ def render_spec_value_row_2(left_label: str, left_value: str, right_label: str, 
             </div>
         """, unsafe_allow_html=True)
 
-def render_spec_value_row_4(spec_label: str, eboss_val: str, std_val: str, diff_val: str | None = None):
+def render_spec_value_row_4(spec_label: str, eboss_val: str, std_val: str, diff_val: str | None):
     """Four cards in one row: Spec | EBOSS | Std Gen | Difference (if numeric)."""
     c1, c2, c3, c4 = st.columns(4, gap="large")
-
-    # auto-compute pretty delta unless caller supplies one
-    diff_html = _delta_badge(eboss_val, std_val) if diff_val is None else _delta_badge(diff_val, "0")
-
     with c1:
         st.markdown(f"""
             <div class="card">
@@ -1271,11 +1269,11 @@ def render_spec_value_row_4(spec_label: str, eboss_val: str, std_val: str, diff_
         st.markdown(f"""
             <div class="card">
                 <div class="card-label">Difference</div>
-                <div class="card-value">{diff_html}</div>
+                <div class="card-value">{diff_val if diff_val is not None else ""}</div>
             </div>
         """, unsafe_allow_html=True)
 
-
+import re
 def _num(x):
     """Extract first float from a string like '70 A / 20.2 kW' -> 70.0 (prefers kW if present)."""
     if x is None: return None
