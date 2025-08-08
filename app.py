@@ -2,6 +2,8 @@ import streamlit as st
 from datetime import date
 import pandas as pd
 from itertools import combinations_with_replacement
+from typing import Dict, List, Tuple, Any
+
 
 def apply_custom_css():
     st.markdown("""
@@ -142,7 +144,84 @@ def apply_custom_css():
 
     </style>
     """, unsafe_allow_html=True)
+@st.cache_data(show_spinner=False)
+def load_std_gen_specs_from_excel(path: str = "/mnt/data/Grn Compare.xlsx") -> Dict[str, Dict[str, List[Tuple[str, Any]]]]:
+    """
+    Read the diesel generator reference workbook and return:
+    {
+      "25": {"Maximum Intermittent Load":[("Three-phase","..."), ...],
+             "Maximum Continuous Load":[(...), ...],
+             "Engine Specs & Fuel Use":[(...), ...]},
+      "70": {...}, ...
+    }
+    Notes:
+    - We accept a few common header spellings and coerce to our spec keys.
+    - If the file is missing or structure is unexpected, we return {} and the UI will show "–".
+    """
+    try:
+        xls = pd.ExcelFile(path)
+    except Exception:
+        return {}
 
+    # Try to be flexible: use the first sheet by default
+    try:
+        df = pd.read_excel(xls, xls.sheet_names[0])
+    except Exception:
+        return {}
+
+    # Normalize column names
+    df.columns = [str(c).strip().lower() for c in df.columns]
+
+    # Heuristics for key columns
+    # Expect at least: 'kva' or 'model', 'section', 'spec'/'metric', 'value'
+    # We'll try a few likely variants
+    def pick(*names):
+        for n in names:
+            if n in df.columns:
+                return n
+        return None
+
+    col_kva     = pick("kva", "rating_kva", "rating", "size_kva", "model_kva")
+    col_model   = pick("model", "name")
+    col_section = pick("section", "category")
+    col_label   = pick("spec", "metric", "label", "item")
+    col_value   = pick("value", "val", "data")
+
+    if not (col_section and col_label and col_value and (col_kva or col_model)):
+        # Structure is too different — return empty to keep app stable
+        return {}
+
+    # Extract "kva_key" we’ll group by (stringified integer like "25", "70", …)
+    def kva_key(row):
+        import re
+        if col_kva:
+            try:
+                return str(int(round(float(row[col_kva]))))
+            except Exception:
+                pass
+        # fallback: get number from model like "125 kVA"
+        m = re.search(r"(\d+)", str(row.get(col_model, "")))
+        return m.group(1) if m else None
+
+    # Normalize sections to our expected keys if possible
+    def map_section(name: str) -> str:
+        n = str(name).strip().lower()
+        if "intermittent" in n: return "Maximum Intermittent Load"
+        if "continuous"  in n: return "Maximum Continuous Load"
+        if "engine" in n or "fuel" in n: return "Engine Specs & Fuel Use"
+        return name  # keep original if we can’t map
+
+    std: Dict[str, Dict[str, List[Tuple[str, Any]]]] = {}
+    for _, row in df.iterrows():
+        key = kva_key(row)
+        if not key:
+            continue
+        section = map_section(row[col_section])
+        label   = str(row[col_label]).strip()
+        value   = row[col_value]
+        std.setdefault(key, {}).setdefault(section, []).append((label, value))
+
+    return std
 # =========================================================================================================
 if "landing_shown" not in st.session_state:
     st.session_state.landing_shown = True
@@ -1028,6 +1107,78 @@ def render_spec_value_row(spec_label: str, spec_value: str):
                 <div class="card-value">{spec_value}</div>
             </div>
         ''', unsafe_allow_html=True)
+        
+def render_spec_value_row_2(left_label: str, left_value: str, right_label: str, right_value: str):
+    """Two cards in the row (used in headers that have two sides occasionally)."""
+    c1, c2 = st.columns(2, gap="large")
+    with c1:
+        st.markdown(f"""
+            <div class="card">
+                <div class="card-label">{left_label}</div>
+                <div class="card-value">{left_value}</div>
+            </div>
+        """, unsafe_allow_html=True)
+    with c2:
+        st.markdown(f"""
+            <div class="card">
+                <div class="card-label">{right_label}</div>
+                <div class="card-value">{right_value}</div>
+            </div>
+        """, unsafe_allow_html=True)
+
+def render_spec_value_row_4(spec_label: str, eboss_val: str, std_val: str, diff_val: str | None):
+    """Four cards in one row: Spec | EBOSS | Std Gen | Difference (if numeric)."""
+    c1, c2, c3, c4 = st.columns(4, gap="large")
+    with c1:
+        st.markdown(f"""
+            <div class="card">
+                <div class="card-label">{spec_label}</div>
+            </div>
+        """, unsafe_allow_html=True)
+    with c2:
+        st.markdown(f"""
+            <div class="card">
+                <div class="card-label">EBOSS®</div>
+                <div class="card-value">{eboss_val}</div>
+            </div>
+        """, unsafe_allow_html=True)
+    with c3:
+        st.markdown(f"""
+            <div class="card">
+                <div class="card-label">Standard Gen</div>
+                <div class="card-value">{std_val}</div>
+            </div>
+        """, unsafe_allow_html=True)
+    with c4:
+        st.markdown(f"""
+            <div class="card">
+                <div class="card-label">Difference</div>
+                <div class="card-value">{diff_val if diff_val is not None else ""}</div>
+            </div>
+        """, unsafe_allow_html=True)
+
+import re
+def _num(x):
+    """Extract first float from a string like '70 A / 20.2 kW' -> 70.0 (prefers kW if present)."""
+    if x is None: return None
+    s = str(x)
+    # prefer a value labeled 'kW' if present
+    m_kw = re.search(r"([0-9]*\.?[0-9]+)\s*kW", s, flags=re.I)
+    if m_kw:
+        return float(m_kw.group(1))
+    m = re.search(r"([0-9]*\.?[0-9]+)", s)
+    return float(m.group(1)) if m else None
+
+def _delta(a, b):
+    """Return a-b if both numeric else None."""
+    try:
+        fa, fb = _num(a), _num(b)
+        if fa is None or fb is None:
+            return None
+        d = fa - fb
+        return f"{d:+.2f}"
+    except Exception:
+        return None
 
 # ---- LOAD SPECS PAGE ----
 def render_load_specs_page():
@@ -1079,7 +1230,7 @@ def render_load_specs_page():
     fuel_month = fuel_day * 30
     co2_day_lbs = fuel_day * 22.4
 
-    # ---- Battery & Charging (section header uses your card styling) ----
+
       # ---- Battery & Charging ----
     st.markdown("""
     <div class="card" style="background-color:#636569;color:#fff;font-weight:700;
@@ -1131,155 +1282,100 @@ def render_load_specs_page():
 def render_compare_page():
     import re
     apply_custom_css()
-    show_logo_and_title("Compare EBOSS® vs Standard Generator")
+    show_logo_and_title("Compare — EBOSS® vs Standard Generator")
     top_navbar()
 
+    # Load the diesel reference once (cached)
+    STD_REF = load_std_gen_specs_from_excel("/mnt/data/Grn Compare.xlsx")
+
+    # Selected EBOSS model (normalize the 125 key if needed)
     model = st.session_state.get("model_select", "EBOSS 25 kVA")
+    if model not in spec_data and model.replace(" 125 kVA", "125 kVA") in spec_data:
+        model = model.replace(" 125 kVA", "125 kVA")
+
     eboss_specs = spec_data.get(model, {})
-    std_specs = std_gen_data.get(model, {})
-    cont_kw = st.session_state.user_inputs.get("cont_kw", 10)
 
-    def extract_kva(m):
-        match = re.search(r"(\d+)", m)
-        return int(match.group(1)) if match else 0
+    # Determine kVA and map to Excel block
+    m = re.search(r"(\d+)", model)
+    kva_key = m.group(1) if m else "25"
+    std_specs = STD_REF.get(kva_key, {})  # empty dict if not found
 
-    kva = extract_kva(model)
-    charge_kw = Eboss_Charge_Rates[kva]["full_hybrid"]
+    # ---- Optional: show which std-gen bucket we matched
+    st.markdown(f"""
+    <div class="card" style="background-color:#636569;color:white;font-weight:700;
+         font-size:1.0rem;padding:0.6rem 1rem;border-radius:12px;margin:0.5rem 0 1rem 0;">
+        Matched Standard Generator: <span style="font-weight:900;">{kva_key} kVA class</span>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # ---------- SECTION 1: Maximum Intermittent ----------
+    st.markdown("""
+    <div class="card" style="background-color:#636569;color:white;font-weight:700;
+         font-size:1.2rem;padding:0.8rem 1.5rem;border-radius:12px;margin:1.2rem 0 0.6rem 0;
+         text-align:center;text-transform:uppercase;box-shadow:0 4px 8px rgba(0,0,0,0.3);">
+        Maximum Intermittent Load
+    </div>
+    """, unsafe_allow_html=True)
+    e_rows = eboss_specs.get("Maximum Intermittent Load", [])
+    s_rows = dict(std_specs.get("Maximum Intermittent Load", []))
+    for label, e_val in e_rows:
+        s_val = s_rows.get(label, "–")
+        render_spec_value_row_4(label, e_val, s_val, _delta(e_val, s_val))
+
+    # ---------- SECTION 2: Maximum Continuous ----------
+    st.markdown("""
+    <div class="card" style="background-color:#636569;color:white;font-weight:700;
+         font-size:1.2rem;padding:0.8rem 1.5rem;border-radius:12px;margin:1.2rem 0 0.6rem 0;
+         text-align:center;text-transform:uppercase;box-shadow:0 4px 8px rgba(0,0,0,0.3);">
+        Maximum Continuous Load
+    </div>
+    """, unsafe_allow_html=True)
+    e_rows = eboss_specs.get("Maximum Continuous Load", [])
+    s_rows = dict(std_specs.get("Maximum Continuous Load", []))
+    for label, e_val in e_rows:
+        s_val = s_rows.get(label, "–")
+        render_spec_value_row_4(label, e_val, s_val, _delta(e_val, s_val))
+
+    # ---------- SECTION 3: Engine / Fuel (computed + Excel) ----------
+    # Compute EBOSS duty-cycle metrics from your envelopes (same method you used before)
+    inputs = st.session_state.user_inputs
+    cont_kw = float(inputs.get("cont_kw", 10))
+    kva = int(kva_key)
     gen_kw = kva * 0.8
-    battery_kwh = {
-        "EBOSS 25 kVA": 15,
-        "EBOSS 70 kVA": 25,
-        "EBOSS 125 kVA": 50,
-        "EBOSS 220 kVA": 75,
-        "EBOSS 400 kVA": 125
-    }.get(model, 0)
+    charge_kw   = Eboss_Specs[kva]["full_hybrid"]
+    battery_kwh = Eboss_Specs[kva]["battery_kwh"]
 
-    battery_life = battery_kwh / cont_kw if cont_kw else 0
-    charge_time = battery_kwh / charge_kw if charge_kw else 0
-    cycles_per_day = 24 / (battery_life + charge_time) if battery_life + charge_time > 0 else 0
-    runtime_hrs = charge_time * cycles_per_day
-    eboss_gph = interpolate_gph(kva, charge_kw / gen_kw if gen_kw else 1)
-    std_gph = interpolate_gph(kva, 1.0)
+    batt_runtime_h  = battery_kwh / cont_kw if cont_kw > 0 else 0
+    charge_time_h   = battery_kwh / charge_kw if charge_kw > 0 else 0
+    cycles_per_day  = 24 / (batt_runtime_h + charge_time_h) if (batt_runtime_h + charge_time_h) > 0 else 0
+    runtime_hrs     = charge_time_h * cycles_per_day
+
+    eboss_gph = interpolate_gph(kva, min(max(charge_kw / gen_kw, 0.25), 1.0))
+    std_gph   = interpolate_gph(kva, 1.0)
 
     eboss_gpd = round(eboss_gph * runtime_hrs, 2)
-    std_gpd = round(std_gph * 24, 2)
-    eboss_gpw = round(eboss_gpd * 7, 2)
-    std_gpw = round(std_gpd * 7, 2)
-    eboss_gpm = round(eboss_gpd * 30, 2)
-    std_gpm = round(std_gpd * 30, 2)
+    std_gpd   = round(std_gph * 24.0, 2)
+    eboss_gpw, std_gpw = round(eboss_gpd * 7, 2), round(std_gpd * 7, 2)
+    eboss_gpm, std_gpm = round(eboss_gpd * 30, 2), round(std_gpd * 30, 2)
 
-    spec_layout = {
-        "Maximum Intermittent Load": eboss_specs.get("Maximum Intermittent Load", []),
-        "Maximum Continuous Load": eboss_specs.get("Maximum Continuous Load", []),
-        "Engine Specs": [
-            ("Runtime Hrs per Day", f"{round(runtime_hrs,1)} h  (EBOSS®)", f"24 h (Std Gen)"),
-            ("Battery Storage", f"{battery_kwh} kWh", "0 kWh"),
-            ("Gallons per Day", f"{eboss_gpd} gal", f"{std_gpd} gal"),
-            ("Gallons per Week", f"{eboss_gpw} gal", f"{std_gpw} gal"),
-            ("Gallons per Month", f"{eboss_gpm} gal", f"{std_gpm} gal")
-        ]
-    }
+    st.markdown("""
+    <div class="card" style="background-color:#636569;color:white;font-weight:700;
+         font-size:1.2rem;padding:0.8rem 1.5rem;border-radius:12px;margin:1.2rem 0 0.6rem 0;
+         text-align:center;text-transform:uppercase;box-shadow:0 4px 8px rgba(0,0,0,0.3);">
+        Engine Specs & Fuel Use
+    </div>
+    """, unsafe_allow_html=True)
 
-    for section, rows in spec_layout.items():
-        st.markdown(f'''
-        <div class="card" style="background-color:#636569;color:white;font-weight:700;
-            font-size:1.2rem;padding:0.8rem 1.5rem;border-radius:12px;
-            margin:2rem 0 1rem 0;text-align:center;text-transform:uppercase;
-            box-shadow:0 4px 8px rgba(0,0,0,0.3);">
-            {section}
-        </div>
-        ''', unsafe_allow_html=True)
+    engine_rows = [
+        ("Runtime Hrs per Day", f"{runtime_hrs:.1f} h", "24 h"),
+        ("Battery Storage",     f"{battery_kwh} kWh",  "0 kWh"),
+        ("Gallons per Day",     f"{eboss_gpd} gal",    f"{std_gpd} gal"),
+        ("Gallons per Week",    f"{eboss_gpw} gal",    f"{std_gpw} gal"),
+        ("Gallons per Month",   f"{eboss_gpm} gal",    f"{std_gpm} gal"),
+    ]
+    for label, e_val, s_val in engine_rows:
+        render_spec_value_row_4(label, e_val, s_val, _delta(e_val, s_val))
 
-        if section != "Engine Specs":
-            std_sec = dict(std_specs.get(section, []))
-            for label, eboss_val in rows:
-                render_spec_value_row(label, eboss_val)
-                render_spec_value_row("Standard Generator", std_sec.get(label, "–"))
-        else:
-            for label, eboss_val, std_val in rows:
-                render_spec_value_row(label + " (EBOSS®)", eboss_val)
-                render_spec_value_row(label + " (Std Gen)", std_val)
-
-
-    def extract_kva(m):
-        match = re.search(r"(\d+)", m)
-        return int(match.group(1)) if match else 0
-
-    kva = extract_kva(model)
-    charge_kw = Eboss_Charge_Rates[kva]["full_hybrid"]
-    gen_kw = kva * 0.8
-    battery_kwh = {
-        "EBOSS 25 kVA": 15,
-        "EBOSS 70 kVA": 25,
-        "EBOSS 125 kVA": 50,
-        "EBOSS 220 kVA": 75,
-        "EBOSS 400 kVA": 125
-    }.get(model, 0)
-
-    battery_life = battery_kwh / cont_kw if cont_kw else 0
-    charge_time = battery_kwh / charge_kw if charge_kw else 0
-    cycles_per_day = 24 / (battery_life + charge_time) if battery_life + charge_time > 0 else 0
-    runtime_hrs = charge_time * cycles_per_day
-    eboss_gph = interpolate_gph(kva, charge_kw / gen_kw if gen_kw else 1)
-    std_gph = interpolate_gph(kva, 1.0)
-
-    eboss_gpd = round(eboss_gph * runtime_hrs, 2)
-    std_gpd = round(std_gph * 24, 2)
-    eboss_gpw = round(eboss_gpd * 7, 2)
-    std_gpw = round(std_gpd * 7, 2)
-    eboss_gpm = round(eboss_gpd * 30, 2)
-    std_gpm = round(std_gpd * 30, 2)
-
-    spec_layout = {
-        "Maximum Intermittent Load": [
-            "Three-phase", "Single-phase", "Frequency", "Simultaneous voltage", "Voltage regulation",
-            "Max. Intermittent 208v", "Max. Intermittent amp-load 480v",
-            "Motor start rating - 3 second 208v", "Motor start rating - 3 second 480v"
-        ],
-        "Maximum Continuous Load": [
-            "Generator Size", "Three-phase output", "Single-phase output", "Simultaneous voltage",
-            "Max. Continuous load @208v", "Max. Continuous load @480v"
-        ],
-        "Engine Specs": [
-            ("Runtime Hrs per Day", f"{round(runtime_hrs,1)}", "24"),
-            ("Battery Storage", f"{battery_kwh} kWH", "0 kWH"),
-            ("Gallons per Day", f"{eboss_gpd} gal", f"{std_gpd} gal"),
-            ("Gallons per Week", f"{eboss_gpw} gal", f"{std_gpw} gal"),
-            ("Gallons per Month", f"{eboss_gpm} gal", f"{std_gpm} gal")
-        ]
-    }
-
-    for section, rows in spec_layout.items():
-        st.markdown(f'''
-        <div class="card" style="background-color: #636569; color: white; font-weight: 700;
-            font-size: 1.2rem; padding: 0.8rem 1.5rem; border-radius: 12px;
-            margin: 2rem 0 1rem 0; text-align: center; text-transform: uppercase;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);">
-            {section}
-        </div>
-        ''', unsafe_allow_html=True)
-
-        if isinstance(rows[0], str):
-            eboss_sec = dict(eboss_specs.get(section, []))
-            std_sec = dict(std_specs.get(section, []))
-
-            for label in rows:
-                col1, col2, col3 = st.columns(3)
-                with col1:
-                    render_card("Metric", label)
-                with col2:
-                    render_card("EBOSS®", eboss_sec.get(label, "–"))
-                with col3:
-                    render_card("Standard Gen", std_sec.get(label, "–"))
-        else:
-            for label, eboss_val, std_val in rows:
-                col1, col2, col3 = st.columns(3)
-                with col1:
-                    render_card("Metric", label)
-                with col2:
-                    render_card("EBOSS®", eboss_val)
-                with col3:
-                    render_card("Standard Gen", std_val)
 
 # ---- COST ANALYSIS PAGE ----
 def render_cost_analysis_page():
