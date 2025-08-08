@@ -492,111 +492,20 @@ def interpolate_gph(kva: int, load_pct: float) -> float:
     return ys[-1]
 
 def calculate_charge_rate(model: str, eboss_type: str, pm_gen: str | None) -> float:
-    """
-    Charge rate is determined ONLY by the EBOSS model + mode.
-    PM generator size does NOT change the charge rate; it's validated separately.
-    Always clamp to max_charge for safety.
-    """
-    # Resolve model kVA (handles "EBOSS 125 kVA" and minor key quirks)
-    model_kva = EBOSS_KVA.get(model)
-    if model_kva is None:
-        import re
-        m = re.search(r"(\d+)", model or "")
-        model_kva = int(m.group(1)) if m else 0
-
-    spec = Eboss_Specs[model_kva]
-    max_charge = float(spec["max_charge"])
-
+    kva = EBOSS_KVA[model] if eboss_type == "Full Hybrid" else int((pm_gen or "0kVA").replace("kVA", ""))
+    base = Eboss_Specs[EBOSS_KVA[model]]
     if eboss_type == "Full Hybrid":
-        charge_rate = float(spec["full_hybrid"])
-    else:
-        # Power Module
-        charge_rate = float(spec["power_module"])
-
-    # Safety: never exceed EBOSS max_charge
-    return min(charge_rate, max_charge)
-
-def get_charge_rate(model: str, eboss_type: str) -> float:
-    """
-    Charge rate depends only on model + mode.
-    PM generator size does NOT affect the rate; it's validated separately.
-    Always clamp to max_charge for safety.
-    """
-    if model not in EBOSS_KVA:
-        raise ValueError(f"Unknown model: {model}")
-
-    kva = EBOSS_KVA[model]              # numeric kVA for the EBOSS model
-    spec = Eboss_Specs[kva]             # envelope for this kVA
-    base_rate = spec["power_module"] if eboss_type == "Power Module" else spec["full_hybrid"]
-    return min(float(base_rate), float(spec["max_charge"]))  # safety cap only
-
-def validate_pm_generator(model: str, pm_gen: str) -> tuple[bool, list[str]]:
-    """
-    Power Module validation.
-    - If gen kW < required PM charge rate → block (cannot continue).
-    - If gen kW > 2/3 of PM charge rate → warn (allowed, but fuel efficiency may be worse).
-    Returns (can_continue, messages).
-    """
-    messages: list[str] = []
-    can_continue = True
-
-    # Model → kVA → PM charge rate
-    model_kva = EBOSS_KVA.get(model)
-    if model_kva is None:
-        import re
-        m = re.search(r"(\d+)", model or "")
-        model_kva = int(m.group(1)) if m else 0
-
-    pm_charge_rate = float(Eboss_Specs[model_kva]["power_module"])
-
-    # Parse PM generator kW capacity (~0.8 × kVA)
-    import re
-    m = re.search(r"(\d+)", str(pm_gen))
-    pm_kva_val = int(m.group(1)) if m else 0
-    pm_gen_kw_cap = 0.8 * pm_kva_val if pm_kva_val > 0 else 0.0
-
-    # Hard fail if undersized
-    if pm_gen_kw_cap < pm_charge_rate:
-        messages.append(
-            f"❌ Selected generator is {pm_gen_kw_cap:.1f} kW, which is LESS than the "
-            f"Power Module charge rate ({pm_charge_rate:.1f} kW). Select a larger generator to continue."
-        )
-        can_continue = False
-    # Efficiency warning if > 2/3 of PM charge rate (your rule)
-    elif pm_gen_kw_cap > (pm_charge_rate * (2/3)):
-        messages.append(
-            f"⚠️ Selected generator is {pm_gen_kw_cap:.1f} kW, which is more than 2/3 of the "
-            f"Power Module charge rate ({pm_charge_rate:.1f} kW). You may not see optimal fuel efficiency."
-        )
-
-    return can_continue, messages
-
+        return base["full_hybrid"]
+    # Power Module uses the PM envelope but cannot exceed its max_charge
+    return min(base["power_module"], base["max_charge"])
 
 def enforce_session_validation():
-    """
-    Ensures user_inputs exists, computes charge_rate, and (if PM) validates generator.
-    Will block page rendering (st.stop) when PM generator is undersized.
-    """
+    """Ensures the calc inputs exist and derives a charge_rate into session."""
     ui = st.session_state.user_inputs
-
     model = ui.get("model")
     eboss_type = ui.get("eboss_type") or "Full Hybrid"
-    pm_gen = ui.get("pm_gen")
-
-    # Store charge rate back into session (used everywhere else)
-    ui["charge_rate"] = calculate_charge_rate(model, eboss_type, pm_gen)
-
-    # PM validation rules (do NOT change rate, just gate + warn)
-    if eboss_type == "Power Module":
-        if not pm_gen:
-            st.error("❌ Please select a PM Generator size to continue.")
-            st.stop()
-        can_continue, msgs = validate_pm_generator(model, pm_gen)
-        for msg in msgs:
-            # show warning vs error
-            (st.warning if msg.startswith("⚠️") else st.error)(msg)
-        if not can_continue:
-            st.stop()
+    kva_opt = ui.get("pm_gen")
+    ui["charge_rate"] = calculate_charge_rate(model, eboss_type, kva_opt)
 
 # No-op backends so buttons won't crash in Cloud
 def submit_demo_request(_): return 200
@@ -741,59 +650,34 @@ if st.session_state.show_contact_form:
  # ──────────────────────────────────────────────────────────────
 # 🔋 CHARGE RATE ENGINE
 # ──────────────────────────────────────────────────────────────
+def get_charge_rate(model, eboss_type):
+    try:
+        eb = EBOSS_KVA[model]
+        spec = Eboss_Specs[kva]
+        return spec["power_module"] if eboss_type == "Power Module" else spec["full_hybrid"]
+    except KeyError:
+        raise ValueError(f"Invalid model or type: {model}, {eboss_type}")
 
-
-
-def validate_charge_rate(model: str,
-                         eboss_type: str,
-                         entered_rate: float,
-                         gen_kw: float | None = None) -> tuple[bool, list[str]]:
-    """
-    Validate an entered charge rate against the envelope, and (for PM) validate the generator.
-    Rules:
-      - entered_rate must not exceed max_charge (hard fail)
-      - PM: if gen_kw provided:
-          * FAIL if gen_kw < power_module
-          * WARN if gen_kw > (2/3) * power_module  (may reduce fuel efficiency)
-    """
-    messages: list[str] = []
-    if model not in EBOSS_KVA:
-        return False, [f"❌ Unknown model: {model}"]
-
-    kva = EBOSS_KVA[model]
+def validate_charge_rate(model, eboss_type, entered_rate, gen_kw=None):
+    eb = EBOSS_KVA[model]
     spec = Eboss_Specs[kva]
-    max_rate = float(spec["max_charge"])
-    pm_rate  = float(spec["power_module"])
-
+    max_rate = spec["max_charge"]
+    messages = []
     is_valid = True
 
-    # cap check for any mode
-    if float(entered_rate) > max_rate:
-        messages.append(f"❌ Charge rate ({entered_rate:.1f} kW) exceeds model max ({max_rate:.1f} kW).")
+    if entered_rate > max_rate:
+        messages.append(f"❌ Charge rate ({entered_rate} kW) exceeds max for {model}: {max_rate} kW")
         is_valid = False
 
-    # PM generator checks (gen_kw optional; only applies in PM mode)
-    if eboss_type == "Power Module" and gen_kw is not None:
-        gen_kw = float(gen_kw)
-
-        # Hard fail if undersized versus PM charge rate
-        if gen_kw < pm_rate:
-            messages.append(
-                f"❌ Selected generator ({gen_kw:.1f} kW) is smaller than the Power Module charge rate "
-                f"({pm_rate:.1f} kW). Select a larger generator to continue."
-            )
+    if eboss_type == "Power Module" and gen_kw:
+        if gen_kw < spec["power_module"]:
+            messages.append(f"❌ Generator ({gen_kw} kW) undersized for charge rate {spec['power_module']} kW")
             is_valid = False
-        # Efficiency warning if sized above 2/3 of PM charge rate (per your rule)
-        elif gen_kw > (pm_rate * (2/3)):
-            messages.append(
-                f"⚠️ Selected generator ({gen_kw:.1f} kW) is more than 2/3 of the Power Module charge rate "
-                f"({pm_rate:.1f} kW). You may not see optimal fuel efficiency."
-            )
+        elif gen_kw > max_rate:
+            messages.append(f"⚠️ Generator output ({gen_kw} kW) exceeds max charge rate {max_rate} kW. May reduce fuel efficiency.")
 
     return is_valid, messages
-
-ui["charge_rate"] = get_charge_rate(ui["model"], ui.get("eboss_type") or "Full Hybrid")
-
+  
 def render_user_input_form():
     with st.container():
         cols = st.columns([1, 1, 1], gap="large")
@@ -1014,23 +898,23 @@ def render_card(label, value):
         </div>
     ''', unsafe_allow_html=True)
 
-def calculate_runtime_specs(model, eboss_type, cont_kw, pm_gen):
-    # Determine generator size based on mode
-    gen_kva = EBOSS_KVA.get(model, 0) if eboss_type == "Full Hybrid" else int(__import__("re").search(r"(\d+)", str(pm_gen or "")).group(1)) if pm_gen else 0
+def calculate_runtime_specs(model, eboss_type, cont_kw, kva):
+    gen_kva = EBOSS_KVA.get(model, 0) if eboss_type == "Full Hybrid" else float(kva.replace("kVA", ""))
     gen_kw = gen_kva * 0.8
-
-    # Use the unified envelope for charge/battery
-    model_kva = EBOSS_KVA.get(model, gen_kva)
-    charge_kw = calculate_charge_rate(model, eboss_type, pm_gen)
-    battery_kwh = Eboss_Specs[model_kva]["battery_kwh"]  # ← unified & correct
-
+    charge_kw = calculate_charge_rate(model, eboss_type, kva)
+    battery_kwh = {
+        "EB25 kVA": 15,
+        "EB70 kVA": 25,
+        "EB125 kVA": 50,
+        "EB220 kVA": 75,
+        "EB400 kVA": 125
+    }.get(model, 20)
     battery_life = battery_kwh / cont_kw if cont_kw else 0
-    charge_time  = battery_kwh / charge_kw if charge_kw else 0
-    cycles_per_day = 24 / (battery_life + charge_time) if (battery_life + charge_time) > 0 else 0
-    total_runtime  = charge_time * cycles_per_day
-    engine_pct     = charge_kw / gen_kw if gen_kw else 0
-    fuel_gph       = interpolate_gph(int(gen_kva), max(0.25, min(engine_pct, 1.0))) if gen_kva else 0.0
-
+    charge_time = battery_kwh / charge_kw if charge_kw else 0
+    cycles_per_day = 24 / (battery_life + charge_time) if battery_life + charge_time > 0 else 0
+    total_runtime = charge_time * cycles_per_day
+    engine_pct = charge_kw / gen_kw if gen_kw else 0
+    fuel_gph = interpolate_gph(int(gen_kva), engine_pct)
     return {
         "battery_kwh": battery_kwh,
         "charge_time": charge_time,
