@@ -790,7 +790,7 @@ def validate_charge_rate(model: str,
 
     return is_valid, messages
 
-  ui["charge_rate"] = get_charge_rate(ui["model"], ui.get("eboss_type") or "Full Hybrid")
+ui["charge_rate"] = get_charge_rate(ui["model"], ui.get("eboss_type") or "Full Hybrid")
 
 def render_user_input_form():
     with st.container():
