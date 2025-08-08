@@ -213,7 +213,7 @@ spec_data = {
             ("Battery Storage", "25 kWH")
         ]
     },
-    "EBOSS125 kVA": {
+    "EBOSS 125 kVA": {
         "Maximum Intermittent Load": [
             ("Three-phase", "125 kVA / 100 kW"),
             ("Single-phase", "N/A / N/A"),
@@ -346,6 +346,91 @@ def top_navbar():
             st.session_state.run_parallel_calc = True
             st.session_state.landing_shown = False
             st.rerun()
+
+# ==== UNIFIED MODEL KEYS (make sure your spec_data uses these exact strings) ====
+VALID_MODELS = ["EBOSS 25 kVA", "EBOSS 70 kVA", "EBOSS 125 kVA", "EBOSS 220 kVA", "EBOSS 400 kVA"]
+
+# kVA name -> kVA value
+EBOSS_KVA = {
+    "EBOSS 25 kVA": 25,
+    "EBOSS 70 kVA": 70,
+    "EBOSS 125 kVA": 125,
+    "EBOSS 220 kVA": 220,
+    "EBOSS 400 kVA": 400,
+}
+
+# Battery sizes (kWh) for EBOSS®
+EBOSS_BATTERY_KWH = {
+    "EBOSS 25 kVA": 15,
+    "EBOSS 70 kVA": 25,
+    "EBOSS 125 kVA": 50,
+    "EBOSS 220 kVA": 75,
+    "EBOSS 400 kVA": 125,
+}
+
+# Charge-rate envelope per kVA (you can tune these with real data)
+Eboss_Specs = {
+    25:  {"full_hybrid": 10.0, "power_module": 7.5,  "max_charge": 12.0, "max_peak": 20.0, "battery_kwh": 15},
+    70:  {"full_hybrid": 28.0, "power_module": 20.0, "max_charge": 36.0, "max_peak": 56.0, "battery_kwh": 25},
+    125: {"full_hybrid": 50.0, "power_module": 36.0, "max_charge": 64.0, "max_peak": 100.0, "battery_kwh": 50},
+    220: {"full_hybrid": 90.0, "power_module": 64.0, "max_charge": 100.0,"max_peak": 176.0,"battery_kwh": 75},
+    400: {"full_hybrid": 160.0,"power_module": 120.0,"max_charge": 200.0,"max_peak": 320.0,"battery_kwh": 125},
+}
+
+# Simple fuel maps for a standard generator running near nameplate (gal/hour)
+STANDARD_GENERATORS = {
+    "25 kVA (≈20 kW)": 1.8,
+    "45 kVA (≈36 kW)": 3.1,
+    "65 kVA (≈52 kW)": 4.6,
+    "125 kVA (≈100 kW)": 7.8,
+    "220 kVA (≈176 kW)": 13.5,
+    "400 kVA (≈320 kW)": 22.0,
+}
+
+def interpolate_gph(kva: int, load_pct: float) -> float:
+    """
+    Very rough interpolation of fuel burn (gallons/hour) vs. load % for a generator of given kVA.
+    Calibrated with made-up but monotonic points—replace with field data when available.
+    """
+    # piecewise points per kVA @ 25/50/75/100% load
+    table = {
+        25:  [0.7, 1.0, 1.3, 1.6],
+        45:  [1.0, 1.5, 2.1, 2.7],
+        65:  [1.5, 2.3, 3.3, 4.3],
+        125: [2.9, 4.2, 5.9, 7.8],
+        220: [5.5, 8.2, 11.0, 13.5],
+        400: [9.5, 14.0, 18.5, 22.0],
+    }
+    xs = [0.25, 0.5, 0.75, 1.0]
+    ys = table.get(int(kva), table[25])
+    load = max(0.25, min(load_pct or 0.25, 1.0))
+    # linear interpolate
+    for i in range(len(xs) - 1):
+        if xs[i] <= load <= xs[i + 1]:
+            x1, x2 = xs[i], xs[i + 1]
+            y1, y2 = ys[i], ys[i + 1]
+            return y1 + (load - x1) * (y2 - y1) / (x2 - x1)
+    return ys[-1]
+
+def calculate_charge_rate(model: str, gen_type: str, kva_option: str | None) -> float:
+    kva = EBOSS_KVA[model] if gen_type == "Full Hybrid" else int((kva_option or "0kVA").replace("kVA", ""))
+    base = Eboss_Specs[EBOSS_KVA[model]]
+    if gen_type == "Full Hybrid":
+        return base["full_hybrid"]
+    # Power Module uses the PM envelope but cannot exceed its max_charge
+    return min(base["power_module"], base["max_charge"])
+
+def enforce_session_validation():
+    """Ensures the calc inputs exist and derives a charge_rate into session."""
+    ui = st.session_state.user_inputs
+    model = ui.get("model") or "EBOSS 25 kVA"
+    gen_type = ui.get("gen_type") or "Full Hybrid"
+    kva_opt = ui.get("kva_option")
+    ui["charge_rate"] = calculate_charge_rate(model, gen_type, kva_opt)
+
+# No-op backends so buttons won't crash in Cloud
+def submit_demo_request(_): return 200
+def submit_training_request(_): return 200
 
 # ===============================================================================================
 
@@ -860,7 +945,7 @@ def render_compare_page():
     battery_kwh = {
         "EBOSS 25 kVA": 15,
         "EBOSS 70 kVA": 25,
-        "EBOSS125 kVA": 50,
+        "EBOSS 125 kVA": 50,
         "EBOSS 220 kVA": 75,
         "EBOSS 400 kVA": 125
     }.get(model, 0)
