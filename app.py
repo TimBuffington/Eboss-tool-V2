@@ -69,14 +69,14 @@ if "user_inputs" not in st.session_state:
 inputs = st.session_state.user_inputs
 
 # =========================================================================================================
-
-# ---- UTILITY: LOGO & TITLE ----
-def show_logo_and_title(title):
+def show_logo_and_title(title: str):
+    # Minimal header; replace with your logo if you have one
     st.markdown(
-        '<div class="logo-header"><img src="https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png" alt="Company Logo"></div>',
+           '<div class="logo-header"><img src="https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png" alt="Company Logo"></div>',
+        f"<h1 style='text-align:center; margin: 0.5rem 0 1rem;'>{title}</h1>",
         unsafe_allow_html=True
     )
-    st.markdown(f'<h1 class="form-section-title">{title}</h1>', unsafe_allow_html=True)
+
 
 #=====================================================================================================
 SPEC_LAYOUT = {
@@ -233,49 +233,6 @@ spec_data = {
     }
 }
 #========================================================================
-
-def show_logo_and_title(title):
-    st.markdown("""
-        <style>
-        .logo-title-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 0rem;
-            padding-bottom: 1rem;
-        }
-
-        .logo-title-container img {
-            max-width: 100%;
-            height: auto;
-        }
-
-        .logo-title-container h1 {
-            font-size: 1.6rem;
-            font-weight: bold;
-            color: #81BD47;
-            text-align: center;
-            margin-top:0rem;
-            margin-bottom: 1rem;
-        }
-
-        @media screen and (max-width: 768px) {
-            .logo-title-container h1 {
-                font-size: 1.2rem;
-            }
-        }
-        </style>
-    """, unsafe_allow_html=True)
-
-    st.markdown(f"""
-        <div class="logo-title-container">
-            <img src="https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png
-">
-            <h1>{title}</h1>
-        </div>
-    """, unsafe_allow_html=True)
-
-
 EBOSS_KVA = {
     "EBOSS 25 kVA": 25,
     "EBOSS 70 kVA": 70,
@@ -298,39 +255,12 @@ def landing_page():
         if key not in st.session_state:
             st.session_state[key] = val
 
+
+  
     if st.session_state.landing_shown:
         show_logo_and_title("EBOSS® Size Specs & Comparison Tool")
 
-        # Inject fixed CSS
-        st.markdown("""
-        <style>
-           .button-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 1rem;
-            max-width: 700px;
-            margin: 2rem auto;
-        }
-        .stButton>button {
-        min-width: 320px !important;
-        max-width: 320px !important;
-        height: 60px !important;
-        font-family: Arial, sans serif !important;
-        font-size: 2.0rem !important;
-        font-weight: bold !important;
-        color: #81BD47 !important;
-        background-color: #000000 !important;
-        border: 2px solid #D3D3D3 !important;
-        border-radius: 12px;
-        transition: all 0.2s ease-in-out;
-        }
-        .stButton>button:hover {
-            box-shadow: 0 0 18px #81BD47;
-        }
-        </style>
-        """, unsafe_allow_html=True)
-
+      
         # Create a true 2-column, responsive layout
         st.markdown('<div class="button-container">', unsafe_allow_html=True)
 
