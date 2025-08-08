@@ -592,17 +592,6 @@ Eboss_Specs = {
     220: {"full_hybrid": 100, "power_module": 96, "max_charge": 125,"max_peak": 252.0, "max_cont":112, "battery_kwh": 75},
     400: {"full_hybrid": 176.0,"power_module": 166,"max_charge": 220.0,"max_peak": 639.0, "max_cont":198, "battery_kwh": 125},
 }
-
-# Simple fuel maps for a standard generator running near nameplate (gal/hour)
-STANDARD_GENERATORS = {
-    "25 kVA (≈20 kW)": 1.6,
-    "45 kVA (≈36 kW)": 2.7,
-    "65 kVA (≈52 kW)": 4.3,
-    "125 kVA (≈100 kW)": 7.8,
-    "220 kVA (≈176 kW)": 13.5,
-    "400 kVA (≈320 kW)": 22.0,
-}
-
 def interpolate_gph(kva: int, load_pct: float) -> float:
     """
     Very rough interpolation of fuel burn (gallons/hour) vs. load % for a generator of given kVA.
