@@ -882,6 +882,18 @@ def render_tech_specs_page():
                         render_card(label, value)
 
     top_navbar()
+def render_kv_card(label: str, value: str):
+    """Card with spec on the left and value on the right."""
+    st.markdown(f"""
+        <div class="card">
+            <div style="
+                display:flex; align-items:center; justify-content:space-between;
+                gap:1rem; flex-wrap:wrap;">
+                <div class="card-label" style="margin:0;">{label}</div>
+                <div class="card-value" style="margin:0; text-align:right;">{value}</div>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
 
 # ---- LOAD SPECS PAGE ----
 def render_load_specs_page():
@@ -921,7 +933,7 @@ def render_load_specs_page():
     st.markdown('</div>', unsafe_allow_html=True)
 
     # ---- Calculations ----
-    gen_kw = kva * 0.8
+  gen_kw = kva * 0.8
     batt_runtime_h = battery_kwh / cont_kw if cont_kw > 0 else 0
     charge_time_h = battery_kwh / charge_rate if charge_rate > 0 else 0
     cycles_per_day = 24 / (batt_runtime_h + charge_time_h) if (batt_runtime_h + charge_time_h) > 0 else 0
@@ -933,65 +945,50 @@ def render_load_specs_page():
     fuel_month = fuel_day * 30
     co2_day_lbs = fuel_day * 22.4
 
-    # ---- Battery & Charging ----
+    # ---- Battery & Charging (section header uses your card styling) ----
     st.markdown("""
-    <div class="card" style="background-color:#636569; color:#fff; font-weight:700;
-         font-size:1.1rem; padding:0.6rem 1.2rem; border-radius:12px; margin:1rem 0 0.8rem 0;
-         text-align:center; text-transform:uppercase; box-shadow:0 4px 8px rgba(0,0,0,0.3);">
+    <div class="card" style="background-color:#636569;color:#fff;font-weight:700;
+         font-size:1.1rem;padding:0.6rem 1.2rem;border-radius:12px;margin:1rem 0 0.8rem 0;
+         text-align:center;text-transform:uppercase;box-shadow:0 4px 8px rgba(0,0,0,0.3);">
         Battery & Charging
     </div>
     """, unsafe_allow_html=True)
-    for label, value in [
-        ("EBOSS® Model", inputs["model"]),
-        ("Battery Capacity", f"{battery_kwh} kWh"),
-        ("Selected Charge Rate", f"{charge_rate:.1f} kW"),
-        ("Battery-only Runtime", f"{batt_runtime_h:.2f} h @ {cont_kw:.1f} kW"),
-        ("Charge Time", f"{charge_time_h:.2f} h"),
-        ("Cycles per Day", f"{cycles_per_day:.2f}")
-    ]:
-        col1, col2 = st.columns([1, 1])
-        col1.markdown(f"<div class='card-label'>{label}</div>", unsafe_allow_html=True)
-        col2.markdown(f"<div class='card-value'>{value}</div>", unsafe_allow_html=True)
+    render_kv_card("EBOSS® Model", inputs["model"])
+    render_kv_card("Battery Capacity", f"{battery_kwh} kWh")
+    render_kv_card("Selected Charge Rate", f"{charge_rate:.1f} kW")
+    render_kv_card("Battery‑only Runtime", f"{batt_runtime_h:.2f} h @ {cont_kw:.1f} kW")
+    render_kv_card("Charge Time", f"{charge_time_h:.2f} h")
+    render_kv_card("Cycles per Day", f"{cycles_per_day:.2f}")
 
     # ---- Engine & Fuel ----
     st.markdown("""
-    <div class="card" style="background-color:#636569; color:#fff; font-weight:700;
-         font-size:1.1rem; padding:0.6rem 1.2rem; border-radius:12px; margin:1rem 0 0.8rem 0;
-         text-align:center; text-transform:uppercase; box-shadow:0 4px 8px rgba(0,0,0,0.3);">
+    <div class="card" style="background-color:#636569;color:#fff;font-weight:700;
+         font-size:1.1rem;padding:0.6rem 1.2rem;border-radius:12px;margin:1rem 0 0.8rem 0;
+         text-align:center;text-transform:uppercase;box-shadow:0 4px 8px rgba(0,0,0,0.3);">
         Engine & Fuel
     </div>
     """, unsafe_allow_html=True)
-    for label, value in [
-        ("Generator Nameplate", f"{kva} kVA / {gen_kw:.0f} kW"),
-        ("Engine Load (approx.)", f"{engine_load_pct*100:.0f}%"),
-        ("Engine Runtime / Day", f"{engine_runtime_day:.2f} h"),
-        ("Fuel Burn (gph)", f"{fuel_gph:.2f} gal/h"),
-        ("Fuel / Day", f"{fuel_day:.2f} gal"),
-        ("Fuel / Week", f"{fuel_week:.2f} gal"),
-        ("Fuel / Month", f"{fuel_month:.2f} gal"),
-        ("CO₂ / Day", f"{co2_day_lbs:.0f} lbs")
-    ]:
-        col1, col2 = st.columns([1, 1])
-        col1.markdown(f"<div class='card-label'>{label}</div>", unsafe_allow_html=True)
-        col2.markdown(f"<div class='card-value'>{value}</div>", unsafe_allow_html=True)
+    render_kv_card("Generator Nameplate", f"{kva} kVA / {gen_kw:.0f} kW")
+    render_kv_card("Engine Load (approx.)", f"{engine_load_pct*100:.0f}%")
+    render_kv_card("Engine Runtime / Day", f"{engine_runtime_day:.2f} h")
+    render_kv_card("Fuel Burn (gph)", f"{fuel_gph:.2f} gal/h")
+    render_kv_card("Fuel / Day", f"{fuel_day:.2f} gal")
+    render_kv_card("Fuel / Week", f"{fuel_week:.2f} gal")
+    render_kv_card("Fuel / Month", f"{fuel_month:.2f} gal")
+    render_kv_card("CO₂ / Day", f"{co2_day_lbs:.0f} lbs")
 
     # ---- Nameplate & Limits ----
     st.markdown("""
-    <div class="card" style="background-color:#636569; color:#fff; font-weight:700;
-         font-size:1.1rem; padding:0.6rem 1.2rem; border-radius:12px; margin:1.4rem 0 0.8rem 0;
-         text-align:center; text-transform:uppercase; box-shadow:0 4px 8px rgba(0,0,0,0.3);">
+    <div class="card" style="background-color:#636569;color:#fff;font-weight:700;
+         font-size:1.1rem;padding:0.6rem 1.2rem;border-radius:12px;margin:1.4rem 0 0.8rem 0;
+         text-align:center;text-transform:uppercase;box-shadow:0 4px 8px rgba(0,0,0,0.3);">
         Nameplate & Limits
     </div>
     """, unsafe_allow_html=True)
-    for label, value in [
-        ("Continuous Load", f"{cont_kw:.1f} kW"),
-        ("Peak Load", f"{peak_kw:.1f} kW"),
-        ("Max Charge Rate", f"{spec['max_charge']:.1f} kW"),
-        ("Max Peak (EBOSS®)", f"{spec['max_peak']:.1f} kW")
-    ]:
-        col1, col2 = st.columns([1, 1])
-        col1.markdown(f"<div class='card-label'>{label}</div>", unsafe_allow_html=True)
-        col2.markdown(f"<div class='card-value'>{value}</div>", unsafe_allow_html=True)
+    render_kv_card("Continuous Load", f"{cont_kw:.1f} kW")
+    render_kv_card("Peak Load", f"{peak_kw:.1f} kW")
+    render_kv_card("Max Charge Rate", f"{spec['max_charge']:.1f} kW")
+    render_kv_card("Max Peak (EBOSS®)", f"{spec['max_peak']:.1f} kW")
 
 
 
