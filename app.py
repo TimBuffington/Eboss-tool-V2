@@ -390,7 +390,7 @@ std_specs = {
             ("Max. Continuous load @208v", "60 A"),
             ("Max. Continuous load @480v", "30 A"),
         ],
-        "Engine Specs & Fuel Use": []
+        "Engine Specs & Fuel Use": [
             ("Runtime Hrs per Day", "24"),
             ("Battery Storage", "0 kWH")
         ]
