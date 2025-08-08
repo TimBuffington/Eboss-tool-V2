@@ -1155,7 +1155,7 @@ def render_tech_specs_page():
     top_navbar()
 
     # model selected elsewhere; fall back to first available
-    model = st.session_state.get("model_select")
+    model = st.session_state.user_inputs.get("model_select")
     if not model:
         model = next(iter(spec_data.keys()))
 
@@ -1189,7 +1189,7 @@ def render_compare_page():
     top_navbar()
 
     # Selected EBOSS model
-    model = st.session_state.user_inputs["model"]
+    model = st.session_state.user_inputs.get("model_select")
 
     # Normalize odd key for 125
     if model not in spec_data and model.replace(" 125 kVA", "125 kVA") in spec_data:
