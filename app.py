@@ -71,7 +71,7 @@ inputs = st.session_state.user_inputs
 # =========================================================================================================
 def show_logo_and_title(title: str):
     # Minimal header; replace with your logo if you have one
-    st.markdown(
+    st.markdown("""
            '<div class="logo-header"><img src="https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png" alt="Company Logo"></div>',
         f"<h1 style='text-align:center; margin: 0.5rem 0 1rem;'>{title}</h1>",
         unsafe_allow_html=True
