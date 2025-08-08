@@ -603,7 +603,8 @@ FH_ATTACHED_GEN_KW = globals().get("FH_ATTACHED_GEN_KW", {25: 20, 70: 36, 125: 5
 def _first_int(s: str | None) -> int:
     if not s: return 0
     m = re.search(r"(\d+)", str(s))
-    return int(m.group(1)) if m else 
+    return int(m.group(1)) if m else 0
+
 
 def get_fuel_use(
     model: str,
