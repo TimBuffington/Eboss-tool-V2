@@ -55,13 +55,14 @@ st.markdown(
         box-shadow: 0 0 10px {COLORS['Energy Green']};
     }}
     .logo {{
-        max-width: 200px; /* Restored original size */
+        max-width: 200px; /* Restored to original size */
         display: block;
-        margin: 20px auto 0; /* Centered with top margin */
+        margin: 0 auto; /* Centered horizontally */
     }}
     .footer {{
         display: flex;
         justify-content: center;
+        align-items: center;
         color: {COLORS['Alpine White']};
         padding: 10px;
         background-color: {COLORS['Asphalt']};
@@ -87,6 +88,16 @@ st.markdown(
     }}
     .message-text:hover {{
         box-shadow: 0 0 10px {COLORS['Energy Green']};
+    }}
+    .centered-radio {{
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }}
+    .centered-button {{
+        display: flex;
+        justify-content: center;
+        width: 100%;
     }}
     @media (max-width: 768px) {{
         .logo {{
@@ -159,20 +170,20 @@ with st.container():
 st.markdown(f"<div class='message-text'>Please Select a Configuration</div>", unsafe_allow_html=True)
 
 # Radio buttons centered under message
-st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+st.markdown("<div class='centered-radio'>", unsafe_allow_html=True)
 selected_option = st.radio(" ", ("Select a EBOSS® Model", "Use Load Based Suggested EBOSS® Model"), horizontal=True)
 st.session_state.selected_option = selected_option  # Update session state
 st.markdown("</div>", unsafe_allow_html=True)
 
 # Enter Data button centered under radio buttons
-st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+st.markdown("<div class='centered-button'>", unsafe_allow_html=True)
 if st.button("Enter Data", key="enter_data_button"):
     try:
         print("Entering dialog...")  # Debug log to console
         if st.session_state.selected_option == "Use Load Based Suggested EBOSS® Model":
             st.session_state.recommended_model = "EB 70 kVA"  # Placeholder
             dialog = st.dialog("Recommended EBOSS® Configuration")
-            dialog.markdown(f"Recommended EBOSS® Model: {st.session_state.recommended_model}")  # Changed from write to markdown
+            dialog.markdown(f"Recommended EBOSS® Model: {st.session_state.recommended_model}")  # Use markdown
             col1, col2, col3 = dialog.columns(3)
             with col2:
                 dialog.number_input("Max Continuous Load", min_value=0.0, step=0.1, key="max_continuous_load_input")
@@ -202,7 +213,7 @@ if st.button("Enter Data", key="enter_data_button"):
                 st.rerun()
         else:  # Select a EBOSS® Model
             dialog = st.dialog("EBOSS® Configuration")
-            dialog.markdown("Enter your EBOSS® configuration:")  # Changed from write to markdown
+            dialog.markdown("Enter your EBOSS® configuration:")  # Use markdown
             col1, col2, col3 = dialog.columns(3)
             with col1:
                 dialog.selectbox("EBOSS® Model", options=["EB 25 kVA", "EB 70 kVA", "EB 125 kVA", "EB 220 kVA", "EB 400 kVA"], key="eboss_model_input")
@@ -262,7 +273,7 @@ elif st.session_state.page == "Parallel Calculator":
 # Footer with links
 st.markdown(f"""
 <div class="footer">
-    <span style="display: flex; justify-content: center; width: 100%;">
+    <span style="display: flex; justify-content: center; align-items: center; width: 100%;">
         EBOSS® Size & Spec Tool | 
         <a href="#" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform?usp=header', '_blank')">Request Demo</a> |
         <a href="#" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header', '_blank')">Request Training</a> |
