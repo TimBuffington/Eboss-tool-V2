@@ -49,7 +49,6 @@ st.markdown(
         border-radius: 5px;
         padding: 8px;
         transition: box-shadow 0.3s ease;
-        width: 100%;
     }}
     .stTextInput > div > div > input:hover, .stSelectbox > div > div > div:hover, .stNumberInput > div > div > input:hover {{
         box-shadow: 0 0 10px {COLORS['Energy Green']};
@@ -106,7 +105,10 @@ if "page" not in st.session_state:
     st.session_state.page = "Home"
 
 # Corporate logo top center
-st.image("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/ANA-ENERGY-LOGO-HORIZONTAL-WHITE-GREEN.png", use_column_width=False, width=150, output_format="PNG", caption="ANA Logo")
+try:
+    st.image("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png", use_column_width=False, width=150, output_format="PNG", caption="ANA Logo")
+except Exception as e:
+    st.error(f"Logo failed to load: {e}. Please verify the file at https://github.com/TimBuffington/Eboss-tool-V2/tree/main/assets/logo.png.")
 
 # Page title
 st.title("EBOSS® Size & Spec Tool")
@@ -114,28 +116,50 @@ st.title("EBOSS® Size & Spec Tool")
 # Buttons for Google Docs and YouTube
 col_buttons = st.columns(1)
 with col_buttons[0]:
-    st.button("Request Demo", on_click=lambda: webbrowser.open_new_tab("https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform?usp=header"))
-    st.button("Request Training", on_click=lambda: webbrowser.open_new_tab("https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header"))
-    st.button("Learn how the EBOSS® works", on_click=lambda: webbrowser.open_new_tab("https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g"))
+    if st.button("Request Demo", key="demo_button"):
+        try:
+            webbrowser.open("https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform")  # Removed new_tab for testing
+            st.success("Opening Demo form...")
+        except Exception as e:
+            st.error(f"Failed to open Demo link: {e}. Trying fallback...")
+            st.link_button("Open Demo Manually", url="https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform")
+    if st.button("Request Training", key="training_button"):
+        try:
+            webbrowser.open("https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform")
+            st.success("Opening Training form...")
+        except Exception as e:
+            st.error(f"Failed to open Training link: {e}. Trying fallback...")
+            st.link_button("Open Training Manually", url="https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform")
+    if st.button("Learn how the EBOSS® works", key="youtube_button"):
+        try:
+            webbrowser.open("https://youtu.be/0Om2qO-zZfM")
+            st.success("Opening YouTube video...")
+        except Exception as e:
+            st.error(f"Failed to open YouTube link: {e}. Trying fallback...")
+            st.link_button("Open YouTube Manually", url="https://youtu.be/0Om2qO-zZfM")
 
 # Radio buttons for EBOSS® option
 st.session_state.selected_option = st.radio("Choose EBOSS® Configuration:", ("Select EBOSS® Model", "Get Recommended EBOSS® Model"))
 
 # Text
-st.write("Choose a page or tool and click Calculate to proceed.")
+st.write("Choose a page or tool and click Enter Data to proceed.")
 
 # Enter Data button with modal
 if st.button("Enter Data"):
-    if st.session_state.selected_option == "Get Recommended EBOSS® Model":
-        # Placeholder for recommended model logic
-        st.session_state.recommended_model = "EB 70 kVA"  # Example
-        with st.dialog("Recommended EBOSS® Configuration"):
-            st.write(f"Recommended EBOSS® Model: {st.session_state.recommended_model}")
-            # Modal stops here as per your request
-    else:  # Select EBOSS® Model
-        with st.dialog("EBOSS® Configuration"):
-            st.write("Enter your EBOSS® configuration:")
-            # Modal stops here as per your request
+    try:
+        print("Entering dialog...")  # Debug log to console
+        if st.session_state.selected_option == "Get Recommended EBOSS® Model":
+            st.session_state.recommended_model = "EB 70 kVA"  # Placeholder
+            with st.dialog("Recommended EBOSS® Configuration"):
+                st.write(f"Recommended EBOSS® Model: {st.session_state.recommended_model}")
+                # Stop here as requested
+        else:  # Select EBOSS® Model
+            with st.dialog("EBOSS® Configuration"):
+                st.write("Enter your EBOSS® configuration:")
+                # Stop here as requested
+    except Exception as e:
+        print(f"Error in modal: {e}")  # Debug log to console
+        st.error(f"TypeError or other error in modal: {str(e)}. Please report this issue with the console output.")
 
 # Footer with links (placeholder for other pages)
 st.markdown(f"""
