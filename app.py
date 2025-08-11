@@ -108,44 +108,65 @@ if "page" not in st.session_state:
 try:
     st.image("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png", use_column_width=False, width=150, output_format="PNG")
 except Exception as e:
-    st.error(f"Logo failed to load: {e}. Please check the URL or file availability.")
+    st.error(f"Logo failed to load: {e}. Please verify the file at https://github.com/TimBuffington/Eboss-tool-V2/tree/main/assets/logo.png.")
 
 # Page title
 st.title("EBOSS® Size & Spec Tool")
 
-# Buttons for Google Docs and YouTube
-col_buttons = st.columns(1)
-with col_buttons[0]:
-    st.link_button("Request Demo", url="https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform?usp=header")
-    st.link_button("Request Training", url="https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header")
-    st.link_button("Learn how the EBOSS® works", url="https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g")
+# Navbar for navigation (always visible)
+navbar_pages = ["Home", "Technical Specs", "Load Based Specs", "EBOSS® to Standard Comparison", "Cost Analysis", "Parallel Calculator"]
+st.session_state.page = st.radio("Navigate to:", navbar_pages, horizontal=True, index=navbar_pages.index(st.session_state.page))
 
-# Radio buttons for EBOSS® option
-st.session_state.selected_option = st.radio("Choose EBOSS® Configuration:", ("Select EBOSS® Model", "Get Recommended EBOSS® Model"))
+if st.session_state.page == "Home":
+    # Buttons for Google Docs and YouTube
+    col_buttons = st.columns(1)
+    with col_buttons[0]:
+        st.link_button("Request Demo", url="https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform?usp=header")
+        st.link_button("Request Training", url="https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header")
+        st.link_button("Learn how the EBOSS® works", url="https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g")
 
-# Text
-st.write("Choose a page or tool and click Enter Data to proceed.")
+    # Radio buttons for EBOSS® option
+    st.session_state.selected_option = st.radio("Choose EBOSS® Configuration:", ("Select EBOSS® Model", "Get Recommended EBOSS® Model"))
 
-# Enter Data button with modal
-if st.button("Enter Data"):
-    try:
-        if st.session_state.selected_option == "Get Recommended EBOSS® Model":
-            st.session_state.recommended_model = "EB 70 kVA"  # Placeholder
-            dialog = st.dialog("Recommended EBOSS® Configuration")
-            dialog.write(f"Recommended EBOSS® Model: {st.session_state.recommended_model}")
-            # Stop here as requested
-            if dialog.button("Close"):
-                pass
-        else:  # Select EBOSS® Model
-            dialog = st.dialog("EBOSS® Configuration")
-            dialog.write("Enter your EBOSS® configuration:")
-            # Stop here as requested
-            if dialog.button("Close"):
-                pass
-    except Exception as e:
-        st.error(f"Error in modal: {str(e)}.")
+    # Text
+    st.write("Choose a page or tool and click Enter Data to proceed.")
 
-# Footer with links (placeholder for other pages)
+    # Enter Data button with modal
+    if st.button("Enter Data"):
+        try:
+            print("Entering dialog...")  # Debug log to console
+            if st.session_state.selected_option == "Get Recommended EBOSS® Model":
+                st.session_state.recommended_model = "EB 70 kVA"  # Placeholder
+                with st.dialog("Recommended EBOSS® Configuration") as dialog:
+                    st.write(f"Recommended EBOSS® Model: {st.session_state.recommended_model}")
+                    if st.button("Close", key="close_recommended"):
+                        dialog.close()
+            else:  # Select EBOSS® Model
+                with st.dialog("EBOSS® Configuration") as dialog:
+                    st.write("Enter your EBOSS® configuration:")
+                    if st.button("Close", key="close_select"):
+                        dialog.close()
+        except Exception as e:
+            print(f"Error in modal: {e}")  # Debug log to console
+            st.error(f"Error in modal: {str(e)}. Please check the console output.")
+
+elif st.session_state.page == "Technical Specs":
+    st.header("Technical Specs")
+    # Placeholder content
+elif st.session_state.page == "Load Based Specs":
+    st.header("Load Based Specs")
+    # Placeholder content
+elif st.session_state.page == "EBOSS® to Standard Comparison":
+    st.header("EBOSS® to Standard Comparison")
+    # Placeholder content
+elif st.session_state.page == "Cost Analysis":
+    st.header("Cost Analysis")
+    # Placeholder content
+elif st.session_state.page == "Parallel Calculator":
+    st.header("Parallel Calculator")
+    # Placeholder content
+
+# Footer with links
 st.markdown(f"""
 <div class="footer">
 EBOSS® Size & Spec Tool | 
