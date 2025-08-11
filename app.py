@@ -8,31 +8,24 @@ COLORS = {
     "Concrete": "#939598",
     "Charcoal": "#636569",
     "Energy Green": "#81BD47",
-    "Alpine White": "#FFFFFF"
+    "Alpine White": "#FFFFFF",
+    "Light Grey": "#D3D3D3"  # Added for border
 }
 
 # EBOSS® model data (adapted from your repo's app.py)
 spec_data = {
     "EB 25 kVA": {
-        "Maximum Intermittent Load": [("Three-phase", "30 kVA / 24 kW"), ("Single-phase", "20 kVA / 16 kW"), ("Frequency", "60 Hz"), ("Simultaneous voltage", "Yes 120V / 240V / 208V / 480V"), ("Voltage regulation", "Adjustable"), ("Max. Intermittent 208V", "70 A / 20 kW"), ("Max. Intermittent amp-load 480V", "30 A / 25 kW"), ("Motor start rating - 3 second 208V", "104 A / 30 kW"), ("Motor start rating - 3 second 480V", "45 A / 37 kW")],
-        "Maximum Continuous Load": [("Generator Size", "25 kVA / 20 kW"), ("Three-phase output", "23 kVA / 19 kW"), ("Single-phase output", "20 kVA / 16 kW"), ("Max. Continuous 208V", "64 A / 18.5 kW"), ("Max. Continuous amp-load 480V", "28 A / 23 kW")],
-        "Battery Specs": [("Battery Capacity", "15 kWh"), ("Battery Chemistry", "Lithium Iron Phosphate"), ("Battery Life Cycles", "> 6,000"), ("Battery Warranty", "10 years")],
-        "Engine Specs & Fuel Use": [("Engine Model", "Yanmar 3TNV88C"), ("Fuel Type", "Diesel"), ("Fuel Tank Capacity", "40 gal"), ("Runtime at 100% Load", "30 hrs"), ("Runtime at 50% Load", "50 hrs"), ("Fuel Consumption", "0.5 gal/hr at 50% load")],
-        "System Specs": [("Weight", "4,500 lbs"), ("Dimensions", "120\" L x 48\" W x 72\" H"), ("Noise Level", "62 dBA at 23 ft"), ("Enclosure", "Aluminum, powder coated")],
-        "Savings": [("Fuel Savings vs Diesel", "83%"), ("CO2 Reduction", "314.73 metric tons/year")]
-    },
-    "EB 70 kVA": {
-        "Maximum Intermittent Load": [("Three-phase", "70 kVA / 56 kW"), ("Single-phase", "46 kVA / 37 kW"), ("Frequency", "60 Hz"), ("Simultaneous voltage", "Yes 120V / 240V / 208V / 480V"), ("Voltage regulation", "Adjustable"), ("Max. Intermittent 208V", "194 A / 56 kW"), ("Max. Intermittent amp-load 480V", "84 A / 70 kW"), ("Motor start rating - 3 second 208V", "291 A / 84 kW"), ("Motor start rating - 3 second 480V", "126 A / 105 kW")],
-        "Maximum Continuous Load": [("Generator Size", "45 kVA / 36 kW"), ("Three-phase output", "41 kVA / 33 kW"), ("Single-phase output", "38 kVA / 30 kW"), ("Max. Continuous 208V", "114 A / 33 kW"), ("Max. Continuous amp-load 480V", "49 A / 41 kW")],
-        "Battery Specs": [("Battery Capacity", "45 kWh"), ("Battery Chemistry", "Lithium Iron Phosphate"), ("Battery Life Cycles", "> 6,000"), ("Battery Warranty", "10 years")],
-        "Engine Specs & Fuel Use": [("Engine Model", "Yanmar 4TNV98C"), ("Fuel Type", "Diesel"), ("Fuel Tank Capacity", "100 gal"), ("Runtime at 100% Load", "35 hrs"), ("Runtime at 50% Load", "70 hrs"), ("Fuel Consumption", "1.0 gal/hr at 50% load")],
-        "System Specs": [("Weight", "6,000 lbs"), ("Dimensions", "144\" L x 60\" W x 80\" H"), ("Noise Level", "65 dBA at 23 ft"), ("Enclosure", "Aluminum, powder coated")],
-        "Savings": [("Fuel Savings vs Diesel", "75%"), ("CO2 Reduction", "250 metric tons/year")]
+        "Maximum Intermittent Output": [("Three-phase", "30 kVA / 24 kW"), ("Single-phase", "20 kVA / 16 kW"), ("Frequency", "60 Hz"), ("Simultaneous voltage", "120/240 (1Φ) • 208/480 (3Φ)"), ("Voltage regulation", "Adjustable"), ("Max. Intermittent amp-load 208V", "70 A / 13.5 kW"), ("Max. Intermittent amp-load 480V", "30 A / 19 kW"), ("Motor start rating for 3 second (208V)", "104 A / 19.5 kW"), ("Motor start rating for 3 second (480V)", "45 A / 29 kW")],
+        "Maximum Continuous Output": [("Generator", "Airman SDG25"), ("Generator charge rate", "25 kVA / 20 kW"), ("Three-phase output", "23 kVA / 19 kW"), ("Single-phase output", "20 kVA / 16 kW"), ("Simultaneous voltage", "120/240 (1Φ) • 208/480 (3Φ)"), ("Max. Continuous amp-load @208V", "70 A / 13.5 kW"), ("Max. Continuous amp-load @480V", "30 A / 19 kW")],
+        "Technology": [("Battery chemistry", "Lithium Titanate Oxide (LTO)"), ("Battery capacity", "15 kWh"), ("Total battery life or energy throughout", "1,200 mWh"), ("Charge time (no load)", "< 45 min"), ("Inverter output max", "24 kW"), ("Parallel capability", "Available")],
+        "Battery Life": [("Battery type", "Lithium Titanate Oxide (LTO)"), ("Est. Cycle life @ 77°F enclosure temp", "90K Cycles at 90% DOD"), ("Est. Cycle life @ 100°F enclosure temp", "80K Cycles at 90% DOD"), ("Battery life (100°F @ 3 kW average load)", "41 Years")],
+        "Operating temperatures": [("Inverter cold start temperature (minimum)", "14°F"), ("Running operating temperature", "-22°F to 130°F"), ("Arctic package operating temp. (optional)", "-50°F to 130°F")],
+        "Weights & Dimensions": [("L x w x h x (EBOSS® only)", "40” x 48” x 46”"), ("Eboss® weight only", "2,120 lbs"), ("L x w x h (trailer and generator)", "160” x 74” x 75”"), ("Total weight (without/with fuel)", "5100 / 5500 lbs"), ("Integral fuel tank capacity", "51.5 gal")]
     }
     # Add other models as needed
 }
-# background-image: url("https://raw.githubusercontent.com/timbuffington/Eboss-tool-V2/main/images/APP_BACKGROUND.jpeg");
-# Apply custom CSS for branding and full-screen background
+
+# Apply custom CSS for branding, full-screen background, mobile-friendly, and container styles
 st.markdown(
     f"""
     <style>
@@ -61,41 +54,19 @@ st.markdown(
     button:hover {{
         box-shadow: 0 0 10px {COLORS['Energy Green']};
     }}
-    .stTextInput > div > div > input {{
-        background-color: {COLORS['Concrete']};
-        color: {COLORS['Asphalt']};
-        border: 1px solid {COLORS['Charcoal']};
+    .stTextInput > div > div > input, .stSelectbox > div > div > div, .stNumberInput > div > div > input {{
+        background-color: {COLORS['Asphalt']};
+        color: {COLORS['Alpine White']};
+        border: 1px solid {COLORS['Light Grey']};
         border-radius: 5px;
         padding: 8px;
         transition: box-shadow 0.3s ease;
     }}
-    .stTextInput > div > div > input:hover {{
-        box-shadow: 0 0 10px {COLORS['Energy Green']};
-    }}
-    .stSelectbox > div > div > div {{
-        background-color: {COLORS['Concrete']};
-        color: {COLORS['Asphalt']};
-        border: 1px solid {COLORS['Charcoal']};
-        border-radius: 5px;
-        padding: 8px;
-        transition: box-shadow 0.3s ease;
-    }}
-    .stSelectbox > div > div > div:hover {{
-        box-shadow: 0 0 10px {COLORS['Energy Green']};
-    }}
-    .stNumberInput > div > div > input {{
-        background-color: {COLORS['Concrete']};
-        color: {COLORS['Asphalt']};
-        border: 1px solid {COLORS['Charcoal']};
-        border-radius: 5px;
-        padding: 8px;
-        transition: box-shadow 0.3s ease;
-    }}
-    .stNumberInput > div > div > input:hover {{
+    .stTextInput > div > div > input:hover, .stSelectbox > div > div > div:hover, .stNumberInput > div > div > input:hover {{
         box-shadow: 0 0 10px {COLORS['Energy Green']};
     }}
     .logo {{
-        max-width: 200px;
+        max-width: 150px; /* Adjusted for mobile friendliness */
         display: block;
         margin: 0 auto;
     }}
@@ -107,6 +78,43 @@ st.markdown(
         position: fixed;
         bottom: 0;
         width: 100%;
+    }}
+    .card-header {{
+        background-color: {COLORS['Concrete']};
+        color: {COLORS['Asphalt']};
+        padding: 10px;
+        margin-bottom: 5px;
+        border-radius: 5px 5px 0 0;
+        width: 100%;
+        display: block;
+    }}
+    .card-content {{
+        background-color: {COLORS['Alpine White']};
+        color: {COLORS['Asphalt']};
+        padding: 10px;
+        border: 1px solid {COLORS['Charcoal']};
+        border-top: none;
+        border-radius: 0 0 5px 5px;
+    }}
+    .two-col-layout {{
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+    }}
+    @media (max-width: 768px) {{
+        .two-col-layout {{
+            flex-direction: column;
+        }}
+        .stColumn {{
+            width: 100% !important;
+        }}
+        .logo {{
+            max-width: 120px; /* Smaller logo on mobile */
+        }}
+        button, .stTextInput > div > div > input, .stSelectbox > div > div > div, .stNumberInput > div > div > input {{
+            width: 100%;
+            box-sizing: border-box;
+        }}
     }}
     </style>
     """,
@@ -137,8 +145,7 @@ if "page" not in st.session_state:
     st.session_state.page = "Home"
 
 # Corporate logo centered
-# st.image("https://raw.githubusercontent.com/timbuffington/Eboss-tool-V2/main/images/ANA-ENERGY-LOGO-HORIZONTAL-WHITE-GREEN.png", use_column_width=False, width=200, output_format="PNG")
-st.image("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/bg.png", use_column_width=False, width=200, output_format="PNG")
+st.image("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/ANA-ENERGY-LOGO-HORIZONTAL-WHITE-GREEN.png", use_column_width=False, width=150, output_format="PNG", caption="ANA Logo")  # Corrected logo URL
 
 # Page title
 st.title("EBOSS® Size & Spec Tool")
@@ -164,7 +171,7 @@ if st.session_state.page == "Home":
         st.header("EBOSS®")
         if st.session_state.selected_option == "Select EBOSS® Model":
             st.session_state.user_inputs["eboss_model"] = st.selectbox("EBOSS® Model", options=list(spec_data.keys()))
-            st.session_state.user_inputs["eboss_type"] = st.radio("EBOSS® Type", options=["Full Hybrid", "Power Module"])
+            st.session_state.user_inputs["eboss_type"] = st.selectbox("EBOSS® Type", options=["Full Hybrid", "Power Module"])
             if st.session_state.user_inputs["eboss_type"] == "Power Module":
                 st.session_state.user_inputs["power_module_gen_size"] = st.selectbox("Power Module Generator Size", options=["25 kVA", "70 kVA", "125 kVA", "220 kVA", "400 kVA"])
 
@@ -181,28 +188,16 @@ if st.session_state.page == "Home":
         with col3b:
             st.session_state.user_inputs["voltage"] = st.selectbox("Voltage", options=["120", "240", "208", "480"])
 
-        # Calculated Actual Load
-        def calculate_actual_load(load, units, voltage):
-            if units == "kW":
-                return load
-            elif units == "Amps":
-                pf = 0.8  # Power Factor
-                return (load * float(voltage) * 1.732 * pf) / 1000  # sqrt(3) = 1.732
-            return 0.0
+        # Calculated Actual Load with labels
+        st.header("Actual Load")
+        col3a, col3b = st.columns(2)
+        with col3a:
+            st.subheader("Actual Continuous Load")
+            st.write(f"{st.session_state.user_inputs['actual_continuous_load']:.2f} kW")
 
-        st.session_state.user_inputs["actual_continuous_load"] = calculate_actual_load(
-            st.session_state.user_inputs["max_continuous_load"],
-            st.session_state.user_inputs["units"],
-            st.session_state.user_inputs["voltage"]
-        )
-        st.write(f"Actual Continuous Load: {st.session_state.user_inputs['actual_continuous_load']:.2f} kW")
-
-        st.session_state.user_inputs["actual_peak_load"] = calculate_actual_load(
-            st.session_state.user_inputs["max_peak_load"],
-            st.session_state.user_inputs["units"],
-            st.session_state.user_inputs["voltage"]
-        )
-        st.write(f"Actual Peak Load: {st.session_state.user_inputs['actual_peak_load']:.2f} kW")
+        with col3b:
+            st.subheader("Actual Peak Load")
+            st.write(f"{st.session_state.user_inputs['actual_peak_load']:.2f} kW")
 
     # Job name input
     st.session_state.user_inputs["job_name"] = st.text_input("Job Name", value=st.session_state.user_inputs["job_name"])
@@ -215,7 +210,7 @@ if st.session_state.page == "Home":
             st.session_state.user_inputs["eboss_model"] = st.session_state.recommended_model
             with st.dialog("Recommended EBOSS® Configuration"):
                 st.write(f"Recommended EBOSS® Model: {st.session_state.user_inputs['eboss_model']}")
-                st.session_state.user_inputs["eboss_type"] = st.radio("Select Type of EBOSS®", options=["Full Hybrid", "Power Module"])
+                st.session_state.user_inputs["eboss_type"] = st.selectbox("Select Type of EBOSS®", options=["Full Hybrid", "Power Module"])
                 if st.session_state.user_inputs["eboss_type"] == "Power Module":
                     st.session_state.user_inputs["power_module_gen_size"] = st.selectbox("Power Module Generator Size", options=["25 kVA", "70 kVA", "125 kVA", "220 kVA", "400 kVA"])
                 if st.button("Go"):
@@ -243,16 +238,43 @@ if st.session_state.show_calculator:
 
 # Display selected page content
 if st.session_state.page == "Technical Specs":
-    st.header("Technical Specs")
-    if st.session_state.user_inputs["eboss_model"]:
-        model = st.session_state.user_inputs["eboss_model"]
-        if model in spec_data:
-            for section, specs in spec_data[model].items():
-                st.subheader(section)
-                for label, value in specs:
-                    st.write(f"{label}: {value}")
-        else:
-            st.write("No specs available for selected model.")
+    st.header("Technical Specifications for the " + st.session_state.user_inputs["eboss_model"] + " " + st.session_state.user_inputs["eboss_type"] + (" using a " + st.session_state.user_inputs["power_module_gen_size"] + " generator" if st.session_state.user_inputs["eboss_type"] == "Power Module" else ""))
+    if st.button("Change EBOSS®"):
+        st.session_state.show_calculator = False
+        st.rerun()
+
+    # Two-column card layout with section headers
+    col1, col2 = st.columns(2)
+    section_headers = ["Maximum Intermittent Output", "Maximum Continuous Output", "Technology", "Battery Life", "Operating temperatures", "Weights & Dimensions"]
+    spec_names = [
+        "Three-phase", "Single-phase", "Frequency", "Simultaneous voltage", "Voltage regulation",
+        "Max. Intermittent amp-load 208V", "Max. Intermittent amp-load 480V", "Motor start rating for 3 second (208V)",
+        "Motor start rating for 3 second (480V)", "Generator", "Generator charge rate", "Three-phase output",
+        "Single-phase output", "Simultaneous voltage", "Max. Continuous amp-load @208V", "Max. Continuous amp-load @480V",
+        "Battery chemistry", "Battery capacity", "Total battery life or energy throughout", "Charge time (no load)",
+        "Inverter output max", "Parallel capability", "Battery type", "Est. Cycle life @ 77°F enclosure temp",
+        "Est. Cycle life @ 100°F enclosure temp", "Battery life (100°F @ 3 kW average load)", "Inverter cold start temperature (minimum)",
+        "Running operating temperature", "Arctic package operating temp. (optional)", "L x w x h x (EBOSS® only)",
+        "Eboss® weight only", "L x w x h (trailer and generator)", "Total weight (without/with fuel)", "Integral fuel tank capacity"
+    ]
+
+    model = st.session_state.user_inputs["eboss_model"]
+    if model in spec_data:
+        specs = []
+        for section in spec_data[model].values():
+            specs.extend(section)
+        header_index = 0
+        for i in range(len(spec_names)):
+            if header_index < len(section_headers) and i % (len(spec_names) // len(section_headers)) == 0:
+                with col1:
+                    st.markdown(f'<div class="card-header" style="grid-column: span 2;">{section_headers[header_index]}</div>', unsafe_allow_html=True)
+                header_index += 1
+            with col1:
+                st.markdown(f'<div class="card-content">{spec_names[i]}</div>', unsafe_allow_html=True)
+            with col2:
+                st.markdown(f'<div class="card-content">{specs[i][1]}</div>', unsafe_allow_html=True)
+    else:
+        st.write("No specs available for selected model.")
 
 elif st.session_state.page == "Load Based Specs":
     st.header("Load Based Specs")
