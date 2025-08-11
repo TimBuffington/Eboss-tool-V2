@@ -55,12 +55,13 @@ st.markdown(
         box-shadow: 0 0 10px {COLORS['Energy Green']};
     }}
     .logo {{
-        max-width: 150px;
+        max-width: 200px; /* Restored original size */
         display: block;
-        margin: 20px auto 0; /* Top center with margin */
+        margin: 20px auto 0; /* Centered with top margin */
     }}
     .footer {{
-        text-align: center;
+        display: flex;
+        justify-content: center;
         color: {COLORS['Alpine White']};
         padding: 10px;
         background-color: {COLORS['Asphalt']};
@@ -89,7 +90,7 @@ st.markdown(
     }}
     @media (max-width: 768px) {{
         .logo {{
-            max-width: 120px;
+            max-width: 160px; /* Adjusted for mobile */
         }}
         .button-container {{
             flex-direction: column;
@@ -129,7 +130,7 @@ if "page" not in st.session_state:
 
 # Corporate logo top center
 try:
-    st.image("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png", use_container_width=False, width=150, output_format="PNG")
+    st.image("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png", use_container_width=False, width=200, output_format="PNG")
 except Exception as e:
     st.error(f"Logo failed to load: {e}. Please verify the file at https://github.com/TimBuffington/Eboss-tool-V2/tree/main/assets/logo.png.")
 
@@ -171,7 +172,7 @@ if st.button("Enter Data", key="enter_data_button"):
         if st.session_state.selected_option == "Use Load Based Suggested EBOSS® Model":
             st.session_state.recommended_model = "EB 70 kVA"  # Placeholder
             dialog = st.dialog("Recommended EBOSS® Configuration")
-            dialog.write(f"Recommended EBOSS® Model: {st.session_state.recommended_model}")
+            dialog.markdown(f"Recommended EBOSS® Model: {st.session_state.recommended_model}")  # Changed from write to markdown
             col1, col2, col3 = dialog.columns(3)
             with col2:
                 dialog.number_input("Max Continuous Load", min_value=0.0, step=0.1, key="max_continuous_load_input")
@@ -197,10 +198,11 @@ if st.button("Enter Data", key="enter_data_button"):
                 st.session_state.user_inputs["voltage"] = voltage
                 st.session_state.show_calculator = True
                 st.session_state.page = "Tool Selection"
+                dialog.close()
                 st.rerun()
         else:  # Select a EBOSS® Model
             dialog = st.dialog("EBOSS® Configuration")
-            dialog.write("Enter your EBOSS® configuration:")
+            dialog.markdown("Enter your EBOSS® configuration:")  # Changed from write to markdown
             col1, col2, col3 = dialog.columns(3)
             with col1:
                 dialog.selectbox("EBOSS® Model", options=["EB 25 kVA", "EB 70 kVA", "EB 125 kVA", "EB 220 kVA", "EB 400 kVA"], key="eboss_model_input")
@@ -232,6 +234,7 @@ if st.button("Enter Data", key="enter_data_button"):
                     st.session_state.user_inputs["actual_peak_load"] = st.session_state.user_inputs["max_peak_load"]
                 st.session_state.show_calculator = True
                 st.session_state.page = "Tool Selection"
+                dialog.close()
                 st.rerun()
     except Exception as e:
         print(f"Error in modal: {e}")  # Debug log to console
@@ -259,9 +262,11 @@ elif st.session_state.page == "Parallel Calculator":
 # Footer with links
 st.markdown(f"""
 <div class="footer">
-EBOSS® Size & Spec Tool | 
-<a href="#" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform?usp=header', '_blank')">Request Demo</a> |
-<a href="#" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header', '_blank')">Request Training</a> |
-<a href="#" onclick="window.open('https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g', '_blank')">Learn how the EBOSS® works</a>
+    <span style="display: flex; justify-content: center; width: 100%;">
+        EBOSS® Size & Spec Tool | 
+        <a href="#" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform?usp=header', '_blank')">Request Demo</a> |
+        <a href="#" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header', '_blank')">Request Training</a> |
+        <a href="#" onclick="window.open('https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g', '_blank')">Learn how the EBOSS® works</a>
+    </span>
 </div>
 """, unsafe_allow_html=True)
