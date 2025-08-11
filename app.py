@@ -66,7 +66,7 @@ st.markdown(
         box-shadow: 0 0 10px {COLORS['Energy Green']};
     }}
     .logo {{
-        max-width: 150px; /* Adjusted for mobile friendliness */
+        max-width: 150px;
         display: block;
         margin: 0 auto;
     }}
@@ -109,7 +109,7 @@ st.markdown(
             width: 100% !important;
         }}
         .logo {{
-            max-width: 120px; /* Smaller logo on mobile */
+            max-width: 120px;
         }}
         button, .stTextInput > div > div > input, .stSelectbox > div > div > div, .stNumberInput > div > div > input {{
             width: 100%;
@@ -145,7 +145,7 @@ if "page" not in st.session_state:
     st.session_state.page = "Home"
 
 # Corporate logo centered
-st.image("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/ANA-ENERGY-LOGO-HORIZONTAL-WHITE-GREEN.png", use_column_width=False, width=150, output_format="PNG", caption="ANA Logo")  # Corrected logo URL
+st.image("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/ANA-ENERGY-LOGO-HORIZONTAL-WHITE-GREEN.png", use_column_width=False, width=150, output_format="PNG", caption="ANA Logo")
 
 # Page title
 st.title("EBOSS® Size & Spec Tool")
@@ -158,18 +158,25 @@ else:
     st.session_state.page = "Home"
 
 if st.session_state.page == "Home":
+    # Google Doc and YouTube buttons
+    col_buttons = st.columns(1)
+    with col_buttons[0]:
+        st.button("Request Demo", on_click=lambda: webbrowser.open_new_tab("https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform?usp=header"))
+        st.button("Request Training", on_click=lambda: webbrowser.open_new_tab("https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header"))
+        st.button("Learn how the EBOSS® works", on_click=lambda: webbrowser.open_new_tab("https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g"))
+
     # Radio buttons for EBOSS® option
-    st.session_state.selected_option = st.radio("Choose EBOSS® Configuration Option:", ("Select EBOSS® Model", "Get Recommended EBOSS® Model Based on Load"))
+    st.session_state.selected_option = st.radio("Choose EBOSS® Configuration:", ("Manually Select EBOSS® Model", "Recommend EBOSS® Model Based on Load"))
 
     # Text
-    st.write("Provide your load details, choose a page or tool, and press Calculate to start.")
+    st.write("Choose a page or tool and click Calculate to proceed.")
 
     # User input section with 3 columns
     col1, col2, col3 = st.columns(3)
 
     with col1:
         st.header("EBOSS®")
-        if st.session_state.selected_option == "Select EBOSS® Model":
+        if st.session_state.selected_option == "Manually Select EBOSS® Model":
             st.session_state.user_inputs["eboss_model"] = st.selectbox("EBOSS® Model", options=list(spec_data.keys()))
             st.session_state.user_inputs["eboss_type"] = st.selectbox("EBOSS® Type", options=["Full Hybrid", "Power Module"])
             if st.session_state.user_inputs["eboss_type"] == "Power Module":
@@ -204,7 +211,7 @@ if st.session_state.page == "Home":
 
     # Calculate button with modal logic
     if st.button("Calculate"):
-        if st.session_state.selected_option == "Get Recommended EBOSS® Model Based on Load":
+        if st.session_state.selected_option == "Recommend EBOSS® Model Based on Load":
             # Placeholder for recommended model logic (to be added later)
             st.session_state.recommended_model = "EB 70 kVA"  # Example
             st.session_state.user_inputs["eboss_model"] = st.session_state.recommended_model
@@ -213,12 +220,12 @@ if st.session_state.page == "Home":
                 st.session_state.user_inputs["eboss_type"] = st.selectbox("Select Type of EBOSS®", options=["Full Hybrid", "Power Module"])
                 if st.session_state.user_inputs["eboss_type"] == "Power Module":
                     st.session_state.user_inputs["power_module_gen_size"] = st.selectbox("Power Module Generator Size", options=["25 kVA", "70 kVA", "125 kVA", "220 kVA", "400 kVA"])
-                if st.button("Go"):
+                if st.button("Proceed"):
                     st.session_state.show_calculator = True
                     st.rerun()
-        else:  # Select EBOSS® Model
+        else:  # Manually Select EBOSS® Model
             with st.dialog("EBOSS® Configuration"):
-                st.write("Confirm your selected EBOSS® configuration:")
+                st.write("Review your selected EBOSS® configuration:")
                 st.write(f"EBOSS® Model: {st.session_state.user_inputs['eboss_model']}")
                 st.write(f"EBOSS® Type: {st.session_state.user_inputs['eboss_type']}")
                 if st.session_state.user_inputs["eboss_type"] == "Power Module":
@@ -228,7 +235,7 @@ if st.session_state.page == "Home":
                 st.write(f"Actual Continuous Load: {st.session_state.user_inputs['actual_continuous_load']:.2f} kW")
                 st.write(f"Actual Peak Load: {st.session_state.user_inputs['actual_peak_load']:.2f} kW")
                 st.write(f"Job Name: {st.session_state.user_inputs['job_name']}")
-                if st.button("Go"):
+                if st.button("Proceed"):
                     st.session_state.show_calculator = True
                     st.rerun()
 
