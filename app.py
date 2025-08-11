@@ -37,7 +37,7 @@ st.markdown(
     f"""
     <style>
     .stApp {{
-        background-image: url("https://github.com/TimBuffington/Eboss-tool-V2/blob/main/assets/bg.png");
+        background-image: url("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/bg.png");
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -138,7 +138,7 @@ if "page" not in st.session_state:
 
 # Corporate logo centered
 # st.image("https://raw.githubusercontent.com/timbuffington/Eboss-tool-V2/main/images/ANA-ENERGY-LOGO-HORIZONTAL-WHITE-GREEN.png", use_column_width=False, width=200, output_format="PNG")
-st.image("https://github.com/TimBuffington/Eboss-tool-V2/blob/main/assets/bg.png", use_column_width=False, width=200, output_format="PNG")
+st.image("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/bg.png", use_column_width=False, width=200, output_format="PNG")
 
 # Page title
 st.title("EBOSS® Size & Spec Tool")
