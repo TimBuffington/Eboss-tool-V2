@@ -32,7 +32,7 @@ st.markdown(
         color: {COLORS['Alpine White']};
     }}
     button {{
-        background-color: {COLORS['Energy Green']};
+        background-color: {COLORS['Black']};
         color: {COLORS['Asphalt']};
         border: 1px solid {COLORS['Charcoal']};
         border-radius: 5px;
@@ -42,7 +42,7 @@ st.markdown(
         margin: 5px 0;
     }}
     button:hover {{
-        box-shadow: 0 0 20px {COLORS['Energy Green']};
+        box-shadow: 0 0 30px {COLORS['Energy Green']};
     }}
     .stTextInput > div > div > input, .stSelectbox > div > div > div, .stNumberInput > div > div > input {{
         background-color: {COLORS['Asphalt']};
