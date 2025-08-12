@@ -1,18 +1,22 @@
 import streamlit as st
-import webbrowser
 import math
+import webbrowser  # (kept if you use it later)
 
-# Color mappings based on provided hex codes
+# ----------------------------
+# Theme Colors
+# ----------------------------
 COLORS = {
     "Asphalt": "#000000",
     "Concrete": "#939598",
     "Charcoal": "#636569",
     "Energy Green": "#81BD47",
     "Alpine White": "#FFFFFF",
-    "Light Grey": "#D3D3D3"  # Added for border
+    "Light Grey": "#D3D3D3",
 }
 
-# Apply custom CSS for branding, layout centering, and components
+# ----------------------------
+# Global Styles (CSS)
+# ----------------------------
 st.markdown(
     f"""
     <style>
@@ -31,15 +35,35 @@ st.markdown(
     .main-center-stack {{
         display: flex;
         flex-direction: column;
-        align-items: center;
+        align-items: center;      /* horizontal centering of all children */
         width: 100%;
-        text-align: center;
-        margin: 0 auto;
-        max-width: 840px;
-        gap: 12px;
+        text-align: center;       /* center text inside children by default */
+        margin: 0 auto;           /* center the stack if it gets a max-width */
+        max-width: 840px;         /* keeps everything on one vertical axis */
+        gap: 12px;                /* space between stacked elements */
     }}
 
-    /* Buttons */
+    .sidebar .sidebar-content {{
+        background-color: {COLORS['Asphalt']};
+        color: {COLORS['Alpine White']};
+    }}
+
+    /* === LOGO === */
+    .logo-header {{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 1rem;
+    }}
+    .logo-header img {{
+        width: 90%;
+        max-width: 360px;
+        height: auto;
+        filter: drop-shadow(0 2px 16px rgba(0,0,0,0.28));
+        border-radius: 0.4rem;
+    }}
+
+    /* Buttons (including link_button look) */
     button {{
         background-color: {COLORS['Energy Green']};
         color: {COLORS['Asphalt']};
@@ -71,23 +95,6 @@ st.markdown(
         box-shadow: 0 0 10px {COLORS['Energy Green']};
     }}
 
-    /* === LOGO === */
-    .logo-header {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-bottom: 1rem;
-    }
-
-    .logo-header img {
-        width: 90%;
-        max-width: 360px;
-        height: auto;
-        filter: drop-shadow(0 2px 16px rgba(0,0,0,0.28));
-        border-radius: 0.4rem;
-    }
-
-
     .message-text {{
         font-size: 1.5em;
         text-align: center;
@@ -102,10 +109,10 @@ st.markdown(
     .button-row-wrap {{
         width: 100%;
         display: flex;
-        justify-content: center;
+        justify-content: center;   /* centers the inner row */
     }}
     .button-row-inner {{
-        display: inline-flex;
+        display: inline-flex;      /* shrink to content width */
         gap: 10px;
         align-items: center;
         justify-content: center;
@@ -115,7 +122,7 @@ st.markdown(
     .button-row-inner .button-block {{
         min-width: 220px;
         max-width: 300px;
-        flex: 0 0 auto;
+        flex: 0 0 auto;            /* don’t stretch */
     }}
 
     /* Radio group centered & evenly spaced */
@@ -178,50 +185,16 @@ st.markdown(
 
     /* Mobile tweaks */
     @media (max-width: 768px) {{
-        .logo {{ max-width: 160px; }}
-        .button-block {{ max-width: 100%; min-width: 180px; }}
-        .centered-radio label {{ min-width: 160px; }}
         .button-row-inner .button-block {{ min-width: 180px; }}
     }}
     </style>
     """,
     unsafe_allow_html=True
 )
-st.markdown(
-    f"""
-    <style>
-    .main-center-stack {{
-        max-width: 840px;
-    }}
-    .button-row-wrap {{
-        width: 100%;
-        display: flex;
-        justify-content: center;      
-    }}
-    .button-row-inner {{
-        display: inline-flex;        
-        gap: 10px;
-        align-items: center;
-        justify-content: center;
-        flex-wrap: wrap;             
-        max-width: 100%;
-    }}
-    .button-row-inner .button-block {{
-        min-width: 220px;
-        max-width: 300px;
-        flex: 0 0 auto;              
-    }}
-    @media (max-width: 768px) {{
-        .button-row-inner .button-block {{
-            min-width: 180px;
-        }}
-    }}
-    </style>
-    """,
-    unsafe_allow_html=True
-)
 
-# Initialize session state
+# ----------------------------
+# Session State
+# ----------------------------
 if "user_inputs" not in st.session_state:
     st.session_state.user_inputs = {
         "eboss_model": "",
@@ -233,7 +206,7 @@ if "user_inputs" not in st.session_state:
         "voltage": "480",
         "actual_continuous_load": 0.0,
         "actual_peak_load": 0.0,
-        "job_name": ""
+        "job_name": "",
     }
 if "show_calculator" not in st.session_state:
     st.session_state.show_calculator = False
@@ -244,64 +217,71 @@ if "recommended_model" not in st.session_state:
 if "page" not in st.session_state:
     st.session_state.page = "Home"
 
-# ===== MAIN CENTER STACK (keeps everything on the same center axis) =====
+# ----------------------------
+# Main Centered Stack
+# ----------------------------
 st.markdown("<div class='main-center-stack'>", unsafe_allow_html=True)
 
-# Logo
-st.markdown("<div class='logo-container'>", unsafe_allow_html=True)
-try:
-    st.image(
-        "https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png",
-        use_container_width=False,
-        width=200,
-        output_format="PNG",
-    )
-except Exception as e:
-    st.error(f"Logo failed to load: {e}. Please verify the file at https://github.com/TimBuffington/Eboss-tool-V2/tree/main/assets/logo.png.")
-st.markdown("</div>", unsafe_allow_html=True)
+# Logo (NEW: logo-header)
+st.markdown(
+    """
+    <div class="logo-header">
+        <img src="https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png" alt="EBOSS Logo">
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
 # Title
 st.markdown("<h1>EBOSS® Size & Spec Tool</h1>", unsafe_allow_html=True)
 
-# Three link buttons row
-# --- Three link buttons row (perfectly centered) ---
+# Three link buttons row (perfectly centered row)
 st.markdown("<div class='button-row-wrap'><div class='button-row-inner'>", unsafe_allow_html=True)
-b1, b2, b3 = st.columns([1, 1, 1], gap="small")
-with b1:
+col1, col2, col3 = st.columns(3, gap="small")
+with col1:
     st.markdown("<div class='button-block'>", unsafe_allow_html=True)
-    st.link_button("Request Demo", url="https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform?usp=header")
+    st.link_button(
+        "Request Demo",
+        url="https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform?usp=header",
+    )
     st.markdown("</div>", unsafe_allow_html=True)
-with b2:
+with col2:
     st.markdown("<div class='button-block'>", unsafe_allow_html=True)
-    st.link_button("Request Training", url="https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header")
+    st.link_button(
+        "Request Training",
+        url="https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header",
+    )
     st.markdown("</div>", unsafe_allow_html=True)
-with b3:
+with col3:
     st.markdown("<div class='button-block'>", unsafe_allow_html=True)
-    st.link_button("Learn how the EBOSS® works", url="https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g")
+    st.link_button(
+        "Learn how the EBOSS® works",
+        url="https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g",
+    )
     st.markdown("</div>", unsafe_allow_html=True)
 st.markdown("</div></div>", unsafe_allow_html=True)
 
-
-# Message row
+# Message
 st.markdown("<div class='message-text'>Please Select a Configuration</div>", unsafe_allow_html=True)
 
-# Radio buttons (centered as a group)
+# Radio buttons
 st.markdown("<div class='centered-radio'>", unsafe_allow_html=True)
 selected_option = st.radio(" ", ("Select a EBOSS® Model", "Use Load Based Suggested EBOSS® Model"), horizontal=True)
 st.session_state.selected_option = selected_option
 st.markdown("</div>", unsafe_allow_html=True)
 
-# Enter Data button (centered)
+# Enter Data button (centered via column trick)
 st.markdown("<div class='centered-button'>", unsafe_allow_html=True)
 c1, c2, c3 = st.columns([1, 2, 1])
 with c2:
     enter_clicked = st.button("Enter Data", key="enter_data_button")
 st.markdown("</div>", unsafe_allow_html=True)
 
-# ===== Dialog handling (correct st.dialog usage) =====
+# ----------------------------
+# Dialogs (correct usage with decorator)
+# ----------------------------
 if enter_clicked:
     try:
-        print("Entering dialog...")
         if st.session_state.selected_option == "Use Load Based Suggested EBOSS® Model":
             st.session_state.recommended_model = "EB 70 kVA"  # Placeholder
 
@@ -335,7 +315,7 @@ if enter_clicked:
                     st.session_state.user_inputs["voltage"] = voltage
                     st.session_state.show_calculator = True
                     st.session_state.page = "Tool Selection"
-                    st.rerun()  # closes dialog
+                    st.rerun()  # close dialog
 
             show_recommended_dialog()
 
@@ -375,7 +355,7 @@ if enter_clicked:
 
                     st.session_state.show_calculator = True
                     st.session_state.page = "Tool Selection"
-                    st.rerun()  # closes dialog
+                    st.rerun()  # close dialog
 
             show_config_dialog()
 
@@ -383,10 +363,9 @@ if enter_clicked:
         print(f"Error in modal: {e}")
         st.error(f"Error in modal: {str(e)}. Please check the console output.")
 
-# Close the center stack wrapper
-st.markdown("</div>", unsafe_allow_html=True)
-
-# Page routes (placeholders for now)
+# ----------------------------
+# Page routes (placeholders)
+# ----------------------------
 if st.session_state.page == "Tool Selection":
     st.header("Tool Selection")
 elif st.session_state.page == "Technical Specs":
@@ -400,17 +379,22 @@ elif st.session_state.page == "Cost Analysis":
 elif st.session_state.page == "Parallel Calculator":
     st.header("Parallel Calculator")
 
-# Footer (centered)
-st.markdown(f"""
-<div class="footer">
-  <div class="footer-inner">
-    <span>EBOSS® Size & Spec Tool</span>
-    <span>|</span>
-    <a href="#" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform?usp=header', '_blank')">Request Demo</a>
-    <span>|</span>
-    <a href="#" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header', '_blank')">Request Training</a>
-    <span>|</span>
-    <a href="#" onclick="window.open('https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g', '_blank')">Learn how the EBOSS® works</a>
-  </div>
-</div>
-""", unsafe_allow_html=True)
+# ----------------------------
+# Footer
+# ----------------------------
+st.markdown(
+    f"""
+    <div class="footer">
+      <div class="footer-inner">
+        <span>EBOSS® Size & Spec Tool</span>
+        <span>|</span>
+        <a href="#" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform?usp=header', '_blank')">Request Demo</a>
+        <span>|</span>
+        <a href="#" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header', '_blank')">Request Training</a>
+        <span>|</span>
+        <a href="#" onclick="window.open('https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g', '_blank')">Learn how the EBOSS® works</a>
+      </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
