@@ -31,17 +31,18 @@ st.markdown(
         color: {COLORS['Alpine White']};
     }}
     button {{
-        background-color: {COLORS['Energy Green']};
-        color: {COLORS['Asphalt']};
-        border: 1px solid {COLORS['Charcoal']};
+        background-color: {COLORS['Asphalt']}; /* Black background */
+        color: {COLORS['Energy Green']}; /* Energy Green font color */
+        border: 1px solid {COLORS['Alpine White']}; /* Alpine White border */
         border-radius: 5px;
         padding: 10px 20px;
         transition: box-shadow 0.3s ease;
         width: 100%;
-        margin: 0;
+        margin: 5px 0;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Text shadowing for enhanced visual effect */
     }}
     button:hover {{
-        box-shadow: 0 0 10px {COLORS['Energy Green']};
+        box-shadow: 0 0 20px {COLORS['Energy Green']}; /* Increased size of box shadowing hover effect to 2x (from 10px to 20px) */
     }}
     .stTextInput > div > div > input, .stSelectbox > div > div > div, .stNumberInput > div > div > input {{
         background-color: {COLORS['Asphalt']};
@@ -54,32 +55,27 @@ st.markdown(
     .stTextInput > div > div > input:hover, .stSelectbox > div > div > div:hover, .stNumberInput > div > div > input:hover {{
         box-shadow: 0 0 10px {COLORS['Energy Green']};
     }}
-    .logo-container {{
+    .logo {{
+        max-width: 200px;
+        display: block;
+        margin: 20px auto 0; /* Top center with margin */
+    }}
+    .footer {{
         display: flex;
         justify-content: center;
         align-items: center;
-        margin: 2px 0;
-        height: 180px; /* Adjusted height for 600px logo */
-    }}
-    .logo {{
-        max-width: 600px; /* Tripled from 200px as requested */
-        display: block;
-    }}
-    .footer {{
+        color: {COLORS['Alpine White']};
+        padding: 10px;
+        background-color: {COLORS['Asphalt']};
         position: fixed;
         bottom: 0;
-        left: 0;
-        right: 0;
-        background-color: {COLORS['Asphalt']}; /* Corrected to match branding */
-        display: flex;
-        justify-content: center; /* Center horizontally */
-        align-items: center; /* Center vertically */
-        padding: 10px;
+        width: 100%;
+        max-width: 100%; /* Prevent overflow */
     }}
     .button-container {{
         display: flex;
         justify-content: center;
-        gap: 2px; /* Minimal gap between buttons */
+        gap: 5px; /* Reduced gap for closer spacing */
         width: 100%;
     }}
     .button-block {{
@@ -105,12 +101,15 @@ st.markdown(
         justify-content: center;
         width: 100%;
     }}
+    .centered-enter-data {{
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        margin: 10px 0; /* Added margin for spacing */
+    }}
     @media (max-width: 768px) {{
         .logo {{
-            max-width: 480px; /* Tripled from 160px for mobile */
-        }}
-        .logo-container {{
-            height: 144px; /* Adjusted height for mobile */
+            max-width: 160px; /* Adjusted for mobile */
         }}
         .button-container {{
             flex-direction: column;
@@ -148,13 +147,11 @@ if "recommended_model" not in st.session_state:
 if "page" not in st.session_state:
     st.session_state.page = "Home"
 
-# Corporate logo top center with container
-st.markdown("<div class='logo-container'>", unsafe_allow_html=True)
+# Corporate logo top center
 try:
-    st.image("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png", use_container_width=False, width=600, output_format="PNG")
+    st.image("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png", use_container_width=False, width=200, output_format="PNG")
 except Exception as e:
     st.error(f"Logo failed to load: {e}. Please verify the file at https://github.com/TimBuffington/Eboss-tool-V2/tree/main/assets/logo.png.")
-st.markdown("</div>", unsafe_allow_html=True)
 
 # Page title centered under logo
 st.markdown("<h1 style='text-align: center;'>EBOSS® Size & Spec Tool</h1>", unsafe_allow_html=True)
@@ -186,8 +183,8 @@ selected_option = st.radio(" ", ("Select a EBOSS® Model", "Use Load Based Sugge
 st.session_state.selected_option = selected_option  # Update session state
 st.markdown("</div>", unsafe_allow_html=True)
 
-# Enter Data button centered under radio buttons
-st.markdown("<div class='centered-button'>", unsafe_allow_html=True)
+# Enter Data button centered under radio buttons with alignment to "Request Training"
+st.markdown("<div class='centered-enter-data'>", unsafe_allow_html=True)
 if st.button("Enter Data", key="enter_data_button"):
     try:
         print("Entering dialog...")  # Debug log to console
@@ -228,7 +225,7 @@ if st.button("Enter Data", key="enter_data_button"):
                 st.markdown("**Enter your EBOSS® configuration:**")
                 col1, col2, col3 = st.columns(3)
                 with col1:
-                    st.selectbox("EBOSS® Model", options=["EB 25 kVA", "EB 70 kVA", "EB 125 kVA", "EB 220 kVA", "EB 400 kVA"], key="eboss_model_input")
+                    st.selectbox("EBOSS® Model", options=["EB 25 kVA", "EB 70 kVA", "EB 125 kVA", "EB 220 kVA", "400 kVA"], key="eboss_model_input")
                     st.selectbox("EBOSS® Type", options=["Full Hybrid", "Power Module"], key="eboss_type_input")
                     if st.session_state.get("eboss_type_input", "") == "Power Module":
                         st.selectbox("Power Module Generator Size", options=["25 kVA", "70 kVA", "125 kVA", "220 kVA", "400 kVA"], key="power_module_gen_size_input")
