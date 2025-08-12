@@ -9,13 +9,13 @@ COLORS = {
     "Charcoal": "#636569",
     "Energy Green": "#81BD47",
     "Alpine White": "#FFFFFF",
-    "Light Grey": "#D3D3D3"  # Added for border
+    "Light Grey": "#D3D3D3"
 }
 
-# Apply custom CSS for branding, full-screen background, mobile-friendly, and container styles
 st.markdown(
     f"""
     <style>
+    /* ===== App Background ===== */
     .stApp {{
         background-image: url("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/bg.png");
         background-size: cover;
@@ -26,70 +26,87 @@ st.markdown(
         font-family: Arial, sans-serif;
         font-size: 16px;
     }}
+
+    /* ===== Sidebar ===== */
     .sidebar .sidebar-content {{
         background-color: {COLORS['Asphalt']};
         color: {COLORS['Alpine White']};
     }}
-    button {{
-        background-color: {COLORS['Asphalt']}; /* Black background */
-        color: {COLORS['Energy Green']}; /* Energy Green font color */
-        border: 1px solid {COLORS['Alpine White']}; /* Alpine White border */
-        border-radius: 5px;
-        padding: 10px 20px;
-        transition: box-shadow 0.3s ease;
+
+    /* ===== Buttons (Streamlit + Link Buttons) ===== */
+    button, .stButton button, .stLinkButton > a {{
+        background-color: {COLORS['Asphalt']} !important;
+        color: {COLORS['Energy Green']} !important;
+        border: 2px solid {COLORS['Alpine White']} !important;
+        font-weight: bold !important;
+        text-shadow: 0 0 6px {COLORS['Energy Green']};
+        border-radius: 6px;
+        padding: 12px 20px;
+        transition: box-shadow 0.3s ease, transform 0.2s ease;
         width: 100%;
         margin: 5px 0;
-        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Text shadowing */
     }}
-    button, .stButton button, .stLinkButton > a {
-    background-color: {COLORS['Asphalt']} !important;   /* Black */
-    color: {COLORS['Energy Green']} !important;         /* Energy Green text */
-    border: 2px solid {COLORS['Alpine White']} !important;
-    font-weight: bold !important;
-    text-shadow: 0 0 6px {COLORS['Energy Green']};
-    border-radius: 6px;
-    padding: 12px 20px;
-    transition: box-shadow 0.3s ease, transform 0.2s ease;
-}
+    button:hover, .stButton button:hover, .stLinkButton > a:hover {{
+        box-shadow: 0 0 20px {COLORS['Energy Green']};
+        transform: translateY(-1px);
+    }}
 
-button:hover, .stButton button:hover, .stLinkButton > a:hover {
-    box-shadow: 0 0 20px {COLORS['Energy Green']};  /* doubled glow size */
-    transform: translateY(-1px);
-}
+    /* ===== Button Layout Containers ===== */
+    .button-container {{
+        display: flex;
+        justify-content: center;
+        gap: 2px;
+        width: 100%;
+    }}
+    .button-block {{
+        flex: 1;
+        max-width: 300px;
+    }}
 
+    /* ===== Inputs ===== */
+    .stTextInput > div > div > input,
+    .stSelectbox > div > div > div,
+    .stNumberInput > div > div > input {{
+        background-color: {COLORS['Asphalt']};
+        color: {COLORS['Alpine White']};
+        border: 1px solid {COLORS['Light Grey']};
+        border-radius: 5px;
+        padding: 8px;
+        transition: box-shadow 0.3s ease;
+    }}
+    .stTextInput > div > div > input:hover,
+    .stSelectbox > div > div > div:hover,
+    .stNumberInput > div > div > input:hover {{
+        box-shadow: 0 0 10px {COLORS['Energy Green']};
+    }}
+
+    /* ===== Logo ===== */
     .logo-container {{
         display: flex;
         justify-content: center;
         align-items: center;
         margin: 20px 0;
-        height: 150px; /* Added height to center vertically */
+        height: 150px;
     }}
     .logo {{
-        max-width: 200px; /* Current size, adjust to 600px if tripling is still desired */
+        max-width: 450px;
         display: block;
     }}
+
+    /* ===== Footer ===== */
     .footer {{
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: black;
         display: flex;
         justify-content: center;
         align-items: center;
-        color: {COLORS['Alpine White']};
         padding: 10px;
-        background-color: {COLORS['Asphalt']};
-        position: fixed;
-        bottom: 0;
-        width: 100%;
-        max-width: 100%; /* Prevent overflow */
     }}
-    .button-container {{
-        display: flex;
-        justify-content: center;
-        gap: 2px; /* Minimal gap between buttons */
-        width: 100%;
-    }}
-    .button-block {{
-        flex: 1;
-        max-width: 300px; /* Equal width, adjustable for mobile */
-    }}
+
+    /* ===== Message & Centered Elements ===== */
     .message-text {{
         font-size: 1.5em;
         text-align: center;
@@ -104,31 +121,27 @@ button:hover, .stButton button:hover, .stLinkButton > a:hover {
         justify-content: center;
         width: 100%;
     }}
-    .centered-enter-data {{
+    .centered-button {{
         display: flex;
         justify-content: center;
         width: 100%;
-        margin-top: 20px; /* Adjusted margin to align with "Request Training" button */
     }}
+
+    /* ===== Mobile Tweaks ===== */
     @media (max-width: 768px) {{
-        .logo {{
-            max-width: 160px; /* Adjusted for mobile */
-        }}
-        .logo-container {{
-            height: 120px; /* Adjusted height for mobile */
-        }}
+        .logo {{ max-width: 480px; }}
+        .logo-container {{ height: 120px; }}
         .button-container {{
             flex-direction: column;
-            gap: 5px; /* Stack vertically on mobile with slightly larger gap */
+            gap: 5px;
         }}
-        .button-block {{
-            max-width: 100%;
-        }}
+        .button-block {{ max-width: 100%; }}
     }}
     </style>
     """,
     unsafe_allow_html=True
 )
+
 
 # Initialize session state
 if "user_inputs" not in st.session_state:
