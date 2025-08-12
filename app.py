@@ -13,7 +13,7 @@ COLORS = {
 }
 
 # Apply custom CSS for branding, layout centering, and components
-st.markdown(
+st.markdown{
     f"""
     <style>
     .stApp {{
