@@ -184,33 +184,40 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-{
-.main-center-stack { max-width: 840px; }
-.button-row-wrap {
-  width: 100%;
-  display: flex;
-  justify-content: center;      
-}
-.button-row-inner {
-  display: inline-flex;        
-  gap: 10px;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;             
-  max-width: 100%;
-}
-.button-row-inner .button-block {
-  min-width: 220px;
-  max-width: 300px;
-  flex: 0 0 auto;              
-}
-@media (max-width: 768px) {
-    .button-row-inner .button-block { min-width: 180px; }
-}
-   </style>
-    """ 
+st.markdown(
+    f"""
+    <style>
+    .main-center-stack {{
+        max-width: 840px;
+    }}
+    .button-row-wrap {{
+        width: 100%;
+        display: flex;
+        justify-content: center;      
+    }}
+    .button-row-inner {{
+        display: inline-flex;        
+        gap: 10px;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;             
+        max-width: 100%;
+    }}
+    .button-row-inner .button-block {{
+        min-width: 220px;
+        max-width: 300px;
+        flex: 0 0 auto;              
+    }}
+    @media (max-width: 768px) {{
+        .button-row-inner .button-block {{
+            min-width: 180px;
+        }}
+    }}
+    </style>
+    """,
     unsafe_allow_html=True
 )
+
 # Initialize session state
 if "user_inputs" not in st.session_state:
     st.session_state.user_inputs = {
