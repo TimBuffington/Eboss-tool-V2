@@ -199,7 +199,7 @@ st.markdown(
     .button-row-inner .button-block { min-width: 180px; }
 }}
    </style>
-    """ ,
+    """ 
     unsafe_allow_html=True
 )
 # Initialize session state
