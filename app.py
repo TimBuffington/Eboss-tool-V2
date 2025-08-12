@@ -204,7 +204,7 @@ with col_ed2:
     if st.button("Enter Data", key="enter_data_button"):
         
         try:
-        print("Entering dialog...")  # Debug log to console
+            print("Entering dialog...")  # Debug log to console
         if st.session_state.selected_option == "Use Load Based Suggested EBOSS® Model":
             st.session_state.recommended_model = "EB 70 kVA"  # Placeholder
             @st.dialog("Recommended EBOSS® Configuration")
