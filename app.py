@@ -39,10 +39,10 @@ st.markdown(
         transition: box-shadow 0.3s ease;
         width: 100%;
         margin: 5px 0;
-        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Text shadowing for enhanced visual effect */
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Text shadowing */
     }}
     button:hover {{
-        box-shadow: 0 0 20px {COLORS['Energy Green']}; /* Increased size of box shadowing hover effect to 2x (from 10px to 20px) */
+        box-shadow: 0 0 20px {COLORS['Energy Green']}; /* 2x larger Energy Green box shadow */
     }}
     .stTextInput > div > div > input, .stSelectbox > div > div > div, .stNumberInput > div > div > input {{
         background-color: {COLORS['Asphalt']};
@@ -55,10 +55,16 @@ st.markdown(
     .stTextInput > div > div > input:hover, .stSelectbox > div > div > div:hover, .stNumberInput > div > div > input:hover {{
         box-shadow: 0 0 10px {COLORS['Energy Green']};
     }}
+    .logo-container {{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 20px 0;
+        height: 150px; /* Added height to center vertically */
+    }}
     .logo {{
-        max-width: 200px;
+        max-width: 200px; /* Current size, adjust to 600px if tripling is still desired */
         display: block;
-        margin: 20px auto 0; /* Top center with margin */
     }}
     .footer {{
         display: flex;
@@ -75,7 +81,7 @@ st.markdown(
     .button-container {{
         display: flex;
         justify-content: center;
-        gap: 5px; /* Reduced gap for closer spacing */
+        gap: 2px; /* Minimal gap between buttons */
         width: 100%;
     }}
     .button-block {{
@@ -96,20 +102,18 @@ st.markdown(
         justify-content: center;
         width: 100%;
     }}
-    .centered-button {{
-        display: flex;
-        justify-content: center;
-        width: 100%;
-    }}
     .centered-enter-data {{
         display: flex;
         justify-content: center;
         width: 100%;
-        margin: 10px 0; /* Added margin for spacing */
+        margin-top: 20px; /* Adjusted margin to align with "Request Training" button */
     }}
     @media (max-width: 768px) {{
         .logo {{
             max-width: 160px; /* Adjusted for mobile */
+        }}
+        .logo-container {{
+            height: 120px; /* Adjusted height for mobile */
         }}
         .button-container {{
             flex-direction: column;
@@ -147,11 +151,13 @@ if "recommended_model" not in st.session_state:
 if "page" not in st.session_state:
     st.session_state.page = "Home"
 
-# Corporate logo top center
+# Corporate logo top center with container
+st.markdown("<div class='logo-container'>", unsafe_allow_html=True)
 try:
     st.image("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png", use_container_width=False, width=200, output_format="PNG")
 except Exception as e:
     st.error(f"Logo failed to load: {e}. Please verify the file at https://github.com/TimBuffington/Eboss-tool-V2/tree/main/assets/logo.png.")
+st.markdown("</div>", unsafe_allow_html=True)
 
 # Page title centered under logo
 st.markdown("<h1 style='text-align: center;'>EBOSS® Size & Spec Tool</h1>", unsafe_allow_html=True)
