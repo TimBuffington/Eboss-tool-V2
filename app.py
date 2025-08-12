@@ -41,20 +41,22 @@ st.markdown(
         margin: 5px 0;
         text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Text shadowing */
     }}
-    button:hover {{
-        box-shadow: 0 0 20px {COLORS['Energy Green']}; /* 2x larger Energy Green box shadow */
-    }}
-    .stTextInput > div > div > input, .stSelectbox > div > div > div, .stNumberInput > div > div > input {{
-        background-color: {COLORS['Asphalt']};
-        color: {COLORS['Alpine White']};
-        border: 1px solid {COLORS['Light Grey']};
-        border-radius: 5px;
-        padding: 8px;
-        transition: box-shadow 0.3s ease;
-    }}
-    .stTextInput > div > div > input:hover, .stSelectbox > div > div > div:hover, .stNumberInput > div > div > input:hover {{
-        box-shadow: 0 0 10px {COLORS['Energy Green']};
-    }}
+    button, .stButton button, .stLinkButton > a {
+    background-color: {COLORS['Asphalt']} !important;   /* Black */
+    color: {COLORS['Energy Green']} !important;         /* Energy Green text */
+    border: 2px solid {COLORS['Alpine White']} !important;
+    font-weight: bold !important;
+    text-shadow: 0 0 6px {COLORS['Energy Green']};
+    border-radius: 6px;
+    padding: 12px 20px;
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+button:hover, .stButton button:hover, .stLinkButton > a:hover {
+    box-shadow: 0 0 20px {COLORS['Energy Green']};  /* doubled glow size */
+    transform: translateY(-1px);
+}
+
     .logo-container {{
         display: flex;
         justify-content: center;
