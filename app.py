@@ -198,8 +198,11 @@ st.session_state.selected_option = selected_option  # Update session state
 st.markdown("</div>", unsafe_allow_html=True)
 
 # Enter Data button centered under radio buttons with alignment to "Request Training"
-st.markdown("<div class='centered-enter-data'>", unsafe_allow_html=True)
-if st.button("Enter Data", key="enter_data_button"):
+st.markdown("<div class='centered-button'>", unsafe_allow_html=True)
+col_ed1, col_ed2, col_ed3 = st.columns(3)
+with col_ed2:
+    if st.button("Enter Data", key="enter_data_button"):
+
     try:
         print("Entering dialog...")  # Debug log to console
         if st.session_state.selected_option == "Use Load Based Suggested EBOSS® Model":
