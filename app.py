@@ -59,8 +59,8 @@ st.markdown(
         margin: 5px 0;
     }}
     .logo {{
-        max-width: 200px; /* Restored to original size */
-        display: inline-block; /* Ensures centering within container */
+        max-width: 300px; /* Restored to original size */
+      
     }}
     .footer {{
         display: flex;
@@ -109,7 +109,7 @@ st.markdown(
         }}
         .button-container {{
             flex-direction: column;
-            gap: 5px;
+            gap: 2px;
         }}
         .button-block {{
             max-width: 100%;
