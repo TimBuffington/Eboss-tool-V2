@@ -202,8 +202,8 @@ st.markdown("<div class='centered-button'>", unsafe_allow_html=True)
 col_ed1, col_ed2, col_ed3 = st.columns(3)
 with col_ed2:
     if st.button("Enter Data", key="enter_data_button"):
-
-    try:
+        
+        try:
         print("Entering dialog...")  # Debug log to console
         if st.session_state.selected_option == "Use Load Based Suggested EBOSS® Model":
             st.session_state.recommended_model = "EB 70 kVA"  # Placeholder
