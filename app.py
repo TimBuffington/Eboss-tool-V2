@@ -37,7 +37,7 @@ st.markdown(
         padding: 6px 10px;
         transition: box-shadow 0.3s ease, transform 0.2s ease;
         width: 100%;
-        margin: 5px 0;
+        margin: 0px 0;
     }}
     button:hover, .stButton button:hover, .stLinkButton > a:hover {{
         box-shadow: 0 0 30px {COLORS['Energy Green']};
@@ -48,7 +48,7 @@ st.markdown(
     .button-container {{
         display: flex;
         justify-content: center;
-        gap: 2px;
+        gap: 0px;
         width: 100%;
     }}
     .button-block {{
