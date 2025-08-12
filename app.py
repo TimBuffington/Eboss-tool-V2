@@ -198,7 +198,7 @@ st.markdown(
 }
 @media (max-width: 768px) (
     .button-row-inner .button-block { min-width: 180px; }
-}
+)}
    </style>
     """ 
     , nsafe_allow_html=True
