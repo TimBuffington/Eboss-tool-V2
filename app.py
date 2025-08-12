@@ -54,10 +54,13 @@ st.markdown(
     .stTextInput > div > div > input:hover, .stSelectbox > div > div > div:hover, .stNumberInput > div > div > input:hover {{
         box-shadow: 0 0 10px {COLORS['Energy Green']};
     }}
+    .logo-container {{
+        text-align: center;
+        margin: 20px 0;
+    }}
     .logo {{
         max-width: 200px; /* Restored to original size */
-        display: block;
-        margin: 0 auto; /* Centered horizontally */
+        display: inline-block; /* Ensures centering within container */
     }}
     .footer {{
         display: flex;
@@ -69,6 +72,7 @@ st.markdown(
         position: fixed;
         bottom: 0;
         width: 100%;
+        max-width: 100%; /* Prevent overflow */
     }}
     .button-container {{
         display: flex;
@@ -139,11 +143,13 @@ if "recommended_model" not in st.session_state:
 if "page" not in st.session_state:
     st.session_state.page = "Home"
 
-# Corporate logo top center
+# Corporate logo top center with container
+st.markdown("<div class='logo-container'>", unsafe_allow_html=True)
 try:
     st.image("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png", use_container_width=False, width=200, output_format="PNG")
 except Exception as e:
     st.error(f"Logo failed to load: {e}. Please verify the file at https://github.com/TimBuffington/Eboss-tool-V2/tree/main/assets/logo.png.")
+st.markdown("</div>", unsafe_allow_html=True)
 
 # Page title centered under logo
 st.markdown("<h1 style='text-align: center;'>EBOSS® Size & Spec Tool</h1>", unsafe_allow_html=True)
@@ -183,7 +189,7 @@ if st.button("Enter Data", key="enter_data_button"):
         if st.session_state.selected_option == "Use Load Based Suggested EBOSS® Model":
             st.session_state.recommended_model = "EB 70 kVA"  # Placeholder
             dialog = st.dialog("Recommended EBOSS® Configuration")
-            dialog.markdown(f"Recommended EBOSS® Model: {st.session_state.recommended_model}")  # Use markdown
+            dialog.markdown(f"Recommended EBOSS® Model: {st.session_state.recommended_model}")
             col1, col2, col3 = dialog.columns(3)
             with col2:
                 dialog.number_input("Max Continuous Load", min_value=0.0, step=0.1, key="max_continuous_load_input")
@@ -191,7 +197,6 @@ if st.button("Enter Data", key="enter_data_button"):
                 dialog.selectbox("Units", options=["kW", "Amps"], key="units_input")
                 dialog.selectbox("Voltage", options=["120", "240", "208", "480"], key="voltage_input")
             if dialog.button("Launch Tool", key="launch_tool_recommended"):
-                # Convert load to kW at 480V three-phase if needed
                 max_continuous_load = float(st.session_state.get("max_continuous_load_input", "0.0"))
                 max_peak_load = float(st.session_state.get("max_peak_load_input", "0.0"))
                 units = st.session_state.get("units_input", "kW")
@@ -213,7 +218,7 @@ if st.button("Enter Data", key="enter_data_button"):
                 st.rerun()
         else:  # Select a EBOSS® Model
             dialog = st.dialog("EBOSS® Configuration")
-            dialog.markdown("Enter your EBOSS® configuration:")  # Use markdown
+            dialog.markdown("Enter your EBOSS® configuration:")
             col1, col2, col3 = dialog.columns(3)
             with col1:
                 dialog.selectbox("EBOSS® Model", options=["EB 25 kVA", "EB 70 kVA", "EB 125 kVA", "EB 220 kVA", "EB 400 kVA"], key="eboss_model_input")
@@ -227,7 +232,6 @@ if st.button("Enter Data", key="enter_data_button"):
                 dialog.selectbox("Units", options=["kW", "Amps"], key="units_input")
                 dialog.selectbox("Voltage", options=["120", "240", "208", "480"], key="voltage_input")
             if dialog.button("Launch Tool", key="launch_tool_select"):
-                # Store input data
                 st.session_state.user_inputs["eboss_model"] = st.session_state.get("eboss_model_input", "")
                 st.session_state.user_inputs["eboss_type"] = st.session_state.get("eboss_type_input", "")
                 st.session_state.user_inputs["power_module_gen_size"] = st.session_state.get("power_module_gen_size_input", "")
@@ -235,7 +239,6 @@ if st.button("Enter Data", key="enter_data_button"):
                 st.session_state.user_inputs["max_peak_load"] = st.session_state.get("max_peak_load_input", 0.0)
                 st.session_state.user_inputs["units"] = st.session_state.get("units_input", "kW")
                 st.session_state.user_inputs["voltage"] = st.session_state.get("voltage_input", "480")
-                # Convert to kW if needed
                 if st.session_state.user_inputs["units"] == "Amps":
                     pf = 0.8  # Power Factor
                     st.session_state.user_inputs["actual_continuous_load"] = (st.session_state.user_inputs["max_continuous_load"] * float(st.session_state.user_inputs["voltage"]) * 1.732 * pf) / 1000
