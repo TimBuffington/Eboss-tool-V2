@@ -285,18 +285,21 @@ st.markdown("</div></div>", unsafe_allow_html=True)
 # Message
 st.markdown("<center><h2>Please Select a Configuration</h2></center>", unsafe_allow_html=True)
 # Radio buttons
-st.markdown("<div class='centered-radio'>", unsafe_allow_html=True)
+# Center the radio buttons horizontally
+st.markdown("<div style='display: flex; justify-content: center;'>", unsafe_allow_html=True)
 selected_option = st.radio(" ", ("Select a EBOSS® Model", "Use Load Based Suggested EBOSS® Model"), horizontal=True)
-st.session_state.selected_option = selected_option
 st.markdown("</div>", unsafe_allow_html=True)
 
-# Enter Data button (centered via column trick)
-st.markdown("<div class='centered-button'>", unsafe_allow_html=True)
-c1, c2, c3 = st.columns([1, 2, 1])
-with c2:
-    enter_clicked = st.button("Enter Data", key="enter_data_button")
-st.markdown("</div>", unsafe_allow_html=True)
+# Handle the case where no option is selected
+if selected_option is not None:
+    st.session_state.selected_option = selected_option
+else:
+    st.session_state.selected_option = None
 
+# Center the "Enter Data" button
+st.markdown("<div style='display: flex; justify-content: center;'>", unsafe_allow_html=True)
+enter_clicked = st.button("Enter Data", key="enter_data_button")
+st.markdown("</div>", unsafe_allow_html=True)
 # ----------------------------
 # Dialogs (correct usage with decorator)
 # ----------------------------
