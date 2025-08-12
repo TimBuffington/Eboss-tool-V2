@@ -175,9 +175,7 @@ st.markdown(
         .button-block {{ max-width: 100%; min-width: 180px; }}
         .centered-radio label {{ min-width: 160px; }}
     }}
-    </style>
-    """ 
-    unsafe_allow_html=True
+ 
 )
 .main-center-stack { max-width: 840px; }
 .button-row-wrap {
@@ -201,7 +199,9 @@ st.markdown(
 @media (max-width: 768px) {
   .button-row-inner .button-block { min-width: 180px; }
 }
-
+   </style>
+    """ 
+    , nsafe_allow_html=True
 # Initialize session state
 if "user_inputs" not in st.session_state:
     st.session_state.user_inputs = {
