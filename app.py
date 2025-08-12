@@ -39,11 +39,6 @@ st.markdown(
         gap: 12px;
     }}
 
-    .sidebar .sidebar-content {{
-        background-color: {COLORS['Asphalt']};
-        color: {COLORS['Alpine White']};
-    }}
-
     /* Buttons */
     button {{
         background-color: {COLORS['Energy Green']};
@@ -76,14 +71,22 @@ st.markdown(
         box-shadow: 0 0 10px {COLORS['Energy Green']};
     }}
 
-    .logo-container {{
-        text-align: center;
-        margin: 20px 0 8px 0;
-    }}
-    .logo {{
-        max-width: 200px;
-        display: inline-block;
-    }}
+    /* === LOGO === */
+    .logo-header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .logo-header img {
+        width: 90%;
+        max-width: 360px;
+        height: auto;
+        filter: drop-shadow(0 2px 16px rgba(0,0,0,0.28));
+        border-radius: 0.4rem;
+    }
+
 
     .message-text {{
         font-size: 1.5em;
