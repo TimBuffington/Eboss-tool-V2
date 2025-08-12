@@ -13,7 +13,7 @@ COLORS = {
 }
 
 # Apply custom CSS for branding, layout centering, and components
-st.markdown{
+st.markdown(
     f"""
     <style>
     .stApp {{
@@ -199,8 +199,9 @@ st.markdown{
     .button-row-inner .button-block { min-width: 180px; }
 }}
    </style>
-    """ 
-    , nsafe_allow_html=True
+    """ ,
+    unsafe_allow_html=True
+)
 # Initialize session state
 if "user_inputs" not in st.session_state:
     st.session_state.user_inputs = {
