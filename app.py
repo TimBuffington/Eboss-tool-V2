@@ -262,7 +262,7 @@ with col3:
 st.markdown("</div></div>", unsafe_allow_html=True)
 
 # Message
- st.markdown("<center>Please Select a Configuration</center>", unsafe_allow_html=True)
+st.markdown("<center>Please Select a Configuration</center>", unsafe_allow_html=True)
 
 # Radio buttons
 st.markdown("<div class='centered-radio'>", unsafe_allow_html=True)
