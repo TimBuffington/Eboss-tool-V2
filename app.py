@@ -1,6 +1,24 @@
 import streamlit as st
 import math
 import webbrowser  # (kept if you use it later)
+from PIL import Image
+from io import BytesIO
+import requests
+
+def main():
+    # Download the logo image
+    logo_url = "https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png"
+    response = requests.get(logo_url)
+    logo_image = Image.open(BytesIO(response.content))
+
+    # Create the Streamlit app
+    st.set_page_config(layout="centered")
+    st.title("")  # Add an empty title to create space for the logo
+
+    # Display the logo centered at the top
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.image(logo_image, use_column_width=True)
 
 # ----------------------------
 # Theme Colors
@@ -223,17 +241,18 @@ if "page" not in st.session_state:
 st.markdown("<div class='main-center-stack'>", unsafe_allow_html=True)
 
 # Logo (NEW: logo-header)
-st.markdown(
-    """
-    <div class="logo-header">
-        <img src="https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png" alt="EBOSS Logo">
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
+#st.markdown(
+ #   """
+  #  <div class="logo-header">
+   #     <img src="https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png" alt="EBOSS Logo">
+ #   </div>
+  #  """,
+   # unsafe_allow_html=True,
+#)
 
 # Title
-st.markdown("<h1>EBOSS® Size & Spec Tool</h1>", unsafe_allow_html=True)
+st.markdown("<center><h1>EBOSS® Size & Spec Tool</h1<center>>", unsafe_allow_html=True)
+#t.markdown("<center>Please Select a Configuration</center>", unsafe_allow_html=True)
 
 # Three link buttons row (perfectly centered row)
 st.markdown("<div class='button-row-wrap'><div class='button-row-inner'>", unsafe_allow_html=True)
