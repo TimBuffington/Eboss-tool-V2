@@ -38,7 +38,7 @@ st.markdown(
         padding: 10px 20px;
         transition: box-shadow 0.3s ease;
         width: 100%;
-        margin: 0; /* Remove margin to minimize gap */
+        margin: 0;
     }}
     button:hover {{
         box-shadow: 0 0 10px {COLORS['Energy Green']};
@@ -55,12 +55,15 @@ st.markdown(
         box-shadow: 0 0 10px {COLORS['Energy Green']};
     }}
     .logo-container {{
-        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         margin: 20px 0;
+        height: 150px; /* Added height to center vertically */
     }}
     .logo {{
-        max-width: 200px; /* Restored to original size */
-        display: inline-block; /* Ensures centering within container */
+        max-width: 600px; /* Tripled from 200px */
+        display: block;
     }}
     .footer {{
         display: flex;
@@ -105,7 +108,10 @@ st.markdown(
     }}
     @media (max-width: 768px) {{
         .logo {{
-            max-width: 160px; /* Adjusted for mobile */
+            max-width: 480px; /* Tripled from 160px for mobile */
+        }}
+        .logo-container {{
+            height: 120px; /* Adjusted height for mobile */
         }}
         .button-container {{
             flex-direction: column;
@@ -146,7 +152,7 @@ if "page" not in st.session_state:
 # Corporate logo top center with container
 st.markdown("<div class='logo-container'>", unsafe_allow_html=True)
 try:
-    st.image("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png", use_container_width=False, width=200, output_format="PNG")
+    st.image("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png", use_container_width=False, width=600, output_format="PNG")
 except Exception as e:
     st.error(f"Logo failed to load: {e}. Please verify the file at https://github.com/TimBuffington/Eboss-tool-V2/tree/main/assets/logo.png.")
 st.markdown("</div>", unsafe_allow_html=True)
