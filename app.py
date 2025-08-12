@@ -196,8 +196,8 @@ st.markdown(
   max-width: 300px;
   flex: 0 0 auto;              
 }
-@media (max-width: 768px) {
-  .button-row-inner .button-block { min-width: 180px; }
+@media (max-width: 768px) (
+    .button-row-inner .button-block { min-width: 180px; }
 }
    </style>
     """ 
