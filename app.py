@@ -203,4 +203,171 @@ if "recommended_model" not in st.session_state:
 if "page" not in st.session_state:
     st.session_state.page = "Home"
 
-# ===== MAIN CENTER STACK (keeps everything on the s
+# ===== MAIN CENTER STACK (keeps everything on the same center axis) =====
+st.markdown("<div class='main-center-stack'>", unsafe_allow_html=True)
+
+# Logo
+st.markdown("<div class='logo-container'>", unsafe_allow_html=True)
+try:
+    st.image(
+        "https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png",
+        use_container_width=False,
+        width=200,
+        output_format="PNG",
+    )
+except Exception as e:
+    st.error(f"Logo failed to load: {e}. Please verify the file at https://github.com/TimBuffington/Eboss-tool-V2/tree/main/assets/logo.png.")
+st.markdown("</div>", unsafe_allow_html=True)
+
+# Title
+st.markdown("<h1>EBOSS® Size & Spec Tool</h1>", unsafe_allow_html=True)
+
+# Three link buttons row
+st.markdown("<div class='button-container'>", unsafe_allow_html=True)
+btn_cols = st.columns(3, gap="small")
+with btn_cols[0]:
+    st.markdown("<div class='button-block'>", unsafe_allow_html=True)
+    st.link_button("Request Demo", url="https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform?usp=header")
+    st.markdown("</div>", unsafe_allow_html=True)
+with btn_cols[1]:
+    st.markdown("<div class='button-block'>", unsafe_allow_html=True)
+    st.link_button("Request Training", url="https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header")
+    st.markdown("</div>", unsafe_allow_html=True)
+with btn_cols[2]:
+    st.markdown("<div class='button-block'>", unsafe_allow_html=True)
+    st.link_button("Learn how the EBOSS® works", url="https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g")
+    st.markdown("</div>", unsafe_allow_html=True)
+st.markdown("</div>", unsafe_allow_html=True)
+
+# Message row
+st.markdown("<div class='message-text'>Please Select a Configuration</div>", unsafe_allow_html=True)
+
+# Radio buttons (centered as a group)
+st.markdown("<div class='centered-radio'>", unsafe_allow_html=True)
+selected_option = st.radio(" ", ("Select a EBOSS® Model", "Use Load Based Suggested EBOSS® Model"), horizontal=True)
+st.session_state.selected_option = selected_option
+st.markdown("</div>", unsafe_allow_html=True)
+
+# Enter Data button (centered)
+st.markdown("<div class='centered-button'>", unsafe_allow_html=True)
+c1, c2, c3 = st.columns([1, 2, 1])
+with c2:
+    enter_clicked = st.button("Enter Data", key="enter_data_button")
+st.markdown("</div>", unsafe_allow_html=True)
+
+# ===== Dialog handling (correct st.dialog usage) =====
+if enter_clicked:
+    try:
+        print("Entering dialog...")
+        if st.session_state.selected_option == "Use Load Based Suggested EBOSS® Model":
+            st.session_state.recommended_model = "EB 70 kVA"  # Placeholder
+
+            @st.dialog("Recommended EBOSS® Configuration")
+            def show_recommended_dialog():
+                st.markdown(f"**Recommended EBOSS® Model:** {st.session_state.recommended_model}")
+                col1, col2, col3 = st.columns(3)
+                with col2:
+                    st.number_input("Max Continuous Load", min_value=0.0, step=0.1, key="max_continuous_load_input")
+                    st.number_input("Max Peak Load", min_value=0.0, step=0.1, key="max_peak_load_input")
+                    st.selectbox("Units", options=["kW", "Amps"], key="units_input")
+                    st.selectbox("Voltage", options=["120", "240", "208", "480"], key="voltage_input")
+
+                if st.button("Launch Tool", key="launch_tool_recommended"):
+                    max_continuous_load = float(st.session_state.get("max_continuous_load_input", 0.0))
+                    max_peak_load = float(st.session_state.get("max_peak_load_input", 0.0))
+                    units = st.session_state.get("units_input", "kW")
+                    voltage = st.session_state.get("voltage_input", "480")
+
+                    if units == "Amps":
+                        pf = 0.8
+                        st.session_state.user_inputs["actual_continuous_load"] = (max_continuous_load * float(voltage) * 1.732 * pf) / 1000
+                        st.session_state.user_inputs["actual_peak_load"] = (max_peak_load * float(voltage) * 1.732 * pf) / 1000
+                    else:
+                        st.session_state.user_inputs["actual_continuous_load"] = max_continuous_load
+                        st.session_state.user_inputs["actual_peak_load"] = max_peak_load
+
+                    st.session_state.user_inputs["max_continuous_load"] = max_continuous_load
+                    st.session_state.user_inputs["max_peak_load"] = max_peak_load
+                    st.session_state.user_inputs["units"] = units
+                    st.session_state.user_inputs["voltage"] = voltage
+                    st.session_state.show_calculator = True
+                    st.session_state.page = "Tool Selection"
+                    st.rerun()  # closes dialog
+
+            show_recommended_dialog()
+
+        else:
+            @st.dialog("EBOSS® Configuration")
+            def show_config_dialog():
+                st.markdown("Enter your EBOSS® configuration:")
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    st.selectbox("EBOSS® Model", options=["EB 25 kVA", "EB 70 kVA", "EB 125 kVA", "EB 220 kVA", "EB 400 kVA"], key="eboss_model_input")
+                    st.selectbox("EBOSS® Type", options=["Full Hybrid", "Power Module"], key="eboss_type_input")
+                    if st.session_state.get("eboss_type_input", "") == "Power Module":
+                        st.selectbox("Power Module Generator Size", options=["25 kVA", "70 kVA", "125 kVA", "220 kVA", "400 kVA"], key="power_module_gen_size_input")
+                with col2:
+                    st.number_input("Max Continuous Load", min_value=0.0, step=0.1, key="max_continuous_load_input")
+                    st.number_input("Max Peak Load", min_value=0.0, step=0.1, key="max_peak_load_input")
+                with col3:
+                    st.selectbox("Units", options=["kW", "Amps"], key="units_input")
+                    st.selectbox("Voltage", options=["120", "240", "208", "480"], key="voltage_input")
+
+                if st.button("Launch Tool", key="launch_tool_select"):
+                    st.session_state.user_inputs["eboss_model"] = st.session_state.get("eboss_model_input", "")
+                    st.session_state.user_inputs["eboss_type"] = st.session_state.get("eboss_type_input", "")
+                    st.session_state.user_inputs["power_module_gen_size"] = st.session_state.get("power_module_gen_size_input", "")
+                    st.session_state.user_inputs["max_continuous_load"] = st.session_state.get("max_continuous_load_input", 0.0)
+                    st.session_state.user_inputs["max_peak_load"] = st.session_state.get("max_peak_load_input", 0.0)
+                    st.session_state.user_inputs["units"] = st.session_state.get("units_input", "kW")
+                    st.session_state.user_inputs["voltage"] = st.session_state.get("voltage_input", "480")
+
+                    if st.session_state.user_inputs["units"] == "Amps":
+                        pf = 0.8
+                        st.session_state.user_inputs["actual_continuous_load"] = (st.session_state.user_inputs["max_continuous_load"] * float(st.session_state.user_inputs["voltage"]) * 1.732 * pf) / 1000
+                        st.session_state.user_inputs["actual_peak_load"] = (st.session_state.user_inputs["max_peak_load"] * float(st.session_state.user_inputs["voltage"]) * 1.732 * pf) / 1000
+                    else:
+                        st.session_state.user_inputs["actual_continuous_load"] = st.session_state.user_inputs["max_continuous_load"]
+                        st.session_state.user_inputs["actual_peak_load"] = st.session_state.user_inputs["max_peak_load"]
+
+                    st.session_state.show_calculator = True
+                    st.session_state.page = "Tool Selection"
+                    st.rerun()  # closes dialog
+
+            show_config_dialog()
+
+    except Exception as e:
+        print(f"Error in modal: {e}")
+        st.error(f"Error in modal: {str(e)}. Please check the console output.")
+
+# Close the center stack wrapper
+st.markdown("</div>", unsafe_allow_html=True)
+
+# Page routes (placeholders for now)
+if st.session_state.page == "Tool Selection":
+    st.header("Tool Selection")
+elif st.session_state.page == "Technical Specs":
+    st.header("Technical Specs")
+elif st.session_state.page == "Load Based Specs":
+    st.header("Load Based Specs")
+elif st.session_state.page == "EBOSS® to Standard Comparison":
+    st.header("EBOSS® to Standard Comparison")
+elif st.session_state.page == "Cost Analysis":
+    st.header("Cost Analysis")
+elif st.session_state.page == "Parallel Calculator":
+    st.header("Parallel Calculator")
+
+# Footer (centered)
+st.markdown(f"""
+<div class="footer">
+  <div class="footer-inner">
+    <span>EBOSS® Size & Spec Tool</span>
+    <span>|</span>
+    <a href="#" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform?usp=header', '_blank')">Request Demo</a>
+    <span>|</span>
+    <a href="#" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header', '_blank')">Request Training</a>
+    <span>|</span>
+    <a href="#" onclick="window.open('https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g', '_blank')">Learn how the EBOSS® works</a>
+  </div>
+</div>
+""", unsafe_allow_html=True)
