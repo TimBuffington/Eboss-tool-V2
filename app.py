@@ -31,6 +31,8 @@ st.markdown(
         background-color: {COLORS['Asphalt']} !important;
         color: {COLORS['Energy Green']} !important;
         border: 2px solid {COLORS['Alpine White']} !important;
+        font-family: Arial, sans-serif;
+        font-size: 16px;
         font-weight: bold !important;
         text-shadow: 0 0 6px {COLORS['Energy Green']};
         border-radius: 6px;
@@ -188,7 +190,8 @@ with st.container():
         st.markdown("</div>", unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
-# Message centered under buttons with increased size and glow effect
+col_buttons = st.columns(3, gap="small")  # or gap="none" in newer Streamlit
+# Mcol_buttons = st.columns(3, gap="small")  # or gap="none" in newer Streamlitessage centered under buttons with increased size and glow effect
 st.markdown(f"<div class='message-text'>Please Select a Configuration</div>", unsafe_allow_html=True)
 
 # Radio buttons centered under message
