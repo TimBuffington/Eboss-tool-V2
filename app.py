@@ -180,7 +180,7 @@ st.markdown(
         .centered-radio label {{ min-width: 160px; }}
         .button-row-inner .button-block {{ min-width: 180px; }}
     }}
-}
+)
 .main-center-stack { max-width: 840px; }
 .button-row-wrap {
   width: 100%;
