@@ -31,12 +31,12 @@ st.markdown(
     .main-center-stack {{
         display: flex;
         flex-direction: column;
-        align-items: center;      /* horizontal centering of all children */
+        align-items: center;
         width: 100%;
-        text-align: center;       /* center text inside children by default */
-        margin: 0 auto;           /* center the stack if it gets a max-width */
-        max-width: 960px;         /* keeps everything on one vertical axis */
-        gap: 12px;                /* small space between stacked elements */
+        text-align: center;
+        margin: 0 auto;
+        max-width: 840px;   /* tightened center column */
+        gap: 12px;
     }}
 
     .sidebar .sidebar-content {{
@@ -44,7 +44,7 @@ st.markdown(
         color: {COLORS['Alpine White']};
     }}
 
-    /* Buttons (including link_button look) */
+    /* Buttons */
     button {{
         background-color: {COLORS['Energy Green']};
         color: {COLORS['Asphalt']};
@@ -95,18 +95,24 @@ st.markdown(
         box-shadow: 0 0 10px {COLORS['Energy Green']};
     }}
 
-    /* Three-button row stays centered as a group */
-    .button-container {{
-        display: flex;
-        justify-content: center;
-        gap: 10px;
+    /* Three-button row perfectly centered */
+    .button-row-wrap {{
         width: 100%;
-        flex-wrap: wrap; /* responsive */
+        display: flex;
+        justify-content: center;   /* centers the inner row */
     }}
-    .button-block {{
-        flex: 1 1 220px;  /* responsive width */
-        max-width: 300px;
+    .button-row-inner {{
+        display: inline-flex;      /* shrink to content width */
+        gap: 10px;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        max-width: 100%;
+    }}
+    .button-row-inner .button-block {{
         min-width: 220px;
+        max-width: 300px;
+        flex: 0 0 auto;            /* don’t stretch */
     }}
 
     /* Radio group centered & evenly spaced */
@@ -135,12 +141,10 @@ st.markdown(
         background: rgba(0,0,0,0.25);
     }}
 
-    /* Enter Data button centered via column trick */
-    .centered-button {{
-        width: 100%;
-    }}
+    /* Enter Data button container */
+    .centered-button {{ width: 100%; }}
 
-    /* Footer perfectly centered */
+    /* Footer centered */
     .footer {{
         position: fixed;
         bottom: 0;
@@ -174,8 +178,14 @@ st.markdown(
         .logo {{ max-width: 160px; }}
         .button-block {{ max-width: 100%; min-width: 180px; }}
         .centered-radio label {{ min-width: 160px; }}
+        .button-row-inner .button-block {{ min-width: 180px; }}
     }}
+    </style>
+    """,
+    unsafe_allow_html=True
 )
+
+
 .main-center-stack { max-width: 840px; }
 .button-row-wrap {
   width: 100%;
