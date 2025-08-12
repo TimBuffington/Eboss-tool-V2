@@ -1,40 +1,17 @@
 import streamlit as st
-import math
-import webbrowser  # (kept if you use it later)
-from PIL import Image
-from io import BytesIO
-import requests
+import webbrowser
 
-def main():
-    # Download the logo image
-    logo_url = "https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png"
-    response = requests.get(logo_url)
-    logo_image = Image.open(BytesIO(response.content))
-
-    # Create the Streamlit app
-    st.set_page_config(layout="centered")
-    st.title("")  # Add an empty title to create space for the logo
-
-    # Display the logo centered at the top
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        st.image(logo_image, use_column_width=True)
-
-# ----------------------------
-# Theme Colors
-# ----------------------------
+# Color mappings based on provided hex codes
 COLORS = {
     "Asphalt": "#000000",
     "Concrete": "#939598",
     "Charcoal": "#636569",
     "Energy Green": "#81BD47",
     "Alpine White": "#FFFFFF",
-    "Light Grey": "#D3D3D3",
+    "Light Grey": "#D3D3D3"  # Added for border
 }
 
-# ----------------------------
-# Global Styles (CSS)
-# ----------------------------
+# Apply custom CSS for branding, full-screen background, mobile-friendly, and container styles
 st.markdown(
     f"""
     <style>
@@ -48,40 +25,10 @@ st.markdown(
         font-family: Arial, sans-serif;
         font-size: 16px;
     }}
-
-    /* ===== Centering stack for all main elements ===== */
-    .main-center-stack {{
-        display: flex;
-        flex-direction: column;
-        align-items: center;      /* horizontal centering of all children */
-        width: 100%;
-        text-align: center;       /* center text inside children by default */
-        margin: 0 auto;           /* center the stack if it gets a max-width */
-        max-width: 840px;         /* keeps everything on one vertical axis */
-        gap: 12px;                /* space between stacked elements */
-    }}
-
     .sidebar .sidebar-content {{
         background-color: {COLORS['Asphalt']};
         color: {COLORS['Alpine White']};
     }}
-
-    /* === LOGO === */
-    .logo-header {{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-bottom: 1rem;
-    }}
-    .logo-header img {{
-        width: 90%;
-        max-width: 360px;
-        height: auto;
-        filter: drop-shadow(0 2px 16px rgba(0,0,0,0.28));
-        border-radius: 0.4rem;
-    }}
-
-    /* Buttons (including link_button look) */
     button {{
         background-color: {COLORS['Energy Green']};
         color: {COLORS['Asphalt']};
@@ -95,11 +42,7 @@ st.markdown(
     button:hover {{
         box-shadow: 0 0 10px {COLORS['Energy Green']};
     }}
-
-    /* Inputs */
-    .stTextInput > div > div > input,
-    .stSelectbox > div > div > div,
-    .stNumberInput > div > div > input {{
+    .stTextInput > div > div > input, .stSelectbox > div > div > div, .stNumberInput > div > div > input {{
         background-color: {COLORS['Asphalt']};
         color: {COLORS['Alpine White']};
         border: 1px solid {COLORS['Light Grey']};
@@ -107,112 +50,38 @@ st.markdown(
         padding: 8px;
         transition: box-shadow 0.3s ease;
     }}
-    .stTextInput > div > div > input:hover,
-    .stSelectbox > div > div > div:hover,
-    .stNumberInput > div > div > input:hover {{
+    .stTextInput > div > div > input:hover, .stSelectbox > div > div > div:hover, .stNumberInput > div > div > input:hover {{
         box-shadow: 0 0 10px {COLORS['Energy Green']};
     }}
-
-    .message-text {{
-        font-size: 1.5em;
-        text-align: center;
-        transition: box-shadow 0.3s ease;
-        padding: 10px;
+    .logo {{
+        max-width: 150px;
+        display: block;
+        margin: 20px auto 0; /* Top center with margin */
     }}
-    .message-text:hover {{
-        box-shadow: 0 0 10px {COLORS['Energy Green']};
-    }}
-
-    /* Three-button row perfectly centered */
-    .button-row-wrap {{
-        width: 100%;
-        display: flex;
-        justify-content: center;   /* centers the inner row */
-    }}
-    .button-row-inner {{
-        display: inline-flex;      /* shrink to content width */
-        gap: 10px;
-        align-items: center;
-        justify-content: center;
-        flex-wrap: wrap;
-        max-width: 100%;
-    }}
-    .button-row-inner .button-block {{
-        min-width: 220px;
-        max-width: 300px;
-        flex: 0 0 auto;            /* don’t stretch */
-    }}
-
-    /* Radio group centered & evenly spaced */
-    .centered-radio {{
-        width: 100%;
-        display: flex;
-        justify-content: center;
-    }}
-    .centered-radio [role="radiogroup"] {{
-        display: flex !important;
-        justify-content: center !important;
-        align-items: center;
-        gap: 28px;
-        flex-wrap: wrap;
-        width: 100%;
-    }}
-    .centered-radio label {{
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 8px 12px;
-        border: 1px solid {COLORS['Light Grey']};
-        border-radius: 6px;
-        min-width: 220px;
-        text-align: center;
-        background: rgba(0,0,0,0.25);
-    }}
-
-    /* Enter Data button container */
-    .centered-button {{ width: 100%; }}
-
-    /* Footer centered */
     .footer {{
+        text-align: center;
+        color: {COLORS['Alpine White']};
+        padding: 10px;
+        background-color: {COLORS['Asphalt']};
         position: fixed;
         bottom: 0;
-        left: 0;
-        right: 0;
-        background-color: {COLORS['Asphalt']};
-        color: {COLORS['Alpine White']};
-        padding: 10px 12px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
         width: 100%;
-        z-index: 999;
     }}
-    .footer-inner {{
-        text-align: center;
-        display: inline-flex;
-        gap: 10px;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: center;
-        max-width: 100%;
-    }}
-    .footer-inner a {{
-        color: {COLORS['Alpine White']};
-        text-decoration: underline;
-    }}
-
-    /* Mobile tweaks */
     @media (max-width: 768px) {{
-        .button-row-inner .button-block {{ min-width: 180px; }}
+        .logo {{
+            max-width: 120px;
+        }}
+        button {{
+            width: 100%;
+            box-sizing: border-box;
+        }}
     }}
     </style>
     """,
     unsafe_allow_html=True
 )
 
-# ----------------------------
-# Session State
-# ----------------------------
+# Initialize session state
 if "user_inputs" not in st.session_state:
     st.session_state.user_inputs = {
         "eboss_model": "",
@@ -224,200 +93,75 @@ if "user_inputs" not in st.session_state:
         "voltage": "480",
         "actual_continuous_load": 0.0,
         "actual_peak_load": 0.0,
-        "job_name": "",
+        "job_name": ""
     }
 if "show_calculator" not in st.session_state:
     st.session_state.show_calculator = False
 if "selected_option" not in st.session_state:
-    st.session_state.selected_option = None
+    st.session_state.selected_option = "Select EBOSS® Model"
 if "recommended_model" not in st.session_state:
     st.session_state.recommended_model = ""
 if "page" not in st.session_state:
     st.session_state.page = "Home"
 
-# ----------------------------
-# Main Centered Stack
-# ----------------------------
-st.markdown("<div class='main-center-stack'>", unsafe_allow_html=True)
+# Corporate logo top center
+try:
+    st.image("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/ANA-ENERGY-LOGO-HORIZONTAL-WHITE-GREEN.png", use_column_width=False, width=150, output_format="PNG", caption="ANA Logo")
+except Exception as e:
+    st.error(f"Logo failed to load: {e}. Please check the URL or file availability.")
 
-# Logo (NEW: logo-header)
-#st.markdown(
- #   """
-  #  <div class="logo-header">
-   #     <img src="https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png" alt="EBOSS Logo">
- #   </div>
-  #  """,
-   # unsafe_allow_html=True,
-#)
+# Page title
+st.title("EBOSS® Size & Spec Tool")
 
-# Title
+# Buttons for Google Docs and YouTube
+col_buttons = st.columns(1)
+with col_buttons[0]:
+    if st.button("Request Demo", key="demo_button"):
+        try:
+            webbrowser.open_new_tab("https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform")
+            st.success("Opening Demo form...")
+        except Exception as e:
+            st.error(f"Failed to open Demo link: {e}. Please check your browser settings or internet connection.")
+    if st.button("Request Training", key="training_button"):
+        try:
+            webbrowser.open_new_tab("https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform")
+            st.success("Opening Training form...")
+        except Exception as e:
+            st.error(f"Failed to open Training link: {e}. Please check your browser settings or internet connection.")
+    if st.button("Learn how the EBOSS® works", key="youtube_button"):
+        try:
+            webbrowser.open_new_tab("https://youtu.be/0Om2qO-zZfM")
+            st.success("Opening YouTube video...")
+        except Exception as e:
+            st.error(f"Failed to open YouTube link: {e}. Please check your browser settings or internet connection.")
 
-st.markdown("<center><h1>EBOSS® Size & Spec Tool</h1></center>", unsafe_allow_html=True)
+# Radio buttons for EBOSS® option
+st.session_state.selected_option = st.radio("Choose EBOSS® Configuration:", ("Select EBOSS® Model", "Get Recommended EBOSS® Model"))
 
-#t.markdown("<center>Please Select a Configuration</center>", unsafe_allow_html=True)
+# Text
+st.write("Choose a page or tool and click Enter Data to proceed.")
 
-# Three link buttons row (perfectly centered row)
-st.markdown("<div class='button-row-wrap'><div class='button-row-inner'>", unsafe_allow_html=True)
-col1, col2, col3 = st.columns(3, gap="small")
-with col1:
-    st.markdown("<div class='button-block'>", unsafe_allow_html=True)
-    st.link_button(
-        "Request Demo",
-        url="https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform?usp=header",
-    )
-    st.markdown("</div>", unsafe_allow_html=True)
-with col2:
-    st.markdown("<div class='button-block'>", unsafe_allow_html=True)
-    st.link_button(
-        "Request Training",
-        url="https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header",
-    )
-    st.markdown("</div>", unsafe_allow_html=True)
-with col3:
-    st.markdown("<div class='button-block'>", unsafe_allow_html=True)
-    st.link_button(
-        "Learn how the EBOSS® works",
-        url="https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g",
-    )
-    st.markdown("</div>", unsafe_allow_html=True)
-st.markdown("</div></div>", unsafe_allow_html=True)
-
-# Message
-st.markdown("<center><h2>Please Select a Configuration</h2></center>", unsafe_allow_html=True)
-# Radio buttons
-# Center the radio buttons horizontally
-st.markdown("<div style='display: flex; justify-content: center;'>", unsafe_allow_html=True)
-selected_option = st.radio(" ", ("Select a EBOSS® Model", "Use Load Based Suggested EBOSS® Model"), horizontal=True)
-st.markdown("</div>", unsafe_allow_html=True)
-
-# Handle the case where no option is selected
-if selected_option is not None:
-    st.session_state.selected_option = selected_option
-else:
-    st.session_state.selected_option = None
-
-# Center the "Enter Data" button
-st.markdown("<div style='display: flex; justify-content: center;'>", unsafe_allow_html=True)
-enter_clicked = st.button("Enter Data", key="enter_data_button")
-st.markdown("</div>", unsafe_allow_html=True)
-# ----------------------------
-# Dialogs (correct usage with decorator)
-# ----------------------------
-if enter_clicked:
+# Enter Data button with modal
+if st.button("Enter Data"):
     try:
-        if st.session_state.selected_option == "Use Load Based Suggested EBOSS® Model":
+        if st.session_state.selected_option == "Get Recommended EBOSS® Model":
             st.session_state.recommended_model = "EB 70 kVA"  # Placeholder
-
-            @st.dialog("Recommended EBOSS® Configuration")
-            def show_recommended_dialog():
-                st.markdown(f"**Recommended EBOSS® Model:** {st.session_state.recommended_model}")
-                col1, col2, col3 = st.columns(3)
-                with col2:
-                    st.number_input("Max Continuous Load", min_value=0.0, step=0.1, key="max_continuous_load_input")
-                    st.number_input("Max Peak Load", min_value=0.0, step=0.1, key="max_peak_load_input")
-                    st.selectbox("Units", options=["kW", "Amps"], key="units_input")
-                    st.selectbox("Voltage", options=["120", "240", "208", "480"], key="voltage_input")
-
-                if st.button("Launch Tool", key="launch_tool_recommended"):
-                    max_continuous_load = float(st.session_state.get("max_continuous_load_input", 0.0))
-                    max_peak_load = float(st.session_state.get("max_peak_load_input", 0.0))
-                    units = st.session_state.get("units_input", "kW")
-                    voltage = st.session_state.get("voltage_input", "480")
-
-                    if units == "Amps":
-                        pf = 0.8
-                        st.session_state.user_inputs["actual_continuous_load"] = (max_continuous_load * float(voltage) * 1.732 * pf) / 1000
-                        st.session_state.user_inputs["actual_peak_load"] = (max_peak_load * float(voltage) * 1.732 * pf) / 1000
-                    else:
-                        st.session_state.user_inputs["actual_continuous_load"] = max_continuous_load
-                        st.session_state.user_inputs["actual_peak_load"] = max_peak_load
-
-                    st.session_state.user_inputs["max_continuous_load"] = max_continuous_load
-                    st.session_state.user_inputs["max_peak_load"] = max_peak_load
-                    st.session_state.user_inputs["units"] = units
-                    st.session_state.user_inputs["voltage"] = voltage
-                    st.session_state.show_calculator = True
-                    st.session_state.page = "Tool Selection"
-                    st.rerun()  # close dialog
-
-            show_recommended_dialog()
-
-        else:
-            @st.dialog("EBOSS® Configuration")
-            def show_config_dialog():
-                st.markdown("Enter your EBOSS® configuration:")
-                col1, col2, col3 = st.columns(3)
-                with col1:
-                    st.selectbox("EBOSS® Model", options=["EB 25 kVA", "EB 70 kVA", "EB 125 kVA", "EB 220 kVA", "EB 400 kVA"], key="eboss_model_input")
-                    st.selectbox("EBOSS® Type", options=["Full Hybrid", "Power Module"], key="eboss_type_input")
-                    if st.session_state.get("eboss_type_input", "") == "Power Module":
-                        st.selectbox("Power Module Generator Size", options=["25 kVA", "70 kVA", "125 kVA", "220 kVA", "400 kVA"], key="power_module_gen_size_input")
-                with col2:
-                    st.number_input("Max Continuous Load", min_value=0.0, step=0.1, key="max_continuous_load_input")
-                    st.number_input("Max Peak Load", min_value=0.0, step=0.1, key="max_peak_load_input")
-                with col3:
-                    st.selectbox("Units", options=["kW", "Amps"], key="units_input")
-                    st.selectbox("Voltage", options=["120", "240", "208", "480"], key="voltage_input")
-
-                if st.button("Launch Tool", key="launch_tool_select"):
-                    st.session_state.user_inputs["eboss_model"] = st.session_state.get("eboss_model_input", "")
-                    st.session_state.user_inputs["eboss_type"] = st.session_state.get("eboss_type_input", "")
-                    st.session_state.user_inputs["power_module_gen_size"] = st.session_state.get("power_module_gen_size_input", "")
-                    st.session_state.user_inputs["max_continuous_load"] = st.session_state.get("max_continuous_load_input", 0.0)
-                    st.session_state.user_inputs["max_peak_load"] = st.session_state.get("max_peak_load_input", 0.0)
-                    st.session_state.user_inputs["units"] = st.session_state.get("units_input", "kW")
-                    st.session_state.user_inputs["voltage"] = st.session_state.get("voltage_input", "480")
-
-                    if st.session_state.user_inputs["units"] == "Amps":
-                        pf = 0.8
-                        st.session_state.user_inputs["actual_continuous_load"] = (st.session_state.user_inputs["max_continuous_load"] * float(st.session_state.user_inputs["voltage"]) * 1.732 * pf) / 1000
-                        st.session_state.user_inputs["actual_peak_load"] = (st.session_state.user_inputs["max_peak_load"] * float(st.session_state.user_inputs["voltage"]) * 1.732 * pf) / 1000
-                    else:
-                        st.session_state.user_inputs["actual_continuous_load"] = st.session_state.user_inputs["max_continuous_load"]
-                        st.session_state.user_inputs["actual_peak_load"] = st.session_state.user_inputs["max_peak_load"]
-
-                    st.session_state.show_calculator = True
-                    st.session_state.page = "Tool Selection"
-                    st.rerun()  # close dialog
-
-            show_config_dialog()
-
+            with st.dialog("Recommended EBOSS® Configuration"):
+                st.write(f"Recommended EBOSS® Model: {st.session_state.recommended_model}")
+                # Stop here as requested
+        else:  # Select EBOSS® Model
+            with st.dialog("EBOSS® Configuration"):
+                st.write("Enter your EBOSS® configuration:")
+                # Stop here as requested
     except Exception as e:
-        print(f"Error in modal: {e}")
-        st.error(f"Error in modal: {str(e)}. Please check the console output.")
+        st.error(f"TypeError or other error in modal: {e}. Please report this issue.")
 
-# ----------------------------
-# Page routes (placeholders)
-# ----------------------------
-if st.session_state.page == "Tool Selection":
-    st.header("Tool Selection")
-elif st.session_state.page == "Technical Specs":
-    st.header("Technical Specs")
-elif st.session_state.page == "Load Based Specs":
-    st.header("Load Based Specs")
-elif st.session_state.page == "EBOSS® to Standard Comparison":
-    st.header("EBOSS® to Standard Comparison")
-elif st.session_state.page == "Cost Analysis":
-    st.header("Cost Analysis")
-elif st.session_state.page == "Parallel Calculator":
-    st.header("Parallel Calculator")
-
-# ----------------------------
-# Footer
-# ----------------------------
-st.markdown(
-    f"""
-    <div class="footer">
-      <div class="footer-inner">
-        <span>EBOSS® Size & Spec Tool</span>
-        <span>|</span>
-        <a href="#" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform?usp=header', '_blank')">Request Demo</a>
-        <span>|</span>
-        <a href="#" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header', '_blank')">Request Training</a>
-        <span>|</span>
-        <a href="#" onclick="window.open('https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g', '_blank')">Learn how the EBOSS® works</a>
-      </div>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
+# Footer with links (placeholder for other pages)
+st.markdown(f"""
+<div class="footer">
+EBOSS® Size & Spec Tool | 
+<a href="#" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform?usp=header', '_blank')">Request Demo</a> |
+<a href="#" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header', '_blank')">Request Training</a> |
+<a href="#" onclick="window.open('https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g', '_blank')">Learn how the EBOSS® works</a>
+</div>
+""", unsafe_allow_html=True)
