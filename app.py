@@ -26,13 +26,6 @@ st.markdown(
         font-family: Arial, sans-serif;
         font-size: 16px;
     }}
-
-    /* ===== Sidebar ===== */
-    .sidebar .sidebar-content {{
-        background-color: {COLORS['Asphalt']};
-        color: {COLORS['Alpine White']};
-    }}
-
     /* ===== Buttons (Streamlit + Link Buttons) ===== */
     button, .stButton button, .stLinkButton > a {{
         background-color: {COLORS['Asphalt']} !important;
@@ -41,13 +34,13 @@ st.markdown(
         font-weight: bold !important;
         text-shadow: 0 0 6px {COLORS['Energy Green']};
         border-radius: 6px;
-        padding: 12px 20px;
+        padding: 6px 10px;
         transition: box-shadow 0.3s ease, transform 0.2s ease;
         width: 100%;
         margin: 5px 0;
     }}
     button:hover, .stButton button:hover, .stLinkButton > a:hover {{
-        box-shadow: 0 0 20px {COLORS['Energy Green']};
+        box-shadow: 0 0 30px {COLORS['Energy Green']};
         transform: translateY(-1px);
     }}
 
@@ -85,7 +78,7 @@ st.markdown(
         display: flex;
         justify-content: center;
         align-items: center;
-        margin: 20px 0;
+        margin: 2px 0;
         height: 150px;
     }}
     .logo {{
