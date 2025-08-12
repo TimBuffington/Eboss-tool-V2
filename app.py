@@ -9,7 +9,8 @@ COLORS = {
     "Charcoal": "#636569",
     "Energy Green": "#81BD47",
     "Alpine White": "#FFFFFF",
-    "Light Grey": "#D3D3D3"  # Added for border
+    "Light Grey": "#D3D3D3" 
+    "Black": "#000000" 
 }
 
 # Apply custom CSS for branding, full-screen background, mobile-friendly, and container styles
