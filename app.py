@@ -65,19 +65,18 @@ st.markdown(
         max-width: 450px; /* Tripled from 200px */
         display: block;
     }}
-    ..footer {{
+   .footer {{
     position: fixed;
     bottom: 0;
-    left: 50%;
-    transform: translateX(-50%); /* truly center container */
+    left: 0;
+    right: 0;
     background-color: black;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px 20px;
-    border-radius: 8px; /* optional for style */
-    max-width: 900px;   /* prevents it from being too wide */
-    width: 100%;
+    justify-content: center; /* center horizontally */
+    align-items: center;     /* center vertically */
+    padding: 10px;
+}}
+
 }}
 
     }}
@@ -156,7 +155,7 @@ if "page" not in st.session_state:
 # Corporate logo top center with container
 st.markdown("<div class='logo-container'>", unsafe_allow_html=True)
 try:
-    st.image("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png", use_container_width=False, width=600, output_format="PNG")
+    st.image("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png", use_container_width=False, width=450, output_format="PNG")
 except Exception as e:
     st.error(f"Logo failed to load: {e}. Please verify the file at https://github.com/TimBuffington/Eboss-tool-V2/tree/main/assets/logo.png.")
 st.markdown("</div>", unsafe_allow_html=True)
