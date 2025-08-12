@@ -41,7 +41,7 @@ st.markdown(
         margin: 5px 0;
     }}
     button:hover {{
-        box-shadow: 0 0 10px {COLORS['Energy Green']};
+        box-shadow: 0 0 20px {COLORS['Energy Green']};
     }}
     .stTextInput > div > div > input, .stSelectbox > div > div > div, .stNumberInput > div > div > input {{
         background-color: {COLORS['Asphalt']};
@@ -49,14 +49,14 @@ st.markdown(
         border: 1px solid {COLORS['Light Grey']};
         border-radius: 5px;
         padding: 8px;
-        transition: box-shadow 0.3s ease;
+        box-shadow: 0 0 20px {COLORS['Energy Green']};
     }}
     .stTextInput > div > div > input:hover, .stSelectbox > div > div > div:hover, .stNumberInput > div > div > input:hover {{
         box-shadow: 0 0 10px {COLORS['Energy Green']};
     }}
     .logo-container {{
         text-align: center;
-        margin: 20px 0;
+        margin: 5px 0;
     }}
     .logo {{
         max-width: 200px; /* Restored to original size */
@@ -77,7 +77,7 @@ st.markdown(
     .button-container {{
         display: flex;
         justify-content: center;
-        gap: 5px; /* Reduced gap for closer spacing */
+        gap: 2px; /* Reduced gap for closer spacing */
         width: 100%;
     }}
     .button-block {{
@@ -146,7 +146,7 @@ if "page" not in st.session_state:
 # Corporate logo top center with container
 st.markdown("<div class='logo-container'>", unsafe_allow_html=True)
 try:
-    st.image("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png", use_container_width=False, width=200, output_format="PNG")
+    st.image("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png", use_container_width=False, width=300, output_format="PNG")
 except Exception as e:
     st.error(f"Logo failed to load: {e}. Please verify the file at https://github.com/TimBuffington/Eboss-tool-V2/tree/main/assets/logo.png.")
 st.markdown("</div>", unsafe_allow_html=True)
