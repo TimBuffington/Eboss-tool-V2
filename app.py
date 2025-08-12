@@ -59,26 +59,22 @@ st.markdown(
         justify-content: center;
         align-items: center;
         margin: 2px 0;
-        height: 150px; /* Added height to center vertically */
+        height: 180px; /* Adjusted height for 600px logo */
     }}
     .logo {{
-        max-width: 450px; /* Tripled from 200px */
+        max-width: 600px; /* Tripled from 200px as requested */
         display: block;
     }}
-   .footer {{
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: black;
-    display: flex;
-    justify-content: center; /* center horizontally */
-    align-items: center;     /* center vertically */
-    padding: 10px;
-}}
-
-}}
-
+    .footer {{
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: {COLORS['Asphalt']}; /* Corrected to match branding */
+        display: flex;
+        justify-content: center; /* Center horizontally */
+        align-items: center; /* Center vertically */
+        padding: 10px;
     }}
     .button-container {{
         display: flex;
@@ -114,7 +110,7 @@ st.markdown(
             max-width: 480px; /* Tripled from 160px for mobile */
         }}
         .logo-container {{
-            height: 120px; /* Adjusted height for mobile */
+            height: 144px; /* Adjusted height for mobile */
         }}
         .button-container {{
             flex-direction: column;
@@ -155,7 +151,7 @@ if "page" not in st.session_state:
 # Corporate logo top center with container
 st.markdown("<div class='logo-container'>", unsafe_allow_html=True)
 try:
-    st.image("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png", use_container_width=False, width=450, output_format="PNG")
+    st.image("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png", use_container_width=False, width=600, output_format="PNG")
 except Exception as e:
     st.error(f"Logo failed to load: {e}. Please verify the file at https://github.com/TimBuffington/Eboss-tool-V2/tree/main/assets/logo.png.")
 st.markdown("</div>", unsafe_allow_html=True)
