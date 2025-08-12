@@ -35,7 +35,7 @@ st.markdown(
         width: 100%;
         text-align: center;
         margin: 0 auto;
-        max-width: 840px;   /* tightened center column */
+        max-width: 840px;
         gap: 12px;
     }}
 
@@ -99,10 +99,10 @@ st.markdown(
     .button-row-wrap {{
         width: 100%;
         display: flex;
-        justify-content: center;   /* centers the inner row */
+        justify-content: center;
     }}
     .button-row-inner {{
-        display: inline-flex;      /* shrink to content width */
+        display: inline-flex;
         gap: 10px;
         align-items: center;
         justify-content: center;
@@ -112,7 +112,7 @@ st.markdown(
     .button-row-inner .button-block {{
         min-width: 220px;
         max-width: 300px;
-        flex: 0 0 auto;            /* don’t stretch */
+        flex: 0 0 auto;
     }}
 
     /* Radio group centered & evenly spaced */
@@ -180,7 +180,11 @@ st.markdown(
         .centered-radio label {{ min-width: 160px; }}
         .button-row-inner .button-block {{ min-width: 180px; }}
     }}
+    </style>
+    """,
+    unsafe_allow_html=True
 )
+{
 .main-center-stack { max-width: 840px; }
 .button-row-wrap {
   width: 100%;
@@ -200,9 +204,9 @@ st.markdown(
   max-width: 300px;
   flex: 0 0 auto;              
 }
-@media (max-width: 768px) (
+@media (max-width: 768px) {
     .button-row-inner .button-block { min-width: 180px; }
-}}
+}
    </style>
     """ 
     unsafe_allow_html=True
