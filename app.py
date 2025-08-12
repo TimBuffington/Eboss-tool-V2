@@ -58,24 +58,28 @@ st.markdown(
         display: flex;
         justify-content: center;
         align-items: center;
-        margin: 20px 0;
+        margin: 2px 0;
         height: 150px; /* Added height to center vertically */
     }}
     .logo {{
-        max-width: 600px; /* Tripled from 200px */
+        max-width: 450px; /* Tripled from 200px */
         display: block;
     }}
-    .footer {{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: {COLORS['Alpine White']};
-        padding: 10px;
-        background-color: {COLORS['Asphalt']};
-        position: fixed;
-        bottom: 0;
-        width: 100%;
-        max-width: 100%; /* Prevent overflow */
+    ..footer {{
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%); /* truly center container */
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 20px;
+    border-radius: 8px; /* optional for style */
+    max-width: 900px;   /* prevents it from being too wide */
+    width: 100%;
+}}
+
     }}
     .button-container {{
         display: flex;
