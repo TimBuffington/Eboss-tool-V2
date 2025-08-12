@@ -26,10 +26,13 @@ st.markdown(
         font-family: Arial, sans-serif;
         font-size: 16px;
     }}
+
     .sidebar .sidebar-content {{
         background-color: {COLORS['Asphalt']};
         color: {COLORS['Alpine White']};
     }}
+
+    /* Buttons (including link_button look) */
     button {{
         background-color: {COLORS['Energy Green']};
         color: {COLORS['Asphalt']};
@@ -43,7 +46,11 @@ st.markdown(
     button:hover {{
         box-shadow: 0 0 10px {COLORS['Energy Green']};
     }}
-    .stTextInput > div > div > input, .stSelectbox > div > div > div, .stNumberInput > div > div > input {{
+
+    /* Inputs */
+    .stTextInput > div > div > input,
+    .stSelectbox > div > div > div,
+    .stNumberInput > div > div > input {{
         background-color: {COLORS['Asphalt']};
         color: {COLORS['Alpine White']};
         border: 1px solid {COLORS['Light Grey']};
@@ -51,39 +58,21 @@ st.markdown(
         padding: 8px;
         transition: box-shadow 0.3s ease;
     }}
-    .stTextInput > div > div > input:hover, .stSelectbox > div > div > div:hover, .stNumberInput > div > div > input:hover {{
+    .stTextInput > div > div > input:hover,
+    .stSelectbox > div > div > div:hover,
+    .stNumberInput > div > div > input:hover {{
         box-shadow: 0 0 10px {COLORS['Energy Green']};
     }}
+
     .logo-container {{
         text-align: center;
         margin: 20px 0;
     }}
     .logo {{
-        max-width: 200px; /* Restored to original size */
-        display: inline-block; /* Ensures centering within container */
+        max-width: 200px;
+        display: inline-block;
     }}
-    .footer {{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: {COLORS['Alpine White']};
-        padding: 10px;
-        background-color: {COLORS['Asphalt']};
-        position: fixed;
-        bottom: 0;
-        width: 100%;
-        max-width: 100%; /* Prevent overflow */
-    }}
-    .button-container {{
-        display: flex;
-        justify-content: center;
-        gap: 5px; /* Reduced gap for closer spacing */
-        width: 100%;
-    }}
-    .button-block {{
-        flex: 1;
-        max-width: 300px; /* Equal width, adjustable for mobile */
-    }}
+
     .message-text {{
         font-size: 1.5em;
         text-align: center;
@@ -93,27 +82,92 @@ st.markdown(
     .message-text:hover {{
         box-shadow: 0 0 10px {COLORS['Energy Green']};
     }}
+
+    /* ----- NEW: Center & evenly space radio group ----- */
     .centered-radio {{
         display: flex;
-        justify-content: center;
+        justify-content: center; /* center the whole group container */
         width: 100%;
     }}
+    /* Streamlit wraps the radio options in a radiogroup; make it a centered flex row with even spacing */
+    .centered-radio [role="radiogroup"] {{
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center;
+        gap: 28px;               /* even spacing between the two options */
+        flex-wrap: wrap;         /* mobile resilience */
+        width: 100%;
+    }}
+    /* Optional: make option labels nicely clickable and evenly sized */
+    .centered-radio label {{
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 12px;
+        border: 1px solid {COLORS['Light Grey']};
+        border-radius: 6px;
+        min-width: 220px;        /* gives both options similar visual width */
+        text-align: center;
+        background: rgba(0,0,0,0.25);
+    }}
+
+    /* ----- NEW: Center the Enter Data button container ----- */
     .centered-button {{
         display: flex;
         justify-content: center;
         width: 100%;
     }}
+
+    /* Layout helpers for link buttons row */
+    .button-container {{
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+        width: 100%;
+    }}
+    .button-block {{
+        flex: 1;
+        max-width: 300px;
+    }}
+
+    /* Mobile tweaks */
     @media (max-width: 768px) {{
-        .logo {{
-            max-width: 160px; /* Adjusted for mobile */
-        }}
+        .logo {{ max-width: 160px; }}
         .button-container {{
             flex-direction: column;
             gap: 5px;
         }}
-        .button-block {{
-            max-width: 100%;
-        }}
+        .button-block {{ max-width: 100%; }}
+        .centered-radio label {{ min-width: 160px; }}
+    }}
+
+    /* ----- NEW: Footer perfectly centered ----- */
+    .footer {{
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: {COLORS['Asphalt']};
+        color: {COLORS['Alpine White']};
+        padding: 10px 12px;
+        display: flex;
+        justify-content: center;   /* center the inner wrapper */
+        align-items: center;
+        width: 100%;
+        z-index: 999;
+    }}
+    .footer-inner {{
+        text-align: center;        /* center text/links */
+        display: inline-flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        max-width: 100%;
+    }}
+    .footer-inner a {{
+        color: {COLORS['Alpine White']};
+        text-decoration: underline;
     }}
     </style>
     """,
@@ -146,7 +200,8 @@ if "page" not in st.session_state:
 # Corporate logo top center with container
 st.markdown("<div class='logo-container'>", unsafe_allow_html=True)
 try:
-    st.image("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png", use_container_width=False, width=200, output_format="PNG")
+    st.image("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png",
+             use_container_width=False, width=200, output_format="PNG")
 except Exception as e:
     st.error(f"Logo failed to load: {e}. Please verify the file at https://github.com/TimBuffington/Eboss-tool-V2/tree/main/assets/logo.png.")
 st.markdown("</div>", unsafe_allow_html=True)
@@ -175,15 +230,20 @@ with st.container():
 # Message centered under buttons with increased size and glow effect
 st.markdown(f"<div class='message-text'>Please Select a Configuration</div>", unsafe_allow_html=True)
 
-# Radio buttons centered under message
+# Radio buttons centered under message (evenly spaced and centered as a group)
 st.markdown("<div class='centered-radio'>", unsafe_allow_html=True)
 selected_option = st.radio(" ", ("Select a EBOSS® Model", "Use Load Based Suggested EBOSS® Model"), horizontal=True)
 st.session_state.selected_option = selected_option  # Update session state
 st.markdown("</div>", unsafe_allow_html=True)
 
-# Enter Data button centered under radio buttons
+# Enter Data button perfectly centered (column trick = robust)
 st.markdown("<div class='centered-button'>", unsafe_allow_html=True)
-if st.button("Enter Data", key="enter_data_button"):
+c1, c2, c3 = st.columns([1, 2, 1])
+with c2:
+    enter_clicked = st.button("Enter Data", key="enter_data_button")
+st.markdown("</div>", unsafe_allow_html=True)
+
+if enter_clicked:
     try:
         print("Entering dialog...")  # Debug log to console
         if st.session_state.selected_option == "Use Load Based Suggested EBOSS® Model":
@@ -273,14 +333,17 @@ elif st.session_state.page == "Parallel Calculator":
     st.header("Parallel Calculator")
     # Placeholder content
 
-# Footer with links
+# ----- NEW: Footer centered with inner wrapper -----
 st.markdown(f"""
 <div class="footer">
-    <span style="display: flex; justify-content: center; align-items: center; width: 100%;">
-        EBOSS® Size & Spec Tool | 
-        <a href="#" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform?usp=header', '_blank')">Request Demo</a> |
-        <a href="#" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header', '_blank')">Request Training</a> |
-        <a href="#" onclick="window.open('https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g', '_blank')">Learn how the EBOSS® works</a>
-    </span>
+  <div class="footer-inner">
+    <span>EBOSS® Size & Spec Tool</span>
+    <span>|</span>
+    <a href="#" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform?usp=header', '_blank')">Request Demo</a>
+    <span>|</span>
+    <a href="#" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header', '_blank')">Request Training</a>
+    <span>|</span>
+    <a href="#" onclick="window.open('https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g', '_blank')">Learn how the EBOSS® works</a>
+  </div>
 </div>
 """, unsafe_allow_html=True)
