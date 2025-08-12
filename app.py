@@ -252,7 +252,8 @@ st.markdown("<div class='main-center-stack'>", unsafe_allow_html=True)
 
 # Title
 
-st.markdown("<center><H1>EBOSS® Size & Spec Tool</H1></center>", unsafe_allow_html=False)
+st.markdown(<center><H1>"EBOSS® Size & Spec Tool"</H1></center>, unsafe_allow_html=False)
+
 #t.markdown("<center>Please Select a Configuration</center>", unsafe_allow_html=True)
 
 # Three link buttons row (perfectly centered row)
