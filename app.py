@@ -176,9 +176,31 @@ st.markdown(
         .centered-radio label {{ min-width: 160px; }}
     }}
     </style>
-    """,
+    """ 
     unsafe_allow_html=True
 )
+.main-center-stack { max-width: 840px; }
+.button-row-wrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;      
+}
+.button-row-inner {
+  display: inline-flex;        
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;             
+  max-width: 100%;
+}
+.button-row-inner .button-block {
+  min-width: 220px;
+  max-width: 300px;
+  flex: 0 0 auto;              
+}
+@media (max-width: 768px) {
+  .button-row-inner .button-block { min-width: 180px; }
+}
 
 # Initialize session state
 if "user_inputs" not in st.session_state:
@@ -223,21 +245,23 @@ st.markdown("</div>", unsafe_allow_html=True)
 st.markdown("<h1>EBOSS® Size & Spec Tool</h1>", unsafe_allow_html=True)
 
 # Three link buttons row
-st.markdown("<div class='button-container'>", unsafe_allow_html=True)
-btn_cols = st.columns(3, gap="small")
-with btn_cols[0]:
+# --- Three link buttons row (perfectly centered) ---
+st.markdown("<div class='button-row-wrap'><div class='button-row-inner'>", unsafe_allow_html=True)
+b1, b2, b3 = st.columns([1, 1, 1], gap="small")
+with b1:
     st.markdown("<div class='button-block'>", unsafe_allow_html=True)
     st.link_button("Request Demo", url="https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform?usp=header")
     st.markdown("</div>", unsafe_allow_html=True)
-with btn_cols[1]:
+with b2:
     st.markdown("<div class='button-block'>", unsafe_allow_html=True)
     st.link_button("Request Training", url="https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header")
     st.markdown("</div>", unsafe_allow_html=True)
-with btn_cols[2]:
+with b3:
     st.markdown("<div class='button-block'>", unsafe_allow_html=True)
     st.link_button("Learn how the EBOSS® works", url="https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g")
     st.markdown("</div>", unsafe_allow_html=True)
-st.markdown("</div>", unsafe_allow_html=True)
+st.markdown("</div></div>", unsafe_allow_html=True)
+
 
 # Message row
 st.markdown("<div class='message-text'>Please Select a Configuration</div>", unsafe_allow_html=True)
