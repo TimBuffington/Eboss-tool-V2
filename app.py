@@ -9,7 +9,7 @@ COLORS = {
     "Charcoal": "#636569",
     "Energy Green": "#81BD47",
     "Alpine White": "#FFFFFF",
-    "Light Grey": "#D3D3D3" 
+    "Light Grey": "#D3D3D3", 
     "Black": "#000000" 
 }
 
