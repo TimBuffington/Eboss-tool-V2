@@ -175,7 +175,7 @@ st.markdown{
         .button-block {{ max-width: 100%; min-width: 180px; }}
         .centered-radio label {{ min-width: 160px; }}
     }}
- 
+}
 )
 .main-center-stack { max-width: 840px; }
 .button-row-wrap {
