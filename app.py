@@ -524,7 +524,7 @@ with st.container():
 # --- Combined button rows ---
 st.markdown("<div class='button-container'>", unsafe_allow_html=True)
 col1, col2, col3 = st.columns(3)
-ue)
+
 
 # Configuration selection buttons
 # --- Combined button rows ---
