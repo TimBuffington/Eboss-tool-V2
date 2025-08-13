@@ -526,6 +526,8 @@ with st.container():
         if st.button("Request Training", key="btn_link_request_training"):
             st.markdown(
                 '<script>window.open("https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header","_blank");</script>',
+               width: 100px;
+            
                 unsafe_allow_html=True
             )
         st.markdown("</div>", unsafe_allow_html=True)
@@ -544,7 +546,6 @@ with st.container():
         "<div class='message-text' style='margin:12px 0;'>Please Select a EBOSS Configuration</div>",
         unsafe_allow_html=True
     )
-
     # Row 2 — in‑app action buttons (keys are unique)
     with col1:
         st.markdown("<div class='button-block'>", unsafe_allow_html=True)
