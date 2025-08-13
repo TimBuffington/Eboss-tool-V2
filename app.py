@@ -511,9 +511,6 @@ with st.container():
     # shared columns (ensures perfect alignment across rows)
     col1, col2, col3 = st.columns(3)
 
-    # Row 1 — external links (open new tab)
- col1, col2, col3 = st.columns(3)
-
 # Row 1 — external links (open new tab)
 with col1:
     with st.container():
