@@ -1,3 +1,4 @@
+```python
 import streamlit as st
 import math
 import logging
@@ -61,7 +62,7 @@ st.markdown(
     }}
     .button-block {{
         flex: 1;
-        max-width: 200px; /* Adjusted for 6 buttons */
+        max-width: 300px;
     }}
 
     /* ===== Inputs ===== */
@@ -499,10 +500,10 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 st.markdown("<h1 style='text-align: center;'>EBOSS® Size & Spec Tool</h1>", unsafe_allow_html=True)
 
-# All buttons in a single row
+# Link buttons (Request Demo, Request Training, YouTube)
 with st.container():
     st.markdown("<div class='button-container'>", unsafe_allow_html=True)
-    col_buttons = st.columns(6)
+    col_buttons = st.columns(3)
     with col_buttons[0]:
         st.markdown("<div class='button-block'>", unsafe_allow_html=True)
         if st.button("Request Demo", key="request_demo_button"):
@@ -518,15 +519,22 @@ with st.container():
         if st.button("Learn how the EBOSS® works", key="learn_eboss_button"):
             st.markdown('<script>window.open("https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g", "_blank")</script>', unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
-    with col_buttons[3]:
+    st.markdown("</div>", unsafe_allow_html=True)
+
+# Configuration selection buttons
+st.markdown("<div class='message-text'>Please Select a Configuration</div>", unsafe_allow_html=True)
+with st.container():
+    st.markdown("<div class='button-container'>", unsafe_allow_html=True)
+    col_buttons = st.columns(3)
+    with col_buttons[0]:
         st.markdown("<div class='button-block'>", unsafe_allow_html=True)
         manual_select_clicked = st.button("Manually Select EBOSS Type and Model", key="manual_select_button")
         st.markdown("</div>", unsafe_allow_html=True)
-    with col_buttons[4]:
+    with col_buttons[1]:
         st.markdown("<div class='button-block'>", unsafe_allow_html=True)
         load_based_clicked = st.button("Use Load Based Suggested EBOSS", key="load_based_button")
         st.markdown("</div>", unsafe_allow_html=True)
-    with col_buttons[5]:
+    with col_buttons[2]:
         st.markdown("<div class='button-block'>", unsafe_allow_html=True)
         fuel_efficiency_clicked = st.button("Use EBOSS Model Based on Max Fuel Efficiency", key="fuel_efficiency_button")
         st.markdown("</div>", unsafe_allow_html=True)
@@ -613,7 +621,7 @@ if load_based_clicked:
             else:
                 launch_enabled = True
 
-            if st.button("Launch Tool", key="launch_tool_load_based", disabled=not launch_enabled):
+            if st.button("Launch Tool", key="load_based_button", disabled=not launch_enabled):
                 if units == "Amps":
                     pf = 0.8
                     st.session_state.user_inputs["actual_continuous_load"] = (max_continuous_load * float(voltage) * 1.732 * pf) / 1000
@@ -669,7 +677,7 @@ if fuel_efficiency_clicked:
             else:
                 launch_enabled = True
 
-            if st.button("Launch Tool", key="launch_tool_fuel_efficiency", disabled=not launch_enabled):
+            if st.button("Launch Tool", key="fuel_efficiency_button", disabled=not launch_enabled):
                 if units == "Amps":
                     pf = 0.8
                     st.session_state.user_inputs["actual_continuous_load"] = (max_continuous_load * float(voltage) * 1.732 * pf) / 1000
@@ -790,3 +798,4 @@ st.markdown(f"""
     </span>
 </div>
 """, unsafe_allow_html=True)
+```
