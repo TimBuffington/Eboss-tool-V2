@@ -526,9 +526,7 @@ with st.container():
         if st.button("Request Training", key="btn_link_request_training"):
             st.markdown(
                 '<script>window.open("https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header","_blank");</script>',
-               width: 100px;
-            
-                unsafe_allow_html=True
+                 unsafe_allow_html=True
             )
         st.markdown("</div>", unsafe_allow_html=True)
 
