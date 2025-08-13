@@ -512,62 +512,57 @@ with st.container():
     col1, col2, col3 = st.columns(3)
 
     # Row 1 — external links (open new tab)
-    with col1:
-        st.markdown("<div class='button-block'>", unsafe_allow_html=True)
+ col1, col2, col3 = st.columns(3)
+
+# Row 1 — external links (open new tab)
+with col1:
+    with st.container():
         if st.button("Request Demo", key="btn_link_request_demo"):
             st.markdown(
                 '<script>window.open("https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform?usp=header","_blank");</script>',
                 unsafe_allow_html=True
             )
-        st.markdown("</div>", unsafe_allow_html=True)
 
-    with col2:
-        st.markdown("<div class='button-block'>", unsafe_allow_html=True)
+with col2:
+    with st.container():
         if st.button("Request Training", key="btn_link_request_training"):
             st.markdown(
                 '<script>window.open("https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header","_blank");</script>',
-                 unsafe_allow_html=True
+                unsafe_allow_html=True
             )
-        st.markdown("</div>", unsafe_allow_html=True)
 
-    with col3:
-        st.markdown("<div class='button-block'>", unsafe_allow_html=True)
+with col3:
+    with st.container():
         if st.button("Learn how the EBOSS® works", key="btn_link_learn_eboss"):
             st.markdown(
                 '<script>window.open("https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g","_blank");</script>',
                 unsafe_allow_html=True
             )
-        st.markdown("</div>", unsafe_allow_html=True)
 
-    # ----- centered text BETWEEN the two rows -----
-    st.markdown(
-        "<div class='message-text' style='margin:12px 0;'>Please Select a EBOSS Configuration</div>",
-        unsafe_allow_html=True
-    )
-    # Row 2 — in‑app action buttons (keys are unique)
-    with col1:
-        st.markdown("<div class='button-block'>", unsafe_allow_html=True)
+# ----- centered text BETWEEN the two rows -----
+st.markdown(
+    "<div class='message-text' style='margin:12px 0;'>Please Select a EBOSS Configuration</div>",
+    unsafe_allow_html=True
+)
+
+# Row 2 — in‑app action buttons (keys are unique)
+with col1:
+    with st.container():
         manual_select_clicked = st.button(
             "Manually Select EBOSS Type and Model", key="btn_manual_select"
         )
-        st.markdown("</div>", unsafe_allow_html=True)
 
-    with col2:
-        st.markdown("<div class='button-block'>", unsafe_allow_html=True)
+with col2:
+    with st.container():
         load_based_clicked = st.button(
             "Use Load Based Suggested EBOSS", key="btn_load_based"
         )
-        st.markdown("</div>", unsafe_allow_html=True)
 
-    with col3:
-        st.markdown("<div class='button-block'>", unsafe_allow_html=True)
+with col3:
+    with st.container():
         fuel_efficiency_clicked = st.button(
             "Use EBOSS Model Based on Max Fuel Efficiency", key="btn_fuel_eff"
         )
-        st.markdown("</div>", unsafe_allow_html=True)
-
-    st.markdown("</div>", unsafe_allow_html=True)  # end flex wrapper
-
 
 # Dialog logic
 if manual_select_clicked:
