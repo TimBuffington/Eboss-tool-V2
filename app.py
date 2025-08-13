@@ -192,8 +192,8 @@ with st.container():
 
 col_buttons = st.columns(3, gap="small")  # or gap="none" in newer Streamlit
 # Mcol_buttons = st.columns(3, gap="small")  # or gap="none" in newer Streamlitessage centered under buttons with increased size and glow effect
-st.markdown(f"<div class='message-text'>Please Select a Configuration</div>", unsafe_allow_html=True)
-
+st.markdown("<h2 style='text-align: center;'>Please Select a Configuration</h2>", unsafe_allow_html=True)
+<h1 style='text-align: center;
 # Radio buttons centered under message
 st.markdown("<div class='centered-radio'>", unsafe_allow_html=True)
 selected_option = st.radio(" ", ("Select a EBOSS® Model", "Use Load Based Suggested EBOSS® Model"), horizontal=True)
