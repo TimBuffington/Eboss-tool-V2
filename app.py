@@ -500,26 +500,6 @@ st.markdown("</div>", unsafe_allow_html=True)
 st.markdown("<h1 style='text-align: center;'>EBOSS® Size & Spec Tool</h1>", unsafe_allow_html=True)
 
 # Link buttons (Request Demo, Request Training, YouTube)
-with st.container():
-    st.markdown("<div class='button-container'>", unsafe_allow_html=True)
-    col_buttons = st.columns(3)
-    with col_buttons[0]:
-        st.markdown("<div class='button-block'>", unsafe_allow_html=True)
-        if st.button("Request Demo", key="request_demo_button"):
-            st.markdown('<script>window.open("https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform?usp=header", "_blank")</script>', unsafe_allow_html=True)
-        st.markdown("</div>", unsafe_allow_html=True)
-    with col_buttons[1]:
-        st.markdown("<div class='button-block'>", unsafe_allow_html=True)
-        if st.button("Request Training", key="request_training_button"):
-            st.markdown('<script>window.open("https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header", "_blank")</script>', unsafe_allow_html=True)
-        st.markdown("</div>", unsafe_allow_html=True)
-    with col_buttons[2]:
-        st.markdown("<div class='button-block'>", unsafe_allow_html=True)
-        if st.button("Learn how the EBOSS® works", key="learn_eboss_button"):
-            st.markdown('<script>window.open("https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g", "_blank")</script>', unsafe_allow_html=True)
-        st.markdown("</div>", unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True)
-
 # Configuration selection buttons
 # --- Combined button rows ---
 st.markdown("<div class='button-container'>", unsafe_allow_html=True)
