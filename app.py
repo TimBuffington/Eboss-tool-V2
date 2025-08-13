@@ -1,5 +1,5 @@
+```python
 import streamlit as st
-import webbrowser
 import math
 import logging
 import pandas as pd
@@ -33,8 +33,8 @@ st.markdown(
         font-family: Arial, sans-serif;
         font-size: 16px;
     }}
-    /* ===== Buttons (Streamlit + Link Buttons) ===== */
-    button, .stButton button, .stLinkButton > a {{
+    /* ===== Buttons ===== */
+    button, .stButton button {{
         background-color: {COLORS['Asphalt']} !important;
         color: {COLORS['Energy Green']} !important;
         border: 2px solid {COLORS['Alpine White']} !important;
@@ -48,7 +48,7 @@ st.markdown(
         width: 100%;
         margin: 0px 0;
     }}
-    button:hover, .stButton button:hover, .stLinkButton > a:hover {{
+    button:hover, .stButton button:hover {{
         box-shadow: 0 0 30px {COLORS['Energy Green']};
         transform: translateY(-1px);
     }}
@@ -62,7 +62,7 @@ st.markdown(
     }}
     .button-block {{
         flex: 1;
-        max-width: 300px;
+        max-width: 200px; /* Adjusted for 6 buttons */
     }}
 
     /* ===== Inputs ===== */
@@ -245,7 +245,6 @@ def interpolate_gph(generator_kva, load_percent):
 
 def calculate_charge_rate(eboss_model, eboss_type, generator_kva=None, custom_rate=None):
     if custom_rate:
-        # Validate custom rate against model max
         model_max_charge_rates = {
             "EB25 kVA": 20,
             "EB70 kVA": 45,
@@ -255,11 +254,11 @@ def calculate_charge_rate(eboss_model, eboss_type, generator_kva=None, custom_ra
         }
         max_rate = model_max_charge_rates.get(eboss_model, float('inf'))
         if custom_rate > max_rate:
-            return None  # Invalid custom rate
+            return None
         return round(custom_rate, 1)
     
     if eboss_model not in EBOSS_LOAD_REFERENCE["battery_capacities"]:
-        return None  # Invalid model
+        return None
     
     generator_kw = 0
     if eboss_type == "Full Hybrid":
@@ -271,10 +270,10 @@ def calculate_charge_rate(eboss_model, eboss_type, generator_kva=None, custom_ra
         generator_kw = gen_kva * 0.8
         charge_rate = EBOSS_LOAD_REFERENCE["generator_sizes"].get(int(gen_kva), {}).get("pm_charge_rate", 0)
     else:
-        return None  # Invalid type or missing generator_kva
+        return None
     
     if charge_rate == 0:
-        return None  # No valid charge rate found
+        return None
     
     return round(charge_rate, 1)
 
@@ -501,36 +500,34 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 st.markdown("<h1 style='text-align: center;'>EBOSS® Size & Spec Tool</h1>", unsafe_allow_html=True)
 
+# All buttons in a single row
 with st.container():
     st.markdown("<div class='button-container'>", unsafe_allow_html=True)
-    col_buttons = st.columns(3)
+    col_buttons = st.columns(6)
     with col_buttons[0]:
         st.markdown("<div class='button-block'>", unsafe_allow_html=True)
-        st.link_button("Request Demo", url="https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform?usp=header")
+        if st.button("Request Demo", key="request_demo_button"):
+            st.markdown('<script>window.open("https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform?usp=header", "_blank")</script>', unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
     with col_buttons[1]:
         st.markdown("<div class='button-block'>", unsafe_allow_html=True)
-        st.link_button("Request Training", url="https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header")
+        if st.button("Request Training", key="request_training_button"):
+            st.markdown('<script>window.open("https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header", "_blank")</script>', unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
     with col_buttons[2]:
         st.markdown("<div class='button-block'>", unsafe_allow_html=True)
-        st.link_button("Learn how the EBOSS® works", url="https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g")
+        if st.button("Learn how the EBOSS® works", key="learn_eboss_button"):
+            st.markdown('<script>window.open("https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g", "_blank")</script>', unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True)
-
-st.markdown("<div class='message-text'>Please Select a Configuration</div>", unsafe_allow_html=True)
-with st.container():
-    st.markdown("<div class='button-container'>", unsafe_allow_html=True)
-    col_buttons = st.columns(3)
-    with col_buttons[0]:
+    with col_buttons[3]:
         st.markdown("<div class='button-block'>", unsafe_allow_html=True)
         manual_select_clicked = st.button("Manually Select EBOSS Type and Model", key="manual_select_button")
         st.markdown("</div>", unsafe_allow_html=True)
-    with col_buttons[1]:
+    with col_buttons[4]:
         st.markdown("<div class='button-block'>", unsafe_allow_html=True)
         load_based_clicked = st.button("Use Load Based Suggested EBOSS", key="load_based_button")
         st.markdown("</div>", unsafe_allow_html=True)
-    with col_buttons[2]:
+    with col_buttons[5]:
         st.markdown("<div class='button-block'>", unsafe_allow_html=True)
         fuel_efficiency_clicked = st.button("Use EBOSS Model Based on Max Fuel Efficiency", key="fuel_efficiency_button")
         st.markdown("</div>", unsafe_allow_html=True)
@@ -794,4 +791,4 @@ st.markdown(f"""
     </span>
 </div>
 """, unsafe_allow_html=True)
-
+```
