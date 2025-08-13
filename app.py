@@ -1,4 +1,3 @@
-```python
 import streamlit as st
 import math
 import logging
@@ -798,4 +797,3 @@ st.markdown(f"""
     </span>
 </div>
 """, unsafe_allow_html=True)
-```
