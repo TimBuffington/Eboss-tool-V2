@@ -80,7 +80,7 @@ st.markdown(
         display: flex;
         justify-content: center;
         align-items: center;
-        margin: 2px 0;
+        margin: 0x 0;
         height: 0px;
     }}
     .logo {{
