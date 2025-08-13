@@ -81,10 +81,10 @@ st.markdown(
         justify-content: center;
         align-items: center;
         margin: 2px 0;
-        height: 150px;
+        height: 0px;
     }}
     .logo {{
-        max-width: 600px;
+        max-width: autopx;
         display: block;
     }}
 
