@@ -521,23 +521,47 @@ with st.container():
     st.markdown("</div>", unsafe_allow_html=True)
 
 # Configuration selection buttons
-st.markdown("<div class='message-text'>Please Select a Configuration</div>", unsafe_allow_html=True)
-with st.container():
-    st.markdown("<div class='button-container'>", unsafe_allow_html=True)
-    col_buttons = st.columns(3)
-    with col_buttons[0]:
-        st.markdown("<div class='button-block'>", unsafe_allow_html=True)
-        manual_select_clicked = st.button("Manually Select EBOSS Type and Model", key="manual_select_button")
-        st.markdown("</div>", unsafe_allow_html=True)
-    with col_buttons[1]:
-        st.markdown("<div class='button-block'>", unsafe_allow_html=True)
-        load_based_clicked = st.button("Use Load Based Suggested EBOSS", key="load_based_button")
-        st.markdown("</div>", unsafe_allow_html=True)
-    with col_buttons[2]:
-        st.markdown("<div class='button-block'>", unsafe_allow_html=True)
-        fuel_efficiency_clicked = st.button("Use EBOSS Model Based on Max Fuel Efficiency", key="fuel_efficiency_button")
-        st.markdown("</div>", unsafe_allow_html=True)
+# --- Combined button rows ---
+st.markdown("<div class='button-container'>", unsafe_allow_html=True)
+col1, col2, col3 = st.columns(3)
+
+# Row 1 (links)
+with col1:
+    st.markdown("<div class='button-block'>", unsafe_allow_html=True)
+    if st.button("Request Demo", key="request_demo_button"):
+        st.markdown('<script>window.open("https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform?usp=header", "_blank")</script>', unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
+
+with col2:
+    st.markdown("<div class='button-block'>", unsafe_allow_html=True)
+    if st.button("Request Training", key="request_training_button"):
+        st.markdown('<script>window.open("https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header", "_blank")</script>', unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+with col3:
+    st.markdown("<div class='button-block'>", unsafe_allow_html=True)
+    if st.button("Learn how the EBOSS® works", key="learn_eboss_button"):
+        st.markdown('<script>window.open("https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g", "_blank")</script>', unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+# Row 2 (config options)
+with col1:
+    st.markdown("<div class='button-block'>", unsafe_allow_html=True)
+    manual_select_clicked = st.button("Manually Select EBOSS Type and Model", key="manual_select_button")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+with col2:
+    st.markdown("<div class='button-block'>", unsafe_allow_html=True)
+    load_based_clicked = st.button("Use Load Based Suggested EBOSS", key="load_based_button")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+with col3:
+    st.markdown("<div class='button-block'>", unsafe_allow_html=True)
+    fuel_efficiency_clicked = st.button("Use EBOSS Model Based on Max Fuel Efficiency", key="fuel_efficiency_button")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+st.markdown("</div>", unsafe_allow_html=True)
+
 
 # Dialog logic
 if manual_select_clicked:
