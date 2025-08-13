@@ -499,55 +499,54 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 st.markdown("<h1 style='text-align: center;'>EBOSS® Size & Spec Tool</h1>", unsafe_allow_html=True)
 
-# Link buttons (Request Demo, Request Training, YouTube)
-# Configuration selection buttons
-# --- Combined button rows ---
-st.markdown("<div class='button-container'>", unsafe_allow_html=True)
-col1, col2, col3 = st.columns(3)
+# --- Centered & aligned 2-row button layout ---
+with st.container():
+    st.markdown("<div style='display:flex;flex-direction:column;align-items:center;width:100%'>", unsafe_allow_html=True)
 
+    # Create columns once so both rows share the same widths
+    col1, col2, col3 = st.columns(3)
 
-# Configuration selection buttons
-# --- Combined button rows ---
-st.markdown("<div class='button-container'>", unsafe_allow_html=True)
-col1, col2, col3 = st.columns(3)
+    # Row 1 — link buttons
+    with col1:
+        st.link_button(
+            "Request Demo",
+            url="https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform?usp=header",
+            key="link_request_demo",
+        )
+    with col2:
+        st.link_button(
+            "Request Training",
+            url="https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header",
+            key="link_request_training",
+        )
+    with col3:
+        st.link_button(
+            "Learn how the EBOSS® works",
+            url="https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g",
+            key="link_learn_eboss",
+        )
 
-# Row 1 (links)
-with col1:
-    st.markdown("<div class='button-block'>", unsafe_allow_html=True)
-    if st.button("Request Demo", key="request_demo_button"):
-        st.markdown('<script>window.open("https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform?usp=header", "_blank")</script>', unsafe_allow_html=True)
+    # Spacer between rows
+    st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
+
+    # Row 2 — action buttons
+    with col1:
+        manual_select_clicked = st.button(
+            "Manually Select EBOSS Type and Model",
+            key="btn_manual_select",
+        )
+    with col2:
+        load_based_clicked = st.button(
+            "Use Load Based Suggested EBOSS",
+            key="btn_load_based",
+        )
+    with col3:
+        fuel_efficiency_clicked = st.button(
+            "Use EBOSS Model Based on Max Fuel Efficiency",
+            key="btn_fuel_eff",
+        )
+
     st.markdown("</div>", unsafe_allow_html=True)
-
-with col2:
-    st.markdown("<div class='button-block'>", unsafe_allow_html=True)
-    if st.button("Request Training", key="request_training_button"):
-        st.markdown('<script>window.open("https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header", "_blank")</script>', unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True)
-
-with col3:
-    st.markdown("<div class='button-block'>", unsafe_allow_html=True)
-    if st.button("Learn how the EBOSS® works", key="learn_eboss_button"):
-        st.markdown('<script>window.open("https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g", "_blank")</script>', unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True)
-
-# Row 2 (config options)
-with col1:
-    st.markdown("<div class='button-block'>", unsafe_allow_html=True)
-    manual_select_clicked = st.button("Manually Select EBOSS Type and Model", key="manual_select_button")
-    st.markdown("</div>", unsafe_allow_html=True)
-
-with col2:
-    st.markdown("<div class='button-block'>", unsafe_allow_html=True)
-    load_based_clicked = st.button("Use Load Based Suggested EBOSS", key="load_based_button")
-    st.markdown("</div>", unsafe_allow_html=True)
-
-with col3:
-    st.markdown("<div class='button-block'>", unsafe_allow_html=True)
-    fuel_efficiency_clicked = st.button("Use EBOSS Model Based on Max Fuel Efficiency", key="fuel_efficiency_button")
-    st.markdown("</div>", unsafe_allow_html=True)
-
-st.markdown("</div>", unsafe_allow_html=True)
-
 
 # Dialog logic
 if manual_select_clicked:
