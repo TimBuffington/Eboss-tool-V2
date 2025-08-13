@@ -500,53 +500,36 @@ st.markdown("</div>", unsafe_allow_html=True)
 st.markdown("<h1 style='text-align: center;'>EBOSS® Size & Spec Tool</h1>", unsafe_allow_html=True)
 
 # --- Centered & aligned 2-row button layout ---
+# --- Centered & aligned 3×2 button grid (works on all Streamlit versions) ---
 with st.container():
     st.markdown("<div style='display:flex;flex-direction:column;align-items:center;width:100%'>", unsafe_allow_html=True)
 
-    # Create columns once so both rows share the same widths
     col1, col2, col3 = st.columns(3)
 
-    # Row 1 — link buttons
+    # Row 1 — external links (open in new tab)
     with col1:
-        st.link_button(
-            "Request Demo",
-            url="https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform?usp=header",
-            key="link_request_demo",
-        )
+        if st.button("Request Demo", key="btn_link_request_demo"):
+            st.markdown('<script>window.open("https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform?usp=header","_blank");</script>', unsafe_allow_html=True)
     with col2:
-        st.link_button(
-            "Request Training",
-            url="https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header",
-            key="link_request_training",
-        )
+        if st.button("Request Training", key="btn_link_request_training"):
+            st.markdown('<script>window.open("https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header","_blank");</script>', unsafe_allow_html=True)
     with col3:
-        st.link_button(
-            "Learn how the EBOSS® works",
-            url="https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g",
-            key="link_learn_eboss",
-        )
+        if st.button("Learn how the EBOSS® works", key="btn_link_learn_eboss"):
+            st.markdown('<script>window.open("https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g","_blank");</script>', unsafe_allow_html=True)
 
-    # Spacer between rows
+    # small spacer
     st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
 
-    # Row 2 — action buttons
+    # Row 2 — in‑app actions (unique keys)
     with col1:
-        manual_select_clicked = st.button(
-            "Manually Select EBOSS Type and Model",
-            key="btn_manual_select",
-        )
+        manual_select_clicked = st.button("Manually Select EBOSS Type and Model", key="btn_manual_select")
     with col2:
-        load_based_clicked = st.button(
-            "Use Load Based Suggested EBOSS",
-            key="btn_load_based",
-        )
+        load_based_clicked = st.button("Use Load Based Suggested EBOSS", key="btn_load_based")
     with col3:
-        fuel_efficiency_clicked = st.button(
-            "Use EBOSS Model Based on Max Fuel Efficiency",
-            key="btn_fuel_eff",
-        )
+        fuel_efficiency_clicked = st.button("Use EBOSS Model Based on Max Fuel Efficiency", key="btn_fuel_eff")
 
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 # Dialog logic
 if manual_select_clicked:
