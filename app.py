@@ -1,3 +1,4 @@
+```python
 import streamlit as st
 import webbrowser
 import math
@@ -87,11 +88,11 @@ st.markdown(
         display: flex;
         justify-content: center;
         align-items: center;
-        margin: 0x 0;
+        margin: 0px 0;
         height: 0px;
     }}
     .logo {{
-        max-width: autopx;
+        max-width: auto;
         display: block;
     }}
 
@@ -144,8 +145,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
-# EBOSS Load Calculation Reference Data from file 2
+# EBOSS Load Calculation Reference Data
 EBOSS_LOAD_REFERENCE = {
     "battery_capacities": {
         "EB25 kVA": 15,
@@ -178,7 +178,7 @@ EBOSS_LOAD_REFERENCE = {
     }
 }
 
-# Standard Generator Data from file 2
+# Standard Generator Data
 STANDARD_GENERATOR_DATA = {
     "25 kVA / 20 kW": {
         "kva": 25, "kw": 20,
@@ -218,21 +218,7 @@ STANDARD_GENERATOR_DATA = {
     }
 }
 
-# Additional STANDARD_GENERATOR_DATA from file 2 (merged)
-STANDARD_GENERATOR_DATA.update({
-    "25 kVA / 20 kW": {
-        "kw": 20,
-        "fuel_consumption_gph": {"50%": 1.2, "75%": 1.7, "100%": 2.3},
-        "fuel_tank_gal": 38,
-        "co2_per_gal": 22.4,
-        "noise_level_db": 75,
-        "dimensions": "60\" x 24\" x 36\"",
-        "weight_lbs": 1850
-    },
-    # ... (similar for other sizes, assuming merge by overwriting if needed)
-})
-
-# Functions from file 2
+# Functions
 def interpolate_gph(generator_kva, load_percent):
     if load_percent > 1:
         load_percent = load_percent / 100
@@ -260,20 +246,37 @@ def interpolate_gph(generator_kva, load_percent):
 
 def calculate_charge_rate(eboss_model, eboss_type, generator_kva=None, custom_rate=None):
     if custom_rate:
-        return custom_rate
+        # Validate custom rate against model max
+        model_max_charge_rates = {
+            "EB25 kVA": 20,
+            "EB70 kVA": 45,
+            "EB125 kVA": 65,
+            "EB220 kVA": 125,
+            "EB400 kVA": 220
+        }
+        max_rate = model_max_charge_rates.get(eboss_model, float('inf'))
+        if custom_rate > max_rate:
+            return None  # Invalid custom rate
+        return round(custom_rate, 1)
+    
+    if eboss_model not in EBOSS_LOAD_REFERENCE["battery_capacities"]:
+        return None  # Invalid model
+    
     generator_kw = 0
     if eboss_type == "Full Hybrid":
         hybrid_kva = EBOSS_LOAD_REFERENCE["generator_kva_hybrid"].get(eboss_model, 0)
         generator_kw = hybrid_kva * 0.8
+        charge_rate = EBOSS_LOAD_REFERENCE["generator_sizes"].get(hybrid_kva, {}).get("fh_charge_rate", 0)
     elif eboss_type == "Power Module" and generator_kva:
         gen_kva = float(generator_kva.replace("kVA", ""))
         generator_kw = gen_kva * 0.8
-    if eboss_type == "Full Hybrid":
-        charge_rate = generator_kw * 0.98
-    elif eboss_type == "Power Module":
-        charge_rate = generator_kw * 0.90 * 0.98
+        charge_rate = EBOSS_LOAD_REFERENCE["generator_sizes"].get(int(gen_kva), {}).get("pm_charge_rate", 0)
     else:
-        charge_rate = 0
+        return None  # Invalid type or missing generator_kva
+    
+    if charge_rate == 0:
+        return None  # No valid charge rate found
+    
     return round(charge_rate, 1)
 
 def get_max_charge_rate(eboss_model, eboss_type, generator_kva=None):
@@ -308,8 +311,7 @@ def calculate_standard_generator_specs(standard_generator_size, continuous_load,
         return {}
     gen_data = STANDARD_GENERATOR_DATA[standard_generator_size]
     gen_kw = gen_data["kw"]
-    engine_load_percent = (continuous_load / gen_kw * 100) if gen_kw > 0 else 0
-    load_percentage = continuous_load / gen_kw if gen_kw > 0 else 0
+    load_percentage = (continuous_load / gen_kw) if gen_kw > 0 else 0
     fuel_gph_data = gen_data["fuel_consumption_gph"]
     if load_percentage <= 0.5:
         fuel_per_hour = fuel_gph_data["50%"]
@@ -321,13 +323,13 @@ def calculate_standard_generator_specs(standard_generator_size, continuous_load,
     fuel_per_week = fuel_per_day * 7
     fuel_per_month = fuel_per_day * 30
     co2_per_day = fuel_per_day * gen_data["co2_per_gal"]
-    runtime_per_day = 24.0
+    runtime_per_day = 24.0  # Standard generator runs 24 hours/day
     tank_runtime = gen_data["fuel_tank_gal"] / fuel_per_hour if fuel_per_hour > 0 else 0
     return {
         "generator_type": "Standard Diesel Generator",
         "generator_size": standard_generator_size,
-        "engine_load_percent": engine_load_percent,
-        "continuous_load_percent": load_percentage * 100,
+        "engine_load_percent": round(load_percentage * 100, 1),
+        "continuous_load_percent": round(load_percentage * 100, 1),
         "fuel_consumption_gph": fuel_per_hour,
         "fuel_per_hour": fuel_per_hour,
         "fuel_per_day": fuel_per_day,
@@ -342,9 +344,7 @@ def calculate_standard_generator_specs(standard_generator_size, continuous_load,
         "fuel_tank_capacity": gen_data["fuel_tank_gal"]
     }
 
-# Additional functions from file 2 (calculate_load_specs, etc.) - adding placeholder for truncated ones
 def calculate_load_specs(eboss_model, eboss_type, continuous_load, max_peak_load, generator_kva=None, custom_charge_rate=None):
-    # Implementation from file 2 (using provided code)
     generator_kw_mapping = {
         "EB25 kVA": 14.5,
         "EB70 kVA": 24.5,
@@ -353,19 +353,115 @@ def calculate_load_specs(eboss_model, eboss_type, continuous_load, max_peak_load
         "EB400 kVA": 125
     }
     model_capacity = generator_kw_mapping.get(eboss_model, 0)
-    generator_data = None
-    if generator_kva:
-        gen_size = int(generator_kva.replace("kVA", ""))
-        generator_data = EBOSS_LOAD_REFERENCE["generator_sizes"].get(gen_size)
+    if not model_capacity:
+        return {"error": "Invalid EBOSS model"}
+    
     peak_utilization = (max_peak_load / model_capacity * 100) if model_capacity > 0 else 0
     continuous_utilization = (continuous_load / model_capacity * 100) if model_capacity > 0 else 0
     charge_rate = calculate_charge_rate(eboss_model, eboss_type, generator_kva, custom_charge_rate)
-    fuel_consumption = None
+    
+    if charge_rate is None:
+        return {"error": "Invalid charge rate or missing generator size for Power Module"}
+    
+    # GPH Calculations
+    fuel_consumption_gph = 0
     engine_load_percent = 0
-    # ... (complete based on truncated code, assuming logic for fuel and load)
-    return {"peak_utilization": peak_utilization, "continuous_utilization": continuous_utilization, "charge_rate": charge_rate, "engine_load_percent": engine_load_percent}  # Placeholder
+    if eboss_type == "Full Hybrid":
+        generator_kva = EBOSS_LOAD_REFERENCE["generator_kva_hybrid"].get(eboss_model, 0)
+        generator_kw = generator_kva * 0.8
+        charge_rate = EBOSS_LOAD_REFERENCE["generator_sizes"].get(generator_kva, {}).get("fh_charge_rate", 0)
+        engine_load_percent = (continuous_load / charge_rate * 100) if charge_rate > 0 else 0
+        fuel_consumption_gph = interpolate_gph(generator_kva, engine_load_percent)
+    elif eboss_type == "Power Module" and generator_kva:
+        gen_size = int(generator_kva.replace("kVA", ""))
+        generator_kw = gen_size * 0.8
+        charge_rate = EBOSS_LOAD_REFERENCE["generator_sizes"].get(gen_size, {}).get("pm_charge_rate", 0)
+        engine_load_percent = (charge_rate / generator_kw * 100) if generator_kw > 0 else 0
+        fuel_consumption_gph = interpolate_gph(gen_size, engine_load_percent)
+    
+    # Battery Longevity, Charge Time, and Engine Run per Day
+    kwh = EBOSS_LOAD_REFERENCE["battery_capacities"].get(eboss_model, 0)
+    battery_longevity = round(kwh / continuous_load, 2) if continuous_load > 0 else "N/A"
+    charge_time = round((charge_rate - continuous_load) / kwh, 2) if kwh > 0 and charge_rate > continuous_load else "N/A"
+    engine_run_per_day = round(24 / charge_time, 2) if isinstance(charge_time, (int, float)) and charge_time > 0 else "N/A"
+    
+    return {
+        "peak_utilization": round(peak_utilization, 1),
+        "continuous_utilization": round(continuous_utilization, 1),
+        "charge_rate": charge_rate,
+        "engine_load_percent": round(engine_load_percent, 1),
+        "fuel_consumption_gph": round(fuel_consumption_gph, 2),
+        "battery_longevity": battery_longevity,
+        "charge_time": charge_time,
+        "engine_run_per_day": engine_run_per_day
+    }
 
-# Initialize session state from file 1, adding from file 2 where it makes sense
+def calculate_max_fuel_efficiency_model(continuous_load, max_peak_load, voltage, units):
+    if units == "Amps":
+        pf = 0.8
+        continuous_load = (continuous_load * float(voltage) * 1.732 * pf) / 1000
+        max_peak_load = (max_peak_load * float(voltage) * 1.732 * pf) / 1000
+    min_gph = float('inf')
+    selected_model = "EB25 kVA"
+    for model, capacity in EBOSS_LOAD_REFERENCE["battery_capacities"].items():
+        gen_kva = EBOSS_LOAD_REFERENCE["generator_kva_hybrid"].get(model, 0)
+        if gen_kva:
+            charge_rate = EBOSS_LOAD_REFERENCE["generator_sizes"].get(gen_kva, {}).get("fh_charge_rate", 0)
+            engine_load_percent = (continuous_load / charge_rate * 100) if charge_rate > 0 else 0
+            gph = interpolate_gph(gen_kva, engine_load_percent)
+            if gph < min_gph and continuous_load <= capacity:
+                min_gph = gph
+                selected_model = model
+    return selected_model
+
+def validate_inputs(eboss_model, eboss_type, continuous_load, max_peak_load, generator_kva=None, units="kW", voltage="480"):
+    generator_kw_mapping = {
+        "EB25 kVA": 14.5,
+        "EB70 kVA": 24.5,
+        "EB125 kVA": 49,
+        "EB220 kVA": 74,
+        "EB400 kVA": 125
+    }
+    errors = []
+    
+    # Convert loads to kW if in Amps
+    actual_continuous_load = continuous_load
+    actual_peak_load = max_peak_load
+    if units == "Amps":
+        pf = 0.8
+        actual_continuous_load = (continuous_load * float(voltage) * 1.732 * pf) / 1000
+        actual_peak_load = (max_peak_load * float(voltage) * 1.732 * pf) / 1000
+    
+    # Validate EBOSS model
+    if eboss_model not in generator_kw_mapping:
+        errors.append("Invalid EBOSS model selected.")
+    
+    # Validate loads
+    if actual_continuous_load <= 0 or actual_peak_load <= 0:
+        errors.append("Continuous and peak loads must be greater than 0.")
+    
+    # Validate model capacity
+    model_capacity = generator_kw_mapping.get(eboss_model, 0)
+    if model_capacity and actual_continuous_load > model_capacity:
+        errors.append(f"Continuous load ({actual_continuous_load:.1f} kW) exceeds model capacity ({model_capacity:.1f} kW). Please select a larger EBOSS model.")
+    
+    # Warn if peak load significantly exceeds capacity
+    if model_capacity and actual_peak_load > model_capacity * 1.2:
+        errors.append(f"Peak load ({actual_peak_load:.1f} kW) significantly exceeds model capacity ({model_capacity:.1f} kW). Risk of overload.")
+    
+    # Validate charge rate
+    charge_rate = calculate_charge_rate(eboss_model, eboss_type, generator_kva)
+    if charge_rate is None:
+        if eboss_type == "Power Module" and not generator_kva:
+            errors.append("Please select a valid generator size for Power Module.")
+        else:
+            errors.append("Unable to calculate charge rate. Check model and type.")
+    elif charge_rate <= actual_continuous_load:
+        errors.append(f"Charge rate ({charge_rate:.1f} kW) is insufficient for continuous load ({actual_continuous_load:.1f} kW). Select a larger model or generator.")
+    
+    return errors
+
+# Initialize session state
 if "user_inputs" not in st.session_state:
     st.session_state.user_inputs = {
         "eboss_model": "",
@@ -387,8 +483,6 @@ if "recommended_model" not in st.session_state:
     st.session_state.recommended_model = ""
 if "page" not in st.session_state:
     st.session_state.page = "Home"
-
-# Add session states from file 2
 if 'show_cost_analysis' not in st.session_state:
     st.session_state.show_cost_analysis = False
 if 'show_cost_dialog' not in st.session_state:
@@ -398,8 +492,7 @@ if 'cost_standard_generator' not in st.session_state:
 if 'pm_charge_enabled' not in st.session_state:
     st.session_state.pm_charge_enabled = False
 
-# Homepage from file 1 (untouched)
-# Corporate logo top center with container
+# Homepage
 st.markdown("<div class='logo-container'>", unsafe_allow_html=True)
 try:
     st.image("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png", use_container_width=False, width=600, output_format="PNG")
@@ -407,10 +500,8 @@ except Exception as e:
     st.error(f"Logo failed to load: {e}. Please verify the file at https://github.com/TimBuffington/Eboss-tool-V2/tree/main/assets/logo.png.")
 st.markdown("</div>", unsafe_allow_html=True)
 
-# Page title centered under logo
 st.markdown("<h1 style='text-align: center;'>EBOSS® Size & Spec Tool</h1>", unsafe_allow_html=True)
 
-# Buttons for Google Docs and YouTube, centered horizontally with minimal gap
 with st.container():
     st.markdown("<div class='button-container'>", unsafe_allow_html=True)
     col_buttons = st.columns(3)
@@ -428,109 +519,190 @@ with st.container():
         st.markdown("</div>", unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
-col_buttons = st.columns(3, gap="small")
-st.markdown(f"<div class='message-text'>Please Select a Configuration</div>", unsafe_allow_html=True)
+st.markdown("<div class='message-text'>Please Select a Configuration</div>", unsafe_allow_html=True)
+with st.container():
+    st.markdown("<div class='button-container'>", unsafe_allow_html=True)
+    col_buttons = st.columns(3)
+    with col_buttons[0]:
+        st.markdown("<div class='button-block'>", unsafe_allow_html=True)
+        manual_select_clicked = st.button("Manually Select EBOSS Type and Model", key="manual_select_button")
+        st.markdown("</div>", unsafe_allow_html=True)
+    with col_buttons[1]:
+        st.markdown("<div class='button-block'>", unsafe_allow_html=True)
+        load_based_clicked = st.button("Use Load Based Suggested EBOSS", key="load_based_button")
+        st.markdown("</div>", unsafe_allow_html=True)
+    with col_buttons[2]:
+        st.markdown("<div class='button-block'>", unsafe_allow_html=True)
+        fuel_efficiency_clicked = st.button("Use EBOSS Model Based on Max Fuel Efficiency", key="fuel_efficiency_button")
+        st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
-st.markdown("<div class='centered-radio'>", unsafe_allow_html=True)
-selected_option = st.radio(" ", ("Select a EBOSS® Model", "Use Load Based Suggested EBOSS® Model"), horizontal=True)
-st.session_state.selected_option = selected_option
-st.markdown("</div>", unsafe_allow_html=True)
-
-st.markdown("<div class='centered-button'>", unsafe_allow_html=True)
-c1, c2, c3 = st.columns(3, gap="small")
-with c2:
-    enter_clicked = st.button("Enter Data", key="enter_data_button")
-st.markdown("</div>", unsafe_allow_html=True)
-
-if enter_clicked:
+# Dialog logic
+if manual_select_clicked:
     try:
-        print("Entering dialog...")
+        @st.dialog("EBOSS® Configuration")
+        def show_manual_config_dialog():
+            st.markdown("Enter your EBOSS® configuration:")
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                eboss_model = st.selectbox("EBOSS® Model", options=["EB25 kVA", "EB70 kVA", "EB125 kVA", "EB220 kVA", "EB400 kVA"], key="eboss_model_input")
+                eboss_type = st.selectbox("EBOSS® Type", options=["Full Hybrid", "Power Module"], key="eboss_type_input")
+                generator_kva = None
+                if eboss_type == "Power Module":
+                    generator_kva = st.selectbox("Power Module Generator Size", options=["25 kVA", "70 kVA", "125 kVA", "220 kVA", "400 kVA"], key="power_module_gen_size_input")
+            with col2:
+                max_continuous_load = st.number_input("Max Continuous Load", min_value=0.0, step=0.1, key="max_continuous_load_input")
+                max_peak_load = st.number_input("Max Peak Load", min_value=0.0, step=0.1, key="max_peak_load_input")
+            with col3:
+                units = st.selectbox("Units", options=["kW", "Amps"], key="units_input")
+                voltage = st.selectbox("Voltage", options=["120", "240", "208", "480"], key="voltage_input")
 
-        if st.session_state.selected_option == "Use Load Based Suggested EBOSS® Model":
-            st.session_state.recommended_model = "EB 70 kVA"  # Placeholder
+            # Validate inputs
+            errors = validate_inputs(eboss_model, eboss_type, max_continuous_load, max_peak_load, generator_kva, units, voltage)
+            if errors:
+                for error in errors:
+                    st.error(error)
+                launch_enabled = False
+            else:
+                launch_enabled = True
 
-            @st.dialog("Recommended EBOSS® Configuration")
-            def show_recommended_dialog():
-                st.markdown(f"**Recommended EBOSS® Model:** {st.session_state.recommended_model}")
-                col1, col2, col3 = st.columns(3)
-                with col2:
-                    st.number_input("Max Continuous Load", min_value=0.0, step=0.1, key="max_continuous_load_input")
-                    st.number_input("Max Peak Load", min_value=0.0, step=0.1, key="max_peak_load_input")
-                    st.selectbox("Units", options=["kW", "Amps"], key="units_input")
-                    st.selectbox("Voltage", options=["120", "240", "208", "480"], key="voltage_input")
+            if st.button("Launch Tool", key="launch_tool_manual", disabled=not launch_enabled):
+                st.session_state.user_inputs["eboss_model"] = eboss_model
+                st.session_state.user_inputs["eboss_type"] = eboss_type
+                st.session_state.user_inputs["power_module_gen_size"] = generator_kva
+                st.session_state.user_inputs["max_continuous_load"] = max_continuous_load
+                st.session_state.user_inputs["max_peak_load"] = max_peak_load
+                st.session_state.user_inputs["units"] = units
+                st.session_state.user_inputs["voltage"] = voltage
 
-                if st.button("Launch Tool", key="launch_tool_recommended"):
-                    max_continuous_load = float(st.session_state.get("max_continuous_load_input", 0.0))
-                    max_peak_load = float(st.session_state.get("max_peak_load_input", 0.0))
-                    units = st.session_state.get("units_input", "kW")
-                    voltage = st.session_state.get("voltage_input", "480")
+                if units == "Amps":
+                    pf = 0.8
+                    st.session_state.user_inputs["actual_continuous_load"] = (max_continuous_load * float(voltage) * 1.732 * pf) / 1000
+                    st.session_state.user_inputs["actual_peak_load"] = (max_peak_load * float(voltage) * 1.732 * pf) / 1000
+                else:
+                    st.session_state.user_inputs["actual_continuous_load"] = max_continuous_load
+                    st.session_state.user_inputs["actual_peak_load"] = max_peak_load
 
-                    if units == "Amps":
-                        pf = 0.8
-                        st.session_state.user_inputs["actual_continuous_load"] = (max_continuous_load * float(voltage) * 1.732 * pf) / 1000
-                        st.session_state.user_inputs["actual_peak_load"] = (max_peak_load * float(voltage) * 1.732 * pf) / 1000
-                    else:
-                        st.session_state.user_inputs["actual_continuous_load"] = max_continuous_load
-                        st.session_state.user_inputs["actual_peak_load"] = max_peak_load
+                st.session_state.show_calculator = True
+                st.session_state.page = "Tool Selection"
+                st.rerun()
 
-                    st.session_state.user_inputs["max_continuous_load"] = max_continuous_load
-                    st.session_state.user_inputs["max_peak_load"] = max_peak_load
-                    st.session_state.user_inputs["units"] = units
-                    st.session_state.user_inputs["voltage"] = voltage
-                    st.session_state.show_calculator = True
-                    st.session_state.page = "Tool Selection"
-                    st.rerun()
-
-            show_recommended_dialog()
-
-        else:
-            @st.dialog("EBOSS® Configuration")
-            def show_config_dialog():
-                st.markdown("Enter your EBOSS® configuration:")
-                col1, col2, col3 = st.columns(3)
-                with col1:
-                    st.selectbox("EBOSS® Model", options=["EB 25 kVA", "EB 70 kVA", "EB 125 kVA", "EB 220 kVA", "EB 400 kVA"], key="eboss_model_input")
-                    st.selectbox("EBOSS® Type", options=["Full Hybrid", "Power Module"], key="eboss_type_input")
-                    if st.session_state.get("eboss_type_input", "") == "Power Module":
-                        st.selectbox("Power Module Generator Size", options=["25 kVA", "70 kVA", "125 kVA", "220 kVA", "400 kVA"], key="power_module_gen_size_input")
-                with col2:
-                    st.number_input("Max Continuous Load", min_value=0.0, step=0.1, key="max_continuous_load_input")
-                    st.number_input("Max Peak Load", min_value=0.0, step=0.1, key="max_peak_load_input")
-                with col3:
-                    st.selectbox("Units", options=["kW", "Amps"], key="units_input")
-                    st.selectbox("Voltage", options=["120", "240", "208", "480"], key="voltage_input")
-
-                if st.button("Launch Tool", key="launch_tool_select"):
-                    st.session_state.user_inputs["eboss_model"] = st.session_state.get("eboss_model_input", "")
-                    st.session_state.user_inputs["eboss_type"] = st.session_state.get("eboss_type_input", "")
-                    st.session_state.user_inputs["power_module_gen_size"] = st.session_state.get("power_module_gen_size_input", "")
-                    st.session_state.user_inputs["max_continuous_load"] = st.session_state.get("max_continuous_load_input", 0.0)
-                    st.session_state.user_inputs["max_peak_load"] = st.session_state.get("max_peak_load_input", 0.0)
-                    st.session_state.user_inputs["units"] = st.session_state.get("units_input", "kW")
-                    st.session_state.user_inputs["voltage"] = st.session_state.get("voltage_input", "480")
-
-                    if st.session_state.user_inputs["units"] == "Amps":
-                        pf = 0.8
-                        st.session_state.user_inputs["actual_continuous_load"] = (st.session_state.user_inputs["max_continuous_load"] * float(st.session_state.user_inputs["voltage"]) * 1.732 * pf) / 1000
-                        st.session_state.user_inputs["actual_peak_load"] = (st.session_state.user_inputs["max_peak_load"] * float(st.session_state.user_inputs["voltage"]) * 1.732 * pf) / 1000
-                    else:
-                        st.session_state.user_inputs["actual_continuous_load"] = st.session_state.user_inputs["max_continuous_load"]
-                        st.session_state.user_inputs["actual_peak_load"] = st.session_state.user_inputs["max_peak_load"]
-
-                    st.session_state.show_calculator = True
-                    st.session_state.page = "Tool Selection"
-                    st.rerun()
-
-            show_config_dialog()
+        show_manual_config_dialog()
 
     except Exception as e:
         print(f"Error in modal: {e}")
         st.error(f"Error in modal: {str(e)}. Please check the console output.")
 
+if load_based_clicked:
+    try:
+        @st.dialog("Load Based Suggested EBOSS® Configuration")
+        def show_load_based_dialog():
+            st.session_state.recommended_model = "EB70 kVA"
+            st.markdown(f"**Recommended EBOSS® Model:** {st.session_state.recommended_model}")
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                eboss_type = st.selectbox("EBOSS® Type", options=["Full Hybrid"], key="eboss_type_input", disabled=True)
+            with col2:
+                max_continuous_load = st.number_input("Max Continuous Load", min_value=0.0, step=0.1, key="max_continuous_load_input")
+                max_peak_load = st.number_input("Max Peak Load", min_value=0.0, step=0.1, key="max_peak_load_input")
+            with col3:
+                units = st.selectbox("Units", options=["kW", "Amps"], key="units_input")
+                voltage = st.selectbox("Voltage", options=["120", "240", "208", "480"], key="voltage_input")
 
+            # Validate inputs
+            errors = validate_inputs(st.session_state.recommended_model, eboss_type, max_continuous_load, max_peak_load, None, units, voltage)
+            if errors:
+                for error in errors:
+                    st.error(error)
+                launch_enabled = False
+            else:
+                launch_enabled = True
+
+            if st.button("Launch Tool", key="launch_tool_load_based", disabled=not launch_enabled):
+                if units == "Amps":
+                    pf = 0.8
+                    st.session_state.user_inputs["actual_continuous_load"] = (max_continuous_load * float(voltage) * 1.732 * pf) / 1000
+                    st.session_state.user_inputs["actual_peak_load"] = (max_peak_load * float(voltage) * 1.732 * pf) / 1000
+                else:
+                    st.session_state.user_inputs["actual_continuous_load"] = max_continuous_load
+                    st.session_state.user_inputs["actual_peak_load"] = max_peak_load
+
+                st.session_state.user_inputs["eboss_model"] = st.session_state.recommended_model
+                st.session_state.user_inputs["eboss_type"] = "Full Hybrid"
+                st.session_state.user_inputs["power_module_gen_size"] = ""
+                st.session_state.user_inputs["max_continuous_load"] = max_continuous_load
+                st.session_state.user_inputs["max_peak_load"] = max_peak_load
+                st.session_state.user_inputs["units"] = units
+                st.session_state.user_inputs["voltage"] = voltage
+                st.session_state.show_calculator = True
+                st.session_state.page = "Tool Selection"
+                st.rerun()
+
+        show_load_based_dialog()
+
+    except Exception as e:
+        print(f"Error in modal: {e}")
+        st.error(f"Error in modal: {str(e)}. Please check the console output.")
+
+if fuel_efficiency_clicked:
+    try:
+        @st.dialog("Max Fuel Efficiency EBOSS® Configuration")
+        def show_fuel_efficiency_dialog():
+            max_continuous_load = st.session_state.get("max_continuous_load_input", 0.0)
+            max_peak_load = st.session_state.get("max_peak_load_input", 0.0)
+            units = st.session_state.get("units_input", "kW")
+            voltage = st.session_state.get("voltage_input", "480")
+            recommended_model = calculate_max_fuel_efficiency_model(max_continuous_load, max_peak_load, voltage, units)
+            st.session_state.recommended_model = recommended_model
+            st.markdown(f"**Recommended EBOSS® Model for Max Fuel Efficiency:** {recommended_model}")
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                eboss_type = st.selectbox("EBOSS® Type", options=["Full Hybrid"], key="eboss_type_input", disabled=True)
+            with col2:
+                max_continuous_load = st.number_input("Max Continuous Load", min_value=0.0, step=0.1, key="max_continuous_load_input")
+                max_peak_load = st.number_input("Max Peak Load", min_value=0.0, step=0.1, key="max_peak_load_input")
+            with col3:
+                units = st.selectbox("Units", options=["kW", "Amps"], key="units_input")
+                voltage = st.selectbox("Voltage", options=["120", "240", "208", "480"], key="voltage_input")
+
+            # Validate inputs
+            errors = validate_inputs(recommended_model, eboss_type, max_continuous_load, max_peak_load, None, units, voltage)
+            if errors:
+                for error in errors:
+                    st.error(error)
+                launch_enabled = False
+            else:
+                launch_enabled = True
+
+            if st.button("Launch Tool", key="launch_tool_fuel_efficiency", disabled=not launch_enabled):
+                if units == "Amps":
+                    pf = 0.8
+                    st.session_state.user_inputs["actual_continuous_load"] = (max_continuous_load * float(voltage) * 1.732 * pf) / 1000
+                    st.session_state.user_inputs["actual_peak_load"] = (max_peak_load * float(voltage) * 1.732 * pf) / 1000
+                else:
+                    st.session_state.user_inputs["actual_continuous_load"] = max_continuous_load
+                    st.session_state.user_inputs["actual_peak_load"] = max_peak_load
+
+                st.session_state.user_inputs["eboss_model"] = recommended_model
+                st.session_state.user_inputs["eboss_type"] = "Full Hybrid"
+                st.session_state.user_inputs["power_module_gen_size"] = ""
+                st.session_state.user_inputs["max_continuous_load"] = max_continuous_load
+                st.session_state.user_inputs["max_peak_load"] = max_peak_load
+                st.session_state.user_inputs["units"] = units
+                st.session_state.user_inputs["voltage"] = voltage
+                st.session_state.show_calculator = True
+                st.session_state.page = "Tool Selection"
+                st.rerun()
+
+        show_fuel_efficiency_dialog()
+
+    except Exception as e:
+        print(f"Error in modal: {e}")
+        st.error(f"Error in modal: {str(e)}. Please check the console output.")
+
+# Navigation to other pages
 elif st.session_state.page == "Tool Selection":
     st.header("Tool Selection")
-    # Integrate tool selection logic - buttons to navigate to other pages
     col1, col2, col3 = st.columns(3)
     with col1:
         if st.button("Technical Specs"):
@@ -553,26 +725,15 @@ elif st.session_state.page == "Tool Selection":
 
 elif st.session_state.page == "Technical Specs":
     st.header("Technical Specs")
-    # Content from file 2 for technical specs (adapted)
     eboss_model = st.session_state.user_inputs["eboss_model"]
     if eboss_model:
-        # Display authentic specs from file 2's data
-        authentic_comparison_specs = {  # From file 2
-            "EB 25 kVA": {
-                "Three-phase Max Power": "25 kVA / 20 kW",
-                # ... (add all fields from file 2)
-            },
-            # ... (for other models)
-        }
-        specs = authentic_comparison_specs.get(eboss_model, {})
-        for key, value in specs.items():
-            st.markdown(f"**{key}:** {value}")
+        st.markdown(f"**Selected EBOSS Model:** {eboss_model}")
+        # Placeholder for detailed specs
     else:
         st.warning("No EBOSS model selected.")
 
 elif st.session_state.page == "Load Based Specs":
     st.header("Load Based Specs")
-    # Content from file 2: calculate_load_specs and display
     eboss_model = st.session_state.user_inputs["eboss_model"]
     eboss_type = st.session_state.user_inputs["eboss_type"]
     continuous_load = st.session_state.user_inputs["actual_continuous_load"]
@@ -580,42 +741,50 @@ elif st.session_state.page == "Load Based Specs":
     generator_kva = st.session_state.user_inputs["power_module_gen_size"]
     if eboss_model:
         specs = calculate_load_specs(eboss_model, eboss_type, continuous_load, max_peak_load, generator_kva)
-        for key, value in specs.items():
-            st.markdown(f"**{key}:** {value}")
+        if "error" in specs:
+            st.error(specs["error"])
+        else:
+            for key, value in specs.items():
+                st.markdown(f"**{key.replace('_', ' ').title()}:** {value}")
     else:
         st.warning("No EBOSS model selected.")
 
 elif st.session_state.page == "EBOSS® to Standard Comparison":
     st.header("EBOSS® to Standard Comparison")
-    # Content from file 2: comparison table
-    # Use data from file 2, display in table using st.markdown or st.dataframe
     eboss_model = st.session_state.user_inputs["eboss_model"]
-    # Assume standard_generator selected or default
+    eboss_type = st.session_state.user_inputs["eboss_type"]
+    continuous_load = st.session_state.user_inputs["actual_continuous_load"]
+    max_peak_load = st.session_state.user_inputs["actual_peak_load"]
+    generator_kva = st.session_state.user_inputs["power_module_gen_size"]
     standard_generator = st.selectbox("Select Standard Generator", list(STANDARD_GENERATOR_DATA.keys()))
     if eboss_model and standard_generator:
-        # Build comparison_data from file 2
-        comparison_data = [
-            # ... (from file 2's comparison_data list)
-        ]
-        df = pd.DataFrame(comparison_data, columns=["Spec", "EBOSS", "Standard"])
-        st.table(df)
+        eboss_specs = calculate_load_specs(eboss_model, eboss_type, continuous_load, max_peak_load, generator_kva)
+        standard_specs = calculate_standard_generator_specs(standard_generator, continuous_load, max_peak_load)
+        if "error" in eboss_specs:
+            st.error(eboss_specs["error"])
+        else:
+            df = pd.DataFrame([
+                ("Generator Size", eboss_model, standard_generator),
+                ("Continuous Load %", f"{eboss_specs.get('continuous_utilization', 0):.1f}%", f"{standard_specs.get('continuous_load_percent', 0):.1f}%"),
+                ("Engine Load %", f"{eboss_specs.get('engine_load_percent', 0):.1f}%", f"{standard_specs.get('engine_load_percent', 0):.1f}%"),
+                ("Fuel Consumption (GPH)", f"{eboss_specs.get('fuel_consumption_gph', 0):.2f}", f"{standard_specs.get('fuel_consumption_gph', 0):.2f}"),
+                ("Runtime per Day (hours)", f"{eboss_specs.get('engine_run_per_day', 'N/A')}", f"{standard_specs.get('runtime_per_day', 0):.1f}")
+            ], columns=["Spec", "EBOSS", "Standard"])
+            st.table(df)
     else:
         st.warning("No EBOSS model or standard generator selected.")
 
 elif st.session_state.page == "Cost Analysis":
     st.header("Cost Analysis")
-    # Content from file 2: cost calculations and table
-    # Inputs for costs
-    local_fuel_price = st.number_input("Local Fuel Price ($/gal)", value=3.50)
-    # ... (other inputs)
-    # Calculate eboss_costs and standard_costs
-    # Display table using markdown from file 2
+    local_fuel_price = st.number_input("Local Fuel Price ($/gal)", value=3.50, min_value=0.0, step=0.1)
+    st.session_state.user_inputs["local_fuel_price"] = local_fuel_price
+    st.warning("Cost analysis functionality is under development.")
 
 elif st.session_state.page == "Parallel Calculator":
     st.header("Parallel Calculator")
-    # Placeholder or add if available in file 2
+    st.warning("Parallel calculator functionality is under development.")
 
-# Footer from file 1
+# Footer
 st.markdown(f"""
 <div class="footer">
     <span style="display: flex; justify-content: center; align-items: center; width: 100%;">
@@ -626,3 +795,4 @@ st.markdown(f"""
     </span>
 </div>
 """, unsafe_allow_html=True)
+```
