@@ -36,7 +36,7 @@ st.markdown(
     button, .stButton button {{
         background-color: {COLORS['Asphalt']} !important;
         color: {COLORS['Energy Green']} !important;
-        border: 2px solid {COLORS['Alpine White']} !important;
+        border: 2px solid {COLORS['Light Grey']} !important;
         font-family: Arial, sans-serif;
         font-size: 16px;
         font-weight: bold !important;
