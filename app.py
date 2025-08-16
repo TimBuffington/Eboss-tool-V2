@@ -288,6 +288,72 @@ STANDARD_GENERATOR_DATA = {
 
 st.set_page_config(layout="wide")  # important!
 
+def _to_normalized_kw(value: float, units: str, voltage: str, pf: float = 0.8) -> float:
+    """
+    Convert a single input (continuous or peak) to normalized kW (baseline 3φ 480V).
+    - If units == 'kW': return as-is (kW is voltage-agnostic).
+    - If units == 'Amps':
+        * 3φ (208, 480): kW = √3 * V * I * PF / 1000
+        * 1φ (120, 240): kW = V * I * PF / 1000
+    """
+    if units == "kW":
+        return float(value or 0.0)
+    v = float(voltage); i = float(value or 0.0)
+    if str(voltage) in {"208", "480"}:
+        return (1.732 * v * i * pf) / 1000.0
+    return (v * i * pf) / 1000.0
+
+
+def compute_and_store_loads(
+    *, continuous_value: float, peak_value: float, units: str, voltage: str,
+    pf: float = 0.8
+) -> tuple[float, float]:
+    """
+    1) Stores RAW UI inputs (exactly what the user typed/selected).
+    2) Computes normalized kW (@ 3φ 480V) and stores:
+       - user_inputs['actual_continuous_load']
+       - user_inputs['actual_peak_load']
+    Returns (cont_kw, peak_kw).
+    """
+    if "user_inputs" not in st.session_state:
+        st.session_state.user_inputs = {}
+
+    # keep the raw UI inputs
+    st.session_state.user_inputs["raw_input_units"] = units
+    st.session_state.user_inputs["raw_input_voltage"] = str(voltage)
+    st.session_state.user_inputs["raw_input_continuous"] = float(continuous_value or 0.0)
+    st.session_state.user_inputs["raw_input_peak"] = float(peak_value or 0.0)
+
+    # normalized kW used across the app
+    cont_kw = _to_normalized_kw(continuous_value, units, voltage, pf)
+    peak_kw = _to_normalized_kw(peak_value,       units, voltage, pf)
+
+    st.session_state.user_inputs["actual_continuous_load"] = cont_kw
+    st.session_state.user_inputs["actual_peak_load"] = peak_kw
+
+    return cont_kw, peak_kw
+
+
+def render_adjusted_load_panel(cont_kw: float, peak_kw: float):
+    """
+    Compact “Adjusted Load” panel for the modal.
+    Shows normalized kW prominently; raw info is available in session if needed.
+    """
+    st.markdown(
+        f"""
+        <div style="
+            border:1px solid #939598; border-radius:10px; padding:12px 14px;
+            background: rgba(0,0,0,.55); box-shadow: 0 0 12px rgba(129,189,71,.35);
+            ">
+          <div style="font-weight:800; letter-spacing:.4px; margin-bottom:6px;">
+            Adjusted Load (kW @ 3φ 480V)
+          </div>
+          <div>Continuous: <b>{cont_kw:.2f} kW</b></div>
+          <div>Peak: <b>{peak_kw:.2f} kW</b></div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 # Functions
 def interpolate_gph(generator_kva, load_percent):
