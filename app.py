@@ -16,6 +16,31 @@ COLORS = {
     "Energy Green": "#81BD47",
     "Alpine White": "#FFFFFF",
     "Light Grey": "#D3D3D3"
+
+LOGO_URL = "https://raw.githubusercontent.com/TimBuffington/troubleshooting/refs/heads/main/assets/ANA-ENERGY-LOGO-HORIZONTAL-WHITE-GREEN.png"
+
+# Centered, responsive logo
+st.markdown("""
+<style>
+.logo-wrap{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin: 8px 0 16px;
+}
+.logo-wrap img{
+  width: clamp(220px, 55vw, 560px);  /* responsive: min 220px, max 560px */
+  height: auto;
+}
+</style>
+""", unsafe_allow_html=True)
+
+st.markdown(
+    f"<div class='logo-wrap'><img src='{LOGO_URL}' alt='ANA Energy Logo' /></div>",
+    unsafe_allow_html=True
+)
+
+
 }
 # --- Add once near the top (after your COLORS dict / styles) ---
 st.markdown(f"""
@@ -133,18 +158,7 @@ st.markdown(
         box-shadow: 0 0 10px {COLORS['Energy Green']};
     }}
 
-    /* ===== Logo ===== */
-    .logo-container {{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin: 0px 0;
-        height: 0px;
-    }}
-    .logo {{
-        width: 80%;
-        display: block;
-    }}
+   
 
     /* ===== Footer ===== */
     .footer {{
