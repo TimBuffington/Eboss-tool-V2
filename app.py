@@ -17,6 +17,32 @@ COLORS = {
     "Alpine White": "#FFFFFF",
     "Light Grey": "#D3D3D3"
 }
+# --- Add once near the top (after your COLORS dict / styles) ---
+st.markdown(f"""
+<style>
+  .cta-link {{
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    text-decoration: none !important;
+    background-color: {COLORS['Asphalt']};
+    color: {COLORS['Alpine White']};
+    border: 2px solid {COLORS['Concrete']};
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    text-shadow: 0 0 6px {COLORS['Energy Green']};
+    border-radius: 10px;
+    padding: 12px 14px;
+    transition: box-shadow .25s ease, transform .15s ease;
+    box-sizing: border-box;
+  }}
+  .cta-link:hover {{
+    box-shadow: 0 0 28px {COLORS['Energy Green']};
+    transform: translateY(-1px);
+  }}
+</style>
+""", unsafe_allow_html=True)
 
 st.markdown(
     f"""
@@ -142,6 +168,40 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
+
+st.markdown(
+    f"""
+    <style>
+    /* ...keep your existing CSS... */
+
+    /* ===== Link-as-Button (no JS, works in Streamlit) ===== */
+    .cta-link {{
+        display: inline-block;
+        width: 100%;
+        text-align: center;
+        text-decoration: none !important;
+        background-color: {COLORS['Asphalt']};
+        color: {COLORS['Energy Green']};
+        border: 2px solid {COLORS['Light Grey']};
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+        font-weight: bold;
+        text-shadow: 0 0 6px {COLORS['Energy Green']};
+        border-radius: 6px;
+        padding: 10px 12px;
+        transition: box-shadow 0.3s ease, transform 0.2s ease;
+        box-sizing: border-box;
+    }}
+    .cta-link:hover {{
+        box-shadow: 0 0 30px {COLORS['Energy Green']};
+        transform: translateY(-1px);
+    }}
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 
 # EBOSS Load Calculation Reference Data
 EBOSS_LOAD_REFERENCE = {
@@ -509,57 +569,55 @@ with st.container():
     )
 
     # shared columns (ensures perfect alignment across rows)
-    col1, col2, col3 = st.columns(3)
+# --- Row 1 — external links (no JS; real links styled as buttons)
+col1, col2, col3 = st.columns(3)
 
-# Row 1 — external links (open new tab)
 with col1:
-    with st.container():
-        if st.button("Request Demo", key="btn_link_request_demo"):
-            st.markdown(
-                '<script>window.open("https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform?usp=header","_blank");</script>',
-                unsafe_allow_html=True
-            )
+    st.markdown(
+        '<a class="cta-link" href="https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform?usp=header" target="_blank" rel="noopener">Request Demo</a>',
+        unsafe_allow_html=True
+    )
 
 with col2:
-    with st.container():
-        if st.button("Request Training", key="btn_link_request_training"):
-            st.markdown(
-                '<script>window.open("https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header","_blank");</script>',
-                unsafe_allow_html=True
-            )
+    st.markdown(
+        '<a class="cta-link" href="https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header" target="_blank" rel="noopener">Request Training</a>',
+        unsafe_allow_html=True
+    )
 
 with col3:
-    with st.container():
-        if st.button("Learn how the EBOSS® works", key="btn_link_learn_eboss"):
-            st.markdown(
-                '<script>window.open("https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g","_blank");</script>',
-                unsafe_allow_html=True
-            )
+    st.markdown(
+        '<a class="cta-link" href="https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g" target="_blank" rel="noopener">Learn how the EBOSS® works</a>',
+        unsafe_allow_html=True
+    )
 
 # ----- centered text BETWEEN the two rows -----
 st.markdown(
-    "<div class='message-text' style='margin:12px 0;'>Please Select a EBOSS Configuration</div>",
+    "<div class='message-text' style='margin:12px 0; text-align:center;'>Please Select an EBOSS Configuration</div>",
     unsafe_allow_html=True
 )
 
-# Row 2 — in‑app action buttons (keys are unique)
+# --- Row 2 — in-app action buttons (keys are unique)
 with col1:
     with st.container():
         manual_select_clicked = st.button(
-            "Manually Select EBOSS Type and Model", key="btn_manual_select"
+            "Manually Select EBOSS Type and Model",
+            key="btn_manual_select"
         )
 
 with col2:
     with st.container():
         load_based_clicked = st.button(
-            "Use Load Based Suggested EBOSS", key="btn_load_based"
+            "Use Load Based Suggested EBOSS",
+            key="btn_load_based"
         )
 
 with col3:
     with st.container():
         fuel_efficiency_clicked = st.button(
-            "Use EBOSS Model Based on Max Fuel Efficiency", key="btn_fuel_eff"
+            "Use EBOSS Model Based on Max Fuel Efficiency",
+            key="btn_fuel_eff"
         )
+
 
 # Dialog logic
 if manual_select_clicked:
