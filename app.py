@@ -41,8 +41,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
-}
 # --- Add once near the top (after your COLORS dict / styles) ---
 st.markdown(f"""
 <style>
