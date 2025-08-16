@@ -15,7 +15,8 @@ COLORS = {
     "Charcoal": "#636569",
     "Energy Green": "#81BD47",
     "Alpine White": "#FFFFFF",
-    "Light Grey": "#D3D3D3"
+    "Light Grey": "#D3D3D3",
+    }
 
 LOGO_URL = "https://raw.githubusercontent.com/TimBuffington/troubleshooting/refs/heads/main/assets/ANA-ENERGY-LOGO-HORIZONTAL-WHITE-GREEN.png"
 
