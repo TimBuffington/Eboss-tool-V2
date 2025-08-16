@@ -597,7 +597,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# --- Row 2 — in-app action buttons (keys are unique)
+col1, col2, col3 = st.columns([1,1,1]) 
 with col1:
     with st.container():
         manual_select_clicked = st.button(
