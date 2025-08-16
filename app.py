@@ -639,8 +639,8 @@ if manual_select_clicked:
                 if eboss_type == "Power Module":
                     generator_kva = st.selectbox("Power Module Generator Size", options=["25 kVA", "70 kVA", "125 kVA", "220 kVA", "400 kVA"], key="power_module_gen_size_input")
             with col2:
-                max_continuous_load = st.number_input("Max Continuous Load", min_value=0.0, step=0.1, key="max_continuous_load_input")
-                max_peak_load = st.number_input("Max Peak Load", min_value=0.0, step=0.1, key="max_peak_load_input")
+                max_continuous_load = st.number_input("Max Continuous Load", min_value=0.0, step=1.0, format="%g", key="max_continuous_load_input")
+                max_peak_load = st.number_input("Max Peak Load", min_value=0.0, step=1.0, format="%g", key="max_peak_load_input")
             with col3:
                 units = st.selectbox("Units", options=["kW", "Amps"], key="units_input")
                 voltage = st.selectbox("Voltage", options=["120", "240", "208", "480"], key="voltage_input")
