@@ -43,6 +43,19 @@ st.markdown(f"""
   }}
 </style>
 """, unsafe_allow_html=True)
+st.markdown("""
+<style>
+/* Make buttons fill the entire column width */
+.cta-scope [data-testid="column"] .stButton { 
+  width: 100% !important; 
+}
+.cta-scope [data-testid="column"] .stButton > button {
+  display: block;                /* prevents shrink */
+  width: 100% !important;        /* full width */
+  box-sizing: border-box;        /* include padding/border */
+}
+</style>
+""", unsafe_allow_html=True)
 
 st.markdown(
     f"""
@@ -621,7 +634,6 @@ with col3:
         )
 
 st.markdown("</div>", unsafe_allow_html=True)
-
 
 # Dialog logic
 if manual_select_clicked:
