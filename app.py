@@ -563,13 +563,6 @@ if 'pm_charge_enabled' not in st.session_state:
     st.session_state.pm_charge_enabled = False
 
 # Homepage
-st.markdown("<div class='logo-container'>", unsafe_allow_html=True)
-try:
-    st.image("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/logo.png", use_container_width=False, width=600, output_format="PNG")
-except Exception as e:
-    st.error(f"Logo failed to load: {e}. Please verify the file at https://github.com/TimBuffington/Eboss-tool-V2/tree/main/assets/logo.png.")
-st.markdown("</div>", unsafe_allow_html=True)
-
 st.markdown("<h1 style='text-align: center;'>EBOSS® Size & Spec Tool</h1>", unsafe_allow_html=True)
 
 
