@@ -20,40 +20,53 @@ COLORS = {
 # --- Add once near the top (after your COLORS dict / styles) ---
 st.markdown(f"""
 <style>
-  .cta-link {{
-    display: inline-block;
-    width: 100%;
-    text-align: center;
-    text-decoration: none !important;
-    background-color: {COLORS['Asphalt']};
-    color: {COLORS['Alpine White']};
-    border: 2px solid {COLORS['Concrete']};
-    font-family: Arial, sans-serif;
-    font-size: 16px;
-    font-weight: 700;
-    text-shadow: 0 0 6px {COLORS['Energy Green']};
-    border-radius: 10px;
-    padding: 12px 14px;
-    transition: box-shadow .25s ease, transform .15s ease;
-    box-sizing: border-box;
-  }}
-  .cta-link:hover {{
-    box-shadow: 0 0 28px {COLORS['Energy Green']};
-    transform: translateY(-1px);
-  }}
-</style>
-""", unsafe_allow_html=True)
-st.markdown("""
-<style>
-/* Make buttons fill the entire column width */
-.cta-scope [data-testid="column"] .stButton { 
-  width: 100% !important; 
-}
-.cta-scope [data-testid="column"] .stButton > button {
-  display: block;                /* prevents shrink */
-  width: 100% !important;        /* full width */
-  box-sizing: border-box;        /* include padding/border */
-}
+/* === Anchor links styled as CTA buttons === */
+.cta-link {{
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  text-decoration: none !important;
+  background-color: {COLORS['Asphalt']};
+  color: {COLORS['Alpine White']};
+  border: 2px solid {COLORS['Concrete']};
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  text-shadow: 0 0 6px {COLORS['Energy Green']};
+  border-radius: 10px;
+  padding: 12px 14px;
+  transition: box-shadow .25s ease, transform .15s ease;
+  box-sizing: border-box;
+}}
+.cta-link:hover {{
+  box-shadow: 0 0 28px {COLORS['Energy Green']};
+  transform: translateY(-1px);
+}}
+
+/* === Streamlit buttons inside .cta-scope should look like .cta-link and fill columns === */
+.cta-scope [data-testid="column"] .stButton {{
+  width: 100% !important;
+}}
+.cta-scope .stButton > button {{
+  display: block;
+  width: 100% !important;
+  text-align: center;
+  background-color: {COLORS['Asphalt']};
+  color: {COLORS['Alpine White']};
+  border: 2px solid {COLORS['Concrete']};
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  text-shadow: 0 0 6px {COLORS['Energy Green']};
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-sizing: border-box;
+  transition: box-shadow .25s ease, transform .15s ease;
+}}
+.cta-scope .stButton > button:hover {{
+  box-shadow: 0 0 28px {COLORS['Energy Green']};
+  transform: translateY(-1px);
+}}
 </style>
 """, unsafe_allow_html=True)
 
@@ -129,7 +142,7 @@ st.markdown(
         height: 0px;
     }}
     .logo {{
-        max-width: auto;
+        width: 80%;
         display: block;
     }}
 
@@ -183,37 +196,8 @@ st.markdown(
 )
 
 
-st.markdown(
-    f"""
-    <style>
-    /* ...keep your existing CSS... */
 
-    /* ===== Link-as-Button (no JS, works in Streamlit) ===== */
-    .cta-link {{
-        display: inline-block;
-        width: 100%;
-        text-align: center;
-        text-decoration: none !important;
-        background-color: {COLORS['Asphalt']};
-        color: {COLORS['Energy Green']};
-        border: 2px solid {COLORS['Light Grey']};
-        font-family: Arial, sans-serif;
-        font-size: 16px;
-        font-weight: bold;
-        text-shadow: 0 0 6px {COLORS['Energy Green']};
-        border-radius: 6px;
-        padding: 10px 12px;
-        transition: box-shadow 0.3s ease, transform 0.2s ease;
-        box-sizing: border-box;
-    }}
-    .cta-link:hover {{
-        box-shadow: 0 0 30px {COLORS['Energy Green']};
-        transform: translateY(-1px);
-    }}
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+    
 
 
 # EBOSS Load Calculation Reference Data
