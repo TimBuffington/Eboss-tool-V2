@@ -276,6 +276,9 @@ STANDARD_GENERATOR_DATA = {
     }
 }
 
+st.set_page_config(layout="wide")  # important!
+
+
 # Functions
 def interpolate_gph(generator_kva, load_percent):
     if load_percent > 1:
