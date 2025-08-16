@@ -562,10 +562,8 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 st.markdown("<h1 style='text-align: center;'>EBOSS® Size & Spec Tool</h1>", unsafe_allow_html=True)
 
-# --- Centered & aligned 2-row button layout ---
-# --- Centered & aligned 3×2 button grid with a centered message in between ---
+
 with st.container():
-    # group rows and center them as one unit
     st.markdown(
         "<div style='display:flex;flex-direction:column;align-items:center;width:100%'>",
         unsafe_allow_html=True
@@ -597,7 +595,10 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-col1, col2, col3 = st.columns([1,1,1]) 
+st.markdown("<div class='cta-scope'>", unsafe_allow_html=True)
+
+col1, col2, col3 = st.columns([1,1,1])
+
 with col1:
     with st.container():
         manual_select_clicked = st.button(
@@ -618,6 +619,8 @@ with col3:
             "Use EBOSS Model Based on Max Fuel Efficiency",
             key="btn_fuel_eff"
         )
+
+st.markdown("</div>", unsafe_allow_html=True)
 
 
 # Dialog logic
