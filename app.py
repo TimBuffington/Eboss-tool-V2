@@ -4,6 +4,25 @@ import logging
 import pandas as pd
 import numpy as np
 
+st.markdown("""
+<style>
+/* Remove or shrink Streamlit's default top block (app header) */
+[data-testid="stHeader"] {
+    height: 0rem;
+    min-height: 0rem;
+    visibility: hidden;
+}
+[data-testid="stToolbar"] {
+    height: 0rem;
+    min-height: 0rem;
+    visibility: hidden;
+}
+.block-container {
+    padding-top: 0rem !important;  /* remove top padding */
+}
+</style>
+""", unsafe_allow_html=True)
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 logger.info("Starting EBOSS® Streamlit app...")
