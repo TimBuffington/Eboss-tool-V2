@@ -458,7 +458,7 @@ def calculate_standard_generator_specs(standard_generator_size, continuous_load,
         "fuel_tank_capacity": gen_data["fuel_tank_gal"]
     }
 
-    }
+    
     model_capacity = generator_kw_mapping.get(eboss_model, 0)
     if not model_capacity:
         return {"error": "Invalid EBOSS model"}
