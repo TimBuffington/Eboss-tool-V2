@@ -57,6 +57,23 @@ import streamlit as st
 import math
 
 MODEL_ORDER = ["EB25 kVA", "EB70 kVA", "EB125 kVA", "EB220 kVA", "EB400 kVA"]
+# --- EBOSS Inputs (example) ---
+eboss_model = st.selectbox("EBOSS Model", ["EB25 kVA","EB70 kVA","EB125 kVA","EB220 kVA","EB400 kVA"], key="eboss_model")
+eboss_type  = st.selectbox("EBOSS Type", ["Full Hybrid", "Power Module"], key="eboss_type")
+
+# Power Module generator size (only when PM selected)
+pm_gen = None
+if eboss_type == "Power Module":
+    pm_gen = st.selectbox(
+        "Generator Size (kVA)",
+        [25, 45, 65, 125, 220],
+        key="power_module_gen_size"  # <-- canon key used everywhere
+    )
+
+# Optional: mirror into session (if you prefer to read from S later)
+S = st.session_state.setdefault("user_inputs", {})
+if pm_gen is not None:
+    S["power_module_gen_size"] = pm_gen
 
 # ---------- parsing & conversions ----------
 def _parse_kva(value):
@@ -84,7 +101,6 @@ def _to_kw_480(value, units, voltage, pf=0.8):
 
 # ---------- loads: compute + store ----------
 def compute_and_store_loads(*, continuous_value, peak_value, units, voltage, pf=0.8):
-    """Store raw UI entries and normalized loads in session; return (cont_kw, peak_kw)."""
     st.session_state.setdefault("user_inputs", {})
     S = st.session_state.user_inputs
 
@@ -156,8 +172,8 @@ def render_charge_rate(eboss_model, eboss_type, *, generator_kva=None, custom_ra
         return rate
 
     # PM: check gen if provided
-    gen_kva = _parse_kva(generator_kva)
-    if gen_kva is None or gen_kva <= 0:
+    pm_gen = _parse_kva(generator_kva)
+    if pm_gen is None or pm_gen <= 0:
         rate = round(desired, 1)
         if store_to_session:
             st.session_state.setdefault("user_inputs", {})
@@ -165,7 +181,7 @@ def render_charge_rate(eboss_model, eboss_type, *, generator_kva=None, custom_ra
             st.session_state.user_inputs["charge_rate_source"] = "custom" if custom_rate is not None else "pm_default"
         return rate
 
-    gen_kw = _gen_kw_from_kva(gen_kva)
+    gen_kw = _gen_kw_from_kva()
     if gen_kw >= desired:
         rate = round(desired, 1)
         if store_to_session:
@@ -181,11 +197,11 @@ def render_charge_rate(eboss_model, eboss_type, *, generator_kva=None, custom_ra
     c1, c2 = st.columns(2)
     proceed = c1.button(
         "Proceed: adjust charge rate to 98% of generator kW",
-        key=f"pm_adjust_{eboss_model}_{gen_kva}_{desired}"
+        key=f"pm_adjust_{eboss_model}_{pm_gen}_{desired}"
     )
     choose_larger = c2.button(
         "Select a larger generator",
-        key=f"pm_larger_{eboss_model}_{gen_kva}_{desired}"
+        key=f"pm_larger_{eboss_model}_{pm_gen}_{desired}"
     )
 
     if proceed:
@@ -257,25 +273,26 @@ def store_derived_metrics(
 
     # ---- Determine generator sizing (kVA → kW) ----
     if eboss_type == "Full Hybrid":
-        gen_kva_for_interp = spec.get("fh_gen_size_kva")
-        if not gen_kva_for_interp:
+        pm_gen_for_interp = spec.get("fh_gen_size_kva")
+        if not pm_gen_for_interp:
             st.warning("Full Hybrid generator size (kVA) missing from specs; cannot interpolate fuel.")
             st.stop()
-        gen_kva_for_interp = int(gen_kva_for_interp)
-        gen_kw = _gen_kw_from_kva(gen_kva_for_interp)
-    else:
-        gkva = _parse_kva(generator_kva)
-        if not gkva:
-            st.warning("Select a Power Module generator size (kVA) to interpolate fuel.")
-            st.stop()
-        gen_kva_for_interp = int(gkva)
-        gen_kw = _gen_kw_from_kva(gkva)
+        pm_gen_for_interp = int(pm_gen_for_interp)
+        gen_kw = _gen_kw_from_kva(pm_gen_for_interp)
+   else:
+    pm_gen_for_interp = spec.get("pm_gen_size_kva")
+    if not pm_gen_for_interp:
+        st.warning("PM generator size (kVA) missing from specs; cannot interpolate fuel.")
+        st.stop()
+    pm_gen_for_interp = int(pm_gen_for_interp)
+    gen_kw = _gen_kw_from_kva(pm_gen_for_interp)
+
 
     # ---- Engine load & fuel (INTERPOLATION ONLY) ----
     load_frac = (charge_rate_kw / gen_kw) if gen_kw > 0 else 0.0
     load_frac = max(0.0, min(1.0, load_frac))
 
-    fuel_gph = interpolate_gph(gen_kva_for_interp, load_frac)
+    fuel_gph = interpolate_gph(pm_gen_for_interp, load_frac)
     if fuel_gph == 0.0:
         st.warning("No interpolation row for this generator size; use one of: 25, 45, 65, 125, 220 kVA.")
         st.stop()
@@ -288,7 +305,7 @@ def store_derived_metrics(
     charge_time_h_full = usable_kwh / net_charge_kw if net_charge_kw > 0 else math.inf
 
     # ---- Daily estimates ----
-    daily_energy_kwh = cont_kw * hours_per_day
+    
     cycles_per_day = (daily_energy_kwh / usable_kwh) if usable_kwh > 0 else math.inf
     engine_run_h_day = cycles_per_day * charge_time_h_full if math.isfinite(cycles_per_day) else math.inf
     daily_fuel_gal = engine_run_h_day * fuel_gph if math.isfinite(engine_run_h_day) else math.inf
@@ -527,8 +544,8 @@ def _simulate_day_for_model_fullpack(model: str, cont_kw: float, peak_kw: float,
     battery_kwh = float(spec.get("battery_kwh", 0) or 0)
     peak_cap_kw = float(spec.get("peak_capacity_kw", 0) or 0)
     charge_rate = float(spec.get("fh_charge_rate_kw", 0) or 0)
-    gen_kva     = int(float(spec.get("fh_gen_size_kva", 0) or 0))
-    gen_kw      = 0.8 * gen_kva if gen_kva > 0 else 0.0
+    pm_gen     = int(float(spec.get("fh_gen_size_kva", 0) or 0))
+    gen_kw      = 0.8 * pm_gen if pm_gen > 0 else 0.0
 
     if peak_kw > peak_cap_kw or battery_kwh <= 0 or charge_rate <= 0 or gen_kw <= 0:
         return None
@@ -547,7 +564,7 @@ def _simulate_day_for_model_fullpack(model: str, cont_kw: float, peak_kw: float,
 
     # Engine load during charge for interpolation
     load_frac = max(0.0, min(1.0, charge_rate / gen_kw))
-    gph = interpolate_gph(gen_kva, load_frac)
+    gph = interpolate_gph(pm_gen, load_frac)
     if gph <= 0:
         return None
 
@@ -558,7 +575,7 @@ def _simulate_day_for_model_fullpack(model: str, cont_kw: float, peak_kw: float,
     return {
         "battery_kwh": battery_kwh,
         "fh_charge_rate_kw": charge_rate,
-        "fh_gen_size_kva": gen_kva,
+        "fh_gen_size_kva": pm_gen,
         "gen_kw": gen_kw,
         "engine_load_frac": load_frac,
         "fuel_gph_at_charge": gph,
@@ -681,7 +698,7 @@ if st.session_state.get("fuel_efficiency_clicked"):
 
 # ==========================================================================
 
-def interpolate_gph(gen_kva: int, load_pct: float) -> float:
+def interpolate_gph(pm_gen: int, load_pct: float) -> float:
     """
     Piecewise-linear interpolation for GPH at given load fraction (0..1) using your table.
     """
@@ -693,10 +710,10 @@ def interpolate_gph(gen_kva: int, load_pct: float) -> float:
         220: [4.60, 6.90, 9.40, 12.0],
         400: [7.70, 12.2, 17.3, 22.5],
     }
-    if gen_kva not in gph_table:
+    if pm_gen not in gph_table:
         return 0.0
 
-    pts = gph_table[gen_kva]
+    pts = gph_table[pm_gen]
     x = max(0.0, min(1.0, float(load_pct or 0.0)))
     if x <= 0.25:
         return pts[0]
@@ -751,18 +768,18 @@ def fill_runtime_and_fuel_if_missing(
 
     # Determine generator kVA / kW for interpolation & % load
     if eboss_type == "Full Hybrid":
-        gen_kva_for_interp = spec.get("fh_gen_size_kva")
-        if not gen_kva_for_interp:
+        pm_gen_for_interp = spec.get("fh_gen_size_kva")
+        if not pm_gen_for_interp:
             st.warning("FH generator size (kVA) missing from specs; cannot interpolate fuel.")
             st.stop()
-        gen_kva_for_interp = int(gen_kva_for_interp)
-        gen_kw = 0.8 * gen_kva_for_interp
+        pm_gen_for_interp = int(pm_gen_for_interp)
+        gen_kw = 0.8 * pm_gen_for_interp
     else:
         gkva = _parse_kva(generator_kva)
         if not gkva:
             st.warning("Power Module generator size required to interpolate fuel.")
             st.stop()
-        gen_kva_for_interp = int(gkva)
+        pm_gen_for_interp = int(gkva)
         gen_kw = 0.8 * gkva
 
     # Engine load fraction during charging (cap 0..1 for interpolation)
@@ -797,7 +814,7 @@ def fill_runtime_and_fuel_if_missing(
     _set_if_missing(S, "engine_run_hours_per_day", round(engine_run_h_per_day, 2))
 
     # 🔹 Fuel at charge (INTERPOLATION ONLY)
-    gph = interpolate_gph(gen_kva_for_interp, load_frac)
+    gph = interpolate_gph(pm_gen_for_interp, load_frac)
     if gph == 0.0:
         st.warning("No interpolation row for this generator size; please use one of: 25, 45, 65, 125, 220, 400 kVA.")
         st.stop()
@@ -884,7 +901,7 @@ def validate_charge_rate(charge_kw, gen_kw, max_charge):
     return "✅ Charge config valid"
 
 # --- KEEP: interpolation-only (load_pct fraction 0..1) ---
-def interpolate_gph(gen_kva, load_pct):
+def interpolate_gph(pm_gen, load_pct):
     table = {
         25:  [0.67, 0.94, 1.26, 1.62],
         45:  [1.04, 1.60, 2.20, 2.03],
@@ -893,9 +910,9 @@ def interpolate_gph(gen_kva, load_pct):
         220: [4.60, 6.90, 9.40, 12.0],
         400: [7.70, 12.2, 17.3, 22.5],
     }
-    if gen_kva not in table:
+    if pm_gen not in table:
         return 0.0
-    pts = table[gen_kva]
+    pts = table[pm_gen]
     x = max(0.0, min(1.0, float(load_pct or 0.0)))
     if x <= 0.25:
         return pts[0]
@@ -923,14 +940,14 @@ def calculate_engine_runtime(model: str, gen_type: str, cont_kw: float, kva):
         charge_kw, _, _ = get_charge_rate(model, gen_type, generator_kva=kva)
 
     # generator kW + %load
-    gen_kva = float(str(kva).lower().replace("kva","").strip()) if kva is not None else 0.0
-    if gen_type == "Full Hybrid" and gen_kva == 0.0:
-        gen_kva = float(spec.get("fh_gen_size_kva", 0) or 0)
-    gen_kw = 0.8 * gen_kva if gen_kva > 0 else float(spec.get("gen_kw", 0) or 0)
+    pm_gen = float(str(kva).lower().replace("kva","").strip()) if kva is not None else 0.0
+    if gen_type == "Full Hybrid" and pm_gen == 0.0:
+        pm_gen = float(spec.get("fh_gen_size_kva", 0) or 0)
+    gen_kw = 0.8 * pm_gen if pm_gen > 0 else float(spec.get("gen_kw", 0) or 0)
 
     engine_load_frac = (charge_kw / gen_kw) if gen_kw > 0 else 0.0
     engine_load_frac = max(0.0, min(1.0, engine_load_frac))
-    gph = interpolate_gph(int(gen_kva), engine_load_frac) if gen_kva else 0.0
+    gph = interpolate_gph(int(pm_gen), engine_load_frac) if pm_gen else 0.0
 
     battery_kwh = float(spec.get("battery_kwh", 0) or 0)
     battery_life_hr = (battery_kwh / cont_kw) if cont_kw > 0 else math.inf
