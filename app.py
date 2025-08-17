@@ -759,28 +759,26 @@ st.markdown("<div class='cta-scope'>", unsafe_allow_html=True)
 col1, col2, col3 = st.columns([1,1,1])
 
 with col1:
-    with st.container():
-        manual_select_clicked = st.button(
-            "Manually Select EBOSS Type and Model",
-            key="btn_manual_select",
-            width: 100% !important;
-        )
+    manual_select_clicked = st.button(
+        "Manually Select EBOSS Type and Model",
+        key="btn_manual_select",
+        use_container_width=True
+    )
 
 with col2:
-    with st.container():
-        load_based_clicked = st.button(
-            "Use Load Based Suggested EBOSS",
-            key="btn_load_based",
-            width: 100% !important;
-        )
+    load_based_clicked = st.button(
+        "Use Load Based Suggested EBOSS",
+        key="btn_load_based",
+        use_container_width=True
+    )
 
 with col3:
-    with st.container():
-        fuel_efficiency_clicked = st.button(
-            "Use EBOSS Model Based on Max Fuel Efficiency",
-            key="btn_fuel_eff",
-            width: 100% !important;
-        )
+    fuel_efficiency_clicked = st.button(
+        "Use EBOSS Model Based on Max Fuel Efficiency",
+        key="btn_fuel_eff",
+        use_container_width=True
+    )
+
 
 st.markdown("</div>", unsafe_allow_html=True)
 
