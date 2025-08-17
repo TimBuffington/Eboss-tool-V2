@@ -1,0 +1,9 @@
+import streamlit as st
+from utils.theme import apply_theme, render_logo
+from utils.state import ensure_state
+
+apply_theme(); ensure_state(); render_logo()
+st.header("Load Based Specs")
+
+st.info("Build your load-based sizing UI here (inputs, interpolation, results).")
+
