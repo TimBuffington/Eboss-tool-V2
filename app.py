@@ -1,7 +1,7 @@
 import streamlit as st
 from utils.theme import apply_theme, render_logo
 from utils.state import ensure_state
-from components.nav import render_cta_row
+from components.nav import render_global_header, render_cta_row
 
 st.set_page_config(page_title="EBOSS® Tool", layout="wide", initial_sidebar_state="collapsed")
 
