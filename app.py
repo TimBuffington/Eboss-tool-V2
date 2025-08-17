@@ -770,8 +770,7 @@ def render_Charge_Rate(
 
 # Homepage============================================================================================================
 st.markdown("<h1 style='text-align: center;'>EBOSS® Size & Spec Tool</h1>", unsafe_allow_html=True)
-TROUBLE_URL = "https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/troubleshooting.py"
-
+TROUBLE_URL = "https://github.com/TimBuffington/Eboss-tool-V2/blob/main/troubleshooting.py"
 
 # --- Row 1 — external links styled as buttons (now 4 columns)
 col1, col2, col3, col4 = st.columns([1,1,1,1])
