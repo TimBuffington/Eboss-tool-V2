@@ -225,6 +225,9 @@ def _set_if_missing(S: dict, key: str, value):
         S[key] = value
     return S[key]
 
+import math
+import streamlit as st
+
 def store_derived_metrics(
     *,
     eboss_model: str,
@@ -233,82 +236,97 @@ def store_derived_metrics(
     peak_kw: float,
     charge_rate_kw: float,
     generator_kva=None,
-    usable_soc_frac: float = 0.80,
-    charge_efficiency: float = 0.90,
+    hours_per_day: float = 24.0,   # default duty time
 ):
     """
-    Persist a rich set of derived values so other pages can just read keys.
-    Uses ONLY interpolation for fuel (no BSFC). Does not overwrite existing keys.
+    Persist derived values for other pages. Fuel uses interpolation only.
+    Assumes 100% of battery_kwh is usable.
+    Does not overwrite existing keys already set in st.session_state.user_inputs.
     """
     st.session_state.setdefault("user_inputs", {})
     S = st.session_state.user_inputs
 
-    spec = EBOSS_UNITS.get(eboss_model, {})
+    # ---- Specs ----
+    spec = EBOSS_UNITS.get(eboss_model, {}) or {}
     battery_kwh = float(spec.get("battery_kwh", 0) or 0)
+    cont_capacity_kw_spec = float(spec.get("cont_capacity_kw", 0) or 0)
+    peak_capacity_kw_spec = float(spec.get("peak_capacity_kw", 0) or 0)
+    pm_charge_rate_spec   = float(spec.get("pm_charge_rate_kw", 0) or 0)
+    fh_charge_rate_spec   = float(spec.get("fh_charge_rate_kw", 0) or 0)
+    max_charge_rate_spec  = float(spec.get("max_charge_rate_kw", 0) or 0)
 
-    # ----- Determine generator sizing (kVA/kW) -----
+    # ---- Determine generator sizing (kVA → kW) ----
     if eboss_type == "Full Hybrid":
         gen_kva_for_interp = spec.get("fh_gen_size_kva")
         if not gen_kva_for_interp:
-            st.warning("FH generator size (kVA) missing from specs; cannot interpolate fuel.")
+            st.warning("Full Hybrid generator size (kVA) missing from specs; cannot interpolate fuel.")
             st.stop()
         gen_kva_for_interp = int(gen_kva_for_interp)
         gen_kw = _gen_kw_from_kva(gen_kva_for_interp)
     else:
         gkva = _parse_kva(generator_kva)
         if not gkva:
-            st.warning("Power Module generator size required to interpolate fuel.")
+            st.warning("Select a Power Module generator size (kVA) to interpolate fuel.")
             st.stop()
         gen_kva_for_interp = int(gkva)
         gen_kw = _gen_kw_from_kva(gkva)
 
-    # ----- Engine load & fuel (INTERPOLATION ONLY) -----
+    # ---- Engine load & fuel (INTERPOLATION ONLY) ----
     load_frac = (charge_rate_kw / gen_kw) if gen_kw > 0 else 0.0
     load_frac = max(0.0, min(1.0, load_frac))
+
     fuel_gph = interpolate_gph(gen_kva_for_interp, load_frac)
     if fuel_gph == 0.0:
-        st.warning("No interpolation row for this generator size; use one of: 25, 45, 65, 125, 220, 400 kVA.")
+        st.warning("No interpolation row for this generator size; use one of: 25, 45, 65, 125, 220 kVA.")
         st.stop()
 
-    # ----- Battery/charge math -----
-    usable_kwh   = battery_kwh * usable_soc_frac
-    runtime_h    = (usable_kwh / cont_kw) if cont_kw > 0 else math.inf
-    net_charge_kw = max(charge_rate_kw - cont_kw, 0.01)               # keep >0 to avoid /0
-    charge_time_h = (/ charge_efficiency) / charge_rate_kw if charge_rate_kw > 0 else math.inf
+    # ---- Battery & charge math ----
+    usable_kwh = battery_kwh   # 100% usable
+    runtime_h_at_cont = (usable_kwh / cont_kw) if cont_kw > 0 else math.inf
 
-    # ----- Daily estimates -----
-    daily_energy_kwh   = cont_kw * 24.0
-    cycles_per_day     = (daily_energy_kwh / usable_kwh) if usable_kwh > 0 else math.inf
-    engine_run_h_day   = (cycles_per_day * charge_time_h) if math.isfinite(cycles_per_day) else math.inf
-    daily_fuel_gal     = (engine_run_h_day * fuel_gph) if math.isfinite(engine_run_h_day) else math.inf
+    net_charge_kw = max((charge_rate_kw - cont_kw), 0.01)
+    charge_time_h_full = usable_kwh / net_charge_kw if net_charge_kw > 0 else math.inf
 
-    # ----- Persist (only if missing) -----
+    # ---- Daily estimates ----
+    daily_energy_kwh = cont_kw * hours_per_day
+    cycles_per_day = (daily_energy_kwh / usable_kwh) if usable_kwh > 0 else math.inf
+    engine_run_h_day = cycles_per_day * charge_time_h_full if math.isfinite(cycles_per_day) else math.inf
+    daily_fuel_gal = engine_run_h_day * fuel_gph if math.isfinite(engine_run_h_day) else math.inf
+
+    # ---- Persist (only if missing) ----
+    def _set_if_missing(d, k, v):
+        if k not in d or d[k] in (None, ""):
+            d[k] = v
+
     _set_if_missing(S, "eboss_model", eboss_model)
     _set_if_missing(S, "eboss_type", eboss_type)
     _set_if_missing(S, "power_module_gen_size", (str(generator_kva) if generator_kva else S.get("power_module_gen_size","")))
-    _set_if_missing(S, "battery_kwh", battery_kwh)
-    _set_if_missing(S, "gen_kw", round(gen_kw, 2))
-    _set_if_missing(S, "cont_capacity_kw", float(spec.get("cont_capacity_kw", 0) or 0))
-    _set_if_missing(S, "peak_capacity_kw", float(spec.get("peak_capacity_kw", 0) or 0))
-    _set_if_missing(S, "pm_charge_rate_kw_spec", float(spec.get("pm_charge_rate_kw", 0) or 0))
-    _set_if_missing(S, "fh_charge_rate_kw_spec", float(spec.get("fh_charge_rate_kw", 0) or 0))
-    _set_if_missing(S, "max_charge_rate_kw_spec", float(spec.get("max_charge_rate_kw", 0) or 0))
-
-    _set_if_missing(S, "actual_continuous_load", cont_kw)
-    _set_if_missing(S, "actual_peak_load", peak_kw)
-
-    _set_if_missing(S, "charge_rate_kw", charge_rate_kw)
-    _set_if_missing(S, "engine_load_pct", round(load_frac * 100.0, 2))
-    _set_if_missing(S, "fuel_gph_at_charge", round(fuel_gph, 3))          # ← canonical, interpolation-only
-
+    _set_if_missing(S, "battery_kwh", round(battery_kwh, 2))
     _set_if_missing(S, "usable_battery_kwh", round(usable_kwh, 2))
-    _set_if_missing(S, "battery_runtime_hours_at_cont", round(runtime_h, 2) if math.isfinite(runtime_h) else runtime_h)
-    _set_if_missing(S, "charge_time_hours_full", round(charge_time_h, 2) if math.isfinite(charge_time_h) else charge_time_h)
 
-    _set_if_missing(S, "daily_energy_kwh", round(daily_energy_kwh, 1))
+    _set_if_missing(S, "gen_kw", round(gen_kw, 2))
+    _set_if_missing(S, "engine_load_pct", round(load_frac * 100.0, 2))
+    _set_if_missing(S, "fuel_gph_at_charge", round(fuel_gph, 3))
+
+    _set_if_missing(S, "cont_capacity_kw", round(cont_capacity_kw_spec, 2))
+    _set_if_missing(S, "peak_capacity_kw", round(peak_capacity_kw_spec, 2))
+    _set_if_missing(S, "pm_charge_rate_kw_spec", round(pm_charge_rate_spec, 2))
+    _set_if_missing(S, "fh_charge_rate_kw_spec", round(fh_charge_rate_spec, 2))
+    _set_if_missing(S, "max_charge_rate_kw_spec", round(max_charge_rate_spec, 2))
+
+    _set_if_missing(S, "actual_continuous_load", round(cont_kw, 2))
+    _set_if_missing(S, "actual_peak_load", round(peak_kw, 2))
+    _set_if_missing(S, "charge_rate_kw", round(charge_rate_kw, 2))
+
+    _set_if_missing(S, "battery_runtime_hours_at_cont", round(runtime_h_at_cont, 2) if math.isfinite(runtime_h_at_cont) else runtime_h_at_cont)
+    _set_if_missing(S, "charge_time_hours_full", round(charge_time_h_full, 2) if math.isfinite(charge_time_h_full) else charge_time_h_full)
+
+    _set_if_missing(S, "daily_energy_kwh", round(daily_energy_kwh, 2))
     _set_if_missing(S, "daily_cycles", round(cycles_per_day, 3) if math.isfinite(cycles_per_day) else cycles_per_day)
     _set_if_missing(S, "engine_run_hours_per_day", round(engine_run_h_day, 2) if math.isfinite(engine_run_h_day) else engine_run_h_day)
     _set_if_missing(S, "daily_fuel_gal", round(daily_fuel_gal, 2) if math.isfinite(daily_fuel_gal) else daily_fuel_gal)
+
+    return S
 
 
 fill_runtime_and_fuel_if_missing(
