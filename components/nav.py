@@ -43,3 +43,47 @@ def render_cta_row():
     with cols[3]:
         st.button("Troubleshooting", key="btn_troubleshooting")
     st.markdown("</div>", unsafe_allow_html=True)
+
+# components/nav.py (append this)
+
+import streamlit as st
+
+def render_config_selector(include_troubleshooting: bool = False) -> str | None:
+    """
+    Show the 3 EBOSS configuration choices (CTA-styled, full-width, mobile-friendly).
+    Returns one of: "manual", "load_based", "fuel_eff", "troubleshooting", or None.
+
+    Also sets a few session flags for downstream logic:
+      - st.session_state["config_mode"] = <mode>
+      - st.session_state["launch_tool_modal"] = True  (single choke point to open your modal/page)
+    """
+    st.markdown("<div class='cta-scope'>", unsafe_allow_html=True)
+
+    cols = st.columns(3)
+
+    clicked_mode = None
+
+    with cols[0]:
+        if st.button("Manually Select EBOSS Type and Model", key="cfg_manual"):
+            clicked_mode = "manual"
+    with cols[1]:
+        if st.button("Use Load Based Suggested EBOSS", key="cfg_load_based"):
+            clicked_mode = "load_based"
+    with cols[2]:
+        if st.button("Use EBOSS Model Based on Max Fuel Efficiency", key="cfg_fuel_eff"):
+            clicked_mode = "fuel_eff"
+
+   st.markdown("</div>", unsafe_allow_html=True)
+
+    if clicked_mode:
+        # one canonical place to store the selection for the rest of the app
+        st.session_state["config_mode"] = clicked_mode
+        # flip a single flag your router can listen for (to open your modal / go to inputs)
+        st.session_state["launch_tool_modal"] = True
+
+        # (Optional) back-compat flags if other code expects them
+        st.session_state["use_manual_select"]      = (clicked_mode == "manual")
+        st.session_state["use_load_based"]         = (clicked_mode == "load_based")
+        st.session_state["use_max_fuel_efficiency"]= (clicked_mode == "fuel_eff")
+
+    return clicked_mode
