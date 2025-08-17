@@ -3,6 +3,7 @@ import math
 import logging
 import pandas as pd
 import numpy as np
+from fault_lookup_widget import render_fault_lookup_widget
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -743,10 +744,10 @@ with col3:
         unsafe_allow_html=True
     )
 
-from fault_lookup_widget import render_fault_code_lookup_inline
+
 
 with col4:
-    render_fault_code_lookup_inline()
+   render_fault_lookup_widget()
 
 # ----- centered text BETWEEN the two rows -----
 st.markdown(
