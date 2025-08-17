@@ -23,6 +23,45 @@ div.viewerBadge_link, [data-testid="stDecoration"] {{
   color: {COLORS['Alpine White']};
   font-family: Arial, sans-serif;
 }}
+st.markdown(f"""
+<style>
+.cta-link,
+.cta-link:link,
+.cta-link:visited,
+.cta-link:active,
+.cta-link:hover {{
+  color: {COLORS['Alpine White']} !important;
+  text-decoration: none !important;
+}}
+
+
+.cta-link {{
+  display:flex; align-items:center; justify-content:center;
+  width:100%; min-height:56px; line-height:1.2;
+  background-color:{COLORS['Asphalt']};
+  border:2px solid {COLORS['Concrete']};
+  font: 700 16px Arial, sans-serif;
+  text-shadow:0 0 6px {COLORS['Energy Green']};
+  border-radius:10px; padding:12px 14px; box-sizing:border-box;
+  transition: box-shadow .25s ease, transform .15s ease;
+}}
+.cta-link:hover {{ box-shadow:0 0 28px {COLORS['Energy Green']}; transform: translateY(-1px);}}
+
+.cta-scope [data-testid="column"] .stButton {{ width:100% !important; }}
+.cta-scope .stButton > button {{
+  display:block; width:100% !important; box-sizing:border-box;
+  min-height:56px; line-height:1.2; text-align:center;
+  background-color:{COLORS['Asphalt']} !important;
+  color:{COLORS['Alpine White']} !important;               
+  border:2px solid {COLORS['Concrete']} !important;
+  font: 700 16px Arial, sans-serif;
+  text-shadow:0 0 6px {COLORS['Energy Green']} !important;
+  border-radius:10px; padding:12px 14px;
+  transition: box-shadow .25s ease, transform .15s ease;
+}}
+.cta-scope .stButton > button:hover {{ box-shadow:0 0 28px {COLORS['Energy Green']}; transform: translateY(-1px); }}
+</style>
+""", unsafe_allow_html=True)
 
 /* ========== Logo ========== */
 .logo-wrap {{
