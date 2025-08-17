@@ -119,6 +119,35 @@ st.markdown(f"""
 }}
 </style>
 """, unsafe_allow_html=True)
+st.markdown(f"""
+<style>
+/* Uniform height + centered text for all CTA buttons */
+.cta-link {{
+  display: flex;                 /* flex for vertical centering */
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 56px;              /* <- make all buttons same height */
+  line-height: 1.2;
+  text-decoration: none !important;
+  background-color: {COLORS['Asphalt']};
+  color: {COLORS['Alpine White']};
+  border: 2px solid {COLORS['Concrete']};
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 700;              /* bold white font */
+  text-shadow: 0 0 6px {COLORS['Energy Green']};
+  border-radius: 10px;
+  padding: 12px 14px;
+  transition: box-shadow .25s ease, transform .15s ease;
+  box-sizing: border-box;
+}}
+.cta-link:hover {{
+  box-shadow: 0 0 28px {COLORS['Energy Green']}; /* Energy Green hover glow */
+  transform: translateY(-1px);
+}}
+</style>
+""", unsafe_allow_html=True)
 
 st.markdown(
     f"""
@@ -741,15 +770,11 @@ def render_Charge_Rate(
 
 # Homepage============================================================================================================
 st.markdown("<h1 style='text-align: center;'>EBOSS® Size & Spec Tool</h1>", unsafe_allow_html=True)
+TROUBLE_URL = "https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/troubleshooting.py"
 
 
-with st.container():
-    st.markdown(
-        "<div style='display:flex;flex-direction:column;align-items:center;width:100%'>",
-        unsafe_allow_html=True
-    )
-# --- Row 1 — external links (no JS; real links styled as buttons)
-col1, col2, col3 = st.columns([1,1,1]) 
+# --- Row 1 — external links styled as buttons (now 4 columns)
+col1, col2, col3, col4 = st.columns([1,1,1,1])
 
 with col1:
     st.markdown(
@@ -766,6 +791,12 @@ with col2:
 with col3:
     st.markdown(
         '<a class="cta-link" href="https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g" target="_blank" rel="noopener">Learn how the EBOSS® works</a>',
+        unsafe_allow_html=True
+    )
+
+with col4:
+    st.markdown(
+        f'<a class="cta-link" href="{TROUBLE_URL}" target="_blank" rel="noopener">EBOSS Troubleshooting</a>',
         unsafe_allow_html=True
     )
 
