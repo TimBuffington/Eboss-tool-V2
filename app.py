@@ -1,4 +1,3 @@
-
 import streamlit as st
 import math
 import logging
@@ -724,7 +723,7 @@ with st.container():
         unsafe_allow_html=True
     )
 # --- Row 1 — external links (no JS; real links styled as buttons)
-col1, col2, col3, Col4 = st.columns([1,1,1,1]) 
+col1, col2, col3 = st.columns([1,1,1]) 
 
 with col1:
     st.markdown(
@@ -744,11 +743,6 @@ with col3:
         unsafe_allow_html=True
     )
 
-with col4:
-    st.markdown(
-        '<a class="cta-link" href="https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g" target="_blank" rel="noopener">Learn how the EBOSS® works</a>',
-        unsafe_allow_html=True
-    )
 # ----- centered text BETWEEN the two rows -----
 st.markdown(
     "<div class='message-text' style='margin:12px 0; text-align:center;'>Please Select an EBOSS Configuration</div>",
