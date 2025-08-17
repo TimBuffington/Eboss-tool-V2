@@ -1,0 +1,9 @@
+import streamlit as st
+from utils.theme import apply_theme, render_logo
+from utils.state import ensure_state
+
+apply_theme(); ensure_state(); render_logo()
+st.header("EBOSS® to Standard Comparison")
+
+st.info("Side-by-side comparison UI goes here.")
+
