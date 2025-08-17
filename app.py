@@ -1128,7 +1128,7 @@ elif st.session_state.get("view_mode") == "cost":
             unsafe_allow_html=True
         )
 
-# If you had a print/export button defined elsewhere
+# If you had a print/export button defined elsewher
 try:
     print_button()
 except Exception:
