@@ -160,3 +160,12 @@ EBOSS_SPECS = {
         "Fuel tank capacity": "285 gal",
     },
 }
+
+SPEC_LABELS = [
+    "Battery Capacity",
+    "Inverter",
+    "Voltage Options",
+    "Weight",
+    "Dimensions",
+    "Warranty"
+]
