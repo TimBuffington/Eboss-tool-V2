@@ -259,7 +259,7 @@ def store_derived_metrics(
     Assumes 100% of battery_kwh is usable.
     Does not overwrite existing keys already set in st.session_state.user_inputs.
     """
-    st.session_state.setdefault("user_inputs", {})
+st.session_state.setdefault("user_inputs", {})
     S = st.session_state.user_inputs
 
     # ---- Specs ----
