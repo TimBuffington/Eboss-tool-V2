@@ -3,151 +3,234 @@ import math
 import logging
 import pandas as pd
 import numpy as np
-st.markdown(f"""
+
+st.markdown("""
 <style>
-/* ========== Chrome cleanup ========== */
-[data-testid="stHeader"], [data-testid="stToolbar"],
-footer, [data-testid="stFooter"], #MainMenu,
-div.viewerBadge_link, [data-testid="stDecoration"] {{
-  visibility: hidden; height: 0 !important;
-}}
-.block-container {{ padding-top: 0 !important; }}
+/* ===== Hide Streamlit Header & Toolbar ===== */
+[data-testid="stHeader"] {visibility: hidden; height: 0px;}
+[data-testid="stToolbar"] {visibility: hidden; height: 0px;}
+.block-container {padding-top: 0rem !important;}
 
-/* ========== Background & base text ========== */
-.stApp {{
-  background-image: url("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/bg.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  color: {COLORS['Alpine White']};
-  font-family: Arial, sans-serif;
-}}
-st.markdown(f"""
+/* ===== Hide Streamlit Footer / "Manage app" ===== */
+footer {visibility: hidden;}
+[data-testid="stFooter"] {visibility: hidden;}
+div.viewerBadge_link,
+div[data-testid="stDecoration"],
+#MainMenu {visibility: hidden;}
+</style>
+""", unsafe_allow_html=True)
+st.markdown(
+        """
+        <style>
+        .stDeployButton {
+            visibility: hidden;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+logger.info("Starting EBOSS® Streamlit app...")
+
+# Color mappings based on provided hex codes
+COLORS = {
+    "Asphalt": "#000000",
+    "Concrete": "#939598",
+    "Charcoal": "#636569",
+    "Energy Green": "#81BD47",
+    "Alpine White": "#FFFFFF",
+    "Light Grey": "#D3D3D3",
+}
+
+LOGO_URL = "https://raw.githubusercontent.com/TimBuffington/troubleshooting/refs/heads/main/assets/ANA-ENERGY-LOGO-HORIZONTAL-WHITE-GREEN.png"
+
+# Centered, responsive logo
+st.markdown("""
 <style>
-.cta-link,
-.cta-link:link,
-.cta-link:visited,
-.cta-link:active,
-.cta-link:hover {{
-  color: {COLORS['Alpine White']} !important;
-  text-decoration: none !important;
-}}
-
-
-.cta-link {{
-  display:flex; align-items:center; justify-content:center;
-  width:100%; min-height:56px; line-height:1.2;
-  background-color:{COLORS['Asphalt']};
-  border:2px solid {COLORS['Concrete']};
-  font: 700 16px Arial, sans-serif;
-  text-shadow:0 0 6px {COLORS['Energy Green']};
-  border-radius:10px; padding:12px 14px; box-sizing:border-box;
-  transition: box-shadow .25s ease, transform .15s ease;
-}}
-.cta-link:hover {{ box-shadow:0 0 28px {COLORS['Energy Green']}; transform: translateY(-1px);}}
-
-.cta-scope [data-testid="column"] .stButton {{ width:100% !important; }}
-.cta-scope .stButton > button {{
-  display:block; width:100% !important; box-sizing:border-box;
-  min-height:56px; line-height:1.2; text-align:center;
-  background-color:{COLORS['Asphalt']} !important;
-  color:{COLORS['Alpine White']} !important;               
-  border:2px solid {COLORS['Concrete']} !important;
-  font: 700 16px Arial, sans-serif;
-  text-shadow:0 0 6px {COLORS['Energy Green']} !important;
-  border-radius:10px; padding:12px 14px;
-  transition: box-shadow .25s ease, transform .15s ease;
-}}
-.cta-scope .stButton > button:hover {{ box-shadow:0 0 28px {COLORS['Energy Green']}; transform: translateY(-1px); }}
+.logo-wrap{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin: 8px 0 16px;
+}
+.logo-wrap img{
+  width: clamp(220px, 55vw, 560px);  /* responsive: min 220px, max 560px */
+  height: auto;
+}
 </style>
 """, unsafe_allow_html=True)
 
-/* ========== Logo ========== */
-.logo-wrap {{
-  display:flex; justify-content:center; align-items:center;
-  margin: 8px 0 16px;
-}}
-.logo-wrap img {{
-  width: clamp(220px, 55vw, 560px);
-  height: auto;
-}}
+st.markdown(
+    f"<div class='logo-wrap'><img src='{LOGO_URL}' alt='ANA Energy Logo' /></div>",
+    unsafe_allow_html=True
+)
 
-/* ========== Anchor links styled as CTA buttons ========== */
+# --- Add once near the top (after your COLORS dict / styles) ---
+st.markdown(f"""
+<style>
+/* === Anchor links styled as CTA buttons === */
 .cta-link {{
-  display:flex; align-items:center; justify-content:center;
-  width:100%; min-height:56px;
-  text-decoration:none !important; line-height:1.2;
-  background-color:{COLORS['Asphalt']};
-  color:{COLORS['Alpine White']};
-  border:2px solid {COLORS['Concrete']};
-  font-size:16px; font-weight:700; font-family:Arial, sans-serif;
-  text-shadow:0 0 6px {COLORS['Energy Green']};
-  border-radius:10px; padding:12px 14px; box-sizing:border-box;
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  text-decoration: none !important;
+  background-color: {COLORS['Asphalt']};
+  color: {COLORS['Alpine White']};
+  border: 2px solid {COLORS['Concrete']};
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  text-shadow: 0 0 6px {COLORS['Energy Green']};
+  border-radius: 10px;
+  padding: 12px 14px;
   transition: box-shadow .25s ease, transform .15s ease;
+  box-sizing: border-box;
 }}
 .cta-link:hover {{
-  box-shadow:0 0 28px {COLORS['Energy Green']};
+  box-shadow: 0 0 28px {COLORS['Energy Green']};
   transform: translateY(-1px);
 }}
 
-/* ========== Streamlit buttons that should match CTA look (scoped) ========== */
-/* Wrap your action row in: st.markdown("<div class='cta-scope'>", unsafe_allow_html=True) ... </div> */
-.cta-scope [data-testid="column"] .stButton {{ width:100% !important; }}
+/* === Streamlit buttons inside .cta-scope should look like .cta-link and fill columns === */
+.cta-scope [data-testid="column"] .stButton {{
+  width: 100% !important;
+}}
 .cta-scope .stButton > button {{
-  display:block; width:100% !important; box-sizing:border-box; text-align:center;
-  min-height:56px; line-height:1.2;
-  background-color:{COLORS['Asphalt']} !important;
-  color:{COLORS['Alpine White']} !important;
-  border:2px solid {COLORS['Concrete']} !important;
-  font-size:16px; font-weight:700; font-family:Arial, sans-serif;
-  text-shadow:0 0 6px {COLORS['Energy Green']} !important;
-  border-radius:10px; padding:12px 14px;
+  display: block;
+  width: 100% !important;
+  text-align: center;
+  background-color: {COLORS['Asphalt']};
+  color: {COLORS['Alpine White']};
+  border: 2px solid {COLORS['Concrete']};
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  text-shadow: 0 0 6px {COLORS['Energy Green']};
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-sizing: border-box;
   transition: box-shadow .25s ease, transform .15s ease;
 }}
 .cta-scope .stButton > button:hover {{
-  box-shadow:0 0 28px {COLORS['Energy Green']};
+  box-shadow: 0 0 28px {COLORS['Energy Green']};
   transform: translateY(-1px);
-}}
-.cta-scope .stButton > button:disabled {{
-  opacity:.85; cursor:not-allowed;
-}}
-
-/* ========== Inputs ========== */
-.stTextInput input,
-.stNumberInput input,
-.stDateInput input,
-.stTimeInput input,
-[data-baseweb="select"] div {{
-  background-color:{COLORS['Asphalt']};
-  color:{COLORS['Alpine White']};
-  border:1px solid {COLORS['Light Grey']};
-  border-radius:6px; padding:8px; transition: box-shadow .2s ease;
-}}
-.stTextInput input:hover,
-.stNumberInput input:hover,
-.stDateInput input:hover,
-.stTimeInput input:hover,
-[data-baseweb="select"] div:hover {{
-  box-shadow:0 0 10px {COLORS['Energy Green']};
-}}
-
-/* ========== Optional footer bar (if you use .footer) ========== */
-.footer {{
-  position:fixed; left:0; right:0; bottom:0;
-  background:#000; display:flex; justify-content:center; align-items:center;
-  padding:10px;
-}}
-
-/* ========== Mobile tweaks ========== */
-@media (max-width: 900px) {{
-  .block-container {{ padding-left:.75rem; padding-right:.75rem; }}
-  [data-testid="stHorizontalBlock"] {{ flex-direction:column !important; gap:.75rem !important; }}
-  [data-testid="column"] {{ width:100% !important; flex:1 1 100% !important; }}
-  .logo-wrap img {{ width: clamp(180px, 70vw, 520px); }}
 }}
 </style>
 """, unsafe_allow_html=True)
+
+st.markdown(
+    f"""
+    <style>
+    /* ===== App Background ===== */
+    .stApp {{
+        background-image: url("https://raw.githubusercontent.com/TimBuffington/Eboss-tool-V2/main/assets/bg.png");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        color: {COLORS['Alpine White']};
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+    }}
+    /* ===== Buttons ===== */
+    button, .stButton button {{
+        background-color: {COLORS['Asphalt']} !important;
+        color: {COLORS['Energy Green']} !important;
+        border: 2px solid {COLORS['Light Grey']} !important;
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+        font-weight: bold !important;
+        text-shadow: 0 0 6px {COLORS['Energy Green']};
+        border-radius: 6px;
+        padding: 6px 10px;
+        transition: box-shadow 0.3s ease, transform 0.2s ease;
+        width: 100%;
+        margin: 0px 0;
+    }}
+    button:hover, .stButton button:hover {{
+        box-shadow: 0 0 30px {COLORS['Energy Green']};
+        transform: translateY(-1px);
+    }}
+
+    /* ===== Button Layout Containers ===== */
+    .button-container {{
+        display: flex;
+        justify-content: center;
+        gap: 0px;
+        width: 100%;
+    }}
+    .button-block {{
+        flex: 1;
+        width: 100%;
+    }}
+
+    /* ===== Inputs ===== */
+    .stTextInput > div > div > input,
+    .stSelectbox > div > div > div,
+    .stNumberInput > div > div > input {{
+        background-color: {COLORS['Asphalt']};
+        color: {COLORS['Alpine White']};
+        border: 1px solid {COLORS['Light Grey']};
+        border-radius: 5px;
+        padding: 8px;
+        transition: box-shadow 0.3s ease;
+    }}
+    .stTextInput > div > div > input:hover,
+    .stSelectbox > div > div > div:hover,
+    .stNumberInput > div > div > input:hover {{
+        box-shadow: 0 0 10px {COLORS['Energy Green']};
+    }}
+
+    /* ===== Footer ===== */
+    .footer {{
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: black;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+    }}
+
+    /* ===== Message & Centered Elements ===== */
+    .message-text {{
+        font-size: 1.5em;
+        text-align: center;
+        transition: box-shadow 0.3s ease;
+        padding: 10px;
+    }}
+    .message-text:hover {{
+        box-shadow: 0 0 10px {COLORS['Energy Green']};
+    }}
+    .centered-radio {{
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }}
+    .centered-button {{
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }}
+
+    /* ===== Mobile Tweaks ===== */
+    @media (max-width: 768px) {{
+        .logo {{ max-width: 480px; }}
+        .logo-container {{ height: 120px; }}
+        .button-container {{
+            flex-direction: column;
+            gap: 5px;
+        }}
+        .button-block {{ max-width: 100%; }}
+    }}
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 # EBOSS Load Calculation Reference Data
 EBOSS_LOAD_REFERENCE = {
@@ -222,8 +305,6 @@ STANDARD_GENERATOR_DATA = {
     }
 }
 
-
-
 def _to_normalized_kw(value: float, units: str, voltage: str, pf: float = 0.8) -> float:
     """
     Convert a single input (continuous or peak) to normalized kW (baseline 3φ 480V).
@@ -238,8 +319,6 @@ def _to_normalized_kw(value: float, units: str, voltage: str, pf: float = 0.8) -
     if str(voltage) in {"208", "480"}:
         return (1.732 * v * i * pf) / 1000.0
     return (v * i * pf) / 1000.0
-
-
 
 def render_adjusted_load_panel(cont_kw: float, peak_kw: float):
     """
@@ -261,9 +340,6 @@ def render_adjusted_load_panel(cont_kw: float, peak_kw: float):
         """,
         unsafe_allow_html=True
     )
-
-import math
-import streamlit as st
 
 def _set_if_missing(S: dict, key: str, value):
     """Set only if missing/None; return final value."""
@@ -394,7 +470,7 @@ def calculate_standard_generator_specs(standard_generator_size, continuous_load,
         "fuel_tank_capacity": gen_data["fuel_tank_gal"]
     }
 
-    
+def calculate_load_specs(eboss_model, eboss_type, continuous_load, max_peak_load, generator_kva=None, custom_charge_rate=None):
     model_capacity = generator_kw_mapping.get(eboss_model, 0)
     if not model_capacity:
         return {"error": "Invalid EBOSS model"}
@@ -488,233 +564,47 @@ def validate_inputs(eboss_model, eboss_type, continuous_load, max_peak_load, gen
     if model_capacity and actual_continuous_load > model_capacity:
         errors.append(f"Continuous load ({actual_continuous_load:.1f} kW) exceeds model capacity ({model_capacity:.1f} kW). Please select a larger EBOSS model.")
     
-  
+    return errors
+
 # Initialize session state
 if "user_inputs" not in st.session_state:
     st.session_state.user_inputs = {
         "eboss_model": "",
-        "eboss_type": "",
-        "power_module_gen_size": "",
-        "max_continuous_load": 0.0,
-        "max_peak_load": 0.0,
-        "units": "kW",
-        "voltage": "480",
-        "actual_continuous_load": 0.0,
-        "actual_peak_load": 0.0,
-        "job_name": ""
+        "eboss_type": ""
     }
-if "show_calculator" not in st.session_state:
-    st.session_state.show_calculator = False
-if "selected_option" not in st.session_state:
-    st.session_state.selected_option = None
-if "recommended_model" not in st.session_state:
-    st.session_state.recommended_model = ""
-if "page" not in st.session_state:
-    st.session_state.page = "Home"
-if 'show_cost_analysis' not in st.session_state:
-    st.session_state.show_cost_analysis = False
-if 'show_cost_dialog' not in st.session_state:
-    st.session_state.show_cost_dialog = False
-if 'cost_standard_generator' not in st.session_state:
-    st.session_state.cost_standard_generator = None
-if 'pm_charge_enabled' not in st.session_state:
-    st.session_state.pm_charge_enabled = False
 
-import streamlit as st
-
-# --- helpers ---
-def _parse_kva(value) -> float | None:
-    """Accepts 65, '65', or '65 kVA' → 65.0 (or None)."""
-    if value is None:
-        return None
-    if isinstance(value, (int, float)):
-        return float(value)
-    s = str(value).lower().replace("kva", "").strip()
-    try:
-        return float(s)
-    except ValueError:
-        return None
-
-def _gen_kw_from_kva(kva: float) -> float:
-    """Rule of thumb: kW ≈ 0.8 × kVA."""
-    return 0.8 * float(kva)
-
-
-# --- single entry point ---
-def render_Charge_Rate(
-    eboss_model: str,
-    eboss_type: str,
-    *,
-    generator_kva=None,              # PM only: per-unit generator size (kVA or '65 kVA')
-    custom_rate: float | None = None,# manual override (kW)
-    store_to_session: bool = True,   # write to st.session_state.user_inputs
-    session_key: str = "charge_rate_kw"
-) -> float | None:
-    """
-    ONE call to determine and (optionally) store the charge rate (kW, rounded 0.1).
-
-    Rules:
-    - Use the model’s FH/PM charge rate from EBOSS_UNITS by default.
-    - If custom_rate is provided, use that instead.
-    - Full Hybrid: return the rate as-is (no generator gate here).
-    - Power Module:
-        • If a generator size is given and gen_kW < desired rate, show a warning and let the user:
-          - Proceed → auto-adjust to 98% of generator kW
-          - Select a larger generator → stop so they can change the input
-        • If no generator size is given (or it’s valid & large enough), just return the rate.
-
-    Returns:
-        float (kW, rounded to 0.1) or None on invalid inputs.
-    """
-#   CHARGE RATE LOGIC ======================================================================
-    spec = EBOSS_UNITS.get(eboss_model)
-    if not spec:
-        return None
-
-    # 1) pick desired rate (custom overrides model default)
-    if custom_rate is not None:
-        try:
-            desired = float(custom_rate)
-        except (TypeError, ValueError):
-            return None
-    else:
-        if eboss_type == "Full Hybrid":
-            desired = float(spec.get("fh_charge_rate_kw", 0.0))
-        elif eboss_type == "Power Module":
-            desired = float(spec.get("pm_charge_rate_kw", 0.0))
-        else:
-            return None
-
-    # 2) Full Hybrid logic (simple)
-    if eboss_type == "Full Hybrid":
-        rate = round(desired, 1)
-        if store_to_session:
-            st.session_state.setdefault("user_inputs", {})
-            st.session_state.user_inputs[session_key] = rate
-            st.session_state.user_inputs["charge_rate_source"] = "custom" if custom_rate is not None else "fh_default"
-        return rate
-
-    # 3) Power Module logic
-    gen_kva = _parse_kva(generator_kva)
-    # If no generator specified, assume source is adequate; use desired
-    if gen_kva is None or gen_kva <= 0:
-        rate = round(desired, 1)
-        if store_to_session:
-            st.session_state.setdefault("user_inputs", {})
-            st.session_state.user_inputs[session_key] = rate
-            st.session_state.user_inputs["charge_rate_source"] = "custom" if custom_rate is not None else "pm_default"
-        return rate
-
-    gen_kw = _gen_kw_from_kva(gen_kva)
-
-    # OK as-is
-    if gen_kw >= desired:
-        rate = round(desired, 1)
-        if store_to_session:
-            st.session_state.setdefault("user_inputs", {})
-            st.session_state.user_inputs[session_key] = rate
-            st.session_state.user_inputs["charge_rate_source"] = "custom" if custom_rate is not None else "pm_default"
-        return rate
-
-    # Underpowered → warn + ask to proceed or pick larger gen
-    st.warning(
-        f"Selected generator is **{gen_kw:.1f} kW**, which is **below** the desired charge rate "
-        f"(**{desired:.1f} kW**) for **{eboss_model}**."
-    )
-    c1, c2 = st.columns(2)
-    proceed = c1.button(
-        "Proceed: adjust charge rate to 98% of generator kW",
-        key=f"pm_adjust_{eboss_model}_{gen_kva}_{desired}"
-    )
-    choose_larger = c2.button(
-        "Select a larger generator",
-        key=f"pm_larger_{eboss_model}_{gen_kva}_{desired}"
-    )
-
-    if proceed:
-        adjusted = round(0.98 * gen_kw, 1)
-        st.success(f"Charge rate adjusted to **{adjusted:.1f} kW** (98% of generator kW).")
-        if store_to_session:
-            st.session_state.setdefault("user_inputs", {})
-            st.session_state.user_inputs[session_key] = adjusted
-            st.session_state.user_inputs["charge_rate_source"] = "pm_adjusted_to_98pct_gen"
-        return adjusted
-
-    if choose_larger:
-        st.info("Please select a larger generator size.")
-        st.stop()  # halt so the user can change the generator input
-
-    # wait for a choice
-    st.stop()
-    return None
-
-
-# Homepage============================================================================================================
-st.markdown("<h1 style='text-align: center;'>EBOSS® Size & Spec Tool</h1>", unsafe_allow_html=True)
-# --- Actions row (FOUR columns) ---
-
-st.markdown("<div class='cta-scope'>", unsafe_allow_html=True)
-cols = st.columns(4)
-with cols[0]:
-    st.button("Manually Select EBOSS Type and Model", key="btn_manual_select")
-with cols[1]:
-    st.button("Use Load Based Suggested EBOSS", key="btn_load_based")
-with cols[2]:
-    st.button("Use EBOSS Model Based on Max Fuel Efficiency", key="btn_fuel_eff")
-with cols[3]:
-    st.button("Troubleshooting", key="btn_troubleshooting_placeholder")
-st.markdown("</div>", unsafe_allow_html=True)
-
-# ----- centered text BETWEEN the two rows -----
-st.markdown(
-    "<div class='message-text' style='margin:12px 0; text-align:center;'>Please Select an EBOSS Configuration</div>",
-    unsafe_allow_html=True
-)
-with st.container():
-    st.markdown(
-        "<div style='display:flex;flex-direction:column;align-items:center;width:100%'>",
-        unsafe_allow_html=True
-    )
-
-st.markdown("<div class='cta-scope'>", unsafe_allow_html=True)
-
-col1, col2, col3 = st.columns([1,1,1])
-
+# Homepage with updated button row
+st.markdown("<h1>EBOSS® Size & Spec Tool</h1>", unsafe_allow_html=True)
+col1, col2, col3, col4 = st.columns(4)
 with col1:
-    manual_select_clicked = st.button(
-        "Manually Select EBOSS Type and Model",
-        key="btn_manual_select",
-        use_container_width=True
-    )
-
+    st.button("Request Demo", key="request_demo", help="Request a demo of the EBOSS® tool", on_click=lambda: st.session_state.update({"page": "Request Demo"}))
 with col2:
-    load_based_clicked = st.button(
-        "Use Load Based Suggested EBOSS",
-        key="btn_load_based",
-        use_container_width=True
-    )
-
+    st.button("Request Training", key="request_training", help="Request training for the EBOSS® tool", on_click=lambda: st.session_state.update({"page": "Request Training"}))
 with col3:
-    fuel_efficiency_clicked = st.button(
-        "Use EBOSS Model Based on Max Fuel Efficiency",
-        key="btn_fuel_eff",
-        use_container_width=True
-    )
+    st.button("Learn how the EBOSS® works", key="learn_how", help="Learn more about how EBOSS® operates", on_click=lambda: st.session_state.update({"page": "Learn How"}))
+with col4:
+    st.button("Troubleshooting", key="troubleshooting", help="Get help with troubleshooting EBOSS®", on_click=lambda: st.session_state.update({"page": "Troubleshooting"}))
 
+st.markdown("<div class='message-text'>Please Select an EBOSS Configuration</div>", unsafe_allow_html=True)
 
-st.markdown("</div>", unsafe_allow_html=True)
+col5, col6, col7 = st.columns(3)
+with col5:
+    manual_clicked = st.button("Manually Select EBOSS Type and Model")
+with col6:
+    load_based_clicked = st.button("Use Load Based Suggested EBOSS")
+with col7:
+    fuel_efficiency_clicked = st.button("Use EBOSS Model Based on Max Fuel Efficiency")
 
-# Dialog logic
-if manual_select_clicked:
+st.markdown("<div class='centered-button'>Please configure a model first (Manual or Load-Based).</div>", unsafe_allow_html=True)
+
+if manual_clicked:
     try:
-        @st.dialog("EBOSS® Configuration")
+        @st.dialog("Manually Select EBOSS® Configuration")
         def show_manual_config_dialog():
-            st.markdown("Enter your EBOSS® configuration:")
             col1, col2, col3 = st.columns(3)
             with col1:
                 eboss_model = st.selectbox("EBOSS® Model", options=["EB25 kVA", "EB70 kVA", "EB125 kVA", "EB220 kVA", "EB400 kVA"], key="eboss_model_input")
-                eboss_type = st.selectbox("EBOSS® Type", options=["Full Hybrid", "Power Module"], key="eboss_type_input")
-                generator_kva = None
+                eboss_type = st.selectbox("EBOSS® Type", options=["Power Module", "Full Hybrid"], key="eboss_type_input")
                 if eboss_type == "Power Module":
                     generator_kva = st.selectbox("Power Module Generator Size", options=["25 kVA", "70 kVA", "125 kVA", "220 kVA", "400 kVA"], key="power_module_gen_size_input")
             with col2:
@@ -867,8 +757,40 @@ if fuel_efficiency_clicked:
         print(f"Error in modal: {e}")
         st.error(f"Error in modal: {str(e)}. Please check the console output.")
 
+if st.session_state.get("page") == "Request Demo":
+    st.header("Request Demo")
+    st.write("Please fill out the demo request form.")
+    st.markdown(f'<a href="https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform?usp=header" target="_blank" class="cta-link">Request Demo Form</a>', unsafe_allow_html=True)
+    if st.button("Back", key="back_to_home"):
+        del st.session_state["page"]
+        st.rerun()
+
+elif st.session_state.get("page") == "Request Training":
+    st.header("Request Training")
+    st.write("Please fill out the training request form.")
+    st.markdown(f'<a href="https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header" target="_blank" class="cta-link">Request Training Form</a>', unsafe_allow_html=True)
+    if st.button("Back", key="back_to_home"):
+        del st.session_state["page"]
+        st.rerun()
+
+elif st.session_state.get("page") == "Learn How":
+    st.header("Learn How the EBOSS® Works")
+    st.write("Watch the tutorial video to learn more.")
+    st.markdown(f'<a href="https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g" target="_blank" class="cta-link">Watch Tutorial</a>', unsafe_allow_html=True)
+    if st.button("Back", key="back_to_home"):
+        del st.session_state["page"]
+        st.rerun()
+
+elif st.session_state.get("page") == "Troubleshooting":
+    st.header("Troubleshooting")
+    st.write("Get help with common EBOSS® issues.")
+    st.markdown(f'<a href="https://github.com/TimBuffington/troubleshooting" target="_blank" class="cta-link">Troubleshooting Guide</a>', unsafe_allow_html=True)
+    if st.button("Back", key="back_to_home"):
+        del st.session_state["page"]
+        st.rerun()
+
 # Navigation to other pages
-elif st.session_state.page == "Tool Selection":
+elif st.session_state.get("page") == "Tool Selection":
     st.header("Tool Selection")
     col1, col2, col3 = st.columns(3)
     with col1:
@@ -950,174 +872,6 @@ elif st.session_state.page == "Cost Analysis":
 elif st.session_state.page == "Parallel Calculator":
     st.header("Parallel Calculator")
     st.warning("Parallel calculator functionality is under development.")
-# ===========================
-# Compare Page
-# ===========================
-import streamlit as st
-
-S = st.session_state.setdefault("user_inputs", {})
-
-# Default view
-st.session_state.setdefault("view_mode", "spec")
-
-# Current model (from earlier modals)
-current_model_key = S.get("eboss_model")  # e.g., "EB125 kVA"
-if not current_model_key:
-    st.info("Please configure a model first (Manual or Load-Based).")
-    st.stop()
-
-# Map EBOSS_UNITS keys -> labels used in the provided spec table
-MODEL_LABEL = {
-    "EB25 kVA":  "EB 25 kVA",
-    "EB70 kVA":  "EB 70 kVA",
-    "EB125 kVA": "EB 125 kVA",
-    "EB220 kVA": "EB 220 kVA",
-    "EB400 kVA": "EB 400 kVA",
-}
-model_label = MODEL_LABEL.get(current_model_key, current_model_key)
-
-# ───────────── Buttons ─────────────
-col_spec, col_cost = st.columns([1, 1])
-with col_spec:
-    if st.button("📊 Spec Comparison"):
-        st.session_state.view_mode = "spec"
-with col_cost:
-    if st.button("💵 Cost Comparison"):
-        st.session_state.view_mode = "cost"
-
-# ───────────── Spec Comparison Table ─────────────
-if st.session_state.get("view_mode") == "spec":
-    st.markdown(
-        "<div class='eboss-card'><strong>EBOSS® vs Standard Generator</strong></div>",
-        unsafe_allow_html=True
-    )
-
-    # NOTE: keeping your provided values; keys align to model_label above
-    spec_table = {
-        "EB 25 kVA": [
-            ("Three-phase",            "30 kVA / 24 kW",          "27.5 kVA / 22 kW"),
-            ("Single-phase",           "20 kVA / 16 kW",          "19.75 kVA / 15.8 kW"),
-            ("Frequency",              "60 Hz",                    "60 Hz"),
-            ("Simultaneous voltage",   "Yes 120v / 240v / 208v / 480v", "No"),
-            ("Voltage regulation",     "Adjustable",               "Adjustable"),
-            ("Max Intermittent 208v",  "70 A / 20 kW",             "60 A / 17.29 kW"),
-            ("Motor start 208v",       "104 A / 30 kW",            "60 A / 17.3 kW"),
-            ("Generator Size",         "25 kVA / 20 kW",           "25 kVA / 20 kW"),
-            ("Max Continuous @208v",   "70 A / 20.2 kW",           "60 A"),
-        ],
-        "EB 70 kVA": [
-            ("Three-phase",            "70 kVA / 56 kW",           "77 kVA / 62 kW"),
-            ("Single-phase",           "47 kVA / 37 kW",           "N/A"),
-            ("Frequency",              "60 Hz",                    "60 Hz"),
-            ("Simultaneous voltage",   "Yes 120v / 240v / 208v / 480v", "No"),
-            ("Voltage regulation",     "Adjustable",               "Adjustable"),
-            ("Max Intermittent 208v",  "194 A / 56 kW",            "168 A / 48 kW"),
-            ("Motor start 208v",       "291 A / 84 kW",            "200 A / 57 kW"),
-            ("Generator Size",         "45 kVA / 36 kW",           "70 kVA / 56 kW"),
-            ("Max Continuous @208v",   "119 A / 34.5 kW",          "168 A"),
-        ],
-        "EB 125 kVA": [
-            ("Three-phase",            "125 kVA / 100 kW",         "137.5 kVA / 110 kW"),
-            ("Single-phase",           "N/A",                      "89.8 kVA / 79 kW"),
-            ("Frequency",              "60 Hz",                    "60 Hz"),
-            ("Simultaneous voltage",   "Yes 208v / 480v",          "No"),
-            ("Voltage regulation",     "Adjustable",               "Adjustable"),
-            ("Max Intermittent 208v",  "345 A / 99.5 kW",          "300 A / 86 kW"),
-            ("Motor start 208v",       "532 A / 153 kW",           "300 A / 86 kW"),
-            ("Generator Size",         "70 kVA / 56 kW",           "125 kVA / 100 kW"),
-            ("Max Continuous @208v",   "167 A / 48 kW",            "300 A"),
-        ],
-        "EB 220 kVA": [
-            ("Three-phase",            "220 kVA / 176 kW",         "242 kVA / 194 kW"),
-            ("Single-phase",           "N/A",                      "N/A"),
-            ("Frequency",              "60 Hz",                    "60 Hz"),
-            ("Simultaneous voltage",   "Yes 208v / 480v",          "No"),
-            ("Voltage regulation",     "Adjustable",               "Adjustable"),
-            ("Max Intermittent 208v",  "700 A / 201 kW",           "529 A / 152.5 kW"),
-            ("Motor start 208v",       "1065 A / 307 kW",          "600 A / 172.9 kW"),
-            ("Generator Size",         "125 kVA / 100 kW",         "220 kVA / 176 kW"),
-            ("Max Continuous @208v",   "328 A / 94 kW",            "529 A"),
-        ],
-        "EB 400 kVA": [
-            ("Three-phase",            "400 kVA / 320 kW",         "420 kVA / 336 kW"),
-            ("Single-phase",           "N/A",                      "N/A"),
-            ("Frequency",              "60 Hz",                    "60 Hz"),
-            ("Simultaneous voltage",   "Yes 208v / 480v",          "No"),
-            ("Voltage regulation",     "Adjustable",               "Adjustable"),
-            ("Max Intermittent 208v",  "481 A / 138.5 kW",         "–"),
-            ("Motor start 208v",       "1776 A / 511 kW",          "–"),
-            ("Generator Size",         "220 kVA / 176 kW",         "220 kVA / 176 kW"),
-            ("Max Continuous @208v",   "481 A",                    "481 A"),
-        ],
-    }
-
-    model_specs = spec_table.get(model_label, [])
-    if not model_specs:
-        st.warning(f"No comparison rows found for {model_label}.")
-    else:
-        col1, col2, col3, col4 = st.columns([2, 3, 3, 1])
-        for label, eboss_val, std_val in model_specs:
-            with col1:
-                st.markdown(f"**{label}**")
-            with col2:
-                st.markdown(eboss_val)
-            with col3:
-                st.markdown(std_val)
-            with col4:
-                st.markdown("✅" if eboss_val != std_val else "–")
-
-# ───────────── Cost Comparison Table ─────────────
-elif st.session_state.get("view_mode") == "cost":
-    with st.form("cost_input_form", clear_on_submit=False):
-        st.markdown(
-            "<div class='eboss-card'><strong>Enter Cost Inputs</strong></div>",
-            unsafe_allow_html=True
-        )
-        rental    = st.number_input("Monthly Rental Rate ($)",     min_value=0.0, step=10.0,  key="rental_rate")
-        fuel_cost = st.number_input("Fuel Cost per Gallon ($)",    min_value=0.0, step=0.01, key="fuel_cost_per_gal")
-        delivery  = st.number_input("Delivery Fee ($)",            min_value=0.0, step=10.0,  key="delivery_fee")
-        pm_cost   = st.number_input("PM Service Cost ($/mo)",      min_value=0.0, step=10.0,  key="pm_service_cost")
-        days_in_month = st.number_input("Days in Month",           min_value=1,   max_value=31, value=30, step=1)
-        submit = st.form_submit_button("Calculate")
-
-    if submit:
-        # Pull daily runtime (hours) and interpolated fuel (gph) from session
-        daily_runtime_hr = float(S.get("engine_run_hours_per_day") or 0.0)
-        fuel_gph         = float(S.get("fuel_gph_at_charge") or 0.0)  # interpolation-only
-
-        if daily_runtime_hr <= 0 or fuel_gph <= 0:
-            st.warning("Runtime or fuel burn not available. Configure a model and run the charge/runtime calc first.")
-            st.stop()
-
-        # Convert to monthly hours
-        monthly_runtime_hr = daily_runtime_hr * float(days_in_month)
-
-        # Use your existing costing helper (returns monthly numbers)
-        fuel_total, total_cost, co2_output = calculate_costs_eboss(
-            monthly_runtime_hr, fuel_gph, fuel_cost, rental, delivery, pm_cost
-        )
-
-        st.markdown("<div class='eboss-card'><strong>Monthly Cost Breakdown</strong></div>", unsafe_allow_html=True)
-        st.markdown(
-            """
-            <table style='width:100%; border: 1px solid #ccc; border-collapse: collapse;'>
-              <tr><th style='text-align:left;'>Cost Component</th><th style='text-align:right;'>Amount ($)</th></tr>
-              <tr><td>Rental</td><td style='text-align:right;'>{:.2f}</td></tr>
-              <tr><td>Fuel</td><td style='text-align:right;'>{:.2f}</td></tr>
-              <tr><td>Delivery</td><td style='text-align:right;'>{:.2f}</td></tr>
-              <tr><td>PM Service</td><td style='text-align:right;'>{:.2f}</td></tr>
-              <tr><td><strong>Total Monthly</strong></td><td style='text-align:right;'><strong>{:.2f}</strong></td></tr>
-              <tr><td>Est. CO₂ Emissions (tons)</td><td style='text-align:right;'>{:.2f}</td></tr>
-            </table>
-            """.format(rental, fuel_total, delivery, pm_cost, total_cost, co2_output),
-            unsafe_allow_html=True
-        )
-
-# If you had a print/export button defined elsewhere
-try:
-    print_button()
-except Exception:
-    pass
 
 # Footer
 st.markdown(f"""
