@@ -762,7 +762,7 @@ with col1:
     with st.container():
         manual_select_clicked = st.button(
             "Manually Select EBOSS Type and Model",
-            key="btn_manual_select"
+            key="btn_manual_select".
             width: 100% !important;
         )
 
@@ -770,7 +770,7 @@ with col2:
     with st.container():
         load_based_clicked = st.button(
             "Use Load Based Suggested EBOSS",
-            key="btn_load_based"
+            key="btn_load_based",
             width: 100% !important;
         )
 
@@ -778,7 +778,7 @@ with col3:
     with st.container():
         fuel_efficiency_clicked = st.button(
             "Use EBOSS Model Based on Max Fuel Efficiency",
-            key="btn_fuel_eff"
+            key="btn_fuel_eff",
             width: 100% !important;
         )
 
