@@ -1,4 +1,6 @@
-# EBOSS unit specs (all powers in kW, battery in kWh, sizes in kVA)
+import streamlit as st
+import math
+
 EBOSS_UNITS = {
     "EB25 kVA": {
         "cont_capacity_kw": 14.0,
@@ -53,17 +55,15 @@ EBOSS_UNITS = {
 }
 
 
-import streamlit as st
-import math
 
 MODEL_ORDER = ["EB25 kVA", "EB70 kVA", "EB125 kVA", "EB220 kVA", "EB400 kVA"]
-# --- EBOSS Inputs (example) ---
-eboss_model = st.selectbox("EBOSS Model", ["EB25 kVA","EB70 kVA","EB125 kVA","EB220 kVA","EB400 kVA"], key="eboss_model")
-eboss_type  = st.selectbox("EBOSS Type", ["Full Hybrid", "Power Module"], key="eboss_type")
+
+eb_model = st.selectbox("EBOSS Model", ["EB25 kVA","EB70 kVA","EB125 kVA","EB220 kVA","EB400 kVA"], key="eb_model")
+eb_type  = st.selectbox("EBOSS Type", ["Full Hybrid", "Power Module"], key="eb_type")
 
 # Power Module generator size (only when PM selected)
 pm_gen = None
-if eboss_type == "Power Module":
+if eb_type == "Power Module":
     pm_gen = st.selectbox(
         "Generator Size (kVA)",
         [25, 45, 65, 125, 220],
@@ -134,7 +134,7 @@ def render_adjusted_load_panel(cont_kw, peak_kw):
     )
 
 # ---------- unified charge rate ----------
-def render_charge_rate(eboss_model, eboss_type, *, generator_kva=None, custom_rate=None,
+def render_charge_rate(eb_model, eb_type, *, generator_kva=None, custom_rate=None,
                        store_to_session=True, session_key="charge_rate_kw"):
     """
     One call to determine charge rate (kW, rounded 0.1).
@@ -144,7 +144,7 @@ def render_charge_rate(eboss_model, eboss_type, *, generator_kva=None, custom_ra
         • proceed (set to 98% of gen kW), or
         • select larger gen (stop)
     """
-    spec = EBOSS_UNITS.get(eboss_model)
+    spec = EBOSS_UNITS.get(eb_model)
     if not spec:
         return None
 
@@ -155,15 +155,15 @@ def render_charge_rate(eboss_model, eboss_type, *, generator_kva=None, custom_ra
         except (TypeError, ValueError):
             return None
     else:
-        if eboss_type == "Full Hybrid":
+        if eb_type == "Full Hybrid":
             desired = float(spec.get("fh_charge_rate_kw", 0.0))
-        elif eboss_type == "Power Module":
+        elif eb_type == "Power Module":
             desired = float(spec.get("pm_charge_rate_kw", 0.0))
         else:
             return None
 
     # FH: use as-is
-    if eboss_type == "Full Hybrid":
+    if eb_type == "Full Hybrid":
         rate = round(desired, 1)
         if store_to_session:
             st.session_state.setdefault("user_inputs", {})
@@ -192,16 +192,16 @@ def render_charge_rate(eboss_model, eboss_type, *, generator_kva=None, custom_ra
     # undersized → prompt
     st.warning(
         f"Selected generator is **{gen_kw:.1f} kW**, which is **below** the desired charge rate "
-        f"(**{desired:.1f} kW**) for **{eboss_model}**."
+        f"(**{desired:.1f} kW**) for **{eb_model}**."
     )
     c1, c2 = st.columns(2)
     proceed = c1.button(
         "Proceed: adjust charge rate to 98% of generator kW",
-        key=f"pm_adjust_{eboss_model}_{pm_gen}_{desired}"
+        key=f"pm_adjust_{eb_model}_{pm_gen}_{desired}"
     )
     choose_larger = c2.button(
         "Select a larger generator",
-        key=f"pm_larger_{eboss_model}_{pm_gen}_{desired}"
+        key=f"pm_larger_{eb_model}_{pm_gen}_{desired}"
     )
 
     if proceed:
@@ -246,33 +246,28 @@ import streamlit as st
 
 def store_derived_metrics(
     *,
-    eboss_model: str,
-    eboss_type: str,
+    eb_model: str,
+    eb_type: str,
     cont_kw: float,
     peak_kw: float,
     charge_rate_kw: float,
     generator_kva=None,
     hours_per_day: float = 24.0,   # default duty time
 ):
-    """
-    Persist derived values for other pages. Fuel uses interpolation only.
-    Assumes 100% of battery_kwh is usable.
-    Does not overwrite existing keys already set in st.session_state.user_inputs.
-    """
 st.session_state.setdefault("user_inputs", {})
 S = st.session_state.user_inputs
 
     # ---- Specs ----
-    spec = EBOSS_UNITS.get(eboss_model, {}) or {}
-    battery_kwh = float(spec.get("battery_kwh", 0) or 0)
-    cont_capacity_kw_spec = float(spec.get("cont_capacity_kw", 0) or 0)
-    peak_capacity_kw_spec = float(spec.get("peak_capacity_kw", 0) or 0)
-    pm_charge_rate_spec   = float(spec.get("pm_charge_rate_kw", 0) or 0)
-    fh_charge_rate_spec   = float(spec.get("fh_charge_rate_kw", 0) or 0)
-    max_charge_rate_spec  = float(spec.get("max_charge_rate_kw", 0) or 0)
+spec = EBOSS_UNITS.get(eb_model, {}) or {}
+battery_kwh = float(spec.get("battery_kwh", 0) or 0)
+cont_capacity_kw_spec = float(spec.get("cont_capacity_kw", 0) or 0)
+peak_capacity_kw_spec = float(spec.get("peak_capacity_kw", 0) or 0)
+pm_charge_rate_spec   = float(spec.get("pm_charge_rate_kw", 0) or 0)
+fh_charge_rate_spec   = float(spec.get("fh_charge_rate_kw", 0) or 0)
+max_charge_rate_spec  = float(spec.get("max_charge_rate_kw", 0) or 0)
 
     # ---- Determine generator sizing (kVA → kW) ----
-    if eboss_type == "Full Hybrid":
+    if eb_type == "Full Hybrid":
         pm_gen_for_interp = spec.get("fh_gen_size_kva")
         if not pm_gen_for_interp:
             st.warning("Full Hybrid generator size (kVA) missing from specs; cannot interpolate fuel.")
@@ -315,8 +310,8 @@ S = st.session_state.user_inputs
         if k not in d or d[k] in (None, ""):
             d[k] = v
 
-    _set_if_missing(S, "eboss_model", eboss_model)
-    _set_if_missing(S, "eboss_type", eboss_type)
+    _set_if_missing(S, "eb_model", eb_model)
+    _set_if_missing(S, "eb_type", eb_type)
     _set_if_missing(S, "power_module_gen_size", (str(generator_kva) if generator_kva else S.get("power_module_gen_size","")))
     _set_if_missing(S, "battery_kwh", round(battery_kwh, 2))
     _set_if_missing(S, "usable_battery_kwh", round(usable_kwh, 2))
@@ -346,8 +341,8 @@ S = st.session_state.user_inputs
     return S
 S = st.session_state.setdefault("user_inputs", {})
 store_derived_metrics(
-    eboss_model=S.get("eboss_model",""),
-    eboss_type=S.get("eboss_type",""),
+    eb_model=S.get("eb_model",""),
+    eb_type=S.get("eb_type",""),
     cont_kw=float(S.get("actual_continuous_load", 0) or 0),
     peak_kw=float(S.get("actual_peak_load", 0) or 0),
     charge_rate_kw=float(S.get("charge_rate_kw", 0) or 0),
@@ -364,10 +359,10 @@ if manual_select_clicked:
 
             # A) Model / Type / PM gen
             with col1:
-                eboss_model = st.selectbox("EBOSS® Model", list(EBOSS_UNITS.keys()), key="eboss_model_input")
-                eboss_type = st.selectbox("EBOSS® Type", ["Full Hybrid", "Power Module"], key="eboss_type_input")
+                eb_model = st.selectbox("EBOSS® Model", list(EBOSS_UNITS.keys()), key="eb_model_input")
+                eb_type = st.selectbox("EBOSS® Type", ["Full Hybrid", "Power Module"], key="eb_type_input")
                 generator_kva = None
-                if eboss_type == "Power Module":
+                if eb_type == "Power Module":
                     generator_kva = st.selectbox(
                         "Power Module Generator Size",
                         ["", "25 kVA", "45 kVA", "65 kVA", "125 kVA", "220 kVA"],
@@ -398,7 +393,7 @@ if manual_select_clicked:
 
             # Validate (use your existing validator)
             errors = validate_inputs(
-                eboss_model, eboss_type,
+                eb_model, eb_type,
                 max_continuous_load, max_peak_load,
                 generator_kva, units, voltage
             )
@@ -408,15 +403,15 @@ if manual_select_clicked:
 
             # Charge rate (FH/PM unified)
             charge_rate_kw = render_charge_rate(
-                eboss_model=eboss_model,
-                eboss_type=eboss_type,
+                eb_model=eb_model,
+                eb_type=eb_type,
                 generator_kva=generator_kva
             )
 
             # Store a rich set of derived values for downstream pages
             store_derived_metrics(
-                eboss_model=eboss_model,
-                eboss_type=eboss_type,
+                eb_model=eb_model,
+                eb_type=eb_type,
                 cont_kw=cont_kw,
                 peak_kw=peak_kw,
                 charge_rate_kw=charge_rate_kw or 0.0,
@@ -441,7 +436,7 @@ if load_based_clicked:
 
             # A) Type fixed
             with col1:
-                st.selectbox("EBOSS® Type", ["Full Hybrid"], index=0, disabled=True, key="eboss_type_lb_fixed")
+                st.selectbox("EBOSS® Type", ["Full Hybrid"], index=0, disabled=True, key="eb_type_lb_fixed")
 
             # B) Loads
             with col2:
@@ -479,9 +474,9 @@ if load_based_clicked:
 
             st.session_state.setdefault("user_inputs", {})
             st.session_state.user_inputs.update({
-                "eboss_type": "Full Hybrid",
+                "eb_type": "Full Hybrid",
                 "power_module_gen_size": "",
-                "eboss_model": chosen_model
+                "eb_model": chosen_model
             })
 
             st.markdown(
@@ -501,8 +496,8 @@ if load_based_clicked:
 
             # Store derived values
             store_derived_metrics(
-                eboss_model=chosen_model,
-                eboss_type="Full Hybrid",
+                eb_model=chosen_model,
+                eb_type="Full Hybrid",
                 cont_kw=cont_kw,
                 peak_kw=peak_kw,
                 charge_rate_kw=charge_rate_kw or 0.0,
@@ -643,7 +638,7 @@ if st.session_state.get("fuel_efficiency_clicked"):
 
             # Persist choice
             S = st.session_state.user_inputs
-            S.update({"eboss_type": "Full Hybrid", "power_module_gen_size": "", "eboss_model": best_model})
+            S.update({"eb_type": "Full Hybrid", "power_module_gen_size": "", "eb_model": best_model})
 
             # Show chosen model
             st.markdown(
@@ -664,8 +659,8 @@ if st.session_state.get("fuel_efficiency_clicked"):
             # Store core/derived metrics using full pack (no usable_kwh). We update with our exact calcs.
             # First call your session helper (it won't overwrite), then set precise values from best_metrics.
             store_derived_metrics(
-                eboss_model=best_model,
-                eboss_type="Full Hybrid",
+                eb_model=best_model,
+                eb_type="Full Hybrid",
                 cont_kw=cont_kw,
                 peak_kw=peak_kw,
                 charge_rate_kw=charge_rate_kw or float(best_metrics["fh_charge_rate_kw"]),
@@ -745,7 +740,7 @@ def _set_if_missing(S: dict, key: str, value):
     return S[key]
 
 def fill_runtime_and_fuel_if_missing(
-    *, eboss_model: str, eboss_type: str, cont_kw: float, generator_kva=None
+    *, eb_model: str, eb_type: str, cont_kw: float, generator_kva=None
 ):
     """
     Computes runtime/charge/fuel using ONLY interpolation.
@@ -763,11 +758,11 @@ def fill_runtime_and_fuel_if_missing(
         st.warning("Charge rate not set yet; cannot compute runtime/fuel.")
         st.stop()
 
-    spec = EBOSS_UNITS.get(eboss_model, {})
+    spec = EBOSS_UNITS.get(eb_model, {})
     battery_kwh = float(spec.get("battery_kwh", 0) or 0)
 
     # Determine generator kVA / kW for interpolation & % load
-    if eboss_type == "Full Hybrid":
+    if eb_type == "Full Hybrid":
         pm_gen_for_interp = spec.get("fh_gen_size_kva")
         if not pm_gen_for_interp:
             st.warning("FH generator size (kVA) missing from specs; cannot interpolate fuel.")
@@ -877,8 +872,8 @@ def get_charge_rate(model: str, gen_type: str, *, generator_kva=None, custom_rat
     spec = EBOSS_UNITS.get(model, {})
     # compute/set charge rate once (handles PM undersized-gen prompt)
     rate_kw = render_charge_rate(
-        eboss_model=model,
-        eboss_type=gen_type,
+        eb_model=model,
+        eb_type=gen_type,
         generator_kva=generator_kva,
         custom_rate=custom_rate,
         store_to_session=True,
@@ -971,8 +966,8 @@ def calculate_engine_runtime(model: str, gen_type: str, cont_kw: float, kva):
 # --- UPDATED: display_load_threshold_check (uses session rate or spec) ---
 def display_load_threshold_check(user_inputs):
     import streamlit as st
-    model = _norm_model(user_inputs.get("eboss_model") or user_inputs.get("model"))
-    gen_type = user_inputs.get("eboss_type") or user_inputs.get("gen_type")
+    model = _norm_model(user_inputs.get("eb_model") or user_inputs.get("model"))
+    gen_type = user_inputs.get("eb_type") or user_inputs.get("gen_type")
     cont_kw = float(user_inputs.get("actual_continuous_load") or user_inputs.get("cont_kw") or 0.0)
 
     spec = EBOSS_UNITS.get(model, {})
@@ -1013,7 +1008,7 @@ S = st.session_state.setdefault("user_inputs", {})
 st.session_state.setdefault("view_mode", "spec")
 
 # Current model (from earlier modals)
-current_model_key = S.get("eboss_model")  # e.g., "EB125 kVA"
+current_model_key = S.get("eb_model")  # e.g., "EB125 kVA"
 if not current_model_key:
     st.info("Please configure a model first (Manual or Load-Based).")
     st.stop()
