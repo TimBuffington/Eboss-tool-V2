@@ -260,7 +260,7 @@ def store_derived_metrics(
     Does not overwrite existing keys already set in st.session_state.user_inputs.
     """
 st.session_state.setdefault("user_inputs", {})
-    S = st.session_state.user_inputs
+S = st.session_state.user_inputs
 
     # ---- Specs ----
     spec = EBOSS_UNITS.get(eboss_model, {}) or {}
