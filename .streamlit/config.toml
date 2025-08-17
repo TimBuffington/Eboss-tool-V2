@@ -1,7 +1,8 @@
-[theme]
-primaryColor = "#00FF00"
-backgroundColor = "#000000"
-secondaryBackgroundColor = "#111111"
-textColor = "#00FF00"
-font = "sans serif"
+[client]
+showSidebarNavigation = false
 
+[theme]
+primaryColor="#80BD47"
+backgroundColor="#000000"
+secondaryBackgroundColor="#636569"
+textColor="#FFFFFF"
