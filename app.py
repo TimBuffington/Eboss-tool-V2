@@ -3,7 +3,10 @@ import math
 import logging
 import pandas as pd
 import numpy as np
-from fault_lookup_widget import render_fault_lookup_widget
+from fault_lookup_widget import render_fault_code_lookup_inline
+# ...and later call:
+render_fault_code_lookup_inline()
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
