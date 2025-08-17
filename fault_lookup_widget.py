@@ -1,4 +1,3 @@
-fault_lookup_widget.py
 import io, json, re, requests, streamlit as st
 from pathlib import Path
 from typing import Optional, Tuple, List, Dict
@@ -155,3 +154,4 @@ def _render_result_inline(entry: dict):
     if fixes:
         st.markdown("**Recommended fixes:**")
         for f in fixes: st.markdown(f"- {f}")
+
