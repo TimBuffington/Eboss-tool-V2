@@ -286,7 +286,7 @@ STANDARD_GENERATOR_DATA = {
     }
 }
 
-st.set_page_config(layout="wide")  # important!
+
 
 def _to_normalized_kw(value: float, units: str, voltage: str, pf: float = 0.8) -> float:
     """
