@@ -10,6 +10,8 @@ ensure_state()
 render_logo()
 
 st.header("EBOSS® Home")
+render_global_header(mode="external")
+
 st.write("Choose a module to get started:")
 
 # Reusable 4-column CTA row
