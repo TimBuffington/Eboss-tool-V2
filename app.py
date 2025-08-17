@@ -22,6 +22,29 @@ st.markdown("""
 }
 </style>
 """, unsafe_allow_html=True)
+st.markdown("""
+<style>
+/* ===== Hide Streamlit Header & Toolbar ===== */
+[data-testid="stHeader"] {
+    height: 0rem;
+    min-height: 0rem;
+    visibility: hidden;
+}
+[data-testid="stToolbar"] {
+    height: 0rem;
+    min-height: 0rem;
+    visibility: hidden;
+}
+.block-container {
+    padding-top: 0rem !important;
+}
+
+/* ===== Hide Streamlit default footer ===== */
+footer {visibility: hidden;}
+[data-testid="stFooter"] {visibility: hidden;}
+</style>
+""", unsafe_allow_html=True)
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
