@@ -327,14 +327,16 @@ def store_derived_metrics(
     _set_if_missing(S, "daily_fuel_gal", round(daily_fuel_gal, 2) if math.isfinite(daily_fuel_gal) else daily_fuel_gal)
 
     return S
-
-
-fill_runtime_and_fuel_if_missing(
-    eboss_model=st.session_state.user_inputs["eboss_model"],
-    eboss_type=st.session_state.user_inputs["eboss_type"],
-    cont_kw=st.session_state.user_inputs["actual_continuous_load"],
-    generator_kva=st.session_state.user_inputs.get("power_module_gen_size")
+S = st.session_state.setdefault("user_inputs", {})
+store_derived_metrics(
+    eboss_model=S.get("eboss_model",""),
+    eboss_type=S.get("eboss_type",""),
+    cont_kw=float(S.get("actual_continuous_load", 0) or 0),
+    peak_kw=float(S.get("actual_peak_load", 0) or 0),
+    charge_rate_kw=float(S.get("charge_rate_kw", 0) or 0),
+    generator_kva=S.get("power_module_gen_size"),
 )
+
 if manual_select_clicked:
     try:
         @st.dialog("EBOSS® Configuration")
