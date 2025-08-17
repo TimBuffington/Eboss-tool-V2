@@ -770,34 +770,27 @@ def render_Charge_Rate(
 
 # Homepage============================================================================================================
 st.markdown("<h1 style='text-align: center;'>EBOSS® Size & Spec Tool</h1>", unsafe_allow_html=True)
-TROUBLE_URL = "https://github.com/TimBuffington/Eboss-tool-V2/blob/main/troubleshooting.py"
+st.markdown("<div class='cta-scope'>", unsafe_allow_html=True)
 
-# --- Row 1 — external links styled as buttons (now 4 columns)
 col1, col2, col3, col4 = st.columns([1,1,1,1])
 
 with col1:
-    st.markdown(
-        '<a class="cta-link" href="https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform?usp=header" target="_blank" rel="noopener">Request Demo</a>',
-        unsafe_allow_html=True
-    )
+    manual_select_clicked = st.button("Manually Select EBOSS Type and Model", key="btn_manual_select")
 
 with col2:
-    st.markdown(
-        '<a class="cta-link" href="https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header" target="_blank" rel="noopener">Request Training</a>',
-        unsafe_allow_html=True
-    )
+    load_based_clicked = st.button("Use Load Based Suggested EBOSS", key="btn_load_based")
 
 with col3:
-    st.markdown(
-        '<a class="cta-link" href="https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g" target="_blank" rel="noopener">Learn how the EBOSS® works</a>',
-        unsafe_allow_html=True
-    )
+    fuel_efficiency_clicked = st.button("Use EBOSS Model Based on Max Fuel Efficiency", key="btn_fuel_eff")
 
+# Placeholder button (no navigation yet)
 with col4:
-    st.markdown(
-        f'<a class="cta-link" href="{TROUBLE_URL}" target="_blank" rel="noopener">EBOSS Troubleshooting</a>',
-        unsafe_allow_html=True
-    )
+    placeholder_clicked = st.button("Troubleshooting", key="btn_troubleshooting_placeholder")
+    if placeholder_clicked:
+        st.toast("Troubleshooting page coming soon.", icon="⏳")
+
+st.markdown("</div>", unsafe_allow_html=True)
+
 
 # ----- centered text BETWEEN the two rows -----
 st.markdown(
