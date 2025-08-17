@@ -770,26 +770,37 @@ def render_Charge_Rate(
 
 # Homepage============================================================================================================
 st.markdown("<h1 style='text-align: center;'>EBOSS® Size & Spec Tool</h1>", unsafe_allow_html=True)
+# --- Actions row (FOUR columns) ---
 st.markdown("<div class='cta-scope'>", unsafe_allow_html=True)
 
-col1, col2, col3, col4 = st.columns([1,1,1,1])
+with st.container():
+    cols = st.columns([1, 1, 1, 1])  # <-- FOUR columns
 
-with col1:
-    manual_select_clicked = st.button("Manually Select EBOSS Type and Model", key="btn_manual_select")
+    with cols[0]:
+        manual_select_clicked = st.button(
+            "Manually Select EBOSS Type and Model", key="btn_manual_select"
+        )
 
-with col2:
-    load_based_clicked = st.button("Use Load Based Suggested EBOSS", key="btn_load_based")
+    with cols[1]:
+        load_based_clicked = st.button(
+            "Use Load Based Suggested EBOSS", key="btn_load_based"
+        )
 
-with col3:
-    fuel_efficiency_clicked = st.button("Use EBOSS Model Based on Max Fuel Efficiency", key="btn_fuel_eff")
+    with cols[2]:
+        fuel_efficiency_clicked = st.button(
+            "Use EBOSS Model Based on Max Fuel Efficiency", key="btn_fuel_eff"
+        )
 
-# Placeholder button (no navigation yet)
-with col4:
-    placeholder_clicked = st.button("Troubleshooting", key="btn_troubleshooting_placeholder")
-    if placeholder_clicked:
-        st.toast("Troubleshooting page coming soon.", icon="⏳")
+    # Placeholder button in the NEW 4th column
+    with cols[3]:
+        placeholder_clicked = st.button(
+            "Troubleshooting", key="btn_troubleshooting_placeholder"
+        )
+        if placeholder_clicked:
+            st.toast("Troubleshooting page coming soon.", icon="⏳")
 
 st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 # ----- centered text BETWEEN the two rows -----
