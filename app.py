@@ -19,7 +19,16 @@ div[data-testid="stDecoration"],
 #MainMenu {visibility: hidden;}
 </style>
 """, unsafe_allow_html=True)
-
+st.markdown(
+        """
+        <style>
+        .stDeployButton {
+            visibility: hidden;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
