@@ -6,28 +6,20 @@ import numpy as np
 
 st.markdown("""
 <style>
-/* Remove or shrink Streamlit's default top block (app header) */
-[data-testid="stHeader"] {
-    height: 0rem;
-    min-height: 0rem;
-    visibility: hidden;
-}
-[data-testid="stToolbar"] {
-    height: 0rem;
-    min-height: 0rem;
-    visibility: hidden;
-}
-[data-testid="stFooter"] {
-    height: 0rem;
-    min-height: 0rem;
-    visibility: hidden;
-}
-.block-container {
-    padding-top: 0rem !important;
-    padding-bottom: 0rem !important;
-}
+/* ===== Hide Streamlit Header & Toolbar ===== */
+[data-testid="stHeader"] {visibility: hidden; height: 0px;}
+[data-testid="stToolbar"] {visibility: hidden; height: 0px;}
+.block-container {padding-top: 0rem !important;}
+
+/* ===== Hide Streamlit Footer / "Manage app" ===== */
+footer {visibility: hidden;}
+[data-testid="stFooter"] {visibility: hidden;}
+div.viewerBadge_link,
+div[data-testid="stDecoration"],
+#MainMenu {visibility: hidden;}
 </style>
 """, unsafe_allow_html=True)
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
