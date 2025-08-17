@@ -1,7 +1,10 @@
 # components/nav.py
 from __future__ import annotations
 import streamlit as st
+from components.nav import render_global_header, render_cta_row
 
+render_global_header(mode="external")
+render_cta_row()
 # Real destinations
 DEMO_FORM_URL  = "https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform?usp=header"
 TRAIN_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header"
@@ -62,3 +65,4 @@ def render_cta_row():
             if st.button("Troubleshooting", key="btn_troubleshooting"):
                 st.session_state["page"] = "Troubleshooting"
     st.markdown("</div>", unsafe_allow_html=True)
+
