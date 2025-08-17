@@ -743,11 +743,11 @@ with col3:
         unsafe_allow_html=True
     )
 
+from fault_lookup_widget import render_fault_code_lookup_inline
+
 with col4:
-    st.markdown(
-        '<a class="cta-link" href="https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g" target="_blank" rel="noopener">Learn how the EBOSS® works</a>',
-        unsafe_allow_html=True
-    )
+    render_fault_code_lookup_inline()
+
 # ----- centered text BETWEEN the two rows -----
 st.markdown(
     "<div class='message-text' style='margin:12px 0; text-align:center;'>Please Select an EBOSS Configuration</div>",
