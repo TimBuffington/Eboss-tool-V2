@@ -747,8 +747,6 @@ with col3:
         unsafe_allow_html=True
     )
 
-
-
 with col4:
    render_fault_lookup_widget()
 
