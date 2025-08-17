@@ -762,7 +762,7 @@ with col1:
     with st.container():
         manual_select_clicked = st.button(
             "Manually Select EBOSS Type and Model",
-            key="btn_manual_select".
+            key="btn_manual_select",
             width: 100% !important;
         )
 
