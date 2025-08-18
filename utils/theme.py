@@ -23,7 +23,7 @@ def apply_theme():
 
     /* Background & text */
     .stApp {{
-      background-image: url("{BG_URL}");
+      background-image: url("{BG_URL}"
       background-size: cover; background-position:center; background-repeat:no-repeat; background-attachment:fixed;
       color: {COLORS['Alpine White']}; font-family: Arial, sans-serif;
     }}
@@ -77,4 +77,8 @@ def apply_theme():
 
 def render_logo():
     st.markdown(f"<div class='logo-wrap'><img src='{LOGO_URL}' alt='ANA Energy Logo' /></div>", unsafe_allow_html=True)
+    
+ render apply_theme() 
+
+
 
