@@ -1,7 +1,7 @@
 # components/modals.py
 from __future__ import annotations
 import streamlit as st
-
+apply_theme()
 # Keep this file import-safe; only Streamlit at top level.
 PAGE_MAP = {
     "Technical Specs": "pages/01_Tech_Specs.py",
