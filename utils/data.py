@@ -5,6 +5,25 @@ SPECS = {
     125: {"eboss_model": "EB220 kVA", "pm_charge_rate": 96.0, "fh_charge_rate": 100.0,"max_charge_rate": 125, "kwh": 75,  "gen_kw": 100, "max_cont_kw": 112, "max_peak_kw": 252},
     220: {"eboss_model": "EB400 kVA", "pm_charge_rate": 166.0,"fh_charge_rate": 176.0,"max_charge_rate": 220, "kwh": 125, "gen_kw": 176, "max_cont_kw": 198, "max_peak_kw": 639},
 }
+
+# Fast lookups
+KVA_TO_REC = SPECS
+NAME_TO_KVA = {rec["eboss_model"]: kva for kva, rec in SPECS.items()}
+
+def spec_by_model(model_name: str) -> dict:
+    """Return the numeric spec record for a model string like 'EB125 kVA'."""
+    kva = NAME_TO_KVA.get(model_name)
+    return dict(KVA_TO_REC[kva]) if kva in KVA_TO_REC else {}
+
+def hybrid_kva_for_model(model_name: str) -> int | None:
+    """Generator kVA curve to use for Full Hybrid of this model."""
+    return NAME_TO_KVA.get(model_name)
+
+def charge_rate_for(model_name: str, eboss_type: str) -> float:
+    rec = spec_by_model(model_name) or {}
+    return float(rec.get("fh_charge_rate" if eboss_type == "Full Hybrid" else "pm_charge_rate", 0.0))
+
+
 EBOSS_SPECS = {
     "EBOSS 25 kVA": {
         "Three-phase": "30 kva / 24 kw",
