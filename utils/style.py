@@ -1,14 +1,11 @@
-# utils/style.py
 from pathlib import Path
 import streamlit as st
-from utils import render_global_header
 
 def inject_css_file(path: str):
     css = Path(path).read_text(encoding="utf-8")
     st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
 
 def inject_theme_vars(colors: dict):
-    # inject color tokens as CSS variables
     st.markdown(
         f"""
         <style>
@@ -24,13 +21,12 @@ def inject_theme_vars(colors: dict):
     )
 
 def inject_theme_css():
-    # static CSS that uses the variables above; no Python formatting here
     st.markdown(
         """
         <style>
         .cta-scope [data-testid="column"] .stButton { width: 100%; }
         .cta-scope .stButton > button{
-            display:block; width:100%;
+            display:block;width:100%;
             background-color: var(--asphalt);
             color: var(--alpine);
             border: 2px solid var(--concrete);
@@ -45,8 +41,8 @@ def inject_theme_css():
             transform: translateY(-1px);
         }
         .cta-link{
-            display:flex; align-items:center; justify-content:center;
-            width:100%; min-height:56px; text-decoration:none!important;
+            display:flex;align-items:center;justify-content:center;
+            width:100%;min-height:56px;text-decoration:none!important;
             background-color: var(--asphalt);
             color: var(--alpine);
             border: 2px solid var(--concrete);
@@ -63,7 +59,6 @@ def inject_theme_css():
     )
 
 def ensure_global_css(colors: dict, extra_files: list[str] | None = None):
-    """Call once per page (or from your header)."""
     if st.session_state.get("_css_injected"):
         return
     inject_theme_vars(colors)
