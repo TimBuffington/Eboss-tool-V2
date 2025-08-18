@@ -52,8 +52,182 @@ def render_modal_nav_grid(*, mode_key: str) -> None:
     st.markdown("</div>", unsafe_allow_html=True)
 
 def open_config_modal(mode: str) -> None:
-    """Unified configuration modal with version-safe modal/dialog fallback."""
+    """Unified configuration modal with strict sizing validation and requested layout."""
     title = f"EBOSS Configuration — {mode.title()}"
+
+    def _body() -> None:
+        # Lazy imports (keeps this file import-safe)
+        try:
+            from utils.data import SPECS
+        except Exception:
+            st.error("Static specs (SPECS) not available.")
+            return
+        try:
+            from utils.spec_store import compute_and_store_spec
+        except Exception:
+            compute_and_store_spec = None
+
+        # ---------- helpers ----------
+        kva_sizes = sorted(SPECS.keys())
+        model_by_kva = {kva: rec.get("eboss_model") for kva, rec in SPECS.items()}
+        kva_by_model = {rec.get("eboss_model"): kva for kva, rec in SPECS.items()}
+        all_models = [model_by_kva[k] for k in kva_sizes if model_by_kva.get(k)]
+
+        def allowed_models_for(cont_kw: float, peak_kw: float) -> list[str]:
+            """Models where cont<=98% of max_cont and peak<=max_peak."""
+            ok = []
+            for kva in kva_sizes:
+                rec = SPECS[kva]
+                max_cont = float(rec.get("max_cont_kw", 0))
+                max_peak = float(rec.get("max_peak_kw", 0))
+                if (cont_kw <= 0.98 * max_cont) and (peak_kw <= max_peak):
+                    ok.append(rec.get("eboss_model"))
+            return ok
+
+        # ---------- layout: 3 columns ----------
+        col1, col2, col3 = st.columns(3)
+
+        # Defaults / current state
+        units_default = st.session_state.get("units", "kW")
+        voltage_default = st.session_state.get("voltage", "480")
+        eboss_type_default = st.session_state.get("eboss_type", "Full Hybrid")
+        eboss_model_default = st.session_state.get("eboss_model", all_models[0] if all_models else "")
+        pm_gen_default = st.session_state.get("pm_gen")
+
+        # --------- Column 2 (loads) so we can filter models right away ---------
+        with col2:
+            cont = st.number_input(
+                "Max Continuous Load (kW)",
+                min_value=0.0, step=1.0, format="%g",
+                key="max_continuous_load",
+            )
+            peak = st.number_input(
+                "Max Peak Load (kW)",
+                min_value=0.0, step=1.0, format="%g",
+                key="max_peak_load",
+            )
+
+        # --------- Column 3 (units/voltage) ----------
+        with col3:
+            units = st.selectbox("Units", options=["kW", "Amps"], index=0 if units_default=="kW" else 1, key="units")
+            voltage = st.selectbox("Voltage", options=["120", "208", "240", "480"], index=["120","208","240","480"].index(voltage_default) if voltage_default in ["120","208","240","480"] else 3, key="voltage")
+
+        # Convert amps→kW if needed (use PF=0.8 by default; adjust if you later expose it)
+        sqrt3 = 1.732
+        pf = 0.8
+        try:
+            v = float(voltage)
+        except Exception:
+            v = 0.0
+
+        if units == "Amps" and v > 0:
+            actual_cont_kw = (float(cont) * v * sqrt3 * pf) / 1000.0
+            actual_peak_kw = (float(peak) * v * sqrt3 * pf) / 1000.0
+        else:
+            actual_cont_kw = float(cont)
+            actual_peak_kw = float(peak)
+
+        st.session_state["actual_continuous_load"] = actual_cont_kw
+        st.session_state["actual_peak_load"] = actual_peak_kw
+
+        # Determine which models are allowed for current loads (for filtering)
+        allowed_models = allowed_models_for(actual_cont_kw, actual_peak_kw) if (actual_cont_kw > 0 or actual_peak_kw > 0) else all_models
+
+        # --------- Column 1 (model/type/pm_gen) ----------
+        with col1:
+            # EBOSS Model (Row 1) — filtered by loads
+            if not allowed_models:
+                st.error("No EBOSS model can meet the entered continuous/peak load. Lower the load or parallel units.")
+                # keep a disabled field with previous or first model just for UI stability
+                st.selectbox("EBOSS® Model", options=all_models, index=all_models.index(eboss_model_default) if eboss_model_default in all_models else 0, key="eboss_model", disabled=True)
+                eboss_model = st.session_state["eboss_model"]
+            else:
+                # If current selection is invalid, auto-correct to the first valid model
+                if eboss_model_default not in allowed_models:
+                    if eboss_model_default:
+                        st.info(f"Selected model **{eboss_model_default}** does not meet the entered load. Adjusted to **{allowed_models[0]}**.")
+                    eboss_model_default = allowed_models[0]
+                eboss_model = st.selectbox(
+                    "EBOSS® Model",
+                    options=allowed_models,
+                    index=allowed_models.index(eboss_model_default) if eboss_model_default in allowed_models else 0,
+                    key="eboss_model",
+                )
+
+            # EBOSS Type (Row 2)
+            if mode == "manual":
+                eboss_type = st.selectbox(
+                    "EBOSS® Type",
+                    options=["Full Hybrid", "Power Module"],
+                    index=0 if eboss_type_default == "Full Hybrid" else 1,
+                    key="eboss_type",
+                )
+            else:
+                eboss_type = "Full Hybrid"
+                st.selectbox("EBOSS® Type", options=["Full Hybrid"], index=0, key="eboss_type", disabled=True)
+
+            # PM Gen (Row 3) — only if Power Module
+            if st.session_state.get("eboss_type") == "Power Module":
+                pm_options = kva_sizes
+                st.selectbox(
+                    "Power Module — Generator Size (kVA)",
+                    options=pm_options,
+                    index=pm_options.index(pm_gen_default) if pm_gen_default in pm_options else 0,
+                    key="pm_gen",
+                )
+            else:
+                # clear any legacy value to avoid accidental use downstream
+                st.session_state["pm_gen"] = None
+                st.text_input("Power Module — Generator Size (kVA)", value="", key="pm_gen_display", disabled=True)
+
+        # -------- validation: hard block undersized picks --------
+        if eboss_model:
+            rec = SPECS.get(kva_by_model.get(eboss_model, -1), {})
+            max_cont = float(rec.get("max_cont_kw", 0))
+            max_peak = float(rec.get("max_peak_kw", 0))
+
+            cont_ok = actual_cont_kw <= 0.98 * max_cont if max_cont > 0 else True
+            peak_ok = actual_peak_kw <= max_peak if max_peak > 0 else True
+
+            if not cont_ok or not peak_ok:
+                st.error(
+                    f"**{eboss_model}** cannot support the entered load. "
+                    f"(Max continuous ≤ **{0.98*max_cont:.1f} kW**, Max peak ≤ **{max_peak:.1f} kW**)"
+                )
+                render_modal_nav_grid(mode_key=mode)
+                return
+
+        # -------- compute + cache spec --------
+        if compute_and_store_spec and eboss_model and st.session_state.get("eboss_type"):
+            try:
+                compute_and_store_spec(
+                    model=eboss_model,
+                    type=st.session_state["eboss_type"],
+                    cont_kw=actual_cont_kw,
+                    gen_kw=None,
+                    size_kva=None,
+                    pm_gen=st.session_state.get("pm_gen"),
+                )
+                st.success(f"Configured: {eboss_model} ({st.session_state['eboss_type']}) — {actual_cont_kw:g} kW")
+            except Exception as e:
+                st.error(f"Failed to compute spec: {e}")
+
+        # -------- bottom nav --------
+        render_modal_nav_grid(mode_key=mode)
+
+    # modal/dialog fallback for version compatibility
+    if hasattr(st, "modal"):
+        with st.modal(title, key=f"cfg_modal_{mode}"):
+            _body()
+    elif hasattr(st, "dialog"):
+        @st.dialog(title)
+        def _dlg():
+            _body()
+        _dlg()
+    else:
+        st.warning("Your Streamlit version lacks modal/dialog; rendering inline.")
+        _body()
+
 
     def _body() -> None:
         """
