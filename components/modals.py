@@ -31,13 +31,14 @@ def render_modal_nav_grid(*, mode_key: str) -> None:
         ("Paralleling",     None),
     ]
     for left, right in rows:
-        c1, c2 = st.columns(2, gap="medium")
+        c1, c2 = st.columns(2, gap="small")
         with c1:
             st.button(
                 left,
                 key=f"nav_{left.replace(' ', '_').lower()}_{mode_key}",
                 on_click=_nav_to,
                 kwargs={"page_label": left, "mode_key": mode_key},
+                line
             )
         with c2:
             if right:
