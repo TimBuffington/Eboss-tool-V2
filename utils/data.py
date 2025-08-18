@@ -168,4 +168,19 @@ EBOSS_SPECS = {
     },
 }
 
+# utils/data.py
+
+# Load fraction is 0.25, 0.50, 0.75, 1.00  (i.e., 25%, 50%, 75%, 100%)
+# Values are GPH at that fraction for a given generator kVA curve.
+FUEL_BURN_CURVES = {
+    25:  [(0.25, 0.67), (0.50, 0.94), (0.75, 1.26), (1.00, 1.62)],
+    45:  [(0.25, 1.04), (0.50, 1.60), (0.75, 2.20), (1.00, 2.73)],  
+    65:  [(0.25, 1.70), (0.50, 2.60), (0.75, 3.50), (1.00, 4.40)],
+    125: [(0.25, 2.60), (0.50, 4.10), (0.75, 5.60), (1.00, 7.10)],
+    220: [(0.25, 4.60), (0.50, 6.90), (0.75, 9.40), (1.00, 12.00)],
+    400: [(0.25, 7.70), (0.50, 12.20), (0.75, 17.30), (1.00, 22.50)],
+}
+
+# Optional back-compat alias if any old code expects this name:
+EBOSS_LOAD_REFERENCE = FUEL_BURN_CURVES
 
