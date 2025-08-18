@@ -1,7 +1,23 @@
 # utils/sizing.py
 from __future__ import annotations
 from typing import Dict, List, Optional, Tuple
-from utils.data import EBOSS_LOAD_REFERENCE
+# utils/sizing.py
+try:
+    from utils.data import FUEL_BURN_CURVES as _CURVES
+except Exception:
+    _CURVES = None
+try:
+    # legacy name support
+    from utils.data import EBOSS_LOAD_REFERENCE as _LEGACY
+except Exception:
+    _LEGACY = None
+
+FUEL_CURVES = _CURVES or _LEGACY
+if FUEL_CURVES is None:
+    raise ImportError(
+        "No fuel-burn curves found. Define FUEL_BURN_CURVES in utils/data.py "
+        "(or provide EBOSS_LOAD_REFERENCE for backward compatibility)."
+    )
 
 # --------- 1D interpolation across load anchors (25/50/75/100%) ----------
 _LOAD_X: List[float] = [0.25, 0.50, 0.75, 1.00]
