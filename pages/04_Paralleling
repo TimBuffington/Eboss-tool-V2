@@ -1,9 +1,18 @@
-import streamlit as stfrom datetime import datefrom theme import apply_global_themefrom nav import render_global_headerfrom utils.keys import CANONfrom utils.data import SPECS, STANDARD_GENERATORS, interpolate_gph
-def render_parallel_calculator_page():    # Apply global theme and logo    apply_global_theme()    render_global_header()
+import streamlit as st
+from datetime import date
+from theme import apply_global_theme
+from nav import render_global_header
+from utils.keys import CANON
+from utils.data import SPECS, STANDARD_GENERATORS, interpolate_gph
+
+def render_parallel_calculator_page():    # Apply global theme and logo    
+apply_global_theme()
+render_global_header()
+
 st.markdown('<div class="form-container">', unsafe_allow_html=True)
 st.markdown("## Parallel/Hybrid Sizing Tool")
 
-# --- System type selection
+   # --- System type selection
 st.markdown("### System Type")
 system_type = st.radio(
     "Select system to calculate:",
@@ -12,7 +21,7 @@ system_type = st.radio(
     key="system_type",
 )
 
-# --- Redundant generators option (for Power Module)
+   # --- Redundant generators option (for Power Module)
 use_redundant_generators = False
 if system_type in ["EBOSS Power Module", "Compare EBOSS vs Standard Diesel"]:
     use_redundant_generators = st.checkbox(
