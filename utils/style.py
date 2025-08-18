@@ -1,6 +1,7 @@
 # utils/style.py
 from pathlib import Path
 import streamlit as st
+from utils import render_global_header
 
 def inject_css_file(path: str):
     css = Path(path).read_text(encoding="utf-8")
