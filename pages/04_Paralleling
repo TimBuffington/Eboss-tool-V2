@@ -96,7 +96,7 @@ else:
     gen_inventory = {}
 
 # --- Calculate
-if st.button("🔢 Calculate System", key="calculate_system"):
+if st.button(" Calculate System", key="calculate_system"):
     # Validate load against inventory
     max_supported_cont = sum(
         qty * SPECS[kva]["max_cont_kw"] for kva, rec in SPECS.items() for model, qty in eboss_inventory.items() if model == rec["eboss_model"]
