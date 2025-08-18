@@ -1,47 +1,479 @@
-import pandas as pd
-# ... (existing imports)
+import streamlit as stfrom datetime import datefrom theme import apply_global_themefrom nav import render_global_headerfrom utils.keys import CANONfrom utils.data import SPECS, STANDARD_GENERATORS, interpolate_gph
+def render_parallel_calculator_page():    # Apply global theme and logo    apply_global_theme()    render_global_header()
+st.markdown('<div class="form-container">', unsafe_allow_html=True)
+st.markdown("## Parallel/Hybrid Sizing Tool")
 
-# After calculating 'results'
+# --- System type selection
+st.markdown("### System Type")
+system_type = st.radio(
+    "Select system to calculate:",
+    ["EBOSS Full Hybrid", "EBOSS Power Module", "Standard Diesel", "Compare EBOSS vs Standard Diesel"],
+    horizontal=True,
+    key="system_type",
+)
 
-# Prepare data for chart and table
-fuel_data = []
-for system_key, configs in results.items():
-    for label, data in configs.items():
-        config_name = f"{system_key} {label}"
-        fuel_data.append({
-            "Configuration": config_name,
-            "GPH": data['total_gph'],
-            "Gallons per Day": data['total_gph'] * 24,
-            "Gallons per Week": data['total_gph'] * 24 * 7,
-            "Gallons per Month": data['total_gph'] * 24 * 30,
-            "Battery Life (hours)": data.get('battery_life', 'N/A'),
-            "Charge Time per Unit (hours)": data.get('charge_time', 'N/A') if data.get('charge_time', float("inf")) != float("inf") else 'Insufficient',
-            "Runtime (hours/day)": data['runtime_hrs'],
-            "Units": data['units'],
-            "Generators": data.get('generators', 'N/A'),
-        })
+# --- Redundant generators option (for Power Module)
+use_redundant_generators = False
+if system_type in ["EBOSS Power Module", "Compare EBOSS vs Standard Diesel"]:
+    use_redundant_generators = st.checkbox(
+        "Use redundant generators for Power Modules (one generator per Power Module)",
+        key="redundant_generators",
+    )
 
-df_fuel = pd.DataFrame(fuel_data)
+# --- View mode (for EBOSS types)
+view_mode = None
+selected_model = None
+if system_type in ["EBOSS Full Hybrid", "EBOSS Power Module"]:
+    st.markdown("### View By")
+    view_mode = st.radio(
+        "View results by:",
+        ["Individual size class", "Size Combination"],
+        horizontal=True,
+        key="view_mode",
+    )
+    if view_mode == "Individual size class":
+        model_list = [rec["eboss_model"] for rec in SPECS.values()]
+        selected_model = st.selectbox(
+            "Select EBOSS Model",
+            options=model_list,
+            key=CANON["model"],
+        )
 
-# Line Graph Chart
-st.markdown("### Fuel Consumption Line Graph")
-metric = st.selectbox("Select metric", ["GPH", "Gallons per Day", "Gallons per Week", "Gallons per Month"])
-df_plot = df_fuel.set_index("Configuration")[[metric]]
-st.line_chart(df_plot)
+# --- Load requirements
+st.markdown("### Required Project Load")
+required_cont_kw = st.number_input(
+    "Required Continuous Load (kW)",
+    min_value=0.0,
+    max_value=2000.0,
+    step=1.0,
+    key=CANON["max_cont"],
+)
+required_peak_kw = st.number_input(
+    "Required Max Peak Load (kW)",
+    min_value=0.0,
+    max_value=2500.0,
+    step=1.0,
+    key=CANON["max_peak"],
+)
 
-# Side-by-Side Table Report
-st.markdown("### Side-by-Side Comparison Table")
-c1, c2, c3 = st.columns(3)
-systems = list(results.keys())
-if len(systems) > 0:
-    with c1:
-        st.markdown(f"#### {systems[0]}")
-        st.table(df_fuel[df_fuel["Configuration"].str.contains(systems[0])][["Configuration", "GPH", "Gallons per Day", "Battery Life (hours)", "Charge Time per Unit (hours)", "Runtime (hours/day)"]])
-if len(systems) > 1:
-    with c2:
-        st.markdown(f"#### {systems[1]}")
-        st.table(df_fuel[df_fuel["Configuration"].str.contains(systems[1])][["Configuration", "GPH", "Gallons per Day", "Battery Life (hours)", "Charge Time per Unit (hours)", "Runtime (hours/day)"]])
-if len(systems) > 2:
-    with c3:
-        st.markdown(f"#### {systems[2]}")
-        st.table(df_fuel[df_fuel["Configuration"].str.contains(systems[2])][["Configuration", "GPH", "Gallons per Day", "Battery Life (hours)", "Charge Time per Unit (hours)", "Runtime (hours/day)"]])
+# --- EBOSS inventory
+st.markdown("### EBOSS Units in Inventory")
+eboss_inventory = {}
+for model in SPECS.values():
+    model_name = model["eboss_model"]
+    qty = st.number_input(
+        f"{model_name} (quantity)",
+        min_value=0,
+        max_value=20,
+        step=1,
+        key=f"{CANON['model']}_{model_name.replace(' ', '_')}",
+    )
+    eboss_inventory[model_name] = qty
+
+# --- Generator inventory
+if system_type in ["EBOSS Power Module", "Standard Diesel", "Compare EBOSS vs Standard Diesel"]:
+    st.markdown("### Generators in Inventory")
+    gen_inventory = {}
+    for gen in STANDARD_GENERATORS.keys():
+        qty = st.number_input(
+            f"{gen} (quantity)",
+            min_value=0,
+            max_value=10,
+            step=1,
+            key=f"gen_{gen.replace('/', '_').replace(' ', '_')}",
+        )
+        gen_inventory[gen] = qty
+else:
+    gen_inventory = {}
+
+# --- Calculate
+if st.button("🔢 Calculate System", key="calculate_system"):
+    # Validate load against inventory
+    max_supported_cont = sum(
+        qty * SPECS[kva]["max_cont_kw"] for kva, rec in SPECS.items() for model, qty in eboss_inventory.items() if model == rec["eboss_model"]
+    )
+    max_supported_peak = sum(
+        qty * SPECS[kva]["max_peak_kw"] for kva, rec in SPECS.items() for model, qty in eboss_inventory.items() if model == rec["eboss_model"]
+    )
+    if required_cont_kw > max_supported_cont or required_peak_kw > max_supported_peak:
+        st.warning(
+            f"Entered load ({required_cont_kw} kW continuous, {required_peak_kw} kW peak) "
+            f"exceeds inventory capacity ({max_supported_cont:.1f} kW continuous, "
+            f"{max_supported_peak:.1f} kW peak). Additional units may be needed."
+        )
+
+    # Initialize results
+    results = {}
+
+    # --- EBOSS Full Hybrid Calculations
+    if system_type in ["EBOSS Full Hybrid", "Compare EBOSS vs Standard Diesel"]:
+        results["Full Hybrid"] = {}
+        charge_key = "fh_charge_rate"
+        gen_key = "fh_gen_kw"
+        if view_mode == "Individual size class" and selected_model:
+            # Single model calculation
+            model_kva = next(kva for kva, rec in SPECS.items() if rec["eboss_model"] == selected_model)
+            model_data = SPECS[model_kva]
+            cont_kw = model_data["max_cont_kw"]
+            qty = max(1, int((required_cont_kw + cont_kw - 1) // cont_kw))
+            total_kw = qty * cont_kw
+            if total_kw > required_cont_kw + 0.5 * cont_kw:
+                qty -= 1
+                total_kw = qty * cont_kw
+            total_kwh = qty * model_data["kwh"]
+            total_charge_rate = qty * model_data[charge_key]
+            battery_life = total_kwh / required_cont_kw if required_cont_kw > 0 else 0
+            charge_time = (total_charge_rate - required_cont_kw) / total_kwh if total_kwh > 0 and total_charge_rate > required_cont_kw else float("inf")
+            cycles_per_day = 24.0 / (battery_life + charge_time) if battery_life + charge_time > 0 else 0
+            runtime_hrs = charge_time * cycles_per_day * qty if charge_time != float("inf") else 24 * qty
+            load_percent = total_charge_rate / (qty * model_data[gen_key]) if qty * model_data[gen_key] > 0 else 0
+            total_gph = qty * interpolate_gph(model_data[gen_key], load_percent)
+            results["Full Hybrid"]["Individual"] = {
+                "units": {selected_model: qty},
+                "total_kw": total_kw,
+                "battery_life": battery_life,
+                "charge_time": charge_time,
+                "runtime_hrs": runtime_hrs,
+                "total_gph": total_gph,
+            }
+        else:
+            # Mixed-size combinations
+            combo1 = {}  # Larger units
+            combo2 = {}  # Smaller units
+            remaining_kw = required_cont_kw
+            for kva in sorted(SPECS.keys(), reverse=True):
+                model = SPECS[kva]["eboss_model"]
+                cont_kw = SPECS[kva]["max_cont_kw"]
+                qty = int(remaining_kw // cont_kw)
+                if qty > 0:
+                    combo1[model] = qty
+                    remaining_kw -= qty * cont_kw
+            if remaining_kw > 0:
+                smallest_model = SPECS[min(SPECS.keys())]["eboss_model"]
+                combo1[smallest_model] = combo1.get(smallest_model, 0) + 1
+
+            remaining_kw = required_cont_kw
+            for kva in sorted(SPECS.keys()):
+                model = SPECS[kva]["eboss_model"]
+                cont_kw = SPECS[kva]["max_cont_kw"]
+                qty = int(remaining_kw // cont_kw)
+                if qty > 0:
+                    combo2[model] = qty
+                    remaining_kw -= qty * cont_kw
+                if remaining_kw <= 0:
+                    break
+            if remaining_kw > 0:
+                largest_model = SPECS[max(SPECS.keys())]["eboss_model"]
+                combo2[largest_model] = combo2.get(largest_model, 0) + 1
+
+            for combo, label in [(combo1, "Combo 1"), (combo2, "Combo 2")]:
+                total_kw = sum(qty * SPECS[kva]["max_cont_kw"] for kva, rec in SPECS.items() for model, qty in combo.items() if model == rec["eboss_model"])
+                total_kwh = sum(qty * SPECS[kva]["kwh"] for kva, rec in SPECS.items() for model, qty in combo.items() if model == rec["eboss_model"])
+                total_charge_rate = sum(qty * SPECS[kva][charge_key] for kva, rec in SPECS.items() for model, qty in combo.items() if model == rec["eboss_model"])
+                total_gen_kw = sum(qty * SPECS[kva][gen_key] for kva, rec in SPECS.items() for model, qty in combo.items() if model == rec["eboss_model"])
+                battery_life = total_kwh / required_cont_kw if required_cont_kw > 0 else 0
+                charge_time = (total_charge_rate - required_cont_kw) / total_kwh if total_kwh > 0 and total_charge_rate > required_cont_kw else float("inf")
+                cycles_per_day = 24.0 / (battery_life + charge_time) if battery_life + charge_time > 0 else 0
+                runtime_hrs = charge_time * cycles_per_day * sum(combo.values()) if charge_time != float("inf") else 24 * sum(combo.values())
+                load_percent = total_charge_rate / total_gen_kw if total_gen_kw > 0 else 0
+                total_gph = sum(qty * interpolate_gph(SPECS[kva][gen_key], load_percent) for kva, rec in SPECS.items() for model, qty in combo.items() if model == rec["eboss_model"])
+                results["Full Hybrid"][label] = {
+                    "units": combo,
+                    "total_kw": total_kw,
+                    "battery_life": battery_life,
+                    "charge_time": charge_time,
+                    "runtime_hrs": runtime_hrs,
+                    "total_gph": total_gph,
+                }
+
+    # --- EBOSS Power Module Calculations
+    if system_type in ["EBOSS Power Module", "Compare EBOSS vs Standard Diesel"]:
+        results["Power Module"] = {}
+        charge_key = "pm_charge_rate"
+        if view_mode == "Individual size class" and selected_model:
+            # Single model calculation
+            model_kva = next(kva for kva, rec in SPECS.items() if rec["eboss_model"] == selected_model)
+            model_data = SPECS[model_kva]
+            cont_kw = model_data["max_cont_kw"]
+            qty = max(1, int((required_cont_kw + cont_kw - 1) // cont_kw))
+            total_kw = qty * cont_kw
+            if total_kw > required_cont_kw + 0.5 * cont_kw:
+                qty -= 1
+                total_kw = qty * cont_kw
+            total_kwh = qty * model_data["kwh"]
+            total_charge_rate = qty * model_data[charge_key]
+            battery_life = total_kwh / required_cont_kw if required_cont_kw > 0 else 0
+            charge_time = (total_charge_rate - required_cont_kw) / total_kwh if total_kwh > 0 and total_charge_rate > required_cont_kw else float("inf")
+            cycles_per_day = 24.0 / (battery_life + charge_time) if battery_life + charge_time > 0 else 0
+            runtime_hrs = charge_time * cycles_per_day * qty if charge_time != float("inf") else 24 * qty
+            # Generator assignment
+            gen_units = {}
+            total_charge_rate_per_gen = total_charge_rate if not use_redundant_generators else model_data[charge_key]
+            num_generators = qty if use_redundant_generators else 1
+            for _ in range(num_generators):
+                remaining_charge_kw = total_charge_rate_per_gen
+                for gen, gen_data in sorted(STANDARD_GENERATORS.items(), key=lambda x: x[1]["kw"]):
+                    if remaining_charge_kw <= 0.9 * gen_data["kw"]:
+                        gen_units[gen] = gen_units.get(gen, 0) + 1
+                        remaining_charge_kw = 0
+                        break
+                if remaining_charge_kw > 0:
+                    largest_gen = max(STANDARD_GENERATORS.keys(), key=lambda x: STANDARD_GENERATORS[x]["kw"])
+                    gen_units[largest_gen] = gen_units.get(largest_gen, 0) + 1
+            load_percent = total_charge_rate / sum(gen_data["kw"] * qty for gen, qty in gen_units.items()) if gen_units else 0
+            total_gph = sum(qty * interpolate_gph(gen_data["kw"], load_percent) for gen, qty in gen_units.items() for g, gen_data in STANDARD_GENERATORS.items() if g == gen)
+            results["Power Module"]["Individual"] = {
+                "units": {selected_model: qty},
+                "generators": gen_units,
+                "total_kw": total_kw,
+                "battery_life": battery_life,
+                "charge_time": charge_time,
+                "runtime_hrs": runtime_hrs,
+                "total_gph": total_gph,
+            }
+        else:
+            # Mixed-size combinations
+            combo1 = {}  # Larger units
+            combo2 = {}  # Smaller units
+            remaining_kw = required_cont_kw
+            for kva in sorted(SPECS.keys(), reverse=True):
+                model = SPECS[kva]["eboss_model"]
+                cont_kw = SPECS[kva]["max_cont_kw"]
+                qty = int(remaining_kw // cont_kw)
+                if qty > 0:
+                    combo1[model] = qty
+                    remaining_kw -= qty * cont_kw
+            if remaining_kw > 0:
+                smallest_model = SPECS[min(SPECS.keys())]["eboss_model"]
+                combo1[smallest_model] = combo1.get(smallest_model, 0) + 1
+
+            remaining_kw = required_cont_kw
+            for kva in sorted(SPECS.keys()):
+                model = SPECS[kva]["eboss_model"]
+                cont_kw = SPECS[kva]["max_cont_kw"]
+                qty = int(remaining_kw // cont_kw)
+                if qty > 0:
+                    combo2[model] = qty
+                    remaining_kw -= qty * cont_kw
+                if remaining_kw <= 0:
+                    break
+            if remaining_kw > 0:
+                largest_model = SPECS[max(SPECS.keys())]["eboss_model"]
+                combo2[largest_model] = combo2.get(largest_model, 0) + 1
+
+            for combo, label in [(combo1, "Combo 1"), (combo2, "Combo 2")]:
+                total_kw = sum(qty * SPECS[kva]["max_cont_kw"] for kva, rec in SPECS.items() for model, qty in combo.items() if model == rec["eboss_model"])
+                total_kwh = sum(qty * SPECS[kva]["kwh"] for kva, rec in SPECS.items() for model, qty in combo.items() if model == rec["eboss_model"])
+                total_charge_rate = sum(qty * SPECS[kva][charge_key] for kva, rec in SPECS.items() for model, qty in combo.items() if model == rec["eboss_model"])
+                battery_life = total_kwh / required_cont_kw if required_cont_kw > 0 else 0
+                charge_time = (total_charge_rate - required_cont_kw) / total_kwh if total_kwh > 0 and total_charge_rate > required_cont_kw else float("inf")
+                cycles_per_day = 24.0 / (battery_life + charge_time) if battery_life + charge_time > 0 else 0
+                runtime_hrs = charge_time * cycles_per_day * sum(combo.values()) if charge_time != float("inf") else 24 * sum(combo.values())
+                # Generator assignment
+                gen_units = {}
+                total_charge_rate_per_gen = total_charge_rate if not use_redundant_generators else max(SPECS[kva][charge_key] for kva, rec in SPECS.items() for model, qty in combo.items() if qty > 0)
+                num_generators = sum(combo.values()) if use_redundant_generators else 1
+                for _ in range(num_generators):
+                    remaining_charge_kw = total_charge_rate_per_gen
+                    for gen, gen_data in sorted(STANDARD_GENERATORS.items(), key=lambda x: x[1]["kw"]):
+                        if remaining_charge_kw <= 0.9 * gen_data["kw"]:
+                            gen_units[gen] = gen_units.get(gen, 0) + 1
+                            remaining_charge_kw = 0
+                            break
+                    if remaining_charge_kw > 0:
+                        largest_gen = max(STANDARD_GENERATORS.keys(), key=lambda x: STANDARD_GENERATORS[x]["kw"])
+                        gen_units[largest_gen] = gen_units.get(largest_gen, 0) + 1
+                load_percent = total_charge_rate / sum(gen_data["kw"] * qty for gen, qty in gen_units.items()) if gen_units else 0
+                total_gph = sum(qty * interpolate_gph(gen_data["kw"], load_percent) for gen, qty in gen_units.items() for g, gen_data in STANDARD_GENERATORS.items() if g == gen)
+                results["Power Module"][label] = {
+                    "units": combo,
+                    "generators": gen_units,
+                    "total_kw": total_kw,
+                    "battery_life": battery_life,
+                    "charge_time": charge_time,
+                    "runtime_hrs": runtime_hrs,
+                    "total_gph": total_gph,
+                }
+
+    # --- Standard Diesel Calculations
+    if system_type in ["Standard Diesel", "Compare EBOSS vs Standard Diesel"]:
+        results["Standard Diesel"] = {}
+        if view_mode == "Individual size class" and selected_model:
+            # Map selected EBOSS model to corresponding generator
+            model_kva = next(kva for kva, rec in SPECS.items() if rec["eboss_model"] == selected_model)
+            gen_name = f"GEN{model_kva}/{SPECS[model_kva]['max_cont_kw']}kW"
+            gen_data = STANDARD_GENERATORS.get(gen_name)
+            if gen_data:
+                qty = max(1, int((required_cont_kw + gen_data["kw"] - 1) // gen_data["kw"]))
+                total_kw = qty * gen_data["kw"]
+                if total_kw > required_cont_kw + 0.5 * gen_data["kw"]:
+                    qty -= 1
+                    total_kw = qty * gen_data["kw"]
+                load_percent = required_cont_kw / total_kw if total_kw > 0 else 0
+                total_gph = qty * interpolate_gph(gen_data["kw"], load_percent)
+                results["Standard Diesel"]["Individual"] = {
+                    "units": {gen_name: qty},
+                    "total_kw": total_kw,
+                    "total_gph": total_gph,
+                }
+            else:
+                st.error(f"No generator found for {selected_model}. Please check STANDARD_GENERATORS.")
+        else:
+            # Mixed-size combinations
+            combo1 = {}  # Larger units
+            combo2 = {}  # Smaller units
+            remaining_kw = required_cont_kw
+            for gen, gen_data in sorted(STANDARD_GENERATORS.items(), key=lambda x: -x[1]["kw"]):
+                qty = int(remaining_kw // gen_data["kw"])
+                if qty > 0:
+                    combo1[gen] = qty
+                    remaining_kw -= qty * gen_data["kw"]
+            if remaining_kw > 0:
+                smallest_gen = min(STANDARD_GENERATORS.keys(), key=lambda x: STANDARD_GENERATORS[x]["kw"])
+                combo1[smallest_gen] = combo1.get(smallest_gen, 0) + 1
+
+            remaining_kw = required_cont_kw
+            for gen, gen_data in sorted(STANDARD_GENERATORS.items(), key=lambda x: x[1]["kw"]):
+                qty = int(remaining_kw // gen_data["kw"])
+                if qty > 0:
+                    combo2[gen] = qty
+                    remaining_kw -= qty * gen_data["kw"]
+                if remaining_kw <= 0:
+                    break
+            if remaining_kw > 0:
+                largest_gen = max(STANDARD_GENERATORS.keys(), key=lambda x: STANDARD_GENERATORS[x]["kw"])
+                combo2[largest_gen] = combo2.get(largest_gen, 0) + 1
+
+            for combo, label in [(combo1, "Combo 1"), (combo2, "Combo 2")]:
+                total_kw = sum(qty * gen_data["kw"] for gen, qty in combo.items() for g, gen_data in STANDARD_GENERATORS.items() if g == gen)
+                load_percent = required_cont_kw / total_kw if total_kw > 0 else 0
+                total_gph = sum(qty * interpolate_gph(gen_data["kw"], load_percent) for gen, qty in combo.items() for g, gen_data in STANDARD_GENERATORS.items() if g == gen)
+                results["Standard Diesel"][label] = {
+                    "units": combo,
+                    "total_kw": total_kw,
+                    "total_gph": total_gph,
+                }
+
+    # --- Display Results
+    st.markdown("### 📊 Results")
+    if system_type == "Compare EBOSS vs Standard Diesel":
+        c1, c2, c3 = st.columns(3)
+        with c1:
+            st.markdown("#### Full Hybrid")
+            for label, data in results.get("Full Hybrid", {}).items():
+                st.markdown(f"**{label}**")
+                for model, qty in data["units"].items():
+                    st.write(f"{model}: {qty}")
+                st.write(f"Total kW: {data['total_kw']:.1f}")
+                st.write(f"Battery Longevity: {data['battery_life']:.2f} hours")
+                if data['charge_time'] == float("inf"):
+                    st.write("Charge Time: Insufficient charge rate")
+                else:
+                    st.write(f"Charge Time per Unit: {data['charge_time']:.2f} hours")
+                    st.write(f"Total Engine Runtime: {data['runtime_hrs']:.2f} hours/day")
+                st.write(f"Total GPH: {data['total_gph']:.2f}")
+                st.write(f"Gallons per Day: {data['total_gph'] * 24:.1f}")
+                st.write(f"Gallons per Week: {data['total_gph'] * 24 * 7:.1f}")
+                st.write(f"Gallons per Month: {data['total_gph'] * 24 * 30:.1f}")
+        with c2:
+            st.markdown("#### Power Module")
+            for label, data in results.get("Power Module", {}).items():
+                st.markdown(f"**{label}**")
+                for model, qty in data["units"].items():
+                    st.write(f"{model}: {qty}")
+                st.write(f"Total kW: {data['total_kw']:.1f}")
+                st.write(f"Battery Longevity: {data['battery_life']:.2f} hours")
+                if data['charge_time'] == float("inf"):
+                    st.write("Charge Time: Insufficient charge rate")
+                else:
+                    st.write(f"Charge Time per Unit: {data['charge_time']:.2f} hours")
+                    st.write(f"Total Engine Runtime: {data['runtime_hrs']:.2f} hours/day")
+                st.write("**Generators Required:**")
+                for gen, qty in data["generators"].items():
+                    st.write(f"{gen}: {qty}")
+                st.write(f"Total GPH: {data['total_gph']:.2f}")
+                st.write(f"Gallons per Day: {data['total_gph'] * 24:.1f}")
+                st.write(f"Gallons per Week: {data['total_gph'] * 24 * 7:.1f}")
+                st.write(f"Gallons per Month: {data['total_gph'] * 24 * 30:.1f}")
+        with c3:
+            st.markdown("#### Standard Diesel")
+            for label, data in results.get("Standard Diesel", {}).items():
+                st.markdown(f"**{label}**")
+                for gen, qty in data["units"].items():
+                    st.write(f"{gen}: {qty}")
+                st.write(f"Total kW: {data['total_kw']:.1f}")
+                st.write(f"Total GPH: {data['total_gph']:.2f}")
+                st.write(f"Gallons per Day: {data['total_gph'] * 24:.1f}")
+                st.write(f"Gallons per Week: {data['total_gph'] * 24 * 7:.1f}")
+                st.write(f"Gallons per Month: {data['total_gph'] * 24 * 30:.1f}")
+    else:
+        system_key = system_type.replace("EBOSS ", "")
+        for label, data in results.get(system_key, {}).items():
+            st.markdown(f"#### {label}")
+            for unit, qty in data["units"].items():
+                st.write(f"{unit}: {qty}")
+            st.write(f"Total kW: {data['total_kw']:.1f}")
+            if system_key in ["Full Hybrid", "Power Module"]:
+                st.write(f"Battery Longevity: {data['battery_life']:.2f} hours")
+                if data['charge_time'] == float("inf"):
+                    st.write("Charge Time: Insufficient charge rate")
+                else:
+                    st.write(f"Charge Time per Unit: {data['charge_time']:.2f} hours")
+                    st.write(f"Total Engine Runtime: {data['runtime_hrs']:.2f} hours/day")
+            if system_key == "Power Module":
+                st.write("**Generators Required:**")
+                for gen, qty in data["generators"].items():
+                    st.write(f"{gen}: {qty}")
+            st.write(f"Total GPH: {data['total_gph']:.2f}")
+            st.write(f"Gallons per Day: {data['total_gph'] * 24:.1f}")
+            st.write(f"Gallons per Week: {data['total_gph'] * 24 * 7:.1f}")
+            st.write(f"Gallons per Month: {data['total_gph'] * 24 * 30:.1f}")
+
+    # --- Print-friendly report
+    today = date.today().strftime("%B %d, %Y")
+    st.markdown("""
+    <style>
+    @media print {
+        body * { visibility: hidden; }
+        .print-logo, .print-logo * { visibility: visible; }
+        .form-container, .form-container * { visibility: visible; }
+        .form-container {
+            position: relative;
+            background: white !important;
+            color: black !important;
+            box-shadow: none !important;
+        }
+        .form-container h3, th, td {
+            color: black !important;
+            text-shadow: none !important;
+        }
+        .cta-link.print-btn {
+            display: none;
+        }
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    st.markdown(f'''
+    <div class="print-logo" style="text-align:center; margin-top:2rem;">
+      <img src="https://raw.githubusercontent.com/TimBuffington/troubleshooting/refs/heads/main/assets/ANA-ENERGY-LOGO-HORIZONTAL-WHITE-GREEN.png" width="240"><br><br>
+      <div style="font-size:1.3rem; font-weight:bold;">
+        EBOSS&reg Parallel Sizing and Generator Comparison Report
+      </div>
+      <div style="font-size:0.9rem; margin-top:0.2rem;">{today}</div>
+      <div style="font-size:0.95rem; margin-top:0.8rem;">
+        <b>Load Parameters:</b> {required_cont_kw} kW continuous, {required_peak_kw} kW peak
+      </div>
+    </div>
+    ''', unsafe_allow_html=True)
+    st.markdown(
+        """
+        <a href="javascript:window.print()" class="cta-link print-btn" style="margin: 1rem auto; display: block; text-align: center;">
+            Print Parallel Calculation
+        </a>
+        """,
+        unsafe_allow_html=True,
+    )
+
+st.markdown('</div>', unsafe_allow_html=True)
+
+if name == "main":    render_parallel_calculator_page()
