@@ -1,145 +1,170 @@
 # utils/sizing.py
 from __future__ import annotations
-from typing import Dict, List, Optional, Tuple
-from utils.data import EBOSS_LOAD_REFERENCE
+from typing import Dict, List, Tuple, Optional
 
-# --------- 1D interpolation across load anchors (25/50/75/100%) ----------
-_LOAD_X: List[float] = [0.25, 0.50, 0.75, 1.00]
+# --- Safe imports: never crash at import time ---
+try:
+    from utils.data import SPECS as _SPECS  # your calc/spec table keyed by kVA
+except Exception:
+    _SPECS: Dict[int, Dict] = {}
 
-def _interp1d(x: float, xp: List[float], fp: List[float]) -> float:
-    """Linear interpolation with clamping to [xp[0], xp[-1]]."""
-    if x <= xp[0]:
-        return fp[0]
-    if x >= xp[-1]:
-        return fp[-1]
-    for i in range(len(xp) - 1):
-        if xp[i] <= x <= xp[i + 1]:
-            x0, x1 = xp[i], xp[i + 1]
-            y0, y1 = fp[i], fp[i + 1]
-            t = (x - x0) / (x1 - x0)
-            return y0 + t * (y1 - y0)
-    return fp[-1]
+# Try preferred name first, then legacy, else empty dict (functions will guard)
+try:
+    from utils.data import FUEL_BURN_CURVES as FUEL_CURVES
+except Exception:
+    try:
+        from utils.data import EBOSS_LOAD_REFERENCE as FUEL_CURVES  # back-compat
+    except Exception:
+        FUEL_CURVES: Dict[int, List[Tuple[float, float]]] = {}
 
-def _gph_curve_for_size(gen_kva: int, gph_table: Dict[int, Dict[str, float]]) -> List[float]:
-    """
-    Return GPH at [25,50,75,100]% for the given size.
-    If size isn't an exact key, interpolate ACROSS SIZE between nearest sizes.
-    """
-    sizes = sorted(gph_table.keys())
-    if gen_kva in gph_table:
-        row = gph_table[gen_kva]
-        return [float(row["25%"]), float(row["50%"]), float(row["75%"]), float(row["100%"])]
+# ── Small helpers over your data ──────────────────────────────────────────────
+def _spec_by_model(model_name: str) -> Dict:
+    """Return the numeric spec record for a model string like 'EB125 kVA'."""
+    for kva, rec in _SPECS.items():
+        if rec.get("eboss_model") == model_name:
+            return dict(rec)
+    return {}
 
-    lower = max([s for s in sizes if s <= gen_kva], default=sizes[0])
-    upper = min([s for s in sizes if s >= gen_kva], default=sizes[-1])
-    if lower == upper:
-        row = gph_table[lower]
-        return [float(row["25%"]), float(row["50%"]), float(row["75%"]), float(row["100%"])]
-
-    lr, ur = gph_table[lower], gph_table[upper]
-    t = (gen_kva - lower) / (upper - lower)
-    out = []
-    for label in ("25%", "50%", "75%", "100%"):
-        y0 = float(lr[label]); y1 = float(ur[label])
-        out.append(y0 + t * (y1 - y0))
-    return out
-
-def fuel_gph_at_load(gen_kva: int | float, load: float,
-                     table: Optional[Dict[int, Dict[str, float]]] = None) -> float:
-    """
-    Interpolate GPH from table given:
-      - gen_kva: generator size in kVA
-      - load: engine load as fraction (0..1) or percent (0..100)
-    """
-    if table is None:
-        table = EBOSS_LOAD_REFERENCE["gph_interpolation"]
-    load_fraction = (load / 100.0) if load > 1.0 else float(load)
-    fp = _gph_curve_for_size(int(round(gen_kva)), table)
-    return float(_interp1d(load_fraction, _LOAD_X, fp))
-
-# ----------------- Helpers to fetch EBOSS charge rates / sizes -----------------
-
-def _rec_for_model(model: str) -> Optional[Dict]:
-    """Find the generator_sizes record for a given EBOSS model string."""
-    for rec in EBOSS_LOAD_REFERENCE["generator_sizes"].values():
-        if rec.get("eboss_model") == model:
-            return rec
+def _hybrid_kva_for_model(model_name: str) -> Optional[int]:
+    """Which gen kVA curve to use for Full Hybrid for this model."""
+    for kva, rec in _SPECS.items():
+        if rec.get("eboss_model") == model_name:
+            return int(kva)
     return None
 
-def eboss_defined_charge_rate_kw(model: str, eboss_type: str) -> Optional[float]:
+def eboss_defined_charge_rate_kw(model: str, eboss_type: str) -> float:
     """
-    Returns the defined charge rate (kW) for the EBOSS model/type:
-      - "Full Hybrid" => fh_charge_rate
-      - "Power Module" => pm_charge_rate
+    Returns the defined charge rate (kW) for the given EBOSS model and type.
+    - Full Hybrid  -> 'fh_charge_rate'
+    - Power Module -> 'pm_charge_rate'
     """
-    rec = _rec_for_model(model)
+    rec = _spec_by_model(model)
     if not rec:
-        return None
-    if eboss_type == "Full Hybrid":
-        return float(rec.get("fh_charge_rate"))
-    if eboss_type == "Power Module":
-        return float(rec.get("pm_charge_rate"))
-    return None
+        return 0.0
+    key = "fh_charge_rate" if eboss_type == "Full Hybrid" else "pm_charge_rate"
+    return float(rec.get(key, 0.0))
 
-def eboss_default_gen_kva(model: str) -> Optional[int]:
-    """Default hybrid gen size for EBOSS model (used for Full Hybrid)."""
-    return EBOSS_LOAD_REFERENCE["generator_kva_hybrid"].get(model)
+# ── Fuel curve interpolation ──────────────────────────────────────────────────
+def _interp(x0: float, y0: float, x1: float, y1: float, x: float) -> float:
+    if x1 == x0:
+        return y0
+    return y0 + (y1 - y0) * (x - x0) / (x1 - x0)
 
-# ------------------- Public API: compute GPH by equipment type -------------------
+def _nearest_curve_size(gen_kva: int) -> int:
+    """Pick nearest available kVA curve if exact size is missing."""
+    if not FUEL_CURVES:
+        raise RuntimeError(
+            "Fuel-burn curves are missing. Define FUEL_BURN_CURVES in utils/data.py "
+            "or provide EBOSS_LOAD_REFERENCE for back-compat."
+        )
+    sizes = sorted(FUEL_CURVES.keys())
+    return min(sizes, key=lambda s: abs(s - gen_kva))
 
-def gph_for_eboss(model: str,
-                  eboss_type: str,
-                  actual_cont_kw: float,
-                  pm_gen_kva: Optional[int] = None) -> Tuple[float, float, int]:
+def fuel_gph_at_load(gen_kva: int, load_fraction: float) -> float:
     """
-    EBOSS path:
+    Linear interpolation of GPH for a given generator curve (kVA) at load fraction ∈ [0, 1].
+    - If the curve for gen_kva doesn't exist, we use the nearest available kVA curve.
+    - load_fraction is clamped to the curve's min/max x (typically 0.25..1.00).
+    """
+    if not FUEL_CURVES:
+        raise RuntimeError(
+            "Fuel-burn curves are missing. Define FUEL_BURN_CURVES in utils/data.py "
+            "or provide EBOSS_LOAD_REFERENCE for back-compat."
+        )
+
+    if gen_kva not in FUEL_CURVES:
+        gen_kva = _nearest_curve_size(gen_kva)
+
+    points: List[Tuple[float, float]] = sorted(FUEL_CURVES[gen_kva], key=lambda p: p[0])
+    x_min, x_max = points[0][0], points[-1][0]
+    x = max(x_min, min(x_max, float(load_fraction)))
+
+    for i in range(1, len(points)):
+        x0, y0 = points[i - 1]
+        x1, y1 = points[i]
+        if x0 <= x <= x1:
+            return _interp(x0, y0, x1, y1, x)
+
+    return points[-1][1]  # fallback (shouldn't hit with clamp)
+
+# ── EBOSS & Standard GPH calculators ─────────────────────────────────────────
+def gph_for_eboss(
+    model: str,
+    eboss_type: str,
+    actual_cont_kw: float,
+    pm_gen_kva: Optional[int] = None,
+) -> Tuple[float, float, int]:
+    """
+    EBOSS rule:
       engine_load_fraction = defined_charge_rate_kw / actual_cont_kw
 
-    gen_kva used:
-      - Full Hybrid: from EBOSS table (generator_kva_hybrid)
-      - Power Module: the selected PM generator (pm_gen_kva) **must** be provided
+    gen_kVA used:
+      - Full Hybrid: model's kVA (key in SPECS)
+      - Power Module: the selected PM generator kVA (pm_gen_kva)
     Returns: (gph, engine_load_percent, gen_kva_used)
     """
     charge_kw = eboss_defined_charge_rate_kw(model, eboss_type)
-    if charge_kw is None or actual_cont_kw <= 0:
+    if charge_kw <= 0 or not actual_cont_kw or actual_cont_kw <= 0:
         return (0.0, 0.0, 0)
 
-    # Engine load as fraction, clamp to [0, 1]
-    eng_load_frac = max(0.0, min(charge_kw / float(actual_cont_kw), 1.0))
-    eng_load_pct = eng_load_frac * 100.0
-
-    # pick generator size (kVA)
     if eboss_type == "Full Hybrid":
-        gen_kva = eboss_default_gen_kva(model) or 0
-    else:  # Power Module
-        gen_kva = int(pm_gen_kva or 0)
+        gen_kva_used = _hybrid_kva_for_model(model) or 0
+    elif eboss_type == "Power Module":
+        gen_kva_used = int(pm_gen_kva or 0)
+    else:
+        gen_kva_used = 0
 
-    if gen_kva <= 0:
-        return (0.0, eng_load_pct, gen_kva)
+    if gen_kva_used <= 0:
+        return (0.0, 0.0, 0)
 
-    gph = fuel_gph_at_load(gen_kva, eng_load_frac)
-    return (gph, eng_load_pct, gen_kva)
+    load_frac = max(0.0, min(1.0, float(charge_kw) / float(actual_cont_kw)))
+    gph = fuel_gph_at_load(gen_kva_used, load_frac)
+    return (float(gph), load_frac * 100.0, int(gen_kva_used))
 
-def gph_for_standard(actual_cont_kw: float,
-                     gen_kw_rating: float,
-                     gen_kva_size: Optional[int] = None) -> Tuple[float, float, int]:
+def gph_for_standard(
+    cont_kw: float,
+    std_gen_kw_rating: float,
+    std_gen_kva: int,
+) -> Tuple[float, float, int]:
+    """Standard diesel: engine_load_fraction = cont_kw / std_gen_kw_rating."""
+    if not cont_kw or cont_kw <= 0 or not std_gen_kw_rating or std_gen_kw_rating <= 0:
+        return (0.0, 0.0, 0)
+    gen_kva_used = int(std_gen_kva or 0)
+    if gen_kva_used <= 0:
+        return (0.0, 0.0, 0)
+
+    load_frac = max(0.0, min(1.0, float(cont_kw) / float(std_gen_kw_rating)))
+    gph = fuel_gph_at_load(gen_kva_used, load_frac)
+    return (float(gph), load_frac * 100.0, int(gen_kva_used))
+
+def gph_for(
+    *,
+    model: Optional[str],
+    type: str,
+    cont_kw: float,
+    gen_kw: Optional[float] = None,
+    size_kva: Optional[int] = None,
+    pm_gen: Optional[int] = None,
+) -> Tuple[float, float, int]:
     """
-    Standard diesel generator path (NOT fh_gen / pm_gen):
-      engine_load_fraction = actual_cont_kw / gen_kw_rating
-
-    gen_kva_size:
-      pass the generator's kVA (e.g., 25, 45, 70, 125, 220, 400). If only kW is known,
-      convert with a PF assumption outside this function.
-    Returns: (gph, engine_load_percent, gen_kva_used)
+    Unified entry used by spec_store.compute_and_store_spec(...).
+    EBOSS if type in {"Full Hybrid", "Power Module"}, otherwise Standard diesel.
     """
-    if actual_cont_kw <= 0 or gen_kw_rating <= 0:
-        return (0.0, 0.0, int(gen_kva_size or 0))
+    if type in ("Full Hybrid", "Power Module"):
+        return gph_for_eboss(
+            model=model or "",
+            eboss_type=type,
+            actual_cont_kw=cont_kw,
+            pm_gen_kva=pm_gen,
+        )
+    if gen_kw is None or size_kva is None:
+        return (0.0, 0.0, 0)
+    return gph_for_standard(cont_kw=cont_kw, std_gen_kw_rating=float(gen_kw), std_gen_kva=int(size_kva))
 
-    eng_load_frac = max(0.0, min(float(actual_cont_kw) / float(gen_kw_rating), 1.0))
-    eng_load_pct = eng_load_frac * 100.0
-    gen_kva = int(gen_kva_size or 0)
-    if gen_kva <= 0:
-        return (0.0, eng_load_pct, gen_kva)
-
-    gph = fuel_gph_at_load(gen_kva, eng_load_frac)
-    return (gph, eng_load_pct, gen_kva)
+__all__ = [
+    "fuel_gph_at_load",
+    "gph_for_eboss",
+    "gph_for_standard",
+    "gph_for",
+    "eboss_defined_charge_rate_kw",
+]
