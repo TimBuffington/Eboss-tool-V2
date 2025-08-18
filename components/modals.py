@@ -216,4 +216,4 @@ def open_config_modal(mode: str) -> None:
             st.warning("Enter a **Max Continuous Load** > 0 to run sizing/fuel calculations.")
 
         # --- Next steps: app navbar (uses stored data) ---
-        render_next_steps_nav()
+        render_modal_nav_grid(mode_key=mode)
