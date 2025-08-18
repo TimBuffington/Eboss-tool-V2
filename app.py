@@ -2,7 +2,8 @@ import streamlit as st
 from utils.theme import apply_theme, render_logo
 from utils.state import ensure_state
 from components.nav import render_global_header, render_config_selector
-from components.modals import open_manual_config_modal
+from components.modals import open_config_modal
+
 st.set_page_config(page_title="EBOSS® Tool", layout="wide", initial_sidebar_state="collapsed")
 
 apply_theme()
@@ -20,3 +21,6 @@ elif choice == "load_based":
 elif choice == "fuel_eff":
     # TODO: open your max fuel efficiency modal (similar pattern)
     pass
+
+
+open_config_modal(choice)  # choice in {"manual", "load_based", "fuel_eff"}
