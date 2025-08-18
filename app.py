@@ -1,7 +1,6 @@
 import streamlit as st
 from components.nav import render_global_header, render_config_selector
 from components.modals import open_config_modal
-import streamlit as st
 from utils.style import ensure_global_css
 
 COLORS = {
@@ -11,13 +10,15 @@ COLORS = {
     "Alpine White": "#FFFFFF",
 }
 
-def render_global_header(mode: str = "external"):
-    # ← injects CSS once per session; feels global on all pages that call header
-    ensure_global_css(COLORS, extra_files=["styles/base.css"])  # base.css optional
-
 st.set_page_config(page_title="EBOSS® Tool", layout="wide", initial_sidebar_state="collapsed")
 
+# Inject CSS once per session (feels global on every page that calls header)
+ensure_global_css(COLORS, extra_files=["styles/base.css"])  # make sure styles/base.css exists
+
+# Render the shared header + external CTA links/buttons
 render_global_header(mode="external")
+
+# Home: configuration launcher buttons
 choice = render_config_selector(include_troubleshooting=True)
 
 if choice in ("manual", "load_based", "fuel_eff"):
