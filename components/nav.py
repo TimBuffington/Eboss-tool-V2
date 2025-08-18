@@ -47,29 +47,4 @@ def render_config_selector(*, include_troubleshooting: bool = True) -> str | Non
             return "troubleshooting"
 
     return choice
-And ensure you have an empty components/__init__.py:
-
-python
-Copy
-Edit
-# components/__init__.py
-# (intentionally empty)
-Your app.py can stay as you wrote:
-
-python
-Copy
-Edit
-import streamlit as st
-from components.nav import render_global_header, render_config_selector
-from components.modals import open_config_modal
-
-st.set_page_config(page_title="EBOSS® Tool", layout="wide", initial_sidebar_state="collapsed")
-
-render_global_header(mode="external")
-choice = render_config_selector(include_troubleshooting=True)
-
-if choice in ("manual", "load_based", "fuel_eff"):
-    open_config_modal(choice)
-elif choice == "troubleshooting" and hasattr(st, "switch_page"):
-    st.switch_page("pages/05_Troubleshooting.py")
 
