@@ -1,6 +1,5 @@
 from __future__ import annotations
 import streamlit as st
-from typing import Optional
 from utils.spec_store import compute_and_store_spec  # computes + caches merged spec (incl. GPH)
 
 EBOSS_MODELS = ["EB25 kVA", "EB70 kVA", "EB125 kVA", "EB220 kVA", "EB400 kVA"]
@@ -190,9 +189,7 @@ def _base_validation(model, eb_type, pm_kva) -> list[str]:
 def open_config_modal(mode: str) -> None:
     ensure_config_defaults()
     with st.modal(title_for(mode), key=f"cfg_modal_{mode}"):
-        # ... all your UI fields & session writes ...
-
-        # ---- Early gating: Units/Voltage not selected yet
+    
         if not ready:
             st.info("Select **Units** and **Voltage** to continue.")
             render_modal_nav_grid(mode_key=mode)   # <- NEW grid
