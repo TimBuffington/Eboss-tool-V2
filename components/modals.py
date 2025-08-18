@@ -69,8 +69,37 @@ def open_config_modal(mode: str) -> None:
             eboss_defined_charge_rate_kw = None
 
         # -----------------------
-        # Render your real fields here (units, voltage, type/model, etc.)
-        # For smoke-test, show minimal content so import succeeds:
+      def open_config_modal(mode: str) -> None:
+    """Unified configuration modal with version-safe modal/dialog fallback."""
+    title = f"EBOSS Configuration — {mode.title()}"
+
+    def _body():
+        # Lazy imports so this file is import-safe
+        try:
+            from utils.spec_store import compute_and_store_spec  # noqa: F401
+            from utils.sizing import eboss_defined_charge_rate_kw  # noqa: F401
+        except Exception:
+            pass
+
+        # TODO: your real UI fields go here
+        st.write("Configure your EBOSS settings…")
+
+        # Shared nav buttons at the bottom
+        render_modal_nav_grid(mode_key=mode)
+
+    # Prefer st.modal if present (newer Streamlit), else st.dialog (older)
+    if hasattr(st, "modal"):
+        with st.modal(title, key=f"cfg_modal_{mode}"):
+            _body()
+    elif hasattr(st, "dialog"):
+        @st.dialog(title)  # st.dialog has no 'key' arg
+        def _dlg():
+            _body()
+        _dlg()
+    else:
+        # Last-resort fallback: render inline (no modal)
+        st.warning("Your Streamlit version doesn’t support modal/dialog; showing inline.")
+        _body()
         st.write("Configure your EBOSS settings. (If you see this, import worked.)")
 
         # TODO: your real UI goes here...
