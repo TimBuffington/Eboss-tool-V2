@@ -6,7 +6,7 @@ from utils.keys import CANON
 from utils.data import SPECS, STANDARD_GENERATORS, interpolate_gph
 
 def render_parallel_calculator_page():    # Apply global theme and logo    
-apply_global_theme()
+apply_theme()
 render_global_header()
 
 st.markdown('<div class="form-container">', unsafe_allow_html=True)
