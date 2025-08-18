@@ -1,16 +1,15 @@
 import streamlit as st
 import components.nav as nav
+# Import the nav grid helper used at the bottom of the modal
+from components.modals import render_modal_nav_grid  # <-- make sure this exists
 
 st.set_page_config(page_title="EBOSS® Tool", layout="wide", initial_sidebar_state="collapsed")
 nav.render_global_header(mode="external")
 
-                        
-                    
+choice = nav.render_config_selector()  # ← no troubleshooting arg anymore
 
-choice = nav.render_config_selector()   # ← no troubleshooting arg anymore
 
-if choice in ("manual", "load_based", "fuel_eff"):
-  def open_config_modal(mode: str) -> None:
+def open_config_modal(mode: str) -> None:
     """Unified configuration modal with strict sizing validation and requested layout."""
     title = f"EBOSS Configuration — {mode.title()}"
 
@@ -103,37 +102,21 @@ if choice in ("manual", "load_based", "fuel_eff"):
         eboss_model_default = st.session_state.get("eboss_model", all_models[0] if all_models else "")
         pm_gen_default = st.session_state.get("pm_gen")
 
-        # --------- Column 2 (loads) so we can filter models right away ---------
+        # --------- Column 2 (loads first) ---------
         with col2:
-            cont = st.number_input(
-                "Max Continuous Load (kW)",
-                min_value=0.0, step=1.0, format="%g",
-                key="max_continuous_load",
-            )
-            peak = st.number_input(
-                "Max Peak Load (kW)",
-                min_value=0.0, step=1.0, format="%g",
-                key="max_peak_load",
-            )
+            cont = st.number_input("Max Continuous Load (kW)", min_value=0.0, step=1.0, format="%g", key="max_continuous_load")
+            peak = st.number_input("Max Peak Load (kW)", min_value=0.0, step=1.0, format="%g", key="max_peak_load")
 
         # --------- Column 3 (units/voltage) ----------
         with col3:
-            units = st.selectbox(
-                "Units",
-                options=["kW", "Amps"],
-                index=0 if units_default == "kW" else 1,
-                key="units",
-            )
-            voltage = st.selectbox(
-                "Voltage",
-                options=["120", "208", "240", "480"],
-                index=["120", "208", "240", "480"].index(voltage_default) if voltage_default in ["120", "208", "240", "480"] else 3,
-                key="voltage",
-            )
+            units = st.selectbox("Units", options=["kW", "Amps"], index=0 if units_default == "kW" else 1, key="units")
+            voltage = st.selectbox("Voltage", options=["120", "208", "240", "480"],
+                                   index=["120", "208", "240", "480"].index(voltage_default) if voltage_default in ["120","208","240","480"] else 3,
+                                   key="voltage")
 
-        # Convert amps→kW if needed (use PF=0.8 by default)
+        # Convert amps→kW if needed (set PF as you prefer)
         sqrt3 = 1.732
-        pf = 0.8
+        pf = 0.8  # <-- change to 1.0 if that's your new standard
         try:
             v = float(voltage)
         except Exception:
@@ -144,107 +127,69 @@ if choice in ("manual", "load_based", "fuel_eff"):
         else:
             actual_cont_kw = float(cont)
             actual_peak_kw = float(peak)
+
         st.session_state["actual_continuous_load"] = actual_cont_kw
         st.session_state["actual_peak_load"] = actual_peak_kw
 
-        # Require Units AND Voltage to be present
+        # Require Units AND Voltage
         if not (units and voltage):
             st.info("Select **Units** and **Voltage** to enable sizing and calculations.")
             render_modal_nav_grid(mode_key=mode)
             return
 
-        # Require a positive load to proceed
+        # Require positive load
         if actual_cont_kw <= 0:
             st.warning("Enter a **Max Continuous Load** > 0 to run sizing and fuel math.")
             render_modal_nav_grid(mode_key=mode)
             return
 
-        # Determine which models are allowed for current loads (for filtering)
+        # Allowed models
         allowed_models = allowed_models_for(actual_cont_kw, actual_peak_kw) if (actual_cont_kw > 0 or actual_peak_kw > 0) else all_models
 
         # --------- Column 1 (model/type/pm_gen) ----------
         with col1:
-            # EBOSS Model (Row 1) — filtered by loads or auto-selected
             if mode == "manual":
                 if not allowed_models:
                     st.error("No EBOSS model can meet the entered continuous/peak load. Lower the load or parallel units.")
-                    st.selectbox(
-                        "EBOSS® Model",
-                        options=all_models,
-                        index=all_models.index(eboss_model_default) if eboss_model_default in all_models else 0,
-                        key="eboss_model",
-                        disabled=True,
-                    )
+                    st.selectbox("EBOSS® Model", options=all_models,
+                                 index=all_models.index(eboss_model_default) if eboss_model_default in all_models else 0,
+                                 key="eboss_model", disabled=True)
                     eboss_model = st.session_state["eboss_model"]
                 else:
                     if eboss_model_default not in allowed_models:
                         if eboss_model_default:
                             st.info(f"Selected model **{eboss_model_default}** does not meet the entered load. Adjusted to **{allowed_models[0]}**.")
                         eboss_model_default = allowed_models[0]
-                    eboss_model = st.selectbox(
-                        "EBOSS® Model",
-                        options=allowed_models,
-                        index=allowed_models.index(eboss_model_default) if eboss_model_default in allowed_models else 0,
-                        key="eboss_model",
-                    )
+                    eboss_model = st.selectbox("EBOSS® Model", options=allowed_models,
+                                               index=allowed_models.index(eboss_model_default) if eboss_model_default in allowed_models else 0,
+                                               key="eboss_model")
             else:
-                # Auto-select model for load_based or fuel_eff modes
                 picked = _auto_pick_model_for_load(actual_cont_kw, actual_peak_kw) if mode == "load_based" else _auto_pick_model_by_efficiency(actual_cont_kw)
                 if picked:
                     st.session_state["eboss_model"] = picked
-                    st.text_input(
-                        "EBOSS® Model (auto)",
-                        value=picked,
-                        key="eboss_model",
-                        disabled=True,
-                    )
+                    st.text_input("EBOSS® Model (auto)", value=picked, key="eboss_model", disabled=True)
                 else:
                     st.error("No EBOSS model meets the constraints. Adjust the load or try Manual.")
-                    st.text_input(
-                        "EBOSS® Model (auto)",
-                        value="",
-                        key="eboss_model",
-                        disabled=True,
-                    )
+                    st.text_input("EBOSS® Model (auto)", value="", key="eboss_model", disabled=True)
                     render_modal_nav_grid(mode_key=mode)
                     return
                 eboss_model = picked
 
             # EBOSS Type (Row 2)
             if mode == "manual":
-                eboss_type = st.selectbox(
-                    "EBOSS® Type",
-                    options=["Full Hybrid", "Power Module"],
-                    index=0 if eboss_type_default == "Full Hybrid" else 1,
-                    key="eboss_type",
-                )
+                st.selectbox("EBOSS® Type", options=["Full Hybrid", "Power Module"],
+                             index=0 if eboss_type_default == "Full Hybrid" else 1, key="eboss_type")
             else:
-                eboss_type = "Full Hybrid"
-                st.selectbox(
-                    "EBOSS® Type",
-                    options=["Full Hybrid"],
-                    index=0,
-                    key="eboss_type",
-                    disabled=True,
-                )
+                st.selectbox("EBOSS® Type", options=["Full Hybrid"], index=0, key="eboss_type", disabled=True)
 
             # PM Gen (Row 3) — only if Power Module
             if st.session_state.get("eboss_type") == "Power Module":
                 pm_options = kva_sizes
-                st.selectbox(
-                    "Power Module — Generator Size (kVA)",
-                    options=pm_options,
-                    index=pm_options.index(pm_gen_default) if pm_gen_default in pm_options else 0,
-                    key="pm_gen",
-                )
+                st.selectbox("Power Module — Generator Size (kVA)", options=pm_options,
+                             index=pm_options.index(pm_gen_default) if pm_gen_default in pm_options else 0, key="pm_gen")
             else:
                 st.session_state["pm_gen"] = None
-                st.text_input(
-                    "Power Module — Generator Size (kVA)",
-                    value="",
-                    key="pm_gen_display",
-                    disabled=True,
-                )
+                st.text_input("Power Module — Generator Size (kVA)", value="", key="pm_gen_display", disabled=True)
 
         # -------- validation: hard block undersized picks --------
         if eboss_model:
@@ -291,5 +236,8 @@ if choice in ("manual", "load_based", "fuel_eff"):
     else:
         st.warning("Your Streamlit version lacks modal/dialog; rendering inline.")
         _body()
- 
-  open_config_modal(choice)
+
+
+# Only open the modal when a valid choice is made
+if choice in ("manual", "load_based", "fuel_eff"):
+    open_config_modal(choice)
