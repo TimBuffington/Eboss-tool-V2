@@ -10,17 +10,12 @@ apply_theme()
 ensure_state()
 render_logo()
 render_global_header(mode="external")
-choice = render_config_selector(include_troubleshooting=True)
-
+if choice in ("manual", "load_based", "fuel_eff"):
+    open_config_modal(choice) 
 # Open the right input UI
-if choice == "manual":
-    open_manual_config_modal()
 elif choice == "load_based":
     # TODO: open your load-based modal (similar pattern)
     pass
 elif choice == "fuel_eff":
     # TODO: open your max fuel efficiency modal (similar pattern)
     pass
-
-
-open_config_modal(choice)  # choice in {"manual", "load_based", "fuel_eff"}
