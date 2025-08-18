@@ -1,44 +1,10 @@
+# components/modals.py
+from __future__ import annotations
 import streamlit as st
 
-# Placeholder for COLORS; replace with actual definitions
-COLORS = {
-    "primary": "#0055A4",
-    "secondary": "#FF9900",
-    "background": "#FFFFFF",
-}
+# Keep this file import-safe. Only Streamlit at top level; lazy-import the rest inside functions.
 
-# Placeholder for ensure_global_css; replace with actual implementation
-def ensure_global_css(colors, extra_files=None):
-    css = """
-    <style>
-    h1 { color: %s; }
-    .cta-scope { 
-        background-color: %s; 
-        padding: 1rem;
-        border-radius: 8px;
-    }
-    .stButton>button {
-        width: 100%;
-        padding: 0.5rem;
-        background-color: %s;
-        color: white;
-        border: none;
-        border-radius: 4px;
-    }
-    .stButton>button:hover {
-        background-color: %s;
-    }
-    </style>
-    """ % (colors["primary"], colors["background"], colors["primary"], colors["secondary"])
-    if extra_files:
-        for file in extra_files:
-            try:
-                with open(file, "r") as f:
-                    css += f"<style>{f.read()}</style>"
-            except FileNotFoundError:
-                st.error(f"CSS file {file} not found")
-    st.markdown(css, unsafe_allow_html=True)
-
+# Pages this modal can navigate to
 PAGE_MAP = {
     "Technical Specs": "pages/01_Tech_Specs.py",
     "Load Based Specs": "pages/02_Load_Based_Specs.py",
@@ -48,6 +14,7 @@ PAGE_MAP = {
 }
 
 def _nav_to(page_label: str, *, mode_key: str):
+    """Close modal & navigate."""
     st.session_state["launch_tool_modal"] = False
     target = PAGE_MAP.get(page_label)
     if target and hasattr(st, "switch_page"):
@@ -57,19 +24,19 @@ def _nav_to(page_label: str, *, mode_key: str):
         st.rerun()
 
 def render_modal_nav_grid(*, mode_key: str):
-    """2 columns × 3 rows; last right cell now omitted."""
+    """2 columns × 3 rows (last right cell is blank since Troubleshooting is removed)."""
     st.markdown("<div class='cta-scope' style='margin-top:.75rem;'>", unsafe_allow_html=True)
     rows = [
         ("Technical Specs", "Load Based Specs"),
-        ("Compare", "Cost Analysis"),
-        ("Paralleling", None),
+        ("Compare",         "Cost Analysis"),
+        ("Paralleling",     None),
     ]
     for left, right in rows:
         c1, c2 = st.columns(2, gap="medium")
         with c1:
             st.button(
                 left,
-                key=f"nav_{left.replace(' ','_').lower()}_{mode_key}",
+                key=f"nav_{left.replace(' ', '_').lower()}_{mode_key}",
                 on_click=_nav_to,
                 kwargs={"page_label": left, "mode_key": mode_key},
             )
@@ -77,20 +44,39 @@ def render_modal_nav_grid(*, mode_key: str):
             if right:
                 st.button(
                     right,
-                    key=f"nav_{right.replace(' ','_').lower()}_{mode_key}",
+                    key=f"nav_{right.replace(' ', '_').lower()}_{mode_key}",
                     on_click=_nav_to,
                     kwargs={"page_label": right, "mode_key": mode_key},
                 )
             else:
-                st.markdown("&nbsp;", unsafe_allow_html=True)
+                st.markdown("&nbsp;", unsafe_allow_html=True)  # spacer
     st.markdown("</div>", unsafe_allow_html=True)
 
-def render_global_header(mode: str = "external"):
-    ensure_global_css(COLORS, extra_files=["styles/base.css"])
-    st.markdown("<h1 style='text-align:center;margin:0.5rem 0'>EBOSS® Size & Spec Tool</h1>", unsafe_allow_html=True)
-    st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
-    render_modal_nav_grid(mode_key=mode)
+def open_config_modal(mode: str) -> None:
+    """
+    Unified configuration modal for {'manual','load_based','fuel_eff'}.
+    NOTE: Heavy imports are done lazily inside this function to avoid ImportError on module import.
+    """
+    with st.modal(f"EBOSS Configuration — {mode.title()}", key=f"cfg_modal_{mode}"):
+        # --- Lazy imports here (so this file can be imported even if utils are mid-refactor)
+        try:
+            # Only when the modal is opened do we import these:
+            from utils.spec_store import compute_and_store_spec
+            from utils.sizing import eboss_defined_charge_rate_kw  # optional helper
+        except Exception:
+            # Keep the modal usable even if utils layer is broken
+            compute_and_store_spec = None
+            eboss_defined_charge_rate_kw = None
 
-def render_config_selector():
-    """Renders a selector for configuration modes."""
-    return st.selectbox("Select configuration mode", ["manual", "load_based", "fuel_eff"], key="config_selector")
+        # -----------------------
+        # Render your real fields here (units, voltage, type/model, etc.)
+        # For smoke-test, show minimal content so import succeeds:
+        st.write("Configure your EBOSS settings. (If you see this, import worked.)")
+
+        # TODO: your real UI goes here...
+        # When ready to compute, guard the call:
+        # if compute_and_store_spec and ready:
+        #     compute_and_store_spec(model=..., type=..., cont_kw=..., gen_kw=..., size_kva=..., pm_gen=...)
+
+        # Shared nav buttons at bottom:
+        render_modal_nav_grid(mode_key=mode)
