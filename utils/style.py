@@ -26,7 +26,7 @@ def inject_theme_css():
         <style>
         .cta-scope [data-testid="column"] .stButton { width: 100%; }
         .cta-scope .stButton > button{
-            display:block;width:100%;
+            display:block; width:100%;
             background-color: var(--asphalt);
             color: var(--alpine);
             border: 2px solid var(--concrete);
@@ -41,8 +41,8 @@ def inject_theme_css():
             transform: translateY(-1px);
         }
         .cta-link{
-            display:flex;align-items:center;justify-content:center;
-            width:100%;min-height:56px;text-decoration:none!important;
+            display:flex; align-items:center; justify-content:center;
+            width:100%; min-height:56px; text-decoration:none!important;
             background-color: var(--asphalt);
             color: var(--alpine);
             border: 2px solid var(--concrete);
