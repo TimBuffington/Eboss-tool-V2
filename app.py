@@ -4,7 +4,7 @@ from components.modals import open_config_modal
 
 st.set_page_config(page_title="EBOSS® Tool", layout="wide", initial_sidebar_state="collapsed")
 
-with st.container()
+with st.container():
             cols = st.columns(3)
             with cols[1]:  # Use the middle column to help with centering
                 st.markdown(
