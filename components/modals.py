@@ -50,7 +50,7 @@ def render_modal_nav_grid(*, mode_key: str) -> None:
                 st.markdown("&nbsp;", unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
-def open_config_modal(mode: str) -> None:
+def render_config_modal(mode: str) -> None:
     """Unified configuration modal with strict sizing validation and requested layout."""
     title = f"EBOSS Configuration — {mode.title()}"
 
