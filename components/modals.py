@@ -207,13 +207,3 @@ def open_config_modal(mode: str) -> None:
         # ---- After compute/auto-select model + compute_and_store_spec(...)
         st.success("Configured…")
         render_modal_nav_grid(mode_key=mode)       # <- NEW grid (final line in modal)
-
-
-            # Let rest of app know a valid config exists
-            st.session_state["show_calculator"] = True
-            st.session_state["config_mode"] = mode
-        else:
-            st.warning("Enter a **Max Continuous Load** > 0 to run sizing/fuel calculations.")
-
-        # --- Next steps: app navbar (uses stored data) ---
-        render_modal_nav_grid(mode_key=mode)
