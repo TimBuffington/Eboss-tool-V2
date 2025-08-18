@@ -1,11 +1,21 @@
 from __future__ import annotations
 import streamlit as st
+from utils.style import ensure_global_css
+
 
 DEMO_FORM_URL  = "https://docs.google.com/forms/d/e/1FAIpQLSftXtJCMcDgPNzmpczFy9Eqf0cIEvsBtBzyuNylu3QZuGozHQ/viewform?usp=header"
 TRAIN_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLScTClX-W3TJS2TG4AQL3G4fSVqi-KLgmauQHDXuXjID2e6XLQ/viewform?usp=header"
 LEARN_YT_URL   = "https://youtu.be/0Om2qO-zZfM?si=XnLKJ_SfyKqqUI-g"
 
-def render_global_header(mode: str = "external") -> None:
+COLORS = {
+    "Asphalt": "#000000",
+    "Concrete": "#939598",
+    "Energy Green": "#81BD47",
+    "Alpine White": "#FFFFFF",
+}
+def render_global_header(mode: str = "external"):
+    ensure_global_css(COLORS, extra_files=["styles/base.css"])  # optional file
+    st.markdown("<h1>EBOSS® Size & Spec Tool</h1>", unsafe_allow_html=Tru
     st.markdown("<h1>EBOSS® Size & Spec Tool</h1>", unsafe_allow_html=True)
     st.markdown("<div class='cta-scope'>", unsafe_allow_html=True)
     c1, c2, c3 = st.columns(3)
@@ -45,3 +55,4 @@ def render_config_selector(include_troubleshooting: bool = True) -> str | None:
             if st.button("Troubleshooting", key="cfg_ts"): clicked = "troubleshooting"
     st.markdown("</div>", unsafe_allow_html=True)
     return clicked
+
