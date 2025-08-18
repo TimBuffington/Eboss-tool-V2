@@ -8,6 +8,44 @@ EBOSS_MODELS = ["EB25 kVA", "EB70 kVA", "EB125 kVA", "EB220 kVA", "EB400 kVA"]
 PM_GEN_KVA_OPTIONS = ["25 kVA", "70 kVA", "125 kVA", "220 kVA", "400 kVA"]
 PLACEHOLDER = "— Select —"  # forces no default selection
 
+# Adjust these filenames to match your repo exactly
+PAGE_MAP = {
+    "Technical Specs": "pages/01_Tech_Specs.py",
+    "Load Based Specs": "pages/02_Load_Based_Specs.py",
+    "Compare": "pages/03_Compare.py",
+    "Cost Analysis": "pages/05_Cost_Analysis.py",   # adjust to your actual file
+    "Paralleling": "pages/04_Parallel.py",
+    "Troubleshooting": "pages/05_Troubleshooting.py"
+}
+
+def _nav_to(page_label: str, *, mode_key: str):
+    st.session_state["launch_tool_modal"] = False
+    target = PAGE_MAP.get(page_label)
+    if target and hasattr(st, "switch_page"):
+        st.switch_page(target)
+    else:
+        st.session_state["page"] = page_label
+        st.rerun()
+
+def render_modal_nav_grid(*, mode_key: str):
+    st.markdown("<div class='cta-scope' style='margin-top:.75rem;'>", unsafe_allow_html=True)
+    rows = [
+        ("Technical Specs", "Load Based Specs"),
+        ("Compare",         "Cost Analysis"),
+        ("Paralleling",     "Troubleshooting"),
+    ]
+    for left, right in rows:
+        c1, c2 = st.columns(2, gap="medium")
+        with c1:
+            st.button(left,  key=f"nav_{left.replace(' ','_').lower()}_{mode_key}",
+                      on_click=_nav_to, kwargs={"page_label": left, "mode_key": mode_key})
+        with c2:
+            st.button(right, key=f"nav_{right.replace(' ','_').lower()}_{mode_key}",
+                      on_click=_nav_to, kwargs={"page_label": right, "mode_key": mode_key})
+    st.markdown("</div>", unsafe_allow_html=True)
+
+
+
 # ---- Canonical keys used by ALL modals (do not rename) ----
 K = {
     "model": "eboss_model",
@@ -53,47 +91,6 @@ def _base_validation(model, eb_type, pm_kva) -> list[str]:
         errs.append("Select a Power Module generator size.")
     return errs
 
-def render_next_steps_nav():
-    """Small navbar shown under the form once selections exist."""
-    st.markdown("<div class='cta-scope' style='margin-top:.5rem;'>", unsafe_allow_html=True)
-    cols = st.columns(4)
-    def go(label, page, key):
-        with page:
-            if st.button(label, key=key):
-                if hasattr(st, "switch_page"):
-                    st.switch_page(f"pages/{label_map[label]}")
-                else:
-                    st.session_state["page"] = label  # fallback if you have manual routing
-    # map labels to page files
-    global label_map
-    label_map = {
-        "Technical Specs": "01_Tech_Specs.py",
-        "Load Based Specs": "02_Load_Based_Specs.py",
-        "EBOSS® to Standard Comparison": "03_Compare.py",
-        "Parallel Calculator": "04_Parallel.py",
-        # you can add Cost Analysis / Troubleshooting elsewhere if you want more buttons
-    }
-    with cols[0]:
-        if st.button("Technical Specs", key="nav_specs"): 
-            st.switch_page("pages/01_Tech_Specs.py")
-    with cols[1]:
-        if st.button("Load Based Specs", key="nav_load"):
-            st.switch_page("pages/02_Load_Based_Specs.py")
-    with cols[2]:
-        if st.button("EBOSS® to Standard Comparison", key="nav_compare"):
-            st.switch_page("pages/03_Compare.py")
-    with cols[3]:
-        if st.button("Parallel Calculator", key="nav_parallel"):
-            st.switch_page("pages/04_Parallel.py")
-    st.markdown("</div>", unsafe_allow_html=True)
-
-def open_config_modal(mode: str) -> None:
-    """
-    Unified configuration modal for any mode in {"manual","load_based","fuel_eff"}.
-    No Submit button: as soon as BOTH Units and Voltage are selected (not placeholders),
-    we validate & compute and store results under the same canonical keys.
-    """
-    ensure_config_defaults()
 
     title = {
         "manual": "Manually Select EBOSS® Configuration",
@@ -135,7 +132,7 @@ def open_config_modal(mode: str) -> None:
 
         if not ready:
             st.info("Select **Units** and **Voltage** to continue.")
-            render_next_steps_nav()
+            render_modal_nav_grid(mode_key=mode)()
             return
 
         # Minimal base validation (mode-independent)
@@ -143,7 +140,7 @@ def open_config_modal(mode: str) -> None:
         if base_errs:
             for e in base_errs:
                 st.error(e)
-            render_next_steps_nav()
+            render_modal_nav_grid(mode_key=mode)
             return
 
         # Convert Amps → kW if needed
@@ -190,6 +187,29 @@ def open_config_modal(mode: str) -> None:
                 f"Engine load: **{spec['engine_load_percent']:.1f}%**, "
                 f"GPH: **{spec['gph']:.2f}**"
             )
+            
+def open_config_modal(mode: str) -> None:
+    ensure_config_defaults()
+    with st.modal(title_for(mode), key=f"cfg_modal_{mode}"):
+        # ... all your UI fields & session writes ...
+
+        # ---- Early gating: Units/Voltage not selected yet
+        if not ready:
+            st.info("Select **Units** and **Voltage** to continue.")
+            render_modal_nav_grid(mode_key=mode)   # <- NEW grid
+            return
+
+        # ---- Validation errors
+        if errs:
+            for e in errs: st.error(e)
+            render_modal_nav_grid(mode_key=mode)   # <- NEW grid
+            return
+
+        # ---- After compute/auto-select model + compute_and_store_spec(...)
+        st.success("Configured…")
+        render_modal_nav_grid(mode_key=mode)       # <- NEW grid (final line in modal)
+
+
             # Let rest of app know a valid config exists
             st.session_state["show_calculator"] = True
             st.session_state["config_mode"] = mode
