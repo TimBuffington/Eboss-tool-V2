@@ -1,4 +1,3 @@
-# components/nav.py
 from __future__ import annotations
 import streamlit as st
 
@@ -87,3 +86,4 @@ def render_config_selector(include_troubleshooting: bool = False) -> str | None:
         st.session_state["use_max_fuel_efficiency"]= (clicked_mode == "fuel_eff")
 
     return clicked_mode
+
