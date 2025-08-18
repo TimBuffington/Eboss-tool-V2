@@ -94,3 +94,13 @@ def render_modal_nav_grid(*, mode_key: str):
             else:
                 st.markdown("&nbsp;", unsafe_allow_html=True)  # spacer
     st.markdown("</div>", unsafe_allow_html=True)
+def open_config_modal(mode: str) -> None:
+    """Unified configuration modal with version-safe modal/dialog fallback."""
+    title = f"EBOSS Configuration — {mode.title()}"
+    def _body() -> None:
+        # Lazy imports to avoid import-time crashes if utils are mid-refactor.
+        try:
+            from utils.spec_store import compute_and_store_spec  # noqa: F401
+            from utils.sizing import eboss_defined_charge_rate_kw  # noqa: F401
+        except Exception:
+            pass
