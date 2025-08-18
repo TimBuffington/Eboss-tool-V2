@@ -1,35 +1,96 @@
 import streamlit as st
-from utils.style import ensure_global_css
 
+# Placeholder for COLORS; replace with your actual color definitions
 COLORS = {
-    "Asphalt": "#000000",
-    "Concrete": "#939598",
-    "Energy Green": "#81BD47",
-    "Alpine White": "#FFFFFF",
+    "primary": "#0055A4",  # Example: blue for headers
+    "secondary": "#FF9900",  # Example: orange for accents
+    "background": "#FFFFFF",  # Example: white background
 }
+
+# Placeholder for ensure_global_css; replace with your actual CSS loading logic
+def ensure_global_css(colors, extra_files=None):
+    css = """
+    <style>
+    h1 { color: %s; }
+    .cta-scope { 
+        background-color: %s; 
+        padding: 1rem;
+        border-radius: 8px;
+    }
+    .stButton>button {
+        width: 100%;
+        padding: 0.5rem;
+        background-color: %s;
+        color: white;
+        border: none;
+        border-radius: 4px;
+    }
+    .stButton>button:hover {
+        background-color: %s;
+    }
+    </style>
+    """ % (colors["primary"], colors["background"], colors["primary"], colors["secondary"])
+    if extra_files:
+        for file in extra_files:
+            try:
+                with open(file, "r") as f:
+                    css += f"<style>{f.read()}</style>"
+            except FileNotFoundError:
+                st.error(f"CSS file {file} not found")
+    st.markdown(css, unsafe_allow_html=True)
+
+PAGE_MAP = {
+    "Technical Specs": "pages/01_Tech_Specs.py",
+    "Load Based Specs": "pages/02_Load_Based_Specs.py",
+    "Compare": "pages/03_Compare.py",
+    "Cost Analysis": "pages/05_Cost_Analysis.py",
+    "Paralleling": "pages/04_Parallel.py",
+}
+
+def _nav_to(page_label: str, *, mode_key: str):
+    st.session_state["launch_tool_modal"] = False
+    target = PAGE_MAP.get(page_label)
+    if target and hasattr(st, "switch_page"):
+        st.switch_page(target)
+    else:
+        st.session_state["page"] = page_label
+        st.rerun()
+
+def render_modal_nav_grid(*, mode_key: str):
+    """2 columns × 3 rows; last right cell now omitted."""
+    st.markdown("<div class='cta-scope' style='margin-top:.75rem;'>", unsafe_allow_html=True)
+    rows = [
+        ("Technical Specs", "Load Based Specs"),
+        ("Compare", "Cost Analysis"),
+        ("Paralleling", None),
+    ]
+    for left, right in rows:
+        c1, c2 = st.columns(2, gap="medium")
+        with c1:
+            st.button(
+                left,
+                key=f"nav_{left.replace(' ','_').lower()}_{mode_key}",
+                on_click=_nav_to,
+                kwargs={"page_label": left, "mode_key": mode_key},
+            )
+        with c2:
+            if right:
+                st.button(
+                    right,
+                    key=f"nav_{right.replace(' ','_').lower()}_{mode_key}",
+                    on_click=_nav_to,
+                    kwargs={"page_label": right, "mode_key": mode_key},
+                )
+            else:
+                st.markdown("&nbsp;", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
 def render_global_header(mode: str = "external"):
     ensure_global_css(COLORS, extra_files=["styles/base.css"])
     st.markdown("<h1 style='text-align:center;margin:0.5rem 0'>EBOSS® Size & Spec Tool</h1>", unsafe_allow_html=True)
     st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
+    render_modal_nav_grid(mode_key=mode)
 
-def render_config_selector() -> str | None:
-    """Show config launch buttons. Returns: 'manual'|'load_based'|'fuel_eff'|None"""
-    choice = None
-    st.markdown("<div class='cta-scope'>", unsafe_allow_html=True)
-
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        if st.button("Manually Select EBOSS Type and Model", key="btn_manual_select"):
-            choice = "manual"
-    with col2:
-        if st.button("Use Load Based Suggested EBOSS", key="btn_load_based"):
-            choice = "load_based"
-    with col3:
-        if st.button("Use EBOSS Model Based on Max Fuel Efficiency", key="btn_fuel_eff"):
-            choice = "fuel_eff"
-
-    st.markdown("</div>", unsafe_allow_html=True)
-    return choice
-
-__all__ = ["render_global_header", "render_config_selector"]
+def render_config_selector():
+    """Renders a selector for configuration modes."""
+    return st.selectbox("Select configuration mode", ["manual", "load_based", "fuel_eff"], key="config_selector")
