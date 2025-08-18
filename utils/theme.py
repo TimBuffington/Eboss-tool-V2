@@ -78,7 +78,7 @@ def apply_theme():
 def render_logo():
     st.markdown(f"<div class='logo-wrap'><img src='{LOGO_URL}' alt='ANA Energy Logo' /></div>", unsafe_allow_html=True)
     
- render apply_theme() 
+
 
 
 
