@@ -9,8 +9,7 @@ with st.container(
             with cols[1]:  # Use the middle column to help with centering
                 st.markdown(
                     "<div class='message-container'>Please Select EBOSS Configuration</div>",
-                """,
-                unsafe_allow_html=True
+                , unsafe_allow_html=True
                 )
                     
 nav.render_global_header(mode="external")
