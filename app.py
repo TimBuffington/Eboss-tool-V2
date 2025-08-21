@@ -1,3 +1,20 @@
+
+<style>
+.stColumn {
+    flex: 1 1 0%;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    box-sizing: border-box;
+}
+.form-container div {
+    padding: 0.5rem;
+    box-sizing: border-box;
+    max-width: 100%;
+}
+</style>
+
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -14,7 +31,7 @@ if 'pm_charge_enabled' not in st.session_state:
 
 # Page configuration
 st.set_page_config(
-    page_title="EBoss Model Selection Tool",
+    page_title="EBOSS® Model Selection Tool",
     page_icon="⚡",
     layout="wide",
     initial_sidebar_state="collapsed"
@@ -316,7 +333,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# EBoss Load Calculation Reference Data
+# EBOSS® Load Calculation Reference Data
 EBOSS_LOAD_REFERENCE = {
     "battery_capacities": {
         "EB25 kVA": 15,
@@ -450,7 +467,7 @@ STANDARD_GENERATOR_DATA = {
 def interpolate_gph(generator_kva, load_percent):
     """
     Interpolate GPH fuel consumption based on generator kVA and load percentage
-    Uses authentic EBoss GPH interpolation data from working_Accurate_Fuel_Calc_1752711064907.xlsx
+    Uses authentic EBOSS® GPH interpolation data from working_Accurate_Fuel_Calc_1752711064907.xlsx
     """
     # Convert load percent to decimal if needed
     if load_percent > 1:
@@ -524,7 +541,7 @@ def calculate_charge_rate(eboss_model, eboss_type, generator_kva=None, custom_ra
 def get_max_charge_rate(eboss_model, eboss_type, generator_kva=None):
     """Get maximum allowed charge rate using model-specific limits, with 98% generator kW as fallback"""
     
-    # EBoss model specific maximum charge rates from the table
+    # EBOSS® model specific maximum charge rates from the table
     model_max_charge_rates = {
         "EB25 kVA": 20,
         "EB70 kVA": 45,
@@ -571,7 +588,7 @@ def calculate_standard_generator_specs(standard_generator_size, continuous_load,
     engine_load_percent = (continuous_load / gen_kw * 100) if gen_kw > 0 else 0
     load_percentage = continuous_load / gen_kw if gen_kw > 0 else 0
     
-    # Use same interpolation method as EBoss for consistency
+    # Use same interpolation method as EBOSS® for consistency
     fuel_gph_data = gen_data["fuel_consumption_gph"]
     if load_percentage <= 0.5:
         fuel_per_hour = fuel_gph_data["50%"]
@@ -614,9 +631,9 @@ def calculate_standard_generator_specs(standard_generator_size, continuous_load,
     }
 
 def calculate_load_specs(eboss_model, eboss_type, continuous_load, max_peak_load, generator_kva=None, custom_charge_rate=None):
-    """Calculate load-based specifications using authentic EBoss reference data"""
+    """Calculate load-based specifications using authentic EBOSS® reference data"""
     
-    # Get EBoss model capacity based on generator size and max continuous load
+    # Get EBOSS® model capacity based on generator size and max continuous load
     generator_kw_mapping = {
         "EB25 kVA": 14.5,   # Gen Size 25 kVA
         "EB70 kVA": 24.5,   # Gen Size 45 kVA  
@@ -639,11 +656,11 @@ def calculate_load_specs(eboss_model, eboss_type, continuous_load, max_peak_load
     # Calculate charge rate using new formula
     charge_rate = calculate_charge_rate(eboss_model, eboss_type, generator_kva, custom_charge_rate)
     
-    # Calculate fuel consumption and engine load based on EBoss model's paired generator
+    # Calculate fuel consumption and engine load based on EBOSS® model's paired generator
     fuel_consumption = None
     engine_load_percent = 0
     
-    # Get the appropriate generator size for this EBoss model
+    # Get the appropriate generator size for this EBOSS® model
     paired_generator_kva = EBOSS_LOAD_REFERENCE["generator_kva_hybrid"].get(eboss_model, 0)
     if paired_generator_kva > 0:
         # Get paired generator data
@@ -689,7 +706,7 @@ def calculate_load_specs(eboss_model, eboss_type, continuous_load, max_peak_load
         "generator_data": generator_data
     }
 
-# EBoss Specifications Data
+# EBOSS® Specifications Data
 EBOSS_SPECS = {
     "EB25 kVA": {
         "Hybrid Energy System": "ANA EBOSS",
@@ -712,7 +729,7 @@ EBOSS_SPECS = {
         "Operating Temperature": "-4°F to 113°F (-20°C to 45°C)",
         "Dimensions (L x W x H)": "108\" x 45\" x 62\"",
         "Weight": "8,200 lbs",
-        "Warranty - EBoss only": "2 Years",
+        "Warranty - EBOSS® only": "2 Years",
         "Warranty - With trailer & generator": "2 Years, 2000 Hours",
         "Battery warranty": "7 Years",
         "Service & Support": "24/7, 365 Days",
@@ -739,7 +756,7 @@ EBOSS_SPECS = {
         "Operating Temperature": "-4°F to 113°F (-20°C to 45°C)",
         "Dimensions (L x W x H)": "108\" x 60\" x 62\"",
         "Weight": "13,200 lbs",
-        "Warranty - EBoss only": "2 Years",
+        "Warranty - EBOSS® only": "2 Years",
         "Warranty - With trailer & generator": "2 Years, 2000 Hours",
         "Battery warranty": "7 Years",
         "Service & Support": "24/7, 365 Days",
@@ -766,7 +783,7 @@ EBOSS_SPECS = {
         "Operating Temperature": "-4°F to 113°F (-20°C to 45°C)",
         "Dimensions (L x W x H)": "144\" x 60\" x 62\"",
         "Weight": "18,200 lbs",
-        "Warranty - EBoss only": "2 Years",
+        "Warranty - EBOSS® only": "2 Years",
         "Warranty - With trailer & generator": "2 Years, 2000 Hours",
         "Battery warranty": "7 Years",
         "Service & Support": "24/7, 365 Days",
@@ -793,7 +810,7 @@ EBOSS_SPECS = {
         "Operating Temperature": "-4°F to 113°F (-20°C to 45°C)",
         "Dimensions (L x W x H)": "192\" x 60\" x 62\"",
         "Weight": "29,200 lbs",
-        "Warranty - EBoss only": "2 Years",
+        "Warranty - EBOSS® only": "2 Years",
         "Warranty - With trailer & generator": "2 Years, 2000 Hours",
         "Battery warranty": "7 Years",
         "Service & Support": "24/7, 365 Days",
@@ -856,7 +873,7 @@ if 'show_generator_dialog' not in st.session_state:
 if 'paired_generator' not in st.session_state:
     st.session_state.paired_generator = None
 
-# EBoss to Standard Generator Pairing (ascending order: 25, 65, 125, 220, 400 kVA)
+# EBOSS® to Standard Generator Pairing (ascending order: 25, 65, 125, 220, 400 kVA)
 EBOSS_STANDARD_PAIRING = {
     "EB25 kVA": "25 kVA / 20 kW",
     "EB70 kVA": "65 kVA / 52 kW", 
@@ -901,7 +918,23 @@ def generator_selection_dialog():
     
     st.markdown('</div>', unsafe_allow_html=True)
 
-@st.dialog("Cost Analysis Setup")
+@st.dialog("
+<div style='text-align:right; margin-bottom: 1rem;'>
+    <button onclick="window.print()" style="background-color: #636569; border: none; color: white; padding: 0.5rem 1.2rem; font-size: 0.9rem; border-radius: 6px; cursor: pointer;">
+        Print Analysis
+    </button>
+</div>
+
+Cost Analysis
+
+<div style='text-align:center; margin-top:1.5rem;'>
+    <a href="https://anacorp.com/contact/" target="_blank">
+        <button style="background-color: #81BD47; border: none; color: white; padding: 0.75rem 1.5rem; font-size: 1rem; border-radius: 8px; cursor: pointer;">
+            Contact us for more details
+        </button>
+    </a>
+</div>
+ Setup")
 def cost_analysis_dialog():
     """Modal dialog for cost analysis with generator selection and input fields"""
     paired_gen = EBOSS_STANDARD_PAIRING.get(st.session_state.eboss_model, "25 kVA / 20 kW")
@@ -935,7 +968,23 @@ def cost_analysis_dialog():
     # If a generator is selected, show the cost analysis form
     if st.session_state.cost_standard_generator:
         st.divider()
-        st.subheader("Cost Analysis Parameters")
+        st.subheader("
+<div style='text-align:right; margin-bottom: 1rem;'>
+    <button onclick="window.print()" style="background-color: #636569; border: none; color: white; padding: 0.5rem 1.2rem; font-size: 0.9rem; border-radius: 6px; cursor: pointer;">
+        Print Analysis
+    </button>
+</div>
+
+Cost Analysis
+
+<div style='text-align:center; margin-top:1.5rem;'>
+    <a href="https://anacorp.com/contact/" target="_blank">
+        <button style="background-color: #81BD47; border: none; color: white; padding: 0.75rem 1.5rem; font-size: 1rem; border-radius: 8px; cursor: pointer;">
+            Contact us for more details
+        </button>
+    </a>
+</div>
+ Parameters")
         
         # Row 1: Fuel price and delivery fee
         st.markdown("**Fuel Information**")
@@ -1000,7 +1049,7 @@ def cost_analysis_dialog():
         rate_col1, rate_col2 = st.columns([1, 1])
         
         with rate_col1:
-            st.markdown("**EBoss Hybrid System**")
+            st.markdown("**EBOSS® Hybrid System**")
             eboss_weekly_rate = st.number_input(
                 "Weekly Rate ($)",
                 min_value=1,
@@ -1063,26 +1112,26 @@ def cost_analysis_dialog():
                 st.rerun()
 
 def calculate_mathematical_difference(eboss_value, standard_value, spec_name):
-    """Calculate mathematical difference between EBoss and standard values"""
+    """Calculate mathematical difference between EBOSS® and standard values"""
     import re
     
     # Skip calculation for certain rows
     if spec_name in ["Generator Size", "Frequency", "Voltage regulation", "Simultaneous voltage", "Parallelable"]:
         if spec_name == "Simultaneous voltage":
-            return "EBoss Advantage" if "Yes" in str(eboss_value) else "N/A"
+            return "EBOSS® Advantage" if "Yes" in str(eboss_value) else "N/A"
         elif spec_name == "Parallelable":
-            return "EBoss Advantage" if eboss_value == "Yes" and standard_value == "No" else "Same"
+            return "EBOSS® Advantage" if eboss_value == "Yes" and standard_value == "No" else "Same"
         elif spec_name == "Frequency":
             return "Same" if eboss_value == standard_value else "Different"
         elif spec_name == "Voltage regulation":
             return "Same" if eboss_value == standard_value else "Different"
         else:
-            return "EBoss vs Standard"
+            return "EBOSS® vs Standard"
     
     # Handle N/A values
     if str(eboss_value) == "N/A" or str(standard_value) == "N/A":
         if str(eboss_value) != "N/A" and str(standard_value) == "N/A":
-            return "EBoss Only"
+            return "EBOSS® Only"
         return "N/A"
     
     try:
@@ -1164,7 +1213,7 @@ def calculate_mathematical_difference(eboss_value, standard_value, spec_name):
             return f"{amp_sign}{amp_diff:.0f} A"
         
         elif "A" in str(eboss_value) and str(standard_value) == "N/A":
-            return "EBoss Only"
+            return "EBOSS® Only"
             
     except (AttributeError, ValueError, TypeError):
         pass
@@ -1212,13 +1261,13 @@ st.markdown('<div class="main-container">', unsafe_allow_html=True)
 
 # Header with logo on separate line
 st.markdown('<div class="logo-container" style="text-align: center; margin-bottom: 1rem;">', unsafe_allow_html=True)
-st.image("ana_energy_logo.png", width=200)
+st.image("ANA-ENERGY-LOGO-PADDED.png", width=200)
 st.markdown('</div>', unsafe_allow_html=True)
 
 # Title in styled container
 st.markdown('''
 <div style="background: var(--cool-gray-10c); color: var(--alpine-white); padding: 1.5rem; margin: 1rem 0 2rem 0; border-radius: 12px; text-align: center; box-shadow: 0 8px 16px rgba(0,0,0,0.4); text-shadow: 2px 2px 4px rgba(0,0,0,0.6);">
-    <h1 style="margin: 0; font-size: 2.5rem; font-weight: 600; letter-spacing: 1px;">EBoss Spec and Comparison Tool</h1>
+    <h1 style="margin: 0; font-size: 2.5rem; font-weight: 600; letter-spacing: 1px;">EBOSS® Spec and Comparison Tool</h1>
 </div>
 ''', unsafe_allow_html=True)
 
@@ -1229,19 +1278,19 @@ with col1:
     st.markdown('<div class="form-container">', unsafe_allow_html=True)
     st.markdown('<h3 class="form-section-title">System Configuration</h3>', unsafe_allow_html=True)
     
-    # EBoss Model dropdown
+    # EBOSS® Model dropdown
     eboss_models = ["EB25 kVA", "EB70 kVA", "EB125 kVA", "EB220 kVA", "EB400 kVA"]
     st.session_state.eboss_model = st.selectbox(
-        "EBoss Model",
+        "EBOSS® Model",
         options=eboss_models,
         index=0 if st.session_state.eboss_model is None else eboss_models.index(st.session_state.eboss_model),
         key="eboss_model_select"
     )
     
-    # EBoss Type dropdown
+    # EBOSS® Type dropdown
     eboss_types = ["Full Hybrid", "Power Module"]
     st.session_state.eboss_type = st.selectbox(
-        "EBoss Type",
+        "EBOSS® Type",
         options=eboss_types,
         index=0 if st.session_state.eboss_type is None else eboss_types.index(st.session_state.eboss_type),
         key="eboss_type_select"
@@ -1317,7 +1366,7 @@ with button_col1:
             st.session_state.show_cost_analysis = False
             st.rerun()
         else:
-            st.markdown('<div class="warning-box">⚠️ Please select an EBoss model first</div>', unsafe_allow_html=True)
+            st.markdown('<div class="warning-box">⚠️ Please select an EBOSS® model first</div>', unsafe_allow_html=True)
 
 with button_col2:
     if st.button("⚡ Load Based Specs", key="load_specs_button"):
@@ -1341,15 +1390,31 @@ with button_col3:
             st.rerun()
         else:
             missing_items = []
-            if not st.session_state.eboss_model: missing_items.append("EBoss model")
-            if not st.session_state.eboss_type: missing_items.append("EBoss type")
+            if not st.session_state.eboss_model: missing_items.append("EBOSS® model")
+            if not st.session_state.eboss_type: missing_items.append("EBOSS® type")
             if not st.session_state.continuous_load: missing_items.append("continuous load")
             if not st.session_state.max_peak_load: missing_items.append("max peak load")
             
             st.markdown(f'<div class="warning-box">⚠️ Please complete: {", ".join(missing_items)}</div>', unsafe_allow_html=True)
 
 with button_col4:
-    if st.button("💰 Cost Analysis", key="cost_analysis_button"):
+    if st.button("💰 
+<div style='text-align:right; margin-bottom: 1rem;'>
+    <button onclick="window.print()" style="background-color: #636569; border: none; color: white; padding: 0.5rem 1.2rem; font-size: 0.9rem; border-radius: 6px; cursor: pointer;">
+        Print Analysis
+    </button>
+</div>
+
+Cost Analysis
+
+<div style='text-align:center; margin-top:1.5rem;'>
+    <a href="https://anacorp.com/contact/" target="_blank">
+        <button style="background-color: #81BD47; border: none; color: white; padding: 0.75rem 1.5rem; font-size: 1rem; border-radius: 8px; cursor: pointer;">
+            Contact us for more details
+        </button>
+    </a>
+</div>
+", key="cost_analysis_button"):
         if (st.session_state.eboss_model and st.session_state.eboss_type and 
             st.session_state.continuous_load and st.session_state.max_peak_load):
             st.session_state.show_cost_dialog = True
@@ -1360,8 +1425,8 @@ with button_col4:
             st.rerun()
         else:
             missing_items = []
-            if not st.session_state.eboss_model: missing_items.append("EBoss model")
-            if not st.session_state.eboss_type: missing_items.append("EBoss type")
+            if not st.session_state.eboss_model: missing_items.append("EBOSS® model")
+            if not st.session_state.eboss_type: missing_items.append("EBOSS® type")
             if not st.session_state.continuous_load: missing_items.append("continuous load")
             if not st.session_state.max_peak_load: missing_items.append("max peak load")
             
@@ -1393,7 +1458,7 @@ if st.session_state.show_specs and st.session_state.eboss_model:
     # Get specifications for selected model
     specs = EBOSS_SPECS.get(st.session_state.eboss_model, {}).copy()
     
-    # Dynamic Generator kVA based on EBoss type
+    # Dynamic Generator kVA based on EBOSS® type
     if st.session_state.eboss_type == "Full Hybrid":
         # Use fixed hybrid generator size
         hybrid_kva = EBOSS_LOAD_REFERENCE["generator_kva_hybrid"].get(st.session_state.eboss_model)
@@ -1425,7 +1490,7 @@ if st.session_state.show_specs and st.session_state.eboss_model:
                 "Operating Temperature", "Dimensions (L x W x H)", "Weight"
             ],
             "Warranty & Support": [
-                "Warranty - EBoss only", "Warranty - With trailer & generator", "Battery warranty",
+                "Warranty - EBOSS® only", "Warranty - With trailer & generator", "Battery warranty",
                 "Service & Support", "Training", "Warranty", "Warranty - With generator"
             ]
         }
@@ -1584,11 +1649,11 @@ elif st.session_state.show_load_specs and st.session_state.eboss_model and st.se
         
         # Load-specific sections with new structure and calculations
         load_sections = {
-            "EBoss & Load Info": [
+            "EBOSS® & Load Info": [
                 ("Continuous Load", f"{st.session_state.continuous_load} kW"),
                 ("Max Peak Load", f"{st.session_state.max_peak_load} kW"),
-                ("EBoss Type", st.session_state.eboss_type or "Not specified"),
-                ("EBoss Model", st.session_state.eboss_model or "Not specified"),
+                ("EBOSS® Type", st.session_state.eboss_type or "Not specified"),
+                ("EBOSS® Model", st.session_state.eboss_model or "Not specified"),
                 ("Generator Size", generator_display)
             ],
             "Battery & Charging": [
@@ -1780,7 +1845,7 @@ if st.session_state.get('show_cost_dialog', False):
 elif st.session_state.get('show_comparison', False) and st.session_state.eboss_model:
     st.markdown('<br>', unsafe_allow_html=True)
     st.markdown('<div class="form-container">', unsafe_allow_html=True)
-    st.markdown('<h3 class="form-section-title">⚖️ EBoss vs Standard Generator Comparison</h3>', unsafe_allow_html=True)
+    st.markdown('<h3 class="form-section-title">⚖️ EBOSS® vs Standard Generator Comparison</h3>', unsafe_allow_html=True)
     
     # Close button for comparison
     if st.button("✕ Close Comparison", key="close_comparison"):
@@ -1806,7 +1871,7 @@ elif st.session_state.get('show_comparison', False) and st.session_state.eboss_m
         options=[None] + standard_generator_options,
         index=current_index,
         key="standard_generator_select",
-        help="Choose a standard diesel generator size to compare with your EBoss configuration"
+        help="Choose a standard diesel generator size to compare with your EBOSS® configuration"
     )
     
     # Only show comparison table if standard generator is selected
@@ -1829,7 +1894,7 @@ elif st.session_state.get('show_comparison', False) and st.session_state.eboss_m
         )
         
         if eboss_specs and standard_specs:
-            # Create 4-column layout: Labels, EBoss Values, Standard Generator Values, Difference
+            # Create 4-column layout: Labels, EBOSS® Values, Standard Generator Values, Difference
             col1, col2, col3, col4 = st.columns([2, 1.5, 1.5, 1])
         
             with col1:
@@ -1860,7 +1925,7 @@ elif st.session_state.get('show_comparison', False) and st.session_state.eboss_m
                 </div>
                 """, unsafe_allow_html=True)
         
-            # Calculate EBoss fuel consumption values
+            # Calculate EBOSS® fuel consumption values
             eboss_fuel_per_hour = eboss_specs.get('fuel_consumption_gph', 0) or 0
             battery_capacity = eboss_specs.get('battery_capacity', 0)
             charge_time = eboss_specs.get('charge_time', 0)
@@ -1881,7 +1946,7 @@ elif st.session_state.get('show_comparison', False) and st.session_state.eboss_m
             fuel_diff_month = eboss_fuel_per_month - standard_specs['fuel_per_month']
             co2_diff_day = eboss_co2_per_day - standard_specs['co2_per_day']
             
-            # Get EBoss engine load percentage from specs (based on paired generator)
+            # Get EBOSS® engine load percentage from specs (based on paired generator)
             eboss_engine_load = eboss_specs.get('engine_load_percent', 0)
             standard_engine_load = 100  # Standard generators run at 100% of rated load
             engine_load_diff = eboss_engine_load - standard_engine_load
@@ -1895,10 +1960,10 @@ elif st.session_state.get('show_comparison', False) and st.session_state.eboss_m
             standard_gen_kw = standard_gen_data.get('kw', 20)
             standard_engine_load_percent = (st.session_state.continuous_load / standard_gen_kw * 100) if standard_gen_kw > 0 else 0
             
-            # Get EBoss specs based on model
+            # Get EBOSS® specs based on model
             eboss_model_specs = EBOSS_SPECS.get(st.session_state.eboss_model, {})
             
-            # Get EBoss max continuous output kW from specifications
+            # Get EBOSS® max continuous output kW from specifications
             eboss_max_continuous_kw = {
                 "EB25 kVA": 22,    # From Max Continuous amp-load 480V: 28 A / 22 kW
                 "EB70 kVA": 56,    # From Max Continuous amp-load 480V: 67 A / 56 kW  
@@ -2103,7 +2168,7 @@ elif st.session_state.get('show_comparison', False) and st.session_state.eboss_m
                 # Row 4: Maximum Intermittent Power Output header
                 ("header", "Maximum Intermittent Power Output", ""),
                 
-                # Rows 5-13: Intermittent power specifications (authentic values for both EBoss and standard)
+                # Rows 5-13: Intermittent power specifications (authentic values for both EBOSS® and standard)
                 ("Three-phase", eboss_authentic_specs.get("Three-phase Max Power", "N/A"), standard_authentic_specs.get("Three-phase Max Power", "N/A")),
                 ("Single-phase", eboss_authentic_specs.get("Single-phase Max Power", "N/A"), standard_authentic_specs.get("Single-phase Max Power", "N/A")),
                 ("Frequency", eboss_authentic_specs.get("Frequency", "N/A"), standard_authentic_specs.get("Frequency", "N/A")),
@@ -2117,7 +2182,7 @@ elif st.session_state.get('show_comparison', False) and st.session_state.eboss_m
                 # Row 14: Maximum Continuous Power Output header
                 ("header", "Maximum Continuous Power Output", ""),
                 
-                # Rows 15-19: Continuous power specifications (authentic values for both EBoss and standard)
+                # Rows 15-19: Continuous power specifications (authentic values for both EBOSS® and standard)
                 ("Three-phase output", eboss_authentic_specs.get("Three-phase Continuous", "N/A"), standard_authentic_specs.get("Three-phase Continuous", "N/A")),
                 ("Single-phase output", eboss_authentic_specs.get("Single-phase Continuous", "N/A"), standard_authentic_specs.get("Single-phase Continuous", "N/A")),
                 ("Simultaneous voltage", eboss_authentic_specs.get("Simultaneous voltage", "N/A"), standard_authentic_specs.get("Simultaneous voltage", "N/A")),
@@ -2216,14 +2281,62 @@ elif st.session_state.get('show_comparison', False) and st.session_state.eboss_m
 
 
 
-# Cost Analysis Display
+# 
+<div style='text-align:right; margin-bottom: 1rem;'>
+    <button onclick="window.print()" style="background-color: #636569; border: none; color: white; padding: 0.5rem 1.2rem; font-size: 0.9rem; border-radius: 6px; cursor: pointer;">
+        Print Analysis
+    </button>
+</div>
+
+Cost Analysis
+
+<div style='text-align:center; margin-top:1.5rem;'>
+    <a href="https://anacorp.com/contact/" target="_blank">
+        <button style="background-color: #81BD47; border: none; color: white; padding: 0.75rem 1.5rem; font-size: 1rem; border-radius: 8px; cursor: pointer;">
+            Contact us for more details
+        </button>
+    </a>
+</div>
+ Display
 if st.session_state.show_cost_analysis and st.session_state.eboss_model:
     st.markdown('<br>', unsafe_allow_html=True)
     st.markdown('<div class="form-container">', unsafe_allow_html=True)
-    st.markdown('<h3 class="form-section-title">💰 Cost Analysis Results</h3>', unsafe_allow_html=True)
+    st.markdown('<h3 class="form-section-title">💰 
+<div style='text-align:right; margin-bottom: 1rem;'>
+    <button onclick="window.print()" style="background-color: #636569; border: none; color: white; padding: 0.5rem 1.2rem; font-size: 0.9rem; border-radius: 6px; cursor: pointer;">
+        Print Analysis
+    </button>
+</div>
+
+Cost Analysis
+
+<div style='text-align:center; margin-top:1.5rem;'>
+    <a href="https://anacorp.com/contact/" target="_blank">
+        <button style="background-color: #81BD47; border: none; color: white; padding: 0.75rem 1.5rem; font-size: 1rem; border-radius: 8px; cursor: pointer;">
+            Contact us for more details
+        </button>
+    </a>
+</div>
+ Results</h3>', unsafe_allow_html=True)
     
     # Close button for cost analysis
-    if st.button("✕ Close Cost Analysis", key="close_cost_analysis"):
+    if st.button("✕ Close 
+<div style='text-align:right; margin-bottom: 1rem;'>
+    <button onclick="window.print()" style="background-color: #636569; border: none; color: white; padding: 0.5rem 1.2rem; font-size: 0.9rem; border-radius: 6px; cursor: pointer;">
+        Print Analysis
+    </button>
+</div>
+
+Cost Analysis
+
+<div style='text-align:center; margin-top:1.5rem;'>
+    <a href="https://anacorp.com/contact/" target="_blank">
+        <button style="background-color: #81BD47; border: none; color: white; padding: 0.75rem 1.5rem; font-size: 1rem; border-radius: 8px; cursor: pointer;">
+            Contact us for more details
+        </button>
+    </a>
+</div>
+", key="close_cost_analysis"):
         st.session_state.show_cost_analysis = False
         st.rerun()
     
@@ -2241,11 +2354,11 @@ if st.session_state.show_cost_analysis and st.session_state.eboss_model:
     # Calculate fuel consumption and costs based on load data
     continuous_load = st.session_state.get('continuous_load', 0)
     
-    # Get EBoss fuel data (from load specs calculations)
+    # Get EBOSS® fuel data (from load specs calculations)
     eboss_model = st.session_state.eboss_model
     battery_capacity_kwh = EBOSS_LOAD_REFERENCE["battery_capacities"].get(eboss_model, 0)
     
-    # EBoss calculations
+    # EBOSS® calculations
     if st.session_state.eboss_type == "Full Hybrid":
         generator_kva = EBOSS_LOAD_REFERENCE["generator_kva_hybrid"].get(eboss_model, 0)
     else:
@@ -2254,7 +2367,7 @@ if st.session_state.show_cost_analysis and st.session_state.eboss_model:
     generator_kw = generator_kva * 0.8
     charge_rate_kw = EBOSS_LOAD_REFERENCE["generator_sizes"].get(generator_kva, {}).get("fh_charge_rate" if st.session_state.eboss_type == "Full Hybrid" else "pm_charge_rate", 0)
     
-    # Calculate EBoss fuel consumption
+    # Calculate EBOSS® fuel consumption
     battery_longevity = (battery_capacity_kwh / continuous_load) if continuous_load > 0 else 0
     charge_time = (battery_capacity_kwh / charge_rate_kw) if charge_rate_kw > 0 else 0
     charges_per_day = 24 / (charge_time + battery_longevity) if (charge_time + battery_longevity) > 0 else 0
@@ -2316,13 +2429,13 @@ if st.session_state.show_cost_analysis and st.session_state.eboss_model:
         }
     
     # Debug information (temporary)
-    st.write(f"Debug - EBoss Model: {eboss_model}")
+    st.write(f"Debug - EBOSS® Model: {eboss_model}")
     st.write(f"Debug - Continuous Load: {continuous_load}")
     st.write(f"Debug - Generator kVA: {generator_kva}")
     st.write(f"Debug - Battery Capacity: {battery_capacity_kwh}")
     st.write(f"Debug - Charge Rate kW: {charge_rate_kw}")
     st.write(f"Debug - Engine Load %: {engine_load_percent}")
-    st.write(f"Debug - EBoss Fuel GPH: {eboss_fuel_per_hour}")
+    st.write(f"Debug - EBOSS® Fuel GPH: {eboss_fuel_per_hour}")
     st.write(f"Debug - Standard Generator: {selected_standard_gen}")
     st.write(f"Debug - Standard Fuel GPH: {standard_fuel_gph}")
     
@@ -2354,11 +2467,11 @@ if st.session_state.show_cost_analysis and st.session_state.eboss_model:
                     <th style="padding: 0.5rem; border: 1px solid var(--charcoal); text-align: left; font-size: 0.8rem;
                               text-shadow: 1px 1px 2px rgba(0,0,0,0.7);"></th>
                     <th style="padding: 0.5rem; border: 1px solid var(--charcoal); text-align: center; font-size: 0.8rem;
-                              text-shadow: 1px 1px 2px rgba(0,0,0,0.7);">EBoss Hybrid</th>
+                              text-shadow: 1px 1px 2px rgba(0,0,0,0.7);">EBOSS® Hybrid</th>
                     <th style="padding: 0.5rem; border: 1px solid var(--charcoal); text-align: center; font-size: 0.8rem;
                               text-shadow: 1px 1px 2px rgba(0,0,0,0.7);">Standard Generator</th>
                     <th style="padding: 0.5rem; border: 1px solid var(--charcoal); text-align: center; font-size: 0.8rem;
-                              text-shadow: 1px 1px 2px rgba(0,0,0,0.7);">EBoss Hybrid</th>
+                              text-shadow: 1px 1px 2px rgba(0,0,0,0.7);">EBOSS® Hybrid</th>
                     <th style="padding: 0.5rem; border: 1px solid var(--charcoal); text-align: center; font-size: 0.8rem;
                               text-shadow: 1px 1px 2px rgba(0,0,0,0.7);">Standard Generator</th>
                 </tr>
@@ -2464,7 +2577,7 @@ if st.session_state.show_cost_analysis and st.session_state.eboss_model:
                 <tr style="background: var(--energy-green); color: var(--alpine-white); font-weight: bold;
                           border: 2px solid var(--charcoal); box-shadow: 0 4px 8px rgba(0,0,0,0.4);">
                     <td style="padding: 0.75rem; border: 1px solid var(--charcoal); font-weight: bold;
-                              text-shadow: 2px 2px 4px rgba(0,0,0,0.7);">EBoss Savings</td>
+                              text-shadow: 2px 2px 4px rgba(0,0,0,0.7);">EBOSS® Savings</td>
                     <td style="padding: 0.75rem; border: 1px solid var(--charcoal); text-align: right;
                               text-shadow: 2px 2px 4px rgba(0,0,0,0.7);">${(standard_costs['weekly']['total'] - eboss_costs['weekly']['total']):,.2f}</td>
                     <td style="padding: 0.75rem; border: 1px solid var(--charcoal); text-align: right;
@@ -2491,7 +2604,7 @@ if st.session_state.show_cost_analysis and st.session_state.eboss_model:
     <div style="background: {savings_color}; color: white; padding: 1rem; border-radius: 8px; margin: 1rem 0; 
                 text-align: center; font-weight: bold; border: 2px solid var(--charcoal); 
                 box-shadow: 0 6px 12px rgba(0,0,0,0.4);">
-        <h4 style="margin: 0; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.7);">EBoss {savings_text}</h4>
+        <h4 style="margin: 0; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.7);">EBOSS® {savings_text}</h4>
         <p style="margin: 0.5rem 0; font-size: 1.1rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.7);">
             Weekly: ${abs(weekly_savings):,.2f} | Monthly: ${abs(monthly_savings):,.2f} | Yearly: ${abs(yearly_savings):,.2f}
         </p>
@@ -2506,7 +2619,7 @@ if st.session_state.show_cost_analysis and st.session_state.eboss_model:
 st.markdown('<br><br>', unsafe_allow_html=True)
 st.markdown(f"""
 <div style="text-align: center; color: var(--cool-gray-8c); font-size: 0.9rem; padding: 1rem;">
-    EBoss Model Selection Tool | Powered by Advanced Energy Solutions
+    EBOSS® Model Selection Tool | Powered by Advanced Energy Solutions
 </div>
 """, unsafe_allow_html=True)
 
