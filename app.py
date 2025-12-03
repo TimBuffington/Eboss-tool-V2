@@ -336,8 +336,8 @@ def calculate_standard_generator_specs(standard_generator_size, continuous_load,
     }
 
 def calculate_load_specs(eboss_model, eboss_type, continuous_load, max_peak_load, generator_kva=None, custom_charge_rate=None):
-    """Calculate load-based specifications using authentic EBOSS® reference data"""
-    
+
+    #Calculate load-based specifications using authentic EBOSS® reference data
     # Get EBOSS® model capacity based on generator size and max continuous load
     generator_kw_mapping = {
         "EB25 kVA": 14.5,   # Gen Size 25 kVA
