@@ -1387,40 +1387,7 @@ with button_col3:
             
             st.markdown(f'<div class="warning-box">⚠️ Please complete: {", ".join(missing_items)}</div>', unsafe_allow_html=True)
 
-with button_col4:
-    if st.button("💰 
-<div style='text-align:right; margin-bottom: 1rem;'>
-    <button onclick="window.print()" style="background-color: #636569; border: none; color: white; padding: 0.5rem 1.2rem; font-size: 0.9rem; border-radius: 6px; cursor: pointer;">
-        Print Analysis
-    </button>
-</div>
 
-Cost Analysis
-
-<div style='text-align:center; margin-top:1.5rem;'>
-    <a href="https://anacorp.com/contact/" target="_blank">
-        <button style="background-color: #81BD47; border: none; color: white; padding: 0.75rem 1.5rem; font-size: 1rem; border-radius: 8px; cursor: pointer;">
-            Contact us for more details
-        </button>
-    </a>
-</div>
-", key="cost_analysis_button"):
-        if (st.session_state.eboss_model and st.session_state.eboss_type and 
-            st.session_state.continuous_load and st.session_state.max_peak_load):
-            st.session_state.show_cost_dialog = True
-            st.session_state.show_specs = False
-            st.session_state.show_load_specs = False
-            st.session_state.show_comparison = False
-            st.session_state.show_cost_analysis = False
-            st.rerun()
-        else:
-            missing_items = []
-            if not st.session_state.eboss_model: missing_items.append("EBOSS® model")
-            if not st.session_state.eboss_type: missing_items.append("EBOSS® type")
-            if not st.session_state.continuous_load: missing_items.append("continuous load")
-            if not st.session_state.max_peak_load: missing_items.append("max peak load")
-            
-            st.markdown(f'<div class="warning-box">⚠️ Please complete: {", ".join(missing_items)}</div>', unsafe_allow_html=True)
 
 with button_col5:
     if st.button("🔄 Reset", key="reset_button"):
