@@ -9,7 +9,7 @@
     box-sizing: border-box;
 }
 .form-container div {
-    padding: 1rem;
+#    padding: 1rem;
     box-sizing: border-box;
     max-width: 100%;
 }
