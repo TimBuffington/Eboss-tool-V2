@@ -47,12 +47,12 @@ st.markdown("""
     
     /* Root variables for color palette */
     :root {
-        --black-asphalt: '#000000;
-        --cool-gray-: '#939598;
-        --cool-gray-: '#636569;
-        --charcoal: '#636569;
-        --alpine-white: '#FFFFFF;
-        --energy-green: '#81BD47;
+        --black-asphalt;
+        --cool-gray-;
+        --cool-gray-;
+        --charcoal;
+        --alpine-white;
+        --energy-green;
     }
     
     /* Hide Streamlit branding and white bar completely */
