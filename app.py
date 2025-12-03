@@ -2258,39 +2258,7 @@ Cost Analysis
 if st.session_state.show_cost_analysis and st.session_state.eboss_model:
     st.markdown('<br>', unsafe_allow_html=True)
     st.markdown('<div class="form-container">', unsafe_allow_html=True)
-    st.markdown('<div class="form-section-title">💰 , unsafe_allow_html=True)
-
-Cost Analysis
-
-<div style='text-align:center; margin-top:1.5rem;'>
-    <a href="https://anacorp.com/contact/" target="_blank">
-        <button style="background-color: #81BD47; border: none; color: white; padding: 0.75rem 1.5rem; font-size: 1rem; border-radius: 8px; cursor: pointer;">
-            Contact us for more details
-        </button>
-    </a>
-</div>
- Results</h3>', unsafe_allow_html=True)
-    
-    # Close button for cost analysis
-    if st.button("✕ Close 
-<div style='text-align:right; margin-bottom: 1rem;'>
-    <button onclick="window.print()" style="background-color: #636569; border: none; color: white; padding: 0.5rem 1.2rem; font-size: 0.9rem; border-radius: 6px; cursor: pointer;">
-        Print Analysis
-    </button>
-</div>
-
-Cost Analysis
-
-<div style='text-align:center; margin-top:1.5rem;'>
-    <a href="https://anacorp.com/contact/" target="_blank">
-        <button style="background-color: #81BD47; border: none; color: white; padding: 0.75rem 1.5rem; font-size: 1rem; border-radius: 8px; cursor: pointer;">
-            Contact us for more details
-        </button>
-    </a>
-</div>
-", key="close_cost_analysis"):
-        st.session_state.show_cost_analysis = False
-        st.rerun()
+ 
     
     # Get input values from session state with defaults
     local_fuel_price = st.session_state.get('local_fuel_price', 3.50)
