@@ -2263,7 +2263,7 @@ if st.session_state.show_cost_analysis and st.session_state.eboss_model:
     <button onclick="window.print()" style="background-color: #636569; border: none; color: white; padding: 0.5rem 1.2rem; font-size: 0.9rem; border-radius: 6px; cursor: pointer;">
         Print Analysis
     </button>
-</div>
+</div>, unsafe_allow_html=True)
 
 Cost Analysis
 
