@@ -974,7 +974,7 @@ Cost Analysis
         </button>
     </a>
 </div>
- Parameters")
+ 
         
         # Row 1: Fuel price and delivery fee
         st.markdown("**Fuel Information**")
