@@ -2258,7 +2258,7 @@ Cost Analysis
 if st.session_state.show_cost_analysis and st.session_state.eboss_model:
     st.markdown('<br>', unsafe_allow_html=True)
     st.markdown('<div class="form-container">', unsafe_allow_html=True)
-    st.markdown('<div class="form-section-title">💰 
+    st.markdown('<div class="form-section-title">💰 , unsafe_allow_html=True)
 
 Cost Analysis
 
