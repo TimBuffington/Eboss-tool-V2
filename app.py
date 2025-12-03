@@ -171,11 +171,9 @@ STANDARD_GENERATOR_DATA = {
     }
 }
 
-def interpolate_gph(generator_kva, load_percent):
-    """
-    Interpolate GPH fuel consumption based on generator kVA and load percentage
-    Uses authentic EBOSS® GPH interpolation data from working_Accurate_Fuel_Calc_1752711064907.xlsx
-    """
+def interpolate_gph (generator_kva, load_percent)
+   # Interpolate GPH fuel consumption based on generator kVA and load percentage
+   # Uses authentic EBOSS® GPH interpolation data from working_Accurate_Fuel_Calc_1752711064907.xlsx
     # Convert load percent to decimal if needed
     if load_percent > 1:
         load_percent = load_percent / 100
