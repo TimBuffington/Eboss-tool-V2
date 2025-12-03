@@ -1,5 +1,8 @@
+import streamlit as st
+import pandas as pd
+import numpy as np
 
-#<style>
+<style>
 .stColumn {
     flex: 1 1 0%;
     min-width: 0 !important;
@@ -15,9 +18,7 @@
 }
 </style>
 
-import streamlit as st
-import pandas as pd
-import numpy as np
+
 
 # Initialize session state variables
 if 'show_cost_analysis' not in st.session_state:
