@@ -963,12 +963,7 @@ def cost_analysis_dialog():
     # If a generator is selected, show the cost analysis form
     if st.session_state.cost_standard_generator:
         st.divider()
-        st.subheader("
-<div style='text-align:right; margin-bottom: 1rem;'>
-    <button onclick="window.print()" style="background-color: #636569; border: none; color: white; padding: 0.5rem 1.2rem; font-size: 0.9rem; border-radius: 6px; cursor: pointer;">
-        Print Analysis
-    </button>
-</div>
+        st.subheader("Print")
 
 Cost Analysis
 
