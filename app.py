@@ -733,31 +733,31 @@ with pm_col1:
     pm_interval_hrs = st.number_input(
     "PM Interval Hrs",
     min_value=0,
-                max_value=1000,
-                value=0,
-                step=1.0,
-                key="pm_interval_hrs"
-            )
+    max_value=1000,
+    value=0,
+    step=1.0,
+    key="pm_interval_hrs"
+)
         
 with pm_col2:
     pm_charge_selection = st.radio(
     "Is there a PM Charge?",
     options=["No", "Yes"],
-                index=0,
-                key="pm_charge_radio",
-                horizontal=True
-            )
+    index=0,
+    key="pm_charge_radio",
+    horizontal=True
+)
             
 if pm_charge_selection == "Yes":
-                cost_per_pm = st.number_input(
-                    "Cost per PM ($)",
-                    min_value=0.0,
-                    max_value=10000.0,
-                    value=0.0,
-                    step=0.1,
-                    format="%.2f",
-                    key="cost_per_pm"
-                )
+    cost_per_pm = st.number_input(
+    "Cost per PM ($)",
+    min_value=0.0,
+    max_value=10000.0,
+    value=0.0,
+    step=0.1,
+    format="%.2f",
+    key="cost_per_pm"
+)
         
         # Row 3: Weekly and Monthly rates for both systems
 st.markdown("**System Rates**")
@@ -766,64 +766,62 @@ rate_col1, rate_col2 = st.columns([1, 1])
 # --- EBOSS Hybrid System ---
 with rate_col1:
     st.markdown("**EBOSS Hybrid System**")
-
     default_rate = 1500.0
     eboss_weekly_rate = st.number_input(
-        "Weekly Rate ($)",
-        min_value=0.0,
-        max_value=100000.0,
-        value=max(default_rate, 0.0),
-        step=50.0,
-        format="%.2f",
-        key="eboss_weekly_rate"
-    )
+    "Weekly Rate ($)",
+    min_value=0.0,
+    max_value=100000.0,
+    value=max(default_rate, 0.0),
+    step=50.0,
+    format="%.2f",
+    key="eboss_weekly_rate"
+)
 
     eboss_monthly_rate = st.number_input(
-        "Monthly Rate ($)",
-        min_value=0.0,           # ✅ safer than -1.00
-        max_value=100000.0,
-        value=0.0,
-        step=50.0,
-        format="%.2f",
-        key="eboss_monthly_rate"
-    )
+    "Monthly Rate ($)",
+    min_value=0.0,           # ✅ safer than -1.00
+    max_value=100000.0,
+    value=0.0,
+    step=50.0,
+    format="%.2f",
+    key="eboss_monthly_rate"
+)
 
 # --- Standard Generator ---
 with rate_col2:
     st.markdown("**Standard Generator**")
-
     standard_weekly_rate = st.number_input(
-        "Weekly Rate ($)",
-        min_value=0.0,
-        max_value=100000.0,
-        value=0.0,
-        step=50.0,
-        format="%.2f",
-        key="standard_weekly_rate"
-    )
+    "Weekly Rate ($)",
+    min_value=0.0,
+    max_value=100000.0,
+    value=0.0,
+    step=50.0,
+    format="%.2f",
+    key="standard_weekly_rate"
+)
 
     standard_monthly_rate = st.number_input(
-        "Monthly Rate ($)",
-        min_value=0.0,
-        max_value=100000.0,
-        value=0.0,
-        step=50.0,
-        format="%.2f",
-        key="standard_monthly_rate"
-    )
+    "Monthly Rate ($)",
+    min_value=0.0,
+    max_value=100000.0,
+    value=0.0,
+    step=50.0,
+    format="%.2f",
+    key="standard_monthly_rate"
+)
 
         # Action buttons
 st.divider()
 action_col1, action_col2, action_col3 = st.columns([1, 1, 1])
         
 with action_col1:
-    if st.button("📊 Generate Analysis", key="generate_cost_analysis", use_container_width=True):
+    if st.button("Generate Analysis", key="generate_cost_analysis", use_container_width=True):
         st.session_state.show_cost_dialog = False
         st.session_state.show_cost_analysis = True
         st.rerun()
         
         with action_col2:
-            if st.button("🔄 Reset Form", key="reset_cost_form", use_container_width=True):
+            if st.button("Reset Form", key="reset_cost_form", use_container_width=True):
                 # Reset all form values
                 for key in ['local_fuel_price', 'fuel_delivery_fee', 'pm_interval_hrs', 'cost_per_pm', 
                            'eboss_weekly_rate', 'eboss_monthly_rate', 'standard_weekly_rate', 'standard_monthly_rate']:
@@ -832,7 +830,7 @@ with action_col1:
                 st.rerun()
         
         with action_col3:
-            if st.button("❌ Cancel", key="cancel_cost_dialog", use_container_width=True):
+            if st.button("Cancel", key="cancel_cost_dialog", use_container_width=True):
                 st.session_state.show_cost_dialog = False
                 st.rerun()
 
