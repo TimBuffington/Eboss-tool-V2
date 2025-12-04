@@ -8,15 +8,14 @@ div[data-testid="column"] {
     flex: 1 1 0% !important;
     min-width: 0 !important;
     max-width: 100% !important;
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    box-sizing: border-box;
+    overflow-wrap: break-word !important;
+    word-wrap: break-word !important;
+    box-sizing: border-box !important;
 }
+
 .form-container div {
-#    padding: 1rem;
-    box-sizing: border-box;
-    max-width: 100%;
-}
+    box-sizing: border-box !important;
+    max-width: 100% !important;
 </style>
 
 
