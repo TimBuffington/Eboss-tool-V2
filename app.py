@@ -551,7 +551,7 @@ EBOSS_SPECS = {
     }
 }
 
-st.write("DEBUG image:", type(image_variable), image_variable)
+
 
 
 # Initialize session state
@@ -2715,6 +2715,7 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
+
 
 
 
