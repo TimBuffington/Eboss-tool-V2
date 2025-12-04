@@ -726,7 +726,7 @@ with pm_col1:
         value=0,
         step=1.0,
         key="pm_interval_hrs"
-)
+    )
         
 with pm_col2:
     pm_charge_selection = st.radio(
@@ -735,18 +735,18 @@ with pm_col2:
         index=0,
         key="pm_charge_radio",
         horizontal=True
-)
-            
-if pm_charge_selection == "Yes":
-    cost_per_pm = st.number_input(
-    "Cost per PM ($)",
-    min_value=0.0,
-    max_value=10000.0,
-    value=0.0,
-    step=0.1,
-    format="%.2f",
-    key="cost_per_pm"
-)
+    )
+    
+    if pm_charge_selection == "Yes":
+        cost_per_pm = st.number_input(
+            "Cost per PM ($)",
+            min_value=0.0,
+            max_value=10000.0,
+            value=0.0,
+            step=0.1,
+            format="%.2f",
+            key="cost_per_pm"
+        )
         
         # Row 3: Weekly and Monthly rates for both systems
 st.markdown("**System Rates**")
@@ -2709,6 +2709,7 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
+
 
 
 
