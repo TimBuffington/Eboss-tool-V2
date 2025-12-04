@@ -666,15 +666,7 @@ def Cost_Analysis():
 
 Cost_Analysis()
 
-    <div style='text-align:center; margin-top:1.5rem;'>
-        <a href="https://anacorp.com/contact/" target="_blank">
-            <button style="background-color: #81BD47; border: none; color: white; padding: 0.75rem 1.5rem; font-size: 1rem; border-radius: 8px; cursor: pointer;">
-                Contact us for more details
-            </button>
-         </a>
-    </div>
-    """, unsafe_allow_html=True)
-        
+       
         # Row 1: Fuel price and delivery fee
         st.markdown("**Fuel Information**")
         fuel_col1, fuel_col2 = st.columns([1, 1])
