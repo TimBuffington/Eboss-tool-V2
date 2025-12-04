@@ -688,10 +688,10 @@ with fuel_col2:
     max_value=1000,
     value=0,
     step=1,
-    key="fuel_delivery_fee"
+    key = "fuel_delivery_fee"
 )
 
-        # Row 2: PM interval and PM charge
+# Row 2: PM interval and PM charge
 st.markdown("**Maintenance Information**")
 pm_col1, pm_col2 = st.columns([1, 1])
       
