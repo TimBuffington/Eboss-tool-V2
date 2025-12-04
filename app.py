@@ -440,6 +440,7 @@ EBOSS_SPECS = {
         "Service & Support": "24/7, 365 Days",
         "Training": "Henderson, NV or On Location"
     },
+    
     "EB70 kVA": {
         "Hybrid Energy System": "ANA EBOSS",
         "Three-phase Max Power": "70 kVA / 56 kW",
@@ -2711,6 +2712,7 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
+
 
 
 
