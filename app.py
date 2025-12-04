@@ -627,26 +627,26 @@ def generator_selection_dialog():
 
 
 
-    def cost_analysis_dialog():
-        """Modal dialog for cost analysis with generator selection and input fields"""
-        paired_gen = EBOSS_STANDARD_PAIRING.get(st.session_state.eboss_model, "25 kVA / 20 kW")
+def cost_analysis_dialog():
+    """Modal dialog for cost analysis with generator selection and input fields"""
+    paired_gen = EBOSS_STANDARD_PAIRING.get(st.session_state.eboss_model, "25 kVA / 20 kW")
         
         # Generator selection section
-        st.markdown(f"""
-        <div style="background: rgba(129, 189, 71, 0.1); padding: 1rem; border-radius: 8px; 
-        border-left: 4px solid #81BD47; margin-bottom: 1rem;">
-            <strong>Recommended Generator:</strong><br>
-            For the <strong>{st.session_state.eboss_model}</strong> model: <strong>{paired_gen}</strong>
-        </div>
-        """, unsafe_allow_html=True)
+st.markdown(f"""
+<div style="background: rgba(129, 189, 71, 0.1); padding: 1rem; border-radius: 8px; 
+border-left: 4px solid #81BD47; margin-bottom: 1rem;">
+<strong>Recommended Generator:</strong><br>
+For the <strong>{st.session_state.eboss_model}</strong> model: <strong>{paired_gen}</strong>
+</div>
+""", unsafe_allow_html=True)
     
-        gen_col1, gen_col2 = st.columns([1, 1])
+gen_col1, gen_col2 = st.columns([1, 1])
     
         # Column 1
-        with gen_col1:
-            if st.button("✅ Use Recommended", key="use_paired_gen_cost", use_container_width=True):
-                st.session_state.cost_standard_generator = paired_gen
-                st.rerun()
+with gen_col1:
+    if st.button("✅ Use Recommended", key="use_paired_gen_cost", use_container_width=True):
+        st.session_state.cost_standard_generator = paired_gen
+        st.rerun()
     
         # Column 2
         with gen_col2:
@@ -660,7 +660,7 @@ def generator_selection_dialog():
                 )
     
         # If a generator is selected, show the cost analysis form
-        if st.session_state.get("cost_standard_generator"):
+            if st.session_state.get("cost_standard_generator"):
             st.divider()
             st.subheader("Print")
 
@@ -695,23 +695,22 @@ def cost_analysis_dialog():
             )
     
     # If a generator is selected, show the cost analysis form
-    if st.session_state.cost_standard_generator:
-        st.divider()
-
-st.markdown('<a href="https://anacorp.com/contact/" target="_blank">Contact us for more details</a>', unsafe_allow_html=True)
-st.subheader("Parameters")
-        
+        if st.session_state.cost_standard_generator:
+            st.divider()
+            st.markdown('<a href="https://anacorp.com/contact/" target="_blank">Contact us for more details</a>', unsafe_allow_html=True)
+            st.subheader("Parameters")
+            
 # Row 1: Fuel price and delivery fee
 st.markdown("**Fuel Information**")
 fuel_col1, fuel_col2 = st.columns([1, 1])
 with fuel_col1:
-           local_fuel_price = st.number_input(
-    "Local Fuel Price / Gal ($)",
-    min_value=-1.0,
-    max_value=1000.0,
-    value=0.00,
-    step=0.01,
-    key="local_fuel_price"
+    local_fuel_price = st.number_input(
+        "Local Fuel Price / Gal ($)",
+        min_value=-1.0,
+        max_value=1000.0,
+        value=0.00,
+        step=0.01,
+        key="local_fuel_price"
 )
    
 with fuel_col2:
