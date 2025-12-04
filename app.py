@@ -807,7 +807,7 @@ Cost Analysis
                 st.rerun()
 
 def calculate_mathematical_difference(eboss_value, standard_value, spec_name):
-    """Calculate mathematical difference between EBOSS® and standard values"""
+    #Calculate mathematical difference between EBOSS® and standard values"""
     import re
     
     # Skip calculation for certain rows
