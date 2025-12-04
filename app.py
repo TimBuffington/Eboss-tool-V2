@@ -665,7 +665,7 @@ def generator_selection_dialog():
             st.subheader("Print")
 
     # Call the dialog function
-   def cost_analysis_dialog():
+def cost_analysis_dialog():
     """Modal dialog for cost analysis with generator selection and input fields"""
     paired_gen = EBOSS_STANDARD_PAIRING.get(st.session_state.eboss_model, "25 kVA / 20 kW")
     
