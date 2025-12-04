@@ -2331,17 +2331,9 @@ elif st.session_state.get('show_comparison', False) and st.session_state.eboss_m
         st.markdown('<div class="info-box">Please select a standard generator above to view the comparison.</div>', unsafe_allow_html=True)
     
     st.markdown('</div>', unsafe_allow_html=True)
+    
 
-
-
-# 
-<div style='text-align:right; margin-bottom: 1rem;'>
-    <button onclick="window.print()" style="background-color: #636569; border: none; color: white; padding: 0.5rem 1.2rem; font-size: 0.9rem; border-radius: 6px; cursor: pointer;">
-        Print Analysis
-    </button>
-</div>
-
-Cost Analysis
+Cost_Analysis()
 
 <div style='text-align:center; margin-top:1.5rem;'>
     <a href="https://anacorp.com/contact/" target="_blank">
