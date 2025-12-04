@@ -1,4 +1,5 @@
-# Custom CSS with the specified color palette
+def global_css():
+    
 st.markdown("""
 <style>
     /* Import fonts */
@@ -293,5 +294,6 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
+
 
 
