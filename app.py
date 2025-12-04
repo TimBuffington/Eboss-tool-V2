@@ -695,7 +695,7 @@ with fuel_col2:
 st.markdown("**Maintenance Information**")
 pm_col1, pm_col2 = st.columns([1, 1])
       
-    with pm_col1:
+with pm_col1:
         pm_interval_hrs = st.number_input(
         "PM Interval Hrs",
         min_value=1,
@@ -705,7 +705,7 @@ pm_col1, pm_col2 = st.columns([1, 1])
         key="pm_interval_hrs"
     )
         
-    with pm_col2:
+with pm_col2:
         pm_charge_selection = st.radio(
         "Is there a PM Charge?",
         options=["No", "Yes"],
@@ -714,7 +714,7 @@ pm_col1, pm_col2 = st.columns([1, 1])
         horizontal=True
     )
             
-    if pm_charge_selection == "Yes":
+if pm_charge_selection == "Yes":
         cost_per_pm = st.number_input(
         "Cost per PM ($)",
         min_value=0.0,
@@ -728,8 +728,8 @@ pm_col1, pm_col2 = st.columns([1, 1])
 st.markdown("**System Rates**")
 rate_col1, rate_col2 = st.columns([1, 1])
         
-    with rate_col1:
-            st.markdown("**EBOSS® Hybrid System**")
+with rate_col1:
+    st.markdown("**EBOSS® Hybrid System**")
             eboss_weekly_rate = st.number_input(
                 "Weekly Rate ($)",
                 min_value=1,
@@ -747,8 +747,8 @@ rate_col1, rate_col2 = st.columns([1, 1])
                 key="eboss_monthly_rate"
             )
         
-    with rate_col2:
-            st.markdown("**Standard Generator**")
+with rate_col2:
+    st.markdown("**Standard Generator**")
             standard_weekly_rate = st.number_input(
                 "Weekly Rate ($)",
                 min_value=1,
@@ -757,7 +757,7 @@ rate_col1, rate_col2 = st.columns([1, 1])
                 step=1,
                 key="standard_weekly_rate"
             )
-            standard_monthly_rate = st.number_input(
+        standard_monthly_rate = st.number_input(
                 "Monthly Rate ($)",
                 min_value=0.0,
                 max_value=200000.0,
@@ -768,11 +768,11 @@ rate_col1, rate_col2 = st.columns([1, 1])
             )
         
         # Action buttons
-        st.divider()
+    st.divider()
         action_col1, action_col2, action_col3 = st.columns([1, 1, 1])
         
-        with action_col1:
-            if st.button("📊 Generate Analysis", key="generate_cost_analysis", use_container_width=True):
+with action_col1:
+    if st.button("📊 Generate Analysis", key="generate_cost_analysis", use_container_width=True):
                 st.session_state.show_cost_dialog = False
                 st.session_state.show_cost_analysis = True
                 st.rerun()
