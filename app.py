@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from styles import global_css
 
-global_css()
+global_css
 
 
 st.markdown("""
@@ -2389,6 +2389,7 @@ elif st.session_state.get('show_comparison', False) and st.session_state.eboss_m
     
     st.markdown('</div>', unsafe_allow_html=True)
     
+
 
 
 
