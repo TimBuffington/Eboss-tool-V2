@@ -1193,19 +1193,7 @@ def calculate_standard_generator_specs(standard_generator_size, continuous_load,
         "fuel_tank_capacity": gen_data["fuel_tank_gal"]
             }
 
-#return {
-        "model_capacity": model_capacity,
-        "peak_utilization": peak_utilization,
-        "continuous_utilization": continuous_utilization,
-        "charge_rate": charge_rate,
-        "battery_capacity": battery_capacity,
-        "charge_time": charge_time,
-        "fuel_consumption_gph": fuel_consumption,
-        "fuel_per_day": fuel_consumption * 24 if fuel_consumption else 0,
-        "co2_per_day": co2_per_day,
-        "engine_load_percent": engine_load_percent,
-        "generator_data": generator_data
-    }
+
 
 def calculate_load_specs(eboss_model, eboss_type, continuous_load, max_peak_load, generator_kva=None, custom_charge_rate=None):
     """Calculate load-based specifications using authentic EBOSS reference data"""
