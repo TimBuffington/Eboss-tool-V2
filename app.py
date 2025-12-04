@@ -664,7 +664,7 @@ def Cost_Analysis():
         st.divider()
         st.subheader("Print")
 
-Cost Analysis
+Cost_Analysis()
 
 <div style='text-align:center; margin-top:1.5rem;'>
     <a href="https://anacorp.com/contact/" target="_blank">
