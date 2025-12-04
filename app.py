@@ -683,12 +683,12 @@ with fuel_col1:
 
 with fuel_col2:
     fuel_delivery_fee = st.number_input(
-        "Fuel Delivery Fee ($)",
+    "Fuel Delivery Fee ($)",
         min_value=1,
         max_value=1000,
         value=0,
         step=1,
-        key="fuel_delivery_fee"
+    key="fuel_delivery_fee"
     )
 
         # Row 2: PM interval and PM charge
