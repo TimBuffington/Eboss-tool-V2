@@ -632,7 +632,6 @@ def Cost_Analysis():
             <button style="background-color: #81BD47; border: none; color: white; padding: 0.75rem 1.5rem; font-size: 1rem; border-radius: 8px; cursor: pointer;">
                 Contact us for more details
             </button>
-        </a>
     </div>
  
 def cost_analysis_dialog():
