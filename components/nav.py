@@ -27,3 +27,46 @@ def render_config_selector() -> str | None:
             choice = "fuel_eff"
     st.markdown("</div>", unsafe_allow_html=True)
     return choice
+}
+
+def render_modal_nav_grid(*, mode_key: str) -> None:
+    """2 columns × 3 rows; last right cell blank (no Troubleshooting)."""
+    st.markdown("<div class='cta-scope' style='margin-top:.75rem;'>", unsafe_allow_html=True)
+    rows = [
+        ("Technical Specs", "Load Based Specs"),
+        ("Compare", "Cost Analysis"),
+        ("Paralleling", None),
+    ]
+    for left, right in rows:
+        c1, c2 = st.columns(2, gap="small")
+        with c1:
+            st.button(
+                left,
+                key=f"nav_{left.replace(' ', '_').lower()}_{mode_key}",
+                on_click=_nav_to,
+                args=(left,),  # Use args for positional, kwargs for named
+            )
+        with c2:
+            if right:
+                st.button(
+                    right,
+                    key=f"nav_{right.replace(' ', '_').lower()}_{mode_key}",
+                    on_click=_nav_to,
+                    args=(right,),
+                )
+            else:
+                st.markdown("&nbsp;", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+
+
+def _nav_to(page_label: str, *, mode_key: str) -> None:
+    """Close modal & navigate."""
+    st.session_state["launch_tool_modal"] = False
+    target = PAGE_MAP.get(page_label)
+    if target and hasattr(st, "switch_page"):
+        st.switch_page(target)
+    else:
+        st.session_state["page"] = page_label
+        st.rerun()
+
