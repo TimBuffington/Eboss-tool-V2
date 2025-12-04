@@ -2,12 +2,9 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
-def global_css():
-    with open("styles.css") as f:
-        css = f.read()
-    st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
+from style import global_css():
 
-global_css()
+global_css():
 
 
 st.markdown("""
@@ -2393,5 +2390,6 @@ elif st.session_state.get('show_comparison', False) and st.session_state.eboss_m
     
     st.markdown('</div>', unsafe_allow_html=True)
     
+
 
 
