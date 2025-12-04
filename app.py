@@ -728,7 +728,7 @@ pm_col1, pm_col2 = st.columns([1, 1])
 st.markdown("**System Rates**")
 rate_col1, rate_col2 = st.columns([1, 1])
         
-        with rate_col1:
+    with rate_col1:
             st.markdown("**EBOSS® Hybrid System**")
             eboss_weekly_rate = st.number_input(
                 "Weekly Rate ($)",
@@ -747,7 +747,7 @@ rate_col1, rate_col2 = st.columns([1, 1])
                 key="eboss_monthly_rate"
             )
         
-        with rate_col2:
+    with rate_col2:
             st.markdown("**Standard Generator**")
             standard_weekly_rate = st.number_input(
                 "Weekly Rate ($)",
