@@ -719,13 +719,14 @@ with fuel_col2:
 st.markdown("**Maintenance Information**")
 pm_col1, pm_col2 = st.columns([1, 1])
 
-with pm_col1: pm_interval_hrs = st.number_input(
-    "PM Interval Hrs",
-        min_value=0,
-        max_value=1000,
-        value=0,
+with pm_col1:
+    pm_interval_hrs = st.number_input(
+        "PM Interval Hrs",
+        min_value=0.0,
+        max_value=1000.0,
+        value=0.0,
         step=1.0,
-        key = "pm_interval_hrs"
+        key="pm_interval_hrs"
     )
 
 with pm_col2:
@@ -2710,6 +2711,7 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
+
 
 
 
