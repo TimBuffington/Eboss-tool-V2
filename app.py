@@ -1797,6 +1797,7 @@ elif st.session_state.show_load_specs and st.session_state.eboss_model and st.se
 
 # Charge Rate Modal Dialog
 @st.dialog("⚡ Charge Rate Configuration")
+
 def charge_rate_modal():
     # Apply custom styling for better readability
     st.markdown("""
@@ -2333,16 +2334,9 @@ elif st.session_state.get('show_comparison', False) and st.session_state.eboss_m
     st.markdown('</div>', unsafe_allow_html=True)
     
 
+import streamlit as st
 Cost_Analysis()
 
-<div style='text-align:center; margin-top:1.5rem;'>
-    <a href="https://anacorp.com/contact/" target="_blank">
-        <button style="background-color: #81BD47; border: none; color: white; padding: 0.75rem 1.5rem; font-size: 1rem; border-radius: 8px; cursor: pointer;">
-            Contact us for more details
-        </button>
-    </a>
-</div>
- Display
 if st.session_state.show_cost_analysis and st.session_state.eboss_model:
     st.markdown('<br>', unsafe_allow_html=True)
     st.markdown('<div class="form-container">', unsafe_allow_html=True)
