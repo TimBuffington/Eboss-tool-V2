@@ -628,7 +628,7 @@ def generator_selection_dialog():
 def Cost_Analysis():
 
     <div style='text-align:center; margin-top:1.5rem;'>
-        <a href="https://anacorp.com/contact/" target="_blank">
+        #<a href="https://anacorp.com/contact/" target="_blank">
             <button style="background-color: #81BD47; border: none; color: white; padding: 0.75rem 1.5rem; font-size: 1rem; border-radius: 8px; cursor: pointer;">
                 Contact us for more details
             </button>
