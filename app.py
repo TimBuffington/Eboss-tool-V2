@@ -667,8 +667,7 @@ def Cost_Analysis():
     # Call the dialog function
     cost_analysis_dialog()
 
-       
-        # Row 1: Fuel price and delivery fee
+# Row 1: Fuel price and delivery fee
 st.markdown("**Fuel Information**")
 fuel_col1, fuel_col2 = st.columns([1, 1])
 
@@ -682,17 +681,16 @@ with fuel_col1:
         key="local_fuel_price"
     )
 
-        
 with fuel_col2:
-        fuel_delivery_fee = st.number_input(
+    fuel_delivery_fee = st.number_input(
         "Fuel Delivery Fee ($)",
         min_value=1,
         max_value=1000,
         value=0,
         step=1,
         key="fuel_delivery_fee"
-)
-        
+    )
+
         # Row 2: PM interval and PM charge
 st.markdown("**Maintenance Information**")
 pm_col1, pm_col2 = st.columns([1, 1])
