@@ -627,44 +627,45 @@ def generator_selection_dialog():
 
 def Cost_Analysis():
 
-   
- 
     def cost_analysis_dialog():
         """Modal dialog for cost analysis with generator selection and input fields"""
         paired_gen = EBOSS_STANDARD_PAIRING.get(st.session_state.eboss_model, "25 kVA / 20 kW")
         
         # Generator selection section
         st.markdown(f"""
-        <div style="background: rgba(129, 189, 71, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #81BD47; margin-bottom: 1rem;">
-        <strong>Recommended Generator:</strong><br>
-        For the <strong>{st.session_state.eboss_model}</strong> model: <strong>{paired_gen}</strong>
+        <div style="background: rgba(129, 189, 71, 0.1); padding: 1rem; border-radius: 8px; 
+        border-left: 4px solid #81BD47; margin-bottom: 1rem;">
+            <strong>Recommended Generator:</strong><br>
+            For the <strong>{st.session_state.eboss_model}</strong> model: <strong>{paired_gen}</strong>
         </div>
         """, unsafe_allow_html=True)
     
         gen_col1, gen_col2 = st.columns([1, 1])
     
-    with gen_col1:
-        if st.button("✅ Use Recommended", key="use_paired_gen_cost", use_container_width=True):
-            st.session_state.cost_standard_generator = paired_gen
-            st.rerun()
+        # Column 1
+        with gen_col1:
+            if st.button("✅ Use Recommended", key="use_paired_gen_cost", use_container_width=True):
+                st.session_state.cost_standard_generator = paired_gen
+                st.rerun()
     
-    with gen_col2:
-        if st.button("🔧 Select Different", key="select_different_gen_cost", use_container_width=True):
-            # Show dropdown for different generator selection
-            available_generators = list(STANDARD_GENERATOR_DATA.keys())
-            st.session_state.cost_standard_generator = st.selectbox(
-                "Choose Standard Generator:",
-                options=available_generators,
-                index=available_generators.index(paired_gen) if paired_gen in available_generators else 0,
-                key="cost_generator_select"
-            )
+        # Column 2
+        with gen_col2:
+            if st.button("🔧 Select Different", key="select_different_gen_cost", use_container_width=True):
+                available_generators = list(STANDARD_GENERATOR_DATA.keys())
+                st.session_state.cost_standard_generator = st.selectbox(
+                    "Choose Standard Generator:",
+                    options=available_generators,
+                    index=available_generators.index(paired_gen) if paired_gen in available_generators else 0,
+                    key="cost_generator_select"
+                )
     
-    # If a generator is selected, show the cost analysis form
-    if st.session_state.cost_standard_generator:
-        st.divider()
-        st.subheader("Print")
+        # If a generator is selected, show the cost analysis form
+        if st.session_state.get("cost_standard_generator"):
+            st.divider()
+            st.subheader("Print")
 
-Cost_Analysis()
+    # Call the dialog function
+    cost_analysis_dialog()
 
        
         # Row 1: Fuel price and delivery fee
