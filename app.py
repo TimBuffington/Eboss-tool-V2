@@ -1193,7 +1193,7 @@ def calculate_standard_generator_specs(standard_generator_size, continuous_load,
         "fuel_tank_capacity": gen_data["fuel_tank_gal"]
             }
 
-return {
+#return {
         "model_capacity": model_capacity,
         "peak_utilization": peak_utilization,
         "continuous_utilization": continuous_utilization,
