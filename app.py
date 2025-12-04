@@ -623,10 +623,6 @@ def generator_selection_dialog():
     
     st.markdown('</div>', unsafe_allow_html=True)
 
-#ADD PRINT
-
-
-
 def cost_analysis_dialog():
     """Modal dialog for cost analysis with generator selection and input fields"""
     paired_gen = EBOSS_STANDARD_PAIRING.get(st.session_state.eboss_model, "25 kVA / 20 kW")
@@ -661,8 +657,8 @@ with gen_col1:
     
         # If a generator is selected, show the cost analysis form
             if st.session_state.get("cost_standard_generator"):
-            st.divider()
-            st.subheader("Print")
+                st.divider()
+                st.subheader("Print")
 
     # Call the dialog function
 def cost_analysis_dialog():
@@ -700,7 +696,7 @@ def cost_analysis_dialog():
             st.markdown('<a href="https://anacorp.com/contact/" target="_blank">Contact us for more details</a>', unsafe_allow_html=True)
             st.subheader("Parameters")
             
-# Row 1: Fuel price and delivery fee
+        # Row 1: Fuel price and delivery fee
 st.markdown("**Fuel Information**")
 fuel_col1, fuel_col2 = st.columns([1, 1])
 with fuel_col1:
