@@ -671,63 +671,62 @@ Cost_Analysis()
 st.markdown("**Fuel Information**")
 fuel_col1, fuel_col2 = st.columns([1, 1])
         
-    with fuel_col1:
-         local_fuel_price = st.number_input(
-         "Local Fuel Price / Gal ($)",
-         min_value=1,
-         max_value=1000,
-         value=0,
-         step=1,
-         key="local_fuel_price"
-        )
+with fuel_col1:
+    local_fuel_price = st.number_input(
+    "Local Fuel Price / Gal ($)",
+    min_value=1,
+    max_value=1000,
+    value=0,
+    step=1,
+    key="local_fuel_price"
+)
         
-    with fuel_col2:
-         fuel_delivery_fee = st.number_input(
-             "Fuel Delivery Fee ($)",
-              min_value=1,
-              max_value=1000,
-              value=0,
-              step=1,
-              key="fuel_delivery_fee"
-            )
+with fuel_col2:
+    fuel_delivery_fee = st.number_input(
+    "Fuel Delivery Fee ($)",
+    min_value=1,
+    max_value=1000,
+    value=0,
+    step=1,
+    key="fuel_delivery_fee"
+)
         
         # Row 2: PM interval and PM charge
-        st.markdown("**Maintenance Information**")
-        pm_col1, pm_col2 = st.columns([1, 1])
+st.markdown("**Maintenance Information**")
+pm_col1, pm_col2 = st.columns([1, 1])
+      
+    with pm_col1:
+        pm_interval_hrs = st.number_input(
+        "PM Interval Hrs",
+        min_value=1,
+        max_value=10000,
+        value=500,
+        step=1,
+        key="pm_interval_hrs"
+    )
         
-        with pm_col1:
-            pm_interval_hrs = st.number_input(
-                "PM Interval Hrs",
-                min_value=1,
-                max_value=10000,
-                value=500,
-                step=1,
-                key="pm_interval_hrs"
-            )
-        
-        with pm_col2:
-            pm_charge_selection = st.radio(
-                "Is there a PM Charge?",
-                options=["No", "Yes"],
-                index=0,
-                key="pm_charge_radio",
-                horizontal=True
-            )
+    with pm_col2:
+        pm_charge_selection = st.radio(
+        "Is there a PM Charge?",
+        options=["No", "Yes"],
+        index=0,
+        key="pm_charge_radio",
+        horizontal=True
+    )
             
-            if pm_charge_selection == "Yes":
-                cost_per_pm = st.number_input(
-                    "Cost per PM ($)",
-                    min_value=0.0,
-                    max_value=10000.0,
-                    value=0.0,
-                    step=0.1,
-                    format="%.2f",
-                    key="cost_per_pm"
-                )
+    if pm_charge_selection == "Yes":
+        cost_per_pm = st.number_input(
+        "Cost per PM ($)",
+        min_value=0.0,
+        max_value=10000.0,
+        value=0.0,
+        format="%.2f",
+        key="cost_per_pm"
+    )
         
         # Row 3: Weekly and Monthly rates for both systems
-        st.markdown("**System Rates**")
-        rate_col1, rate_col2 = st.columns([1, 1])
+st.markdown("**System Rates**")
+rate_col1, rate_col2 = st.columns([1, 1])
         
         with rate_col1:
             st.markdown("**EBOSS® Hybrid System**")
