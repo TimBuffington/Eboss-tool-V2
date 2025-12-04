@@ -693,6 +693,7 @@ def cost_analysis_dialog():
         # Row 1: Fuel price and delivery fee
 st.markdown("**Fuel Information**")
 fuel_col1, fuel_col2 = st.columns([1, 1])
+
 with fuel_col1:
     local_fuel_price = st.number_input(
         "Local Fuel Price / Gal ($)",
@@ -701,20 +702,20 @@ with fuel_col1:
         value=0.00,
         step=0.01,
         key="local_fuel_price"
-)
-   
+    )
+
 with fuel_col2:
     fuel_delivery_fee = st.number_input(
-            "Fuel Delivery Fee ($)",
-    min_value=0.0,       # float
-    max_value=1000.0,    # float
-    value=75.0,          # float
-    step=1.0,            # float
-    format="%.2f",       # show two decimal places
-    key="fuel_delivery_fee"
+        "Fuel Delivery Fee ($)",
+        min_value=0.0,       # float
+        max_value=1000.0,    # float
+        value=75.0,          # float
+        step=1.0,            # float
+        format="%.2f",       # show two decimal places
+        key="fuel_delivery_fee"
     )
-        
-        # Row 2: PM interval and PM charge
+
+# Row 2: PM interval and PM charge   <-- FIXED: no extra indentation
 st.markdown("**Maintenance Information**")
 pm_col1, pm_col2 = st.columns([1, 1])
 
@@ -727,7 +728,7 @@ with pm_col1:
         step=1.0,
         key="pm_interval_hrs"
     )
-        
+
 with pm_col2:
     pm_charge_selection = st.radio(
         "Is there a PM Charge?",
@@ -736,7 +737,7 @@ with pm_col2:
         key="pm_charge_radio",
         horizontal=True
     )
-    
+
     if pm_charge_selection == "Yes":
         cost_per_pm = st.number_input(
             "Cost per PM ($)",
@@ -747,6 +748,7 @@ with pm_col2:
             format="%.2f",
             key="cost_per_pm"
         )
+
         
         # Row 3: Weekly and Monthly rates for both systems
 st.markdown("**System Rates**")
@@ -2709,6 +2711,7 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
+
 
 
 
