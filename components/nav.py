@@ -1,15 +1,19 @@
 import streamlit as st
 from utils.style import ensure_global_css  # <-- use the helper from utils
 
-COLORS = {
-    "Asphalt": "#000000",
-    "Concrete": "#939598",
-    "Energy Green": "#81BD47",
-    "Alpine White": "#FFFFFF",
-}
+
+
+import streamlit as st
+from style import ensure_global_css   # if defined externally, optional
+
+# ⬇️ CALL YOUR CSS LOADER HERE — immediately after imports
+ensure_global_css(COLORS, extra_files=["styles/base.css"])
+
+# -------------------------------------------------
+# Now define your components
+# -------------------------------------------------
 
 def render_global_header(mode: str = "external"):
-    ensure_global_css(COLORS, extra_files=["styles/base.css"])  # base.css optional
     st.markdown("<h1 style='text-align:center;margin:.5rem 0'>EBOSS® Size & Spec Tool</h1>", unsafe_allow_html=True)
 
 def render_config_selector() -> str | None:
@@ -27,10 +31,9 @@ def render_config_selector() -> str | None:
             choice = "fuel_eff"
     st.markdown("</div>", unsafe_allow_html=True)
     return choice
-}
+
 
 def render_modal_nav_grid(*, mode_key: str) -> None:
-    """2 columns × 3 rows; last right cell blank (no Troubleshooting)."""
     st.markdown("<div class='cta-scope' style='margin-top:.75rem;'>", unsafe_allow_html=True)
     rows = [
         ("Technical Specs", "Load Based Specs"),
@@ -44,7 +47,7 @@ def render_modal_nav_grid(*, mode_key: str) -> None:
                 left,
                 key=f"nav_{left.replace(' ', '_').lower()}_{mode_key}",
                 on_click=_nav_to,
-                args=(left,),  # Use args for positional, kwargs for named
+                args=(left,),
             )
         with c2:
             if right:
@@ -56,12 +59,11 @@ def render_modal_nav_grid(*, mode_key: str) -> None:
                 )
             else:
                 st.markdown("&nbsp;", unsafe_allow_html=True)
+
     st.markdown("</div>", unsafe_allow_html=True)
 
 
-
-def _nav_to(page_label: str, *, mode_key: str) -> None:
-    """Close modal & navigate."""
+def nav_to(page_label: str, *, mode_key: str) -> None:
     st.session_state["launch_tool_modal"] = False
     target = PAGE_MAP.get(page_label)
     if target and hasattr(st, "switch_page"):
@@ -69,4 +71,3 @@ def _nav_to(page_label: str, *, mode_key: str) -> None:
     else:
         st.session_state["page"] = page_label
         st.rerun()
-
