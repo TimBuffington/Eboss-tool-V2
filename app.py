@@ -717,7 +717,7 @@ with fuel_col2:
         # Row 2: PM interval and PM charge
 st.markdown("**Maintenance Information**")
 pm_col1, pm_col2 = st.columns([1, 1])
-        
+
 with pm_col1:
     pm_interval_hrs = st.number_input(
         "PM Interval Hrs",
@@ -730,11 +730,11 @@ with pm_col1:
         
 with pm_col2:
     pm_charge_selection = st.radio(
-    "Is there a PM Charge?",
-    options=["No", "Yes"],
-    index=0,
-    key="pm_charge_radio",
-    horizontal=True
+        "Is there a PM Charge?",
+        options=["No", "Yes"],
+        index=0,
+        key="pm_charge_radio",
+        horizontal=True
 )
             
 if pm_charge_selection == "Yes":
@@ -2709,5 +2709,6 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
+
 
 
