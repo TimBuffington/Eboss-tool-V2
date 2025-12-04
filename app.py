@@ -2394,8 +2394,8 @@ elif st.session_state.get('show_comparison', False) and st.session_state.eboss_m
     st.markdown('</div>', unsafe_allow_html=True)
     
 
-import streamlit as st
-Cost_Analysis()
+
+def Cost_Analysis():
 
 if st.session_state.show_cost_analysis and st.session_state.eboss_model:
     st.markdown('<br>', unsafe_allow_html=True)
@@ -2686,6 +2686,7 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
+
 
 
 
