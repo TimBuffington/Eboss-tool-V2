@@ -625,7 +625,7 @@ def generator_selection_dialog():
 
 #ADD PRINT
 
-def Cost_Analysis():
+
 
     def cost_analysis_dialog():
         """Modal dialog for cost analysis with generator selection and input fields"""
@@ -665,69 +665,177 @@ def Cost_Analysis():
             st.subheader("Print")
 
     # Call the dialog function
-    cost_analysis_dialog()
+   def cost_analysis_dialog():
+    """Modal dialog for cost analysis with generator selection and input fields"""
+    paired_gen = EBOSS_STANDARD_PAIRING.get(st.session_state.eboss_model, "25 kVA / 20 kW")
+    
+    # Generator selection section
+    st.markdown("""
+    <strong>Recommended Generator:</strong><br>
+    For the <strong>{st.session_state.eboss_model}</strong> model: <strong>{paired_gen}</strong>
 
+""", unsafe_allow_html=True)
+    
+    gen_col1, gen_col2 = st.columns([1, 1])
+    
+    with gen_col1:
+        if st.button("✅ Use Recommended", key="use_paired_gen_cost", use_container_width=True):
+            st.session_state.cost_standard_generator = paired_gen
+            st.rerun()
+    
+    with gen_col2:
+        if st.button("🔧 Select Different", key="select_different_gen_cost", use_container_width=True):
+            # Show dropdown for different generator selection
+            available_generators = list(STANDARD_GENERATOR_DATA.keys())
+            st.session_state.cost_standard_generator = st.selectbox(
+                "Choose Standard Generator:",
+                options=available_generators,
+                index=available_generators.index(paired_gen) if paired_gen in available_generators else 0,
+                key="cost_generator_select"
+            )
+    
+    # If a generator is selected, show the cost analysis form
+    if st.session_state.cost_standard_generator:
+        st.divider()
+
+st.markdown('<a href="https://anacorp.com/contact/" target="_blank">Contact us for more details</a>', unsafe_allow_html=True)
+st.subheader("Parameters")
+        
 # Row 1: Fuel price and delivery fee
 st.markdown("**Fuel Information**")
 fuel_col1, fuel_col2 = st.columns([1, 1])
-
 with fuel_col1:
-    local_fuel_price = st.number_input(
-        "Local Fuel Price / Gal ($)",
-        min_value=-1.0,
-        max_value=1000.0,
-        value=0.00,
-        step=0.01,
-        key="local_fuel_price"
-    )
-
+           local_fuel_price = st.number_input(
+    "Local Fuel Price / Gal ($)",
+    min_value=-1.0,
+    max_value=1000.0,
+    value=0.00,
+    step=0.01,
+    key="local_fuel_price"
+)
+   
 with fuel_col2:
     fuel_delivery_fee = st.number_input(
-    "Fuel Delivery Fee ($)",
-    min_value=1,
-    max_value=1000,
-    value=0,
-    step=1,
-    key = "fuel_delivery_fee"
-)
-
-# Row 2: PM interval and PM charge
-st.markdown("**Maintenance Information**")
-pm_col1, pm_col2 = st.columns([1, 1])
-      
-with pm_col1:
-        pm_interval_hrs = st.number_input(
-        "PM Interval Hrs",
-        min_value=1,
-        max_value=10000,
-        value=500,
-        step=1,
-        key="pm_interval_hrs"
+            "Fuel Delivery Fee ($)",
+    min_value=0.0,       # float
+    max_value=1000.0,    # float
+    value=75.0,          # float
+    step=1.0.0,            # float
+    format="%.2f",       # show two decimal places
+    key="fuel_delivery_fee"
     )
         
+        # Row 2: PM interval and PM charge
+st.markdown("**Maintenance Information**")
+pm_col1, pm_col2 = st.columns([1, 1])
+        
+with pm_col1:
+    pm_interval_hrs = st.number_input(
+    "PM Interval Hrs",
+    min_value=0,
+                max_value=1000,
+                value=0,
+                step=1.0,
+                key="pm_interval_hrs"
+            )
+        
 with pm_col2:
-        pm_charge_selection = st.radio(
-        "Is there a PM Charge?",
-        options=["No", "Yes"],
-        index=0,
-        key="pm_charge_radio",
-        horizontal=True
-    )
+    pm_charge_selection = st.radio(
+    "Is there a PM Charge?",
+    options=["No", "Yes"],
+                index=0,
+                key="pm_charge_radio",
+                horizontal=True
+            )
             
 if pm_charge_selection == "Yes":
-        cost_per_pm = st.number_input(
-        "Cost per PM ($)",
-        min_value=0.0,
-        max_value=10000.0,
-        value=0.0,
-        format="%.2f",
-        key="cost_per_pm"
-    )
+                cost_per_pm = st.number_input(
+                    "Cost per PM ($)",
+                    min_value=0.0,
+                    max_value=10000.0,
+                    value=0.0,
+                    step=0.1,
+                    format="%.2f",
+                    key="cost_per_pm"
+                )
         
         # Row 3: Weekly and Monthly rates for both systems
 st.markdown("**System Rates**")
 rate_col1, rate_col2 = st.columns([1, 1])
+
+# --- EBOSS Hybrid System ---
+with rate_col1:
+    st.markdown("**EBOSS Hybrid System**")
+
+    default_rate = 1500.0
+    eboss_weekly_rate = st.number_input(
+        "Weekly Rate ($)",
+        min_value=0.0,
+        max_value=100000.0,
+        value=max(default_rate, 0.0),
+        step=50.0,
+        format="%.2f",
+        key="eboss_weekly_rate"
+    )
+
+    eboss_monthly_rate = st.number_input(
+        "Monthly Rate ($)",
+        min_value=0.0,           # ✅ safer than -1.00
+        max_value=100000.0,
+        value=0.0,
+        step=50.0,
+        format="%.2f",
+        key="eboss_monthly_rate"
+    )
+
+# --- Standard Generator ---
+with rate_col2:
+    st.markdown("**Standard Generator**")
+
+    standard_weekly_rate = st.number_input(
+        "Weekly Rate ($)",
+        min_value=0.0,
+        max_value=100000.0,
+        value=0.0,
+        step=50.0,
+        format="%.2f",
+        key="standard_weekly_rate"
+    )
+
+    standard_monthly_rate = st.number_input(
+        "Monthly Rate ($)",
+        min_value=0.0,
+        max_value=100000.0,
+        value=0.0,
+        step=50.0,
+        format="%.2f",
+        key="standard_monthly_rate"
+    )
+
+        # Action buttons
+st.divider()
+action_col1, action_col2, action_col3 = st.columns([1, 1, 1])
         
+with action_col1:
+    if st.button("📊 Generate Analysis", key="generate_cost_analysis", use_container_width=True):
+        st.session_state.show_cost_dialog = False
+        st.session_state.show_cost_analysis = True
+        st.rerun()
+        
+        with action_col2:
+            if st.button("🔄 Reset Form", key="reset_cost_form", use_container_width=True):
+                # Reset all form values
+                for key in ['local_fuel_price', 'fuel_delivery_fee', 'pm_interval_hrs', 'cost_per_pm', 
+                           'eboss_weekly_rate', 'eboss_monthly_rate', 'standard_weekly_rate', 'standard_monthly_rate']:
+                    if key in st.session_state:
+                        del st.session_state[key]
+                st.rerun()
+        
+        with action_col3:
+            if st.button("❌ Cancel", key="cancel_cost_dialog", use_container_width=True):
+                st.session_state.show_cost_dialog = False
+                st.rerun()
+
 # EBOSS Specifications Data
 EBOSS_SPECS = {
     "EB25 kVA": {
