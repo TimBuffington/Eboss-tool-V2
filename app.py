@@ -629,19 +629,19 @@ def Cost_Analysis():
 
    
  
-def cost_analysis_dialog():
-    """Modal dialog for cost analysis with generator selection and input fields"""
-    paired_gen = EBOSS_STANDARD_PAIRING.get(st.session_state.eboss_model, "25 kVA / 20 kW")
+    def cost_analysis_dialog():
+        """Modal dialog for cost analysis with generator selection and input fields"""
+        paired_gen = EBOSS_STANDARD_PAIRING.get(st.session_state.eboss_model, "25 kVA / 20 kW")
+        
+        # Generator selection section
+        st.markdown(f"""
+        <div style="background: rgba(129, 189, 71, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #81BD47; margin-bottom: 1rem;">
+        <strong>Recommended Generator:</strong><br>
+        For the <strong>{st.session_state.eboss_model}</strong> model: <strong>{paired_gen}</strong>
+        </div>
+        """, unsafe_allow_html=True)
     
-    # Generator selection section
-    st.markdown(f"""
-    <div style="background: rgba(129, 189, 71, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #81BD47; margin-bottom: 1rem;">
-    <strong>Recommended Generator:</strong><br>
-    For the <strong>{st.session_state.eboss_model}</strong> model: <strong>{paired_gen}</strong>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    gen_col1, gen_col2 = st.columns([1, 1])
+        gen_col1, gen_col2 = st.columns([1, 1])
     
     with gen_col1:
         if st.button("✅ Use Recommended", key="use_paired_gen_cost", use_container_width=True):
