@@ -684,7 +684,7 @@ with fuel_col1:
 
         
 with fuel_col2:
-    fuel_delivery_fee = st.number_input(
+        fuel_delivery_fee = st.number_input(
         "Fuel Delivery Fee ($)",
         min_value=1,
         max_value=1000,
