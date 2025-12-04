@@ -728,181 +728,587 @@ if pm_charge_selection == "Yes":
 st.markdown("**System Rates**")
 rate_col1, rate_col2 = st.columns([1, 1])
         
-with rate_col1:
-    st.markdown("**EBOSS® Hybrid System**")
-            eboss_weekly_rate = st.number_input(
-                "Weekly Rate ($)",
-                min_value=1,
-                max_value=1000,
-                value=0,
-                step=1,
-                key="eboss_weekly_rate"
-            )
-            eboss_monthly_rate = st.number_input(
-                "Monthly Rate ($)",
-                min_value=1,
-                max_value=1000,
-                value=0,
-                step=1,
-                key="eboss_monthly_rate"
-            )
-        
-with rate_col2:
-    st.markdown("**Standard Generator**")
-            standard_weekly_rate = st.number_input(
-                "Weekly Rate ($)",
-                min_value=1,
-                max_value=1000,
-                value=0,
-                step=1,
-                key="standard_weekly_rate"
-            )
-        standard_monthly_rate = st.number_input(
-                "Monthly Rate ($)",
-                min_value=0.0,
-                max_value=200000.0,
-                value=0.0,
-                step=0.1,
-                format="%.2f",
-                key="standard_monthly_rate"
-            )
-        
-        # Action buttons
-    st.divider()
-        action_col1, action_col2, action_col3 = st.columns([1, 1, 1])
-        
-with action_col1:
-    if st.button("📊 Generate Analysis", key="generate_cost_analysis", use_container_width=True):
-                st.session_state.show_cost_dialog = False
-                st.session_state.show_cost_analysis = True
-                st.rerun()
-        
-        with action_col2:
-            if st.button("🔄 Reset Form", key="reset_cost_form", use_container_width=True):
-                # Reset all form values
-                for key in ['local_fuel_price', 'fuel_delivery_fee', 'pm_interval_hrs', 'cost_per_pm', 
-                           'eboss_weekly_rate', 'eboss_monthly_rate', 'standard_weekly_rate', 'standard_monthly_rate']:
-                    if key in st.session_state:
-                        del st.session_state[key]
-                st.rerun()
-        
-        with action_col3:
-            if st.button("❌ Cancel", key="cancel_cost_dialog", use_container_width=True):
-                st.session_state.show_cost_dialog = False
-                st.rerun()
+# EBOSS Specifications Data
+EBOSS_SPECS = {
+    "EB25 kVA": {
+        "Hybrid Energy System": "ANA EBOSS",
+        "Three-phase Max Power": "30 kVA / 24 kW",
+        "Single-phase Max Power": "20 kVA / 16 kW",
+        "Frequency": "60 Hz",
+        "Simultaneous voltage": "120/240 (1Φ) • 208/480 (3Φ)",
+        "Voltage regulation": "Adjustable",
+        "Max Intermittent amp-load 208V": "70 A / 13.5 kW",
+        "Max Continuous amp-load 208V": "55 A / 10.5 kW",
+        "Max Intermittent amp-load 240V": "61 A / 13.5 kW",
+        "Max Continuous amp-load 240V": "48 A / 10.5 kW",
+        "Max Intermittent amp-load 480V": "35 A / 28 kW",
+        "Max Continuous amp-load 480V": "28 A / 22 kW",
+        "Battery Type": "Lithium Titanate Oxide (Li4Ti5O12)",
+        "Battery Capacity": "15 kWh",
+        "Generator kVA": "25 kVA (Hybrid units only)",
+        "Battery Voltage": "440 VDC",
+        "Inverter Type": "Pure Sine Wave",
+        "Operating Temperature": "-4°F to 113°F (-20°C to 45°C)",
+        "Dimensions (L x W x H)": "108\" x 45\" x 62\"",
+        "Weight": "8,200 lbs",
+        "Warranty - EBOSS only": "2 Years",
+        "Warranty - With trailer & generator": "2 Years, 2000 Hours",
+        "Battery warranty": "7 Years",
+        "Service & Support": "24/7, 365 Days",
+        "Training": "Henderson, NV or On Location"
+    },
+    "EB70 kVA": {
+        "Hybrid Energy System": "ANA EBOSS",
+        "Three-phase Max Power": "70 kVA / 56 kW",
+        "Single-phase Max Power": "47 kVA / 37 kW",
+        "Frequency": "60 Hz",
+        "Simultaneous voltage": "120/240 (1Φ) • 208/480 (3Φ)",
+        "Voltage regulation": "Adjustable",
+        "Max Intermittent amp-load 208V": "194 A / 37.2 kW",
+        "Max Continuous amp-load 208V": "155 A / 29.8 kW",
+        "Max Intermittent amp-load 240V": "169 A / 37.2 kW",
+        "Max Continuous amp-load 240V": "135 A / 29.8 kW",
+        "Max Intermittent amp-load 480V": "84 A / 70 kW",
+        "Max Continuous amp-load 480V": "67 A / 56 kW",
+        "Battery Type": "Lithium Titanate Oxide (Li4Ti5O12)",
+        "Battery Capacity": "25 kWh",
+        "Generator kVA": "45 kVA (Hybrid units only)",
+        "Battery Voltage": "440 VDC",
+        "Inverter Type": "Pure Sine Wave",
+        "Operating Temperature": "-4°F to 113°F (-20°C to 45°C)",
+        "Dimensions (L x W x H)": "108\" x 60\" x 62\"",
+        "Weight": "13,200 lbs",
+        "Warranty - EBOSS only": "2 Years",
+        "Warranty - With trailer & generator": "2 Years, 2000 Hours",
+        "Battery warranty": "7 Years",
+        "Service & Support": "24/7, 365 Days",
+        "Training": "Henderson, NV or On Location"
+    },
+    "EB125 kVA": {
+        "Hybrid Energy System": "ANA EBOSS",
+        "Three-phase Max Power": "125 kVA / 100 kW",
+        "Single-phase Max Power": "N/A / N/A",
+        "Frequency": "60 Hz",
+        "Simultaneous voltage": "120V (1Φ) • 208/480 (3Φ)",
+        "Voltage regulation": "Adjustable",
+        "Max Intermittent amp-load 208V": "345 A / 66.2 kW",
+        "Max Continuous amp-load 208V": "276 A / 53 kW",
+        "Max Intermittent amp-load 240V": "301 A / 66.2 kW",
+        "Max Continuous amp-load 240V": "241 A / 53 kW",
+        "Max Intermittent amp-load 480V": "150 A / 125 kW",
+        "Max Continuous amp-load 480V": "120 A / 100 kW",
+        "Battery Type": "Lithium Titanate Oxide (Li4Ti5O12)",
+        "Battery Capacity": "50 kWh",
+        "Generator kVA": "65 kVA (Hybrid units only)",
+        "Battery Voltage": "440 VDC",
+        "Inverter Type": "Pure Sine Wave",
+        "Operating Temperature": "-4°F to 113°F (-20°C to 45°C)",
+        "Dimensions (L x W x H)": "144\" x 60\" x 62\"",
+        "Weight": "18,200 lbs",
+        "Warranty - EBOSS only": "2 Years",
+        "Warranty - With trailer & generator": "2 Years, 2000 Hours",
+        "Battery warranty": "7 Years",
+        "Service & Support": "24/7, 365 Days",
+        "Training": "Henderson, NV or On Location"
+    },
+    "EB220 kVA": {
+        "Hybrid Energy System": "ANA EBOSS",
+        "Three-phase Max Power": "220 kVA / 176 kW",
+        "Single-phase Max Power": "N/A / N/A",
+        "Frequency": "60 Hz",
+        "Simultaneous voltage": "120V (1Φ) • 208/480 (3Φ)",
+        "Voltage regulation": "Adjustable",
+        "Max Intermittent amp-load 208V": "700 A / 134 kW",
+        "Max Continuous amp-load 208V": "560 A / 108 kW",
+        "Max Intermittent amp-load 240V": "611 A / 134 kW",
+        "Max Continuous amp-load 240V": "489 A / 108 kW",
+        "Max Intermittent amp-load 480V": "264 A / 220 kW",
+        "Max Continuous amp-load 480V": "211 A / 176 kW",
+        "Battery Type": "Lithium Titanate Oxide (Li4Ti5O12)",
+        "Battery Capacity": "75 kWh",
+        "Generator kVA": "125 kVA (Hybrid units only)",
+        "Battery Voltage": "440 VDC",
+        "Inverter Type": "Pure Sine Wave",
+        "Operating Temperature": "-4°F to 113°F (-20°C to 45°C)",
+        "Dimensions (L x W x H)": "192\" x 60\" x 62\"",
+        "Weight": "29,200 lbs",
+        "Warranty - EBOSS only": "2 Years",
+        "Warranty - With trailer & generator": "2 Years, 2000 Hours",
+        "Battery warranty": "7 Years",
+        "Service & Support": "24/7, 365 Days",
+        "Training": "Henderson, NV or On Location"
+    },
+    "EB400 kVA": {
+        "Hybrid Energy System": "ANA EBOSS™",
+        "Three-phase Max Power": "400 kVA / 320 kW",
+        "Single-phase Max Power": "N/A",
+        "Frequency": "60 Hz",
+        "Simultaneous voltage": "120V (Courtesy Outlets) • 480 (3Φ)",
+        "Voltage regulation": "Adjustable",
+        "Max Intermittent amp-load 208V": "481 A / 92.5 kW",
+        "Max Continuous amp-load 208V": "385 A / 74 kW",
+        "Max Intermittent amp-load 240V": "419 A / 92.5 kW",
+        "Max Continuous amp-load 240V": "335 A / 74 kW",
+        "Max Intermittent amp-load 480V": "481 A / 400 kW",
+        "Max Continuous amp-load 480V": "385 A / 320 kW",
+        "Battery Type": "Lithium Titanate Oxide (Li4Ti5O12)",
+        "Battery Capacity": "125 kWh",
+        "Generator kVA": "220 kVA (Hybrid units only)",
+        "Battery Voltage": "440 VDC",
+        "Inverter Type": "Pure Sine Wave",
+        "Operating Temperature": "-4°F to 113°F (-20°C to 45°C)",
+        "Dimensions (L x W x H)": "240\" x 60\" x 62\"",
+        "Weight": "38,200 lbs",
+        "Warranty": "2 Years",
+        "Warranty - With generator": "2 Years, 2000 Hours",
+        "Battery warranty": "7 Years",
+        "Service & Support": "24/7, 365 Days",
+        "Training": "Henderson, NV or On Location"
+    }
+}
 
-def calculate_mathematical_difference(eboss_value, standard_value, spec_name):
-    #Calculate mathematical difference between EBOSS® and standard values"""
-    import re
+
+#--POWER /ENGINE STATS--EBOSS
+spec_data = {
+    "EBOSS® 25 kVA": {
+        "Three-phase Output": "25 kVA / 20 kW",
+        "Single-phase Output": "20 kVA / 16 kW",
+        "Frequency": "60 Hz",
+        "Simultaneous Voltage": "120V (1Φ) • 208/480 (3Φ)",
+        "Voltage Regulation": "Adjustable",
+        "Max Intermittent Amp Load @208V": "83 A / 17.3 kW",
+        "Max Intermittent Amp Load @480V": "36 A / 29.8 kW",
+        "Motor Start Rating 3s @208V": "133 A / 47.8 kW",
+        "Motor Start Rating 3s @480V": "57 A / 47.8 kW",
+        "Generator": "Airman SDG25",
+        "EBOSS Charge Rate": "25 kVA / 20 kW"
+    },
+    "EBOSS® 70 kVA": {
+        "Three-phase Output": "45 kVA / 36 kW",
+        "Single-phase Output": "47 kVA / 37 kW",
+        "Frequency": "60 Hz",
+        "Simultaneous Voltage": "120V (1Φ) • 208/480 (3Φ)",
+        "Voltage Regulation": "Adjustable",
+        "Max Intermittent Amp Load @208V": "194 A / 38 kW",
+        "Max Intermittent Amp Load @480V": "84 A / 58 kW",
+        "Motor Start Rating 3s @208V": "298 A / 107 kW",
+        "Motor Start Rating 3s @480V": "129 A / 107 kW",
+        "Generator": "Airman SDG45",
+        "EBOSS Charge Rate": "45 kVA / 36 kW"
+    }
+}
+EBOSS_LOAD_REFERENCE = {
+    "battery_capacities": {
+        "EB25 kVA": 15,
+        "EB70 kVA": 25,
+        "EB125 kVA": 50,
+        "EB220 kVA": 75,
+        "EB400 kVA": 125
+    },
+    "generator_kva_hybrid": {
+        "EB25 kVA": 25,
+        "EB70 kVA": 45,
+        "EB125 kVA": 65,
+        "EB220 kVA": 125,
+        "EB400 kVA": 220
+    },
+    "generator_sizes": {
+        25: {"eboss_model": "EB25 kVA", "pm_charge_rate": 18.5, "fh_charge_rate": 19.5, "max_charge_rate": 20, "kwh": 15, "gen_kw": 20},
+        45: {"eboss_model": "EB70 kVA", "pm_charge_rate": 33, "fh_charge_rate": 36, "max_charge_rate": 45, "kwh": 25, "gen_kw": 36},
+        65: {"eboss_model": "EB125 kVA", "pm_charge_rate": 48, "fh_charge_rate": 52, "max_charge_rate": 65, "kwh": 50, "gen_kw": 52},
+        125: {"eboss_model": "EB220 kVA", "pm_charge_rate": 96, "fh_charge_rate": 100, "max_charge_rate": 125, "kwh": 75, "gen_kw": 100},
+        220: {"eboss_model": "EB400 kVA", "pm_charge_rate": 166, "fh_charge_rate": 176, "max_charge_rate": 220, "kwh": 125, "gen_kw": 176}
+    },
+    "gph_interpolation": {
+        25: {"25%": 0.67, "50%": 0.94, "75%": 1.26, "100%": 1.62},
+        45: {"25%": 1.04, "50%": 1.60, "75%": 2.20, "100%": 2.03},
+        70: {"25%": 1.70, "50%": 2.60, "75%": 3.50, "100%": 4.40},
+        125: {"25%": 2.60, "50%": 4.10, "75%": 5.60, "100%": 7.10},
+        220: {"25%": 4.60, "50%": 6.90, "75%": 9.40, "100%": 12.00},
+        400: {"25%": 7.70, "50%": 12.20, "75%": 17.30, "100%": 22.50}
+    }
+}
+
+# Standard Diesel Generator Reference Data (based on authentic industry specifications)
+STANDARD_GENERATOR_DATA = {
+    "25 kVA / 20 kW": {
+        "kva": 25, "kw": 20,
+        "fuel_consumption_gph": {"50%": 0.90, "75%": 1.30, "100%": 1.60},
+        "noise_level_db": 68, "dimensions": "L:48\" W:24\" H:30\"", "weight_lbs": 650,
+        "fuel_tank_gal": 12, "runtime_at_50_load": 13.3, "co2_per_gal": 22.4
+    },
+    "45 kVA / 36 kW": {
+        "kva": 45, "kw": 36,
+        "fuel_consumption_gph": {"50%": 2.30, "75%": 3.20, "100%": 4.00},
+        "noise_level_db": 72, "dimensions": "L:60\" W:28\" H:36\"", "weight_lbs": 1200,
+        "fuel_tank_gal": 25, "runtime_at_50_load": 10.9, "co2_per_gal": 22.4
+    },
+    "65 kVA / 52 kW": {
+        "kva": 65, "kw": 52,
+        "fuel_consumption_gph": {"50%": 2.90, "75%": 3.80, "100%": 4.80},
+        "noise_level_db": 75, "dimensions": "L:72\" W:32\" H:42\"", "weight_lbs": 1800,
+        "fuel_tank_gal": 40, "runtime_at_50_load": 13.8, "co2_per_gal": 22.4
+    },
+    "125 kVA / 100 kW": {
+        "kva": 125, "kw": 100,
+        "fuel_consumption_gph": {"50%": 5.00, "75%": 7.10, "100%": 9.10},
+        "noise_level_db": 78, "dimensions": "L:96\" W:36\" H:48\"", "weight_lbs": 3200,
+        "fuel_tank_gal": 75, "runtime_at_50_load": 15.0, "co2_per_gal": 22.4
+    },
+    "220 kVA / 176 kW": {
+        "kva": 220, "kw": 176,
+        "fuel_consumption_gph": {"50%": 8.80, "75%": 12.50, "100%": 16.60},
+        "noise_level_db": 82, "dimensions": "L:120\" W:48\" H:60\"", "weight_lbs": 5500,
+        "fuel_tank_gal": 125, "runtime_at_50_load": 14.2, "co2_per_gal": 22.4
+    },
+    "400 kVA / 320 kW": {
+        "kva": 400, "kw": 320,
+        "fuel_consumption_gph": {"50%": 14.90, "75%": 21.30, "100%": 28.60},
+        "noise_level_db": 85, "dimensions": "L:144\" W:60\" H:72\"", "weight_lbs": 8800,
+        "fuel_tank_gal": 200, "runtime_at_50_load": 13.4, "co2_per_gal": 22.4
+    }
+}
+
+# Standard Generator Data for Comparison
+STANDARD_GENERATOR_DATA = {
+    "25 kVA / 20 kW": {
+        "kw": 20,
+        "fuel_consumption_gph": {"50%": 1.2, "75%": 1.7, "100%": 2.3},
+        "fuel_tank_gal": 38,
+        "co2_per_gal": 22.4,
+        "noise_level_db": 75,
+        "dimensions": "60\" x 24\" x 36\"",
+        "weight_lbs": 1850
+    },
+    "45 kVA / 36 kW": {
+        "kw": 36,
+        "fuel_consumption_gph": {"50%": 2.1, "75%": 3.0, "100%": 4.1},
+        "fuel_tank_gal": 60,
+        "co2_per_gal": 22.4,
+        "noise_level_db": 78,
+        "dimensions": "72\" x 30\" x 42\"",
+        "weight_lbs": 2850
+    },
+    "65 kVA / 52 kW": {
+        "kw": 52,
+        "fuel_consumption_gph": {"50%": 2.8, "75%": 4.2, "100%": 5.8},
+        "fuel_tank_gal": 80,
+        "co2_per_gal": 22.4,
+        "noise_level_db": 80,
+        "dimensions": "84\" x 36\" x 48\"",
+        "weight_lbs": 4200
+    },
+    "125 kVA / 100 kW": {
+        "kw": 100,
+        "fuel_consumption_gph": {"50%": 5.2, "75%": 7.8, "100%": 10.5},
+        "fuel_tank_gal": 120,
+        "co2_per_gal": 22.4,
+        "noise_level_db": 82,
+        "dimensions": "120\" x 48\" x 60\"",
+        "weight_lbs": 8500
+    },
+    "220 kVA / 176 kW": {
+        "kw": 176,
+        "fuel_consumption_gph": {"50%": 9.1, "75%": 13.7, "100%": 18.2},
+        "fuel_tank_gal": 200,
+        "co2_per_gal": 22.4,
+        "noise_level_db": 85,
+        "dimensions": "144\" x 60\" x 72\"",
+        "weight_lbs": 15000
+    },
+    "400 kVA / 320 kW": {
+        "kw": 320,
+        "fuel_consumption_gph": {"50%": 16.8, "75%": 25.2, "100%": 33.6},
+        "fuel_tank_gal": 350,
+        "co2_per_gal": 22.4,
+        "noise_level_db": 88,
+        "dimensions": "180\" x 72\" x 84\"",
+        "weight_lbs": 28000
+    }
+}
+
+def interpolate_gph(generator_kva, load_percent):
+    """
+    Interpolate GPH fuel consumption based on generator kVA and load percentage
+    Uses authentic EBOSS GPH interpolation data from working_Accurate_Fuel_Calc_1752711064907.xlsx
+    """
+    # Convert load percent to decimal if needed
+    if load_percent > 1:
+        load_percent = load_percent / 100
     
-    # Skip calculation for certain rows
-    if spec_name in ["Generator Size", "Frequency", "Voltage regulation", "Simultaneous voltage", "Parallelable"]:
-        if spec_name == "Simultaneous voltage":
-            return "EBOSS® Advantage" if "Yes" in str(eboss_value) else "N/A"
-        elif spec_name == "Parallelable":
-            return "EBOSS® Advantage" if eboss_value == "Yes" and standard_value == "No" else "Same"
-        elif spec_name == "Frequency":
-            return "Same" if eboss_value == standard_value else "Different"
-        elif spec_name == "Voltage regulation":
-            return "Same" if eboss_value == standard_value else "Different"
-        else:
-            return "EBOSS® vs Standard"
+    # Get GPH interpolation data
+    gph_data_map = EBOSS_LOAD_REFERENCE["gph_interpolation"]
     
-    # Handle N/A values
-    if str(eboss_value) == "N/A" or str(standard_value) == "N/A":
-        if str(eboss_value) != "N/A" and str(standard_value) == "N/A":
-            return "EBOSS® Only"
-        return "N/A"
+    # Find the correct generator size data or closest match
+    if generator_kva not in gph_data_map:
+        # Find closest generator size
+        available_sizes = list(gph_data_map.keys())
+        closest_size = min(available_sizes, key=lambda x: abs(x - generator_kva))
+        gph_data = gph_data_map[closest_size]
+    else:
+        gph_data = gph_data_map[generator_kva]
     
-    try:
-        # Extract kVA and kW values from strings like "30 kVA / 24 kW"
-        if "kVA" in str(eboss_value) and "kW" in str(eboss_value):
-            eboss_kva = float(re.search(r'(\d+(?:\.\d+)?)\s*kVA', str(eboss_value)).group(1))
-            eboss_kw = float(re.search(r'(\d+(?:\.\d+)?)\s*kW', str(eboss_value)).group(1))
-            
-            if "kVA" in str(standard_value) and "kW" in str(standard_value):
-                std_kva = float(re.search(r'(\d+(?:\.\d+)?)\s*kVA', str(standard_value)).group(1))
-                std_kw = float(re.search(r'(\d+(?:\.\d+)?)\s*kW', str(standard_value)).group(1))
-                
-                kva_diff = eboss_kva - std_kva
-                kw_diff = eboss_kw - std_kw
-                
-                kva_sign = "+" if kva_diff >= 0 else ""
-                kw_sign = "+" if kw_diff >= 0 else ""
-                
-                return f"{kva_sign}{kva_diff:.1f} kVA / {kw_sign}{kw_diff:.1f} kW"
-        
-        # Extract single kW values
-        elif "kW" in str(eboss_value) and "kW" in str(standard_value):
-            eboss_kw = float(re.search(r'(\d+(?:\.\d+)?)\s*kW', str(eboss_value)).group(1))
-            std_kw = float(re.search(r'(\d+(?:\.\d+)?)\s*kW', str(standard_value)).group(1))
-            
-            kw_diff = eboss_kw - std_kw
-            kw_sign = "+" if kw_diff >= 0 else ""
-            
-            return f"{kw_sign}{kw_diff:.1f} kW"
-        
-        # Extract percentage values
-        elif "%" in str(eboss_value) and "%" in str(standard_value):
-            eboss_pct = float(re.search(r'(\d+(?:\.\d+)?)', str(eboss_value)).group(1))
-            std_pct = float(re.search(r'(\d+(?:\.\d+)?)', str(standard_value)).group(1))
-            
-            pct_diff = eboss_pct - std_pct
-            pct_sign = "+" if pct_diff >= 0 else ""
-            
-            return f"{pct_sign}{pct_diff:.1f}%"
-        
-        # Extract GPH values
-        elif "GPH" in str(eboss_value) and "GPH" in str(standard_value):
-            eboss_gph = float(re.search(r'(\d+(?:\.\d+)?)', str(eboss_value)).group(1))
-            std_gph = float(re.search(r'(\d+(?:\.\d+)?)', str(standard_value)).group(1))
-            
-            gph_diff = eboss_gph - std_gph
-            gph_sign = "+" if gph_diff >= 0 else ""
-            
-            return f"{gph_sign}{gph_diff:.2f} GPH"
-        
-        # Extract gallons values
-        elif "gallons" in str(eboss_value) and "gallons" in str(standard_value):
-            eboss_gal = float(re.search(r'(\d+(?:\.\d+)?)', str(eboss_value)).group(1))
-            std_gal = float(re.search(r'(\d+(?:\.\d+)?)', str(standard_value)).group(1))
-            
-            gal_diff = eboss_gal - std_gal
-            gal_sign = "+" if gal_diff >= 0 else ""
-            
-            return f"{gal_sign}{gal_diff:.1f} gallons"
-        
-        # Extract lbs values (emissions)
-        elif "lbs" in str(eboss_value) and "lbs" in str(standard_value):
-            eboss_lbs = float(re.search(r'(\d+(?:\.\d+)?)', str(eboss_value)).group(1))
-            std_lbs = float(re.search(r'(\d+(?:\.\d+)?)', str(standard_value)).group(1))
-            
-            lbs_diff = eboss_lbs - std_lbs
-            lbs_sign = "+" if lbs_diff >= 0 else ""
-            
-            return f"{lbs_sign}{lbs_diff:.1f} lbs"
-        
-        # Extract amp values
-        elif "A" in str(eboss_value) and "A" in str(standard_value):
-            eboss_amps = float(re.search(r'(\d+(?:\.\d+)?)', str(eboss_value)).group(1))
-            std_amps = float(re.search(r'(\d+(?:\.\d+)?)', str(standard_value)).group(1))
-            
-            amp_diff = eboss_amps - std_amps
-            amp_sign = "+" if amp_diff >= 0 else ""
-            
-            return f"{amp_sign}{amp_diff:.0f} A"
-        
-        elif "A" in str(eboss_value) and str(standard_value) == "N/A":
-            return "EBOSS® Only"
-            
-    except (AttributeError, ValueError, TypeError):
-        pass
+    # Define load percentage breakpoints and corresponding GPH values
+    load_points = [0.25, 0.50, 0.75, 1.00]
+    gph_values = [gph_data["25%"], gph_data["50%"], gph_data["75%"], gph_data["100%"]]
     
-    # Default cases
-    if str(eboss_value) == str(standard_value):
-        return "Same"
+    # Clamp load_percent to valid range
+    load_percent = max(0.25, min(1.00, load_percent))
     
-    return "Different"
+    # Handle edge cases
+    if load_percent <= 0.25:
+        return gph_values[0]
+    elif load_percent >= 1.00:
+        return gph_values[3]
+    
+    # Find the two points to interpolate between
+    for i in range(len(load_points) - 1):
+        if load_points[i] <= load_percent <= load_points[i + 1]:
+            # Linear interpolation formula: y = y1 + (x - x1) * (y2 - y1) / (x2 - x1)
+            x1, x2 = load_points[i], load_points[i + 1]
+            y1, y2 = gph_values[i], gph_values[i + 1]
+            
+            interpolated_gph = y1 + (load_percent - x1) * (y2 - y1) / (x2 - x1)
+            return round(interpolated_gph, 4)
+    
+    return 0
+
+def calculate_charge_rate(eboss_model, eboss_type, generator_kva=None, custom_rate=None):
+    """Calculate charge rate using authentic formulas"""
+    if custom_rate:
+        return custom_rate
+        
+    # Get generator kW capacity
+    generator_kw = 0
+    if eboss_type == "Full Hybrid":
+        # Use paired generator for hybrid
+        hybrid_kva = EBOSS_LOAD_REFERENCE["generator_kva_hybrid"].get(eboss_model, 0)
+        generator_kw = hybrid_kva * 0.8  # kW = kVA * 0.8
+    elif eboss_type == "Power Module" and generator_kva:
+        # Use selected generator for power module
+        gen_kva = float(generator_kva.replace("kVA", ""))
+        generator_kw = gen_kva * 0.8  # kW = kVA * 0.8
+    
+    # Calculate charge rate based on formulas
+    if eboss_type == "Full Hybrid":
+        # Full Hybrid: 98% of generator kW
+        charge_rate = generator_kw * 0.98
+    elif eboss_type == "Power Module":
+        # Power Module: 98% of (90% of generator kW)
+        charge_rate = generator_kw * 0.90 * 0.98
+    else:
+        charge_rate = 0
+        
+    return round(charge_rate, 1)
+
+def get_max_charge_rate(eboss_model, eboss_type, generator_kva=None):
+    """Get maximum allowed charge rate using model-specific limits, with 98% generator kW as fallback"""
+    
+    # EBOSS model specific maximum charge rates from the table
+    model_max_charge_rates = {
+        "EB25 kVA": 20,
+        "EB70 kVA": 45,
+        "EB125 kVA": 65,
+        "EB220 kVA": 125,
+        "EB400 kVA": 220
+    }
+    
+    # Get model-specific max charge rate
+    model_max = model_max_charge_rates.get(eboss_model, 0)
+    
+    # Calculate 98% of generator kW as secondary limit
+    generator_kw = 0
+    if eboss_type == "Full Hybrid":
+        hybrid_kva = EBOSS_LOAD_REFERENCE["generator_kva_hybrid"].get(eboss_model, 0)
+        generator_kw = hybrid_kva * 0.8
+    elif eboss_type == "Power Module" and generator_kva:
+        gen_kva = float(generator_kva.replace("kVA", ""))
+        generator_kw = gen_kva * 0.8
+    
+    generator_98_percent = generator_kw * 0.98
+    
+    # Use the lower of the two limits (model max or 98% generator kW)
+    if model_max > 0 and generator_98_percent > 0:
+        max_charge_rate = min(model_max, generator_98_percent)
+    elif model_max > 0:
+        max_charge_rate = model_max
+    elif generator_98_percent > 0:
+        max_charge_rate = generator_98_percent
+    else:
+        max_charge_rate = 0
+    
+    return round(max_charge_rate, 1)
+
+def calculate_standard_generator_specs(standard_generator_size, continuous_load, max_peak_load):
+    """Calculate specifications for standard diesel generator comparison using authentic interpolation"""
+    if not standard_generator_size or standard_generator_size not in STANDARD_GENERATOR_DATA:
+        return {}
+    
+    gen_data = STANDARD_GENERATOR_DATA[standard_generator_size]
+    gen_kw = gen_data["kw"]
+    
+    # Calculate engine load percentage based on continuous load (since it runs 24/7)
+    engine_load_percent = (continuous_load / gen_kw * 100) if gen_kw > 0 else 0
+    load_percentage = continuous_load / gen_kw if gen_kw > 0 else 0
+    
+    # Use same interpolation method as EBOSS for consistency
+    fuel_gph_data = gen_data["fuel_consumption_gph"]
+    if load_percentage <= 0.5:
+        fuel_per_hour = fuel_gph_data["50%"]
+    elif load_percentage <= 0.75:
+        fuel_per_hour = fuel_gph_data["75%"]
+    else:
+        fuel_per_hour = fuel_gph_data["100%"]
+    
+    # Calculate daily, weekly, monthly consumption (runs 24/7)
+    fuel_per_day = fuel_per_hour * 24
+    fuel_per_week = fuel_per_day * 7
+    fuel_per_month = fuel_per_day * 30
+    
+    # Calculate CO2 emissions (22.4 lbs CO2 per gallon of diesel)
+    co2_per_day = fuel_per_day * gen_data["co2_per_gal"]
+    
+    # Runtime is continuous (24 hours) since no battery backup
+    runtime_per_day = 24.0
+    
+    # Tank runtime calculation
+    tank_runtime = gen_data["fuel_tank_gal"] / fuel_per_hour if fuel_per_hour > 0 else 0
+    
+    return {
+        "generator_type": "Standard Diesel Generator",
+        "generator_size": standard_generator_size,
+        "engine_load_percent": engine_load_percent,
+        "continuous_load_percent": load_percentage * 100,
+        "fuel_consumption_gph": fuel_per_hour,
+        "fuel_per_hour": fuel_per_hour,
+        "fuel_per_day": fuel_per_day,
+        "fuel_per_week": fuel_per_week,
+        "fuel_per_month": fuel_per_month,
+        "co2_per_day": co2_per_day,
+        "runtime_per_day": runtime_per_day,
+        "tank_runtime_hours": tank_runtime,
+        "noise_level": gen_data["noise_level_db"],
+        "dimensions": gen_data["dimensions"],
+        "weight_lbs": gen_data["weight_lbs"],
+        "fuel_tank_capacity": gen_data["fuel_tank_gal"]
+            }
+
+return {
+        "model_capacity": model_capacity,
+        "peak_utilization": peak_utilization,
+        "continuous_utilization": continuous_utilization,
+        "charge_rate": charge_rate,
+        "battery_capacity": battery_capacity,
+        "charge_time": charge_time,
+        "fuel_consumption_gph": fuel_consumption,
+        "fuel_per_day": fuel_consumption * 24 if fuel_consumption else 0,
+        "co2_per_day": co2_per_day,
+        "engine_load_percent": engine_load_percent,
+        "generator_data": generator_data
+    }
+
+def calculate_load_specs(eboss_model, eboss_type, continuous_load, max_peak_load, generator_kva=None, custom_charge_rate=None):
+    """Calculate load-based specifications using authentic EBOSS reference data"""
+    
+    # Get EBOSS model capacity based on generator size and max continuous load
+    generator_kw_mapping = {
+        "EB25 kVA": 14.5,   # Gen Size 25 kVA
+        "EB70 kVA": 24.5,   # Gen Size 45 kVA  
+        "EB125 kVA": 49,    # Gen Size 65 kVA
+        "EB220 kVA": 74,    # Gen Size 125 kVA
+        "EB400 kVA": 125    # Gen Size 220 kVA
+    }
+    model_capacity = generator_kw_mapping.get(eboss_model, 0)
+    
+    # Find matching generator data
+    generator_data = None
+    if generator_kva:
+        gen_size = int(generator_kva.replace("kVA", ""))
+        generator_data = EBOSS_LOAD_REFERENCE["generator_sizes"].get(gen_size)
+    
+    # Calculate utilization
+    peak_utilization = (max_peak_load / model_capacity * 100) if model_capacity > 0 else 0
+    continuous_utilization = (continuous_load / model_capacity * 100) if model_capacity > 0 else 0
+    
+    # Calculate charge rate using new formula
+    charge_rate = calculate_charge_rate(eboss_model, eboss_type, generator_kva, custom_charge_rate)
+    
+    # Calculate fuel consumption and engine load based on EBOSS model's paired generator
+    fuel_consumption = None
+    engine_load_percent = 0
+    
+    # Get the appropriate generator size for this EBOSS model
+    paired_generator_kva = EBOSS_LOAD_REFERENCE["generator_kva_hybrid"].get(eboss_model, 0)
+    if paired_generator_kva > 0:
+        # Get paired generator data
+        paired_gen_data = EBOSS_LOAD_REFERENCE["generator_sizes"].get(paired_generator_kva)
+        if paired_gen_data:
+            gen_kw = paired_gen_data["gen_kw"]
+            charge_rate_kw = charge_rate  # charge rate is already in kW
+            engine_load_percent = (charge_rate_kw / gen_kw * 100) if gen_kw > 0 else 0
+            
+            # Use charge rate for GPH interpolation
+            load_percentage = charge_rate_kw / gen_kw if gen_kw > 0 else 0
+            
+            # Interpolate GPH based on paired generator size and load percentage
+            gph_data = EBOSS_LOAD_REFERENCE["gph_interpolation"].get(paired_generator_kva, {})
+            
+            if load_percentage <= 0.25:
+                fuel_consumption = gph_data.get("25%", 0)
+            elif load_percentage <= 0.5:
+                fuel_consumption = gph_data.get("50%", 0)
+            elif load_percentage <= 0.75:
+                fuel_consumption = gph_data.get("75%", 0)
+            else:
+                fuel_consumption = gph_data.get("100%", 0)
+    
+    # Calculate battery specs - always use model-specific capacity
+    battery_capacity = EBOSS_LOAD_REFERENCE["battery_capacities"].get(eboss_model, 0)
+    charge_time = (battery_capacity / charge_rate) if charge_rate > 0 else 0
+    
+    # Calculate environmental impact
+    co2_per_day = fuel_consumption * 24 * 19.6 if fuel_consumption else 0  # 19.6 lbs CO2 per gallon
+    
+    
+
+
+# Initialize session state
+if 'eboss_model' not in st.session_state:
+    st.session_state.eboss_model = None
+if 'eboss_type' not in st.session_state:
+    st.session_state.eboss_type = None
+if 'generator_kva' not in st.session_state:
+    st.session_state.generator_kva = None
+if 'continuous_load' not in st.session_state:
+    st.session_state.continuous_load = None
+if 'max_peak_load' not in st.session_state:
+    st.session_state.max_peak_load = None
+if 'show_specs' not in st.session_state:
+    st.session_state.show_specs = False
+if 'show_load_specs' not in st.session_state:
+    st.session_state.show_load_specs = False
+if 'show_comparison' not in st.session_state:
+    st.session_state.show_comparison = False
+if 'standard_generator' not in st.session_state:
+    st.session_state.standard_generator = None
+if 'custom_charge_rate' not in st.session_state:
+    st.session_state.custom_charge_rate = None
+if 'use_custom_charge' not in st.session_state:
+    st.session_state.use_custom_charge = False
+if 'show_generator_dialog' not in st.session_state:
+    st.session_state.show_generator_dialog = False
+if 'paired_generator' not in st.session_state:
+    st.session_state.paired_generator = None
+
+# EBOSS to Standard Generator Pairing (ascending order: 25, 65, 125, 220, 400 kVA)
+EBOSS_STANDARD_PAIRING = {
+    "EB25 kVA": "25 kVA / 20 kW",
+    "EB70 kVA": "65 kVA / 52 kW", 
+    "EB125 kVA": "125 kVA / 100 kW",
+    "EB220 kVA": "220 kVA / 176 kW",
+    "EB400 kVA": "400 kVA / 320 kW"
+}
+
 
 def format_difference_value(difference, spec_name):
     """Format difference values with consistent font color matching other columns"""
