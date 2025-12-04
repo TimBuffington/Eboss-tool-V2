@@ -725,7 +725,7 @@ with pm_col1: pm_interval_hrs = st.number_input(
         max_value=1000,
         value=0,
         step=1.0,
-        key="pm_interval_hrs"
+        key = "pm_interval_hrs"
     )
 
 with pm_col2:
@@ -2710,6 +2710,7 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
+
 
 
 
