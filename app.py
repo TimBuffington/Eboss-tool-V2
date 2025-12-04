@@ -673,7 +673,7 @@ Cost_Analysis()
         </button>
     </a>
 </div>
- 
+""", unsafe_allow_html=True)
         
         # Row 1: Fuel price and delivery fee
         st.markdown("**Fuel Information**")
