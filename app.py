@@ -16,8 +16,9 @@ div[data-testid="column"] {
 .form-container div {
     box-sizing: border-box !important;
     max-width: 100% !important;
+}
 </style>
-
+""", unsafe_allow_html=True)
 
 
 # Initialize session state variables
