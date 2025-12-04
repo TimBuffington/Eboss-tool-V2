@@ -1,3 +1,5 @@
+import streamlit as st
+
 def global_css():
     
     st.markdown("""
