@@ -668,8 +668,8 @@ Cost_Analysis()
 
        
         # Row 1: Fuel price and delivery fee
-    st.markdown("**Fuel Information**")
-        fuel_col1, fuel_col2 = st.columns([1, 1])
+st.markdown("**Fuel Information**")
+    fuel_col1, fuel_col2 = st.columns([1, 1])
         
     with fuel_col1:
          local_fuel_price = st.number_input(
@@ -681,14 +681,14 @@ Cost_Analysis()
          key="local_fuel_price"
         )
         
-       with fuel_col2:
-            fuel_delivery_fee = st.number_input(
-                "Fuel Delivery Fee ($)",
-                min_value=1,
-                max_value=1000,
-                value=0,
-                step=1,
-                key="fuel_delivery_fee"
+    with fuel_col2:
+         fuel_delivery_fee = st.number_input(
+             "Fuel Delivery Fee ($)",
+              min_value=1,
+              max_value=1000,
+              value=0,
+              step=1,
+              key="fuel_delivery_fee"
             )
         
         # Row 2: PM interval and PM charge
