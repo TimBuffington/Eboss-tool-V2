@@ -1,9 +1,5 @@
 import streamlit as st
 from utils.style import ensure_global_css  # <-- use the helper from utils
-
-
-
-import streamlit as st
 from style import ensure_global_css   # if defined externally, optional
 
 # ⬇️ CALL YOUR CSS LOADER HERE — immediately after imports
@@ -71,3 +67,4 @@ def nav_to(page_label: str, *, mode_key: str) -> None:
     else:
         st.session_state["page"] = page_label
         st.rerun()
+
